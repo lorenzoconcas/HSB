@@ -3,19 +3,25 @@ using System.Reflection;
 
 namespace HSB
 {
-    public class Server
+    public class HSBStandalone
     {
 
         private static void Main(string[] args)
         {
+            HSBMain(args);
+        }
+
+        public static void HSBMain(string[] args)
+        {
             Terminal.Write("HSB-# Standalone Preloader\n");
 
-            Configuration? conf;
+            Configuration conf = new Configuration();
             String path = "config.json";
             List<string> assemblies = new List<string>();
 
             if (args.Length > 0)
             {
+                //sicuramente c'è un modo migliore per parsare gli argomenti
                 bool verbose = true;
                 foreach (string s in args)
                 {
@@ -40,6 +46,14 @@ namespace HSB
                     {
                         assemblies.Add(s.Split("--assembly=")[1]);
                     }
+                    if (s.StartsWith("--port="))
+                    {
+                        conf.port = int.Parse(s.Split("--port=")[1]);
+                    }
+                    if (s.StartsWith("--address="))
+                    {
+                        conf.address = s.Split("--address=")[1];
+                    }
                     if (s.StartsWith("--info") || s.StartsWith("?"))
                     {
                         Utils.PrintLogo();
@@ -48,6 +62,8 @@ namespace HSB
                         Terminal.WriteLine("--create-default : \tCreates a default configuration");
                         Terminal.WriteLine("--info, ? : \tShow this message screen");
                         Terminal.WriteLine("--no-verbose : \tDisables verbose writing");
+                        Terminal.WriteLine("--port : \t Set server listening port");
+                        Terminal.WriteLine("--address : \t Set server listening address");
                         Terminal.WriteLine("--assembly : \tUse it to load custom assemblies (use it to run without embedding HSB");
                         return;
                     }
@@ -65,8 +81,8 @@ namespace HSB
                 }
             }
 
-            Utils.printLoadedAssemblies();
-            
+            // Utils.printLoadedAssemblies();
+
             try
             {
                 if (File.Exists(path))
@@ -92,7 +108,7 @@ namespace HSB
                         "\t--config-path=path (Loads configuration file from specified path)\n");
 
                     Terminal.WriteLine("HSB-# will start with default configuration\n");
-                    conf = new Configuration("127.0.0.1", 8080, "", true);
+                    //conf = new Configuration();
                 }
 
             }
@@ -104,29 +120,14 @@ namespace HSB
             }
             try
             {
-                _ = new ServerEngine(conf!);
+                _ = new Server(conf!);
             }
             catch (Exception e)
             {
-                Terminal.ERROR("Invalid configuration file");
+                Terminal.ERROR("Error starting server ->");
                 Terminal.ERROR(e.Message);
             }
 
         }
     }
-
-    //public class MainServlet : Servlet
-    //{
-    //    public MainServlet(Request req, Response res) : base(req, res)
-    //    {
-    //        // Console.WriteLine(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-    //    }
-
-    //    public override void ProcessGet(Request r, Response res)
-    //    {
-    //        //res.SendCode(404);
-    //        res.Send("ciao!", "text/plain");
-    //        //base.ProcessGet(r, res);
-    //    }
-    //}
 }

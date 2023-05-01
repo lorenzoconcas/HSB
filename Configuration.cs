@@ -15,6 +15,14 @@ namespace HSB
         public string staticFolderPath = "";
         public bool verbose = true;
 
+        public Configuration()
+        {
+            address = "127.0.0.1";
+            port = 8080;
+            staticFolderPath = "";
+            verbose = true;
+        }
+
         public Configuration(string address, int port, String staticPath, bool verbose)
         {
 

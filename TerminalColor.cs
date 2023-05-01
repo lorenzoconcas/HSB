@@ -85,8 +85,8 @@
             }
 
             Write(o, BG_COLOR.NERO, FG_COLOR.GIALLO);
-
-            Write("]", BG_COLOR.NERO, FG_COLOR.GIALLO);
+            if (printExtraInfo)
+                Write("]", BG_COLOR.NERO, FG_COLOR.GIALLO);
             WriteLine();
         }
         public static void ERROR<T>(T o, bool printExtraInfo = false)
@@ -96,7 +96,8 @@
                 Write($"[{DateTime.Now.ToString()}][E][", BG_COLOR.NERO, FG_COLOR.ROSSO);
             }
             Write(o, BG_COLOR.NERO, FG_COLOR.ROSSO);
-            Write("]", BG_COLOR.NERO, FG_COLOR.ROSSO);
+            if (printExtraInfo)
+                Write("]", BG_COLOR.NERO, FG_COLOR.ROSSO);
             WriteLine();
         }
 

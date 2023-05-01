@@ -9,10 +9,10 @@ using System.Reflection;
 
 namespace HSB
 {
-    public class ServerEngine
+    public class Server
     {
 
-        public ServerEngine(Configuration config)
+        public Server(Configuration config)
         {
             Utils.PrintLogo();
 
@@ -21,32 +21,26 @@ namespace HSB
 
             Terminal.INFO($"Listening at address http://{config.address}:{config.port}/");
 
-            // Data buffer for incoming data.  
+            //buffer per dati in ingresso
             byte[] bytes = new Byte[1024];
 
-            // Establish the local endpoint for the socket.  
-            // Dns.GetHostName returns the name of the
-            // host running the application.  
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(config.address);
-            IPAddress ipAddress = ipHostInfo.AddressList[1];
-
+            //ricerca indirizzo ip 
+            var addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork);
+            IPAddress ipAddress = addresses[0];
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, config.port);
 
-            // Create a TCP/IP socket.  
             Socket listener = new Socket(ipAddress.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
 
-            // Bind the socket to the local endpoint and
-            // listen for incoming connections.  
+
             try
             {
                 listener.Bind(localEndPoint);
                 listener.Listen(10);
 
-                // Start listening for connections.  
                 while (true)
                 {
-                    // Program is suspended while waiting for an incoming connection.  
+                    //attendiamo una connessione
                     Socket handler = listener.Accept();
 
                     int bytesRec = handler.Receive(bytes);

@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿
 using System.Reflection;
+using System.Text.Json;
 
 namespace HSB
 {
@@ -37,8 +38,8 @@ namespace HSB
                     {
                         Console.WriteLine("Creating default configuration and exiting...");
 
-                        conf = new Configuration("127.0.0.1", 8080, "", verbose);
-                        var str = JsonConvert.SerializeObject(conf);
+                        conf = new Configuration();
+                        var str = JsonSerializer.Serialize(conf);//JsonConvert.SerializeObject(conf);
                         File.WriteAllText("./config.json", str);
                         return;
                     }
@@ -90,10 +91,16 @@ namespace HSB
                     using (StreamReader r = new StreamReader(path))
                     {
                         string json = r.ReadToEnd();
-                        conf = JsonConvert.DeserializeObject<Configuration>(json);
-                        if (conf != null && conf!.verbose)
+                        Configuration? _conf = JsonSerializer.Deserialize<Configuration>(json);//JsonConvert.DeserializeObject<Configuration>(json);
+                        if (_conf == null)
                         {
+                            Terminal.ERROR("Invalid configuration file");
+                            return;
+                        }
+                        conf = _conf;
 
+                        if (conf.verbose)
+                        {
                             Console.WriteLine("Configuration file loaded");
                             Console.WriteLine(conf.ToString());
                         }

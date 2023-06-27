@@ -1,19 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="TestRunnerClasses\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TestRunnerClasses\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HSB\HSB.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="TestRunnerClasses\" />
+		<None Remove="static\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="TestRunnerClasses\" />
+		<Folder Include="static\" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HSB\HSB.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="static\JavascriptFile.js">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

@@ -77,18 +77,22 @@ namespace HSB
         public void SendFile(string absPath, string? mimeType = null, int statusCode = 200)
         {
 
-            string data = File.ReadAllText(absPath);
+            var data = File.ReadAllBytes(absPath);
+
             string _mime = mimeType ?? MimeType.GetMimeType(Path.GetExtension(absPath)); ; //qui va messo l'autodetect
 
+            string headers = GetHeaders(statusCode, data.Length + 2, _mime);
+            byte[] headersBytes = Encoding.UTF8.GetBytes(headers);
+            byte[] responseBytes = new byte[data.Length + headersBytes.Length];
 
-            string resp = GetHeaders(statusCode, data.Length + 2, _mime) + "\r\n";
-            byte[] respBytes = Encoding.UTF8.GetBytes(resp);
-            //byte[] _data = new byte[data.Length + respBytes.Length];
-            // respBytes.CopyTo(_data, 0);
-            // data.CopyTo(_data, respBytes.Length);
 
-            // Send(respBytes);
-            Send(Encoding.UTF8.GetBytes(resp + data));
+
+
+            headersBytes.CopyTo(responseBytes, 0);
+            data.CopyTo(responseBytes, headersBytes.Length);
+
+            Send(responseBytes);
+
 
         }
         public void SendCode(int httpCode)

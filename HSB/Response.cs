@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace HSB
 {
@@ -52,9 +48,9 @@ namespace HSB
         {
             try
             {
-                String content = File.ReadAllText(path);
+                string content = File.ReadAllText(path);
                 if (process)
-                    content = processContent(content);
+                    content = ProcessContent(content);
                 Send(content, MimeType.TEXT_HTML);
             }
             catch (Exception)
@@ -103,21 +99,24 @@ namespace HSB
         }
         public string GetHeaders(int responseCode, int size, string contentType)
         {
-            CultureInfo ci = new CultureInfo("en-US");
+            CultureInfo ci = new("en-US");
 
             string currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss GMT", ci);
             string headers = HttpUtils.ProtocolAsString(request.PROTOCOL) + " " + responseCode + " " + request.URL + NEW_LINE;
             headers += "Date: " + currentTime + NEW_LINE;
-            headers += $"Server : HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({Environment.OSVersion.ToString()})" + NEW_LINE;
+            headers += $"Server : HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({Environment.OSVersion})" + NEW_LINE;
             headers += "Last-Modified: " + currentTime + NEW_LINE;
             headers += "Content-Length: " + size + NEW_LINE;
             headers += "Content-Type: " + contentType + NEW_LINE;
-            headers += "Connection: Closed";
+
+            //visit https://httpwg.org/specs/rfc9113.html#ConnectionSpecific, p8.2.2 (27-Jun-23)
+            if (request.PROTOCOL == HTTP_PROTOCOL.HTTP1_0 || request.PROTOCOL == HTTP_PROTOCOL.HTTP1_1)
+                headers += "Connection: Closed";
             headers += NEW_LINE + NEW_LINE;
             return headers;
         }
 
-        private string processContent(string content)
+        private string ProcessContent(string content)
         {
             foreach (var attr in attributes)
             {

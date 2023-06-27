@@ -44,7 +44,7 @@ namespace HSB
             }
             catch (Exception e)
             {
-                Terminal.ERROR($"Errore sending data ->\n {e}");
+                Terminal.ERROR($"Error sending data ->\n {e}");
             }
         }
         public void SendHTMLPage(string path, bool process = false)
@@ -60,7 +60,7 @@ namespace HSB
             {
                 //dato che l'invio dei dati è parte nostra, se non riusciamo diamo un errore 500
                 SendCode(500);
-                Terminal.ERROR("Errore sending file : " + path);
+                Terminal.ERROR("Error sending file : " + path);
             }
         }
 

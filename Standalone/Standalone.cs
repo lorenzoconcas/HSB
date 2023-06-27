@@ -1,8 +1,7 @@
-﻿
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.Json;
-
-namespace HSB
+using HSB;
+namespace HSBStandalone
 {
     public class HSBStandalone
     {
@@ -114,7 +113,7 @@ namespace HSB
                         "\t--create-default (Create a default configuration file) \n" +
                         "\t--config-path=path (Loads configuration file from specified path)\n");
 
-                    Terminal.WriteLine("HSB-# will start with default configuration\n");
+                    Terminal.WriteLine("HSB-# will start with default failsafe configuration\n");
                     //conf = new Configuration();
                 }
 

@@ -12,7 +12,7 @@ namespace HSB
     {
         //support-variables
         readonly string reqText = "";
-        readonly string[] reqTextLns;
+        readonly List<string> requestContent;
 
 
         //Request variables
@@ -20,30 +20,51 @@ namespace HSB
         HTTP_METHOD _method = HTTP_METHOD.UNKNOWN;
         HTTP_PROTOCOL _protocol = HTTP_PROTOCOL.UNKNOWN; //HTTP1.0 ecc
         string _url = "";
+        string body = "";
+        Dictionary<string, string> headers = new();
 
-        List<string> rawHeaders = new List<string>();
+        List<string> rawHeaders = new();
 
 
         public Request(byte[] data)
         {
             if (data == null)
             {
-                reqTextLns = Array.Empty<String>();
+                requestContent = new();
                 return;
             }
             reqText = Encoding.UTF8.GetString(data);
-            reqTextLns = reqText.Split("\r\n");
+            requestContent = reqText.Split("\r\n").ToList();
+
             parseRequest();
-            rawHeaders = new List<string>();
+
         }
         private void parseRequest()
         {
             try
             {
-                string[] firstLine = reqTextLns[0].Split(" ");
+                string[] firstLine = requestContent.First().Split(" ");
                 _method = HttpUtils.GetMethod(firstLine[0]);
                 _url = firstLine[1];
                 _protocol = HttpUtils.GetProtocol(firstLine[2]);
+                //get headers
+                foreach (string r in requestContent)
+                {
+                    //skip if first element
+                    if (r == requestContent.First())
+                        continue;
+                    if (r == "")
+                    {
+                        break;
+                    }
+
+                    rawHeaders.Add(r);
+                    string[] header = r.Split(": ");
+                    headers.Add(header[0], header[1]);
+
+                }
+                body = requestContent.Last();
+
             }
             catch (Exception e)
             {
@@ -64,6 +85,10 @@ namespace HSB
         public HTTP_METHOD METHOD => this._method;
         public HTTP_PROTOCOL PROTOCOL => _protocol;
         public string URL => _url;
+        public string rawBody => body;
+        public Dictionary<string, string> GetHeaders => headers;
+        public List<string> GetRawHeaders => rawHeaders;
+
     }
 
 

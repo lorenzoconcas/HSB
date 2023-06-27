@@ -11,7 +11,11 @@ namespace HSB
 {
     public class Server
     {
-
+        public static void Main(string[] args)
+        {
+            Terminal.INFO("This instance of HSB-# is designed to run as library, therefore cannot run standalone");
+            Terminal.INFO("To run as standalone you must compile/execute the \"Standalone\" project");
+        }
         public Server(Configuration config)
         {
             Utils.PrintLogo();

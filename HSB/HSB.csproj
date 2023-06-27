@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Deterministic>false</Deterministic>
+		<Description>The HSB-# Server</Description>
+		<Configurations>Debug;Release</Configurations>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>
+		</DebugType>
+		<WarningLevel>4</WarningLevel>
+		<DocumentationFile>bin\Release\net7.0\HSB.xml</DocumentationFile>
+		<SignAssembly>true</SignAssembly>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="DefaultPages\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="DefaultPages\" />
+	</ItemGroup>
+	<ProjectExtensions>
+	  <MonoDevelop>
+	    <Properties>
+	      <Policies>
+	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+	        <StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
+	      </Policies>
+	    </Properties>
+	  </MonoDevelop>
+	</ProjectExtensions>
+</Project>

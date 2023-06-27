@@ -11,7 +11,7 @@ namespace HSB
          {
              return System.Reflection.MethodBase.GetCurrentMethod().DeclaringType;
          }*/
-        internal static void PrintLogo()
+        public static void PrintLogo()
         {
             Terminal.Write("Welcome to ");
             Terminal.Write("H", BG_COLOR.DEFAULT, FG_COLOR.ROSSO);

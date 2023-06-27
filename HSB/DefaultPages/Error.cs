@@ -11,7 +11,7 @@ namespace HSB
         private int errorCode;
         public Error(Request req, Response res, string errorMessage, int errorCode) : base(req, res)
         {
-            Console.WriteLine("TESTING");
+
             this.errorCode = errorCode;
             this.errorMsg = errorMessage;
         }
@@ -38,7 +38,7 @@ namespace HSB
 
         private string Get4XXPage()
         {
-            string content = $"<h2>Errore {errorCode}</h2><hr>";
+            string content = $"<h2>Errore {errorCode}</h2><hr>\n<h3>La risorsa cercata non &egrave; stata trovata su questo server</h3>";
             return content;
         }
     }

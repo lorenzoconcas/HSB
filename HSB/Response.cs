@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -92,7 +93,7 @@ namespace HSB
         }
         public void SendCode(int httpCode)
         {
-            string resp = GetHeaders(200, 0, "text/plain") + "\r\n";
+            string resp = GetHeaders(httpCode, 0, "text/plain") + "\r\n";
 
             Send(Encoding.UTF8.GetBytes(resp));
         }
@@ -103,7 +104,7 @@ namespace HSB
             string currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss GMT", ci);
             string headers = HttpUtils.ProtocolAsString(request.PROTOCOL) + " " + responseCode + " " + request.URL + NEW_LINE;
             headers += "Date: " + currentTime + NEW_LINE;
-            headers += "Server : HSB-#/0.0.2 (" + Environment.OSVersion.ToString() + ")" + NEW_LINE;
+            headers += $"Server : HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({Environment.OSVersion.ToString()})" + NEW_LINE;
             headers += "Last-Modified: " + currentTime + NEW_LINE;
             headers += "Content-Length: " + size + NEW_LINE;
             headers += "Content-Type: " + contentType + NEW_LINE;

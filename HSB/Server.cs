@@ -13,7 +13,7 @@ namespace HSB
     {
         public static void Main(string[] args)
         {
-            Terminal.INFO("This instance of HSB-# is designed to run as library, therefore cannot run standalone");
+            Terminal.INFO("HSB-# has wrongfully been compiled has executable and will not run!");
             Terminal.INFO("To run as standalone you must compile/execute the \"Standalone\" project");
         }
         public Server(Configuration config)

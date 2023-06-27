@@ -14,9 +14,9 @@ namespace HSB
         public Servlet(Request req, Response res)
         {
             if (req == null || res == null)
-                return;       
+                throw new Exception("Request or Response cannot be null!");
             this.req = req;
-            this.res = res;    
+            this.res = res;
         }
 
 

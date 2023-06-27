@@ -22,18 +22,28 @@ namespace HSB
             Terminal.WriteLine($" Server ({Assembly.GetExecutingAssembly().GetName().Version})");
         }
 
-        public static void printLoadedAssemblies()
+        public static void printLoadedAssemblies(bool filter = true)
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            Assembly[] assems = currentDomain.GetAssemblies();
+            List<Assembly> assems = currentDomain.GetAssemblies().ToList();
+            if (filter)
+            {
+                assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
+                assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
+                assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+            }
 
             foreach (Assembly assem in assems)
             {
-                var classes = assem.GetTypes();
+                List<Type> classes = assem.GetTypes().ToList();
+
                 foreach (var c in classes)
                     Terminal.WriteLine(c.FullName, BG_COLOR.BIANCO, FG_COLOR.BLU);
             }
         }
+
+        public static T Safe<T>(T? o, T safe) => o ?? safe!;
+
     }
 }
 

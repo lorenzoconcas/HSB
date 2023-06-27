@@ -3,9 +3,10 @@ using HSB;
 namespace TestRunner
 {
     [Binding("/")]
-    public class BodyTest_cs : Servlet
+    [Binding("/info")]
+    public class MultiBinding : Servlet
     {
-        public BodyTest_cs(Request req, Response res) : base(req, res)
+        public MultiBinding(Request req, Response res) : base(req, res)
         {
 
         }
@@ -13,13 +14,13 @@ namespace TestRunner
         public override void ProcessGet(Request req, Response res)
         {
             base.ProcessGet(req, res);
-            res.Send("<h1>Hello GET</h1>");
+            res.Send($"<h1>Hello GET -> {req.URL}</h1>");
         }
 
         public override void ProcessPost(Request req, Response res)
         {
             base.ProcessPost(req, res);
-            res.Send($"<p>{req.rawBody}</p>");
+            res.Send($"<h1>Hello POST -> {req.URL}</h1>");
         }
 
 

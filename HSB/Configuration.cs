@@ -41,7 +41,7 @@ namespace HSB
                 {
                     Terminal.INFO($"Requested '{req.URL}'", true);
                     //qui va scritta una logica di ricerca delle servlet migliore
-                    Object? o = GetInstance(req, res);
+                    object? o = GetInstance(req, res);
                     if (o != null)
                     {
                         Servlet servlet = (Servlet)o;
@@ -49,17 +49,24 @@ namespace HSB
                     }
                     else
                     {
-                        //controlliamo se si cerca una risorsa, altrimenti 404 non trovato
-                        if (File.Exists(staticFolderPath + "/" + req.URL))
-                        {
-                            Terminal.INFO($"Static file found, serving '{req.URL}'", true);
-                            res.SendFile(staticFolderPath + "/" + req.URL);
-                        }
+                        //non è stata trovata una mappatura valida
+                        //se siamo qui non c'è una pagina di root preimpostata, restituiamo quella di default
+                        if (req.URL == "/")
+                            new Index(req, res).Process();
                         else
                         {
-                            //potrebbe non venire trovata la giusta servlet, rimandiamo un errore 404
-                            Terminal.WARNING($"No servlet or static found for URL : {req.URL}", true);
-                            res.SendCode(404);
+                            //controlliamo se si cerca una risorsa, altrimenti 404 non trovato
+                            if (File.Exists(staticFolderPath + "/" + req.URL))
+                            {
+                                Terminal.INFO($"Static file found, serving '{req.URL}'", true);
+                                res.SendFile(staticFolderPath + "/" + req.URL);
+                            }
+                            else
+                            {
+                                //potrebbe non venire trovata la giusta servlet, rimandiamo un errore 404
+                                Terminal.WARNING($"No servlet or static found for URL : {req.URL}", true);
+                                new Error(req, res, "Page not found", 404).Process();
+                            }
                         }
                     }
 
@@ -80,18 +87,37 @@ namespace HSB
 
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            Assembly[] assems = currentDomain.GetAssemblies();
+            List<Assembly> assems = currentDomain.GetAssemblies().ToList();
+
+            assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
+            assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
+            assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+
 
             foreach (Assembly assem in assems)
             {
-                var classes = assem.GetTypes();
+                List<Type> classes = assem.GetTypes().ToList();
+
                 foreach (var c in classes)
                 {
                     try
                     {
-                        Binding? attr = c.GetCustomAttribute<Binding>(false);
+                        IEnumerable<Binding> multiBindings = c.GetCustomAttributes<Binding>(false);
+                        Binding? attr;
+                        if (multiBindings.Any())
+                        {
+                            //non ci sono classi che hanno più binding, cerchiamo chi ne ha una sola
+                            attr = multiBindings.First();
+                        }
+                        else
+                        {
+                            attr = c.GetCustomAttribute<Binding>(false);
+                        }
+
                         if (attr != null && c.FullName != null && attr.Path == req.URL)
                             return Activator.CreateInstance(c, req, res);
+
+
 
                     }
                     catch (Exception e)
@@ -103,8 +129,7 @@ namespace HSB
 
                 }
             }
-            //se siamo qui non c'è una pagina di root preimpostata, restituiamo quella di default
-            return new Index(req, res);
+            return null;
         }
 
         public override string ToString()

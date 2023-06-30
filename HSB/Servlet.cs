@@ -40,7 +40,9 @@ namespace HSB
                     ProcessHead(req, res);
                     break;
                 default:
-                    throw new Exception("Can't process request, unknown http method");
+                    Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}");
+                    break;
+
             }
         }
 

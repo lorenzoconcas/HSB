@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Sockets;
+using System.Text;
 
 namespace HSB
 {
@@ -8,7 +9,7 @@ namespace HSB
         //support-variables
         readonly string reqText = "";
         readonly List<string> requestContent;
-
+        internal Socket connectionSocket;
 
         //Request variables
         public bool validRequest = false;
@@ -17,12 +18,13 @@ namespace HSB
         string _url = "";
         string body = "";
         Dictionary<string, string> headers = new();
-
+        Dictionary<string, string> parameters = new();
         List<string> rawHeaders = new();
 
 
-        public Request(byte[] data)
+        public Request(byte[] data, Socket socket)
         {
+            connectionSocket = socket;
             if (data == null)
             {
                 requestContent = new();
@@ -40,8 +42,21 @@ namespace HSB
             {
                 string[] firstLine = requestContent.First().Split(" ");
                 _method = HttpUtils.GetMethod(firstLine[0]);
-                _url = firstLine[1];
+                _url = firstLine[1].Split("?")[0];
                 _protocol = HttpUtils.GetProtocol(firstLine[2]);
+
+                if (firstLine[1].Replace(_url, "") != "")
+                {
+                    List<string> prms = firstLine[1].Split("?")[1].Split("&").ToList();
+
+                    foreach (string p in prms)
+                    {
+                        if (p != "")
+                            parameters.Add(p.Split("=")[0], p.Split("=")[1]);
+                    }
+                }
+
+
                 //get headers
                 foreach (string r in requestContent)
                 {
@@ -83,6 +98,8 @@ namespace HSB
         public string rawBody => body;
         public Dictionary<string, string> GetHeaders => headers;
         public List<string> GetRawHeaders => rawHeaders;
+        public Dictionary<string, string> GetParameters => parameters;
+        internal string GetRawRequest => reqText;
 
     }
 

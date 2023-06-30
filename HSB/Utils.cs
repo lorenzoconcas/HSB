@@ -44,6 +44,16 @@ namespace HSB
 
         public static T Safe<T>(T? o, T safe) => o ?? safe!;
 
+        public static string DictToString(this Dictionary<string, string> obj)
+        {
+            string s = "";
+            foreach (var v in obj)
+            {
+                s += v.Key + " - " + v.Value + "\n";
+            }
+            return s;
+        }
+
     }
 }
 

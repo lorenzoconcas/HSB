@@ -1,11 +1,13 @@
-﻿using System;
+﻿
+
+using System;
 using HSB;
 namespace TestRunner
 {
-    [Binding("/single1")]
-    public class SingleBinding : Servlet
+    [Binding("/infezioni")]
+    public class Parameters : Servlet
     {
-        public SingleBinding(Request req, Response res) : base(req, res)
+        public Parameters(Request req, Response res) : base(req, res)
         {
 
         }

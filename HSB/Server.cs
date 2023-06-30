@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Net;
-using System.Reflection;
 
 namespace HSB
 {
@@ -26,33 +20,37 @@ namespace HSB
             Terminal.INFO($"Listening at address http://{config.address}:{config.port}/");
 
             //buffer per dati in ingresso
-            byte[] bytes = new Byte[1024];
+
 
             //ricerca indirizzo ip 
             var addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork);
             IPAddress ipAddress = addresses[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, config.port);
+            IPEndPoint localEndPoint = new(ipAddress, config.port);
 
-            Socket listener = new Socket(ipAddress.AddressFamily,
+            Socket listener = new(ipAddress.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
 
 
             try
             {
                 listener.Bind(localEndPoint);
-                listener.Listen(10);
+                listener.Listen(100);
 
                 while (true)
                 {
                     //attendiamo una connessione
-                    Socket handler = listener.Accept();
+                    Socket socket = listener.Accept();
+                    new Task(() =>
+                    {
+                        byte[] bytes = new byte[1024];
+                        int bytesRec = socket.Receive(bytes);
+                        Request req = new(bytes, socket);
+                        Response res = new(socket, req);
+                        config.Process(req, res);
 
-                    int bytesRec = handler.Receive(bytes);
-                    Request r = new(bytes);
-                    Response res = new(handler, r);
-                    config.Process(r, res);
-                    //sarebbe opportuno salvare le connessioni aperte... forse
+                    }).Start();
 
+                    Console.WriteLine("Hello");
                 }
 
             }
@@ -61,6 +59,7 @@ namespace HSB
                 Terminal.ERROR(e);
             }
         }
-
     }
+
+
 }

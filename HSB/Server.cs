@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 
 namespace HSB
 {
@@ -12,6 +14,11 @@ namespace HSB
         }
         public Server(Configuration config)
         {
+            /* if (!CheckIfRequiredDLLAreLoaded())
+             {
+                 Terminal.ERROR("Error some library are missing, install them via nuget:\nMimeTypeMapOfficial");
+                 return;
+             }*/
             Utils.PrintLogo();
 
             if (config.port > 65535)
@@ -57,6 +64,20 @@ namespace HSB
             {
                 Terminal.ERROR(e);
             }
+        }
+
+        private bool CheckIfRequiredDLLAreLoaded()
+        {
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            List<Assembly> assems = currentDomain.GetAssemblies().ToList();
+            //required dlls: MimeTypeMapOfficial
+            bool ok = false;
+            foreach (var a in assems)
+            {
+                if (a.FullName!.Contains("MimeTypes"))
+                    ok = true;
+            }
+            return ok;
         }
     }
 

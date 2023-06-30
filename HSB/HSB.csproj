@@ -21,9 +21,6 @@
 		<SignAssembly>true</SignAssembly>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Remove="DefaultPages\" />
 	</ItemGroup>
 	<ItemGroup>

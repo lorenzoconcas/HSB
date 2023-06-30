@@ -30,9 +30,7 @@ namespace HSB
             try
             {
                 int totalBytes = socket.Send(data);
-
                 socket.Disconnect(true);
-                Terminal.INFO($"Written {totalBytes} bytes");
             }
             catch (Exception e)
             {

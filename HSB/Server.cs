@@ -7,6 +7,7 @@ namespace HSB
 {
     public class Server
     {
+
         public static void Main(string[] args)
         {
             Terminal.INFO("HSB-# has wrongfully been compiled has executable and will not run!");

@@ -16,6 +16,8 @@ namespace HSB
         public string staticFolderPath = "";
         public bool verbose = true;
 
+        //utile per condividere oggetti fra le servlet
+        protected Dictionary<string, object> customObjects = new();
 
         //expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
 
@@ -56,9 +58,9 @@ namespace HSB
                 {
                     Terminal.INFO($"Requested '{req.URL}'", true);
 
-
                     if (RunIfExpressMapping(req, res))
                         return;
+
                     object? o = GetInstance(req, res);
                     if (o != null)
                     {
@@ -67,6 +69,9 @@ namespace HSB
                     }
                     else
                     {
+                        //controlliamo se esistono routing che usano regex
+
+
                         //non è stata trovata una mappatura valida
                         //se siamo qui non c'è una pagina di root preimpostata, restituiamo quella di default
                         if (req.URL == "/")
@@ -128,16 +133,20 @@ namespace HSB
             return false;
         }
 
-        private static object? GetInstance(Request req, Response res)
+
+        private static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
         {
-
-
             AppDomain currentDomain = AppDomain.CurrentDomain;
             List<Assembly> assems = currentDomain.GetAssemblies().ToList();
 
             assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
             assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
             assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+
+            Dictionary<Tuple<string, bool>, Type> routes = new();
+
+
+            // List<Tuple<string, Type, bool>> routes = new();
 
 
             foreach (Assembly assem in assems)
@@ -149,33 +158,93 @@ namespace HSB
                     try
                     {
                         IEnumerable<Binding> multiBindings = c.GetCustomAttributes<Binding>(false);
-                        Binding? attr;
+
                         //se non ci sono classi che hanno più binding, cerchiamo chi ne ha una sola
                         if (multiBindings.Any())
                         {
-                            attr = multiBindings.First();
+                            foreach (Binding b in multiBindings)
+                            {
+                                if (b.Path != "")
+                                    routes.Add(new(b.Path, b.StartsWith), c);
+                                // routes.Add(new(b.Path, c, b.StartsWith));
+                            }
+
                         }
                         else
                         {
-                            attr = c.GetCustomAttribute<Binding>(false);
+                            Binding? attr = c.GetCustomAttribute<Binding>(false);
+                            if (attr != null && attr.Path != "")
+                                routes.Add(new(attr.Path, attr.StartsWith), c);
+
                         }
 
-                        if (attr != null && c.FullName != null && attr.Path == req.URL)
-                            return Activator.CreateInstance(c, req, res);
-
-
 
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        Terminal.WARNING(e);
-                        //si è verificata un eccezione durante la creazione della servlet, mostriamo errore
-                        return new Error(req, res, e.ToString(), 500);
                     }
-
                 }
             }
+
+            return routes;
+        }
+
+
+        private object? GetInstance(Request req, Response res)
+        {
+
+            Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
+
+
+            if (routes.ContainsKey(new(req.URL, false)))
+            {
+                Type c = routes[new(req.URL, false)];
+                var x = c.GetConstructors()[0];
+                return x.GetParameters().Length switch
+                {
+                    3 => Activator.CreateInstance(c, req, res, this),
+                    2 => Activator.CreateInstance(c, req, res),
+                    _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                };
+            }
+            else
+            {
+                //controllare se esiste un url che inizia come quello della richiesta
+                foreach (var r in routes)
+                {
+                    string path = r.Key.Item1;
+                    if (req.URL.StartsWith(path))
+                    {
+                        Type c = r.Value;
+                        var x = c.GetConstructors()[0];
+                        return x.GetParameters().Length switch
+                        {
+                            3 => Activator.CreateInstance(c, req, res, this),
+                            2 => Activator.CreateInstance(c, req, res),
+                            _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                        };
+                    }
+                }
+
+
+
+                //WIP
+                /* //controllare se usa una regex
+                 Dictionary<string, Type> regexRoutes = new();
+                 foreach (var r in routes)
+                     regexRoutes.Add(r.Key.Replace("/", @"\/"), r.Value);
+
+
+                 IEnumerable<Match> p = regexRoutes.Keys.Select(s => new Regex(s).Match(req.URL));
+
+                 if (p.First().Success)
+                 {
+                     //trovato il routing regex
+                     Terminal.INFO("lol");
+                 }*/
+            }
             return null;
+
         }
 
         public override string ToString()
@@ -193,6 +262,10 @@ namespace HSB
         public void PUT(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.PUT, func);
 
         public void DELETE(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.DELETE, func);
+
+        public void AddCustomObject(string name, object o) => customObjects.Add(name, o);
+
+        public object GetCustomObject(string name) => customObjects[name];
 
     }
 }

@@ -10,13 +10,23 @@ namespace HSB
     {
         protected Request req;
         protected Response res;
-
+        protected Configuration configuration;
         public Servlet(Request req, Response res)
         {
             if (req == null || res == null)
                 throw new Exception("Request or Response cannot be null!");
             this.req = req;
             this.res = res;
+            configuration = new();
+        }
+
+        public Servlet(Request req, Response res, Configuration conf)
+        {
+            if (req == null || res == null)
+                throw new Exception("Request or Response cannot be null!");
+            this.req = req;
+            this.res = res;
+            configuration = conf;
         }
 
 

@@ -12,6 +12,7 @@ namespace TestRunner
                 port = 8080
             };
 
+
             //test expressjs-like routing
             //note that these are controlled first, so eventual servlet
             //with same routing will be ignored if they respond to that http method
@@ -19,7 +20,7 @@ namespace TestRunner
             //but a POST call to the same route will be handled by the servlet
             c.GET("/expressget", TestExpressRoutingGET);
             c.POST("/expresspost", TestExpressRoutingPOST);
-
+            c.AddSharedObject("test", 1996);
             _ = new Server(c);
         }
 

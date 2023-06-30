@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HSB
 {
@@ -31,7 +34,21 @@ namespace HSB
             verbose = true;
         }
 
-        public Configuration(string address, int port, String staticPath, bool verbose)
+        public Configuration(string json)
+        {
+
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+
+            address = root.GetProperty("address").GetString() ?? "127.0.0.1";
+            port = root.GetProperty("port").GetInt16();
+            staticFolderPath = root.GetProperty("staticFolderPath").GetString() ?? "";
+            verbose = root.GetProperty("verbose").GetBoolean();
+
+        }
+
+        public Configuration(string address, int port, string staticPath, bool verbose)
         {
 
             this.address = address;
@@ -249,7 +266,29 @@ namespace HSB
 
         public override string ToString()
         {
-            return $"Port {port}\nStatic path : {staticFolderPath}\nMapping:\n";
+            string str = $"Current configuration:\nListening address and port: {address}:{port}";
+            if (staticFolderPath == "")
+                str += "\nStatic folder is not set";
+            else
+                str += $"\nStatic folder path: {staticFolderPath}";
+
+            if (expressMapping.Any())
+            {
+                str += "\nExpressJS-Like routing map:";
+                expressMapping.ForEach(m => str += $"\nPath : {m.Item1} -> {m.Item2.Item2.Method.Name}");
+            }
+
+            var staticRoutes = CollectStaticRoutes();
+
+            if (staticRoutes.Any())
+            {
+                str += "\nStatic routes:";
+                staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");
+            }
+
+
+
+            return str;
         }
 
 

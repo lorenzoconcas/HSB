@@ -17,7 +17,7 @@ namespace HSB
         public bool verbose = true;
 
         //utile per condividere oggetti fra le servlet
-        protected Dictionary<string, object> customObjects = new();
+        protected Dictionary<string, object> sharedObjects = new();
 
         //expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
 
@@ -263,9 +263,9 @@ namespace HSB
 
         public void DELETE(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.DELETE, func);
 
-        public void AddCustomObject(string name, object o) => customObjects.Add(name, o);
+        public void AddSharedObject(string name, object o) => sharedObjects.Add(name, o);
 
-        public object GetCustomObject(string name) => customObjects[name];
+        public object GetSharedObject(string name) => sharedObjects[name];
 
     }
 }

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MimeTypes;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HSB
@@ -40,10 +41,9 @@ namespace HSB
 
         public void Send(string data, string? mimeType = null, int statusCode = 200)
         {
-            string _mime = mimeType ?? MimeType.TEXT_PLAIN; //qui va messo l'autodetect
+            string _mime = mimeType ?? MimeTypeMap.GetMimeType(data);
 
-
-            string resp = GetHeaders(statusCode, data.Length + 2, _mime) + "\r\n" + data + "\r\n";
+            string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime) + data;
 
             Send(Encoding.UTF8.GetBytes(resp));
         }

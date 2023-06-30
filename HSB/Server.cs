@@ -50,7 +50,6 @@ namespace HSB
 
                     }).Start();
 
-                    Console.WriteLine("Hello");
                 }
 
             }

@@ -124,7 +124,7 @@ namespace HSB
                {*/
             //visit https://httpwg.org/specs/rfc9113.html#ConnectionSpecific, p8.2.2 (27-Jun-23)
             if (request.PROTOCOL == HTTP_PROTOCOL.HTTP1_0 || request.PROTOCOL == HTTP_PROTOCOL.HTTP1_1)
-                headers += "Connection: Closed";
+                headers += "Connection: Close";
 
             //}
             headers += NEW_LINE + NEW_LINE;

@@ -14,7 +14,6 @@ namespace TestRunner
 
         public override void ProcessGet(Request req, Response res)
         {
-            base.ProcessGet(req, res);
             res.JSON(new SimpleObject());
         }
 

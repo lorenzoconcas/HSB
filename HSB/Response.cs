@@ -50,10 +50,10 @@ namespace HSB
         /// <param name="data">Body of the response</param>
         /// <param name="mimeType">MimeType of the body</param>
         /// <param name="statusCode">Response status code</param>
-        public void Send(string data, string? mimeType = null, int statusCode = 200)
+        public void Send(string data, string? mimeType = null, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
         {
             string _mime = mimeType ?? MimeTypeMap.GetMimeType(data);
-
+            Terminal.INFO(_mime);
             string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime) + data;
 
             Send(Encoding.UTF8.GetBytes(resp));
@@ -64,14 +64,14 @@ namespace HSB
         /// </summary>
         /// <param name="path">Path of the HTML file</param>
         /// <param name="process">Whether or not or not process the document before sending</param>
-        public void SendHTMLPage(string path, bool process = false)
+        public void SendHTMLPage(string path, bool process = false, Dictionary<string, string>? customHeaders = null)
         {
             try
             {
                 string content = File.ReadAllText(path);
                 if (process)
                     content = ProcessContent(content);
-                Send(content, MimeType.TEXT_HTML);
+                Send(content, MimeType.TEXT_HTML, customHeaders: customHeaders);
             }
             catch (Exception)
             {
@@ -81,17 +81,30 @@ namespace HSB
             }
         }
         /// <summary>
+        /// Sends an html page passed as string
+        /// </summary>
+        /// <param name="path">HTML content</param>
+        /// <param name="process">Whether or not or not process the document before sending</param>
+        public void SendHTMLContent(string content, bool process = false, string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null)
+        {
+            if (process)
+                content = ProcessContent(content);
+            Send(content, MimeType.TEXT_HTML + $"; charset={encoding}");
+        }
+
+
+        /// <summary>
         /// Loads a file from a given path and sends an HTTP Response
         /// </summary>
         /// <param name="absPath">Path (absolute) of the file</param>
         /// <param name="mimeType">MimeType of the file</param>
         /// <param name="statusCode">Response status code</param>
-        public void SendFile(string absPath, string? mimeType = null, int statusCode = 200)
+        public void SendFile(string absPath, string? mimeType = null, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
         {
             var data = File.ReadAllBytes(absPath);
 
             string _mime = mimeType ?? MimeType.GetMimeType(Path.GetExtension(absPath));
-            string headers = GetHeaders(statusCode, data.Length, _mime);
+            string headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);
             byte[] headersBytes = Encoding.UTF8.GetBytes(headers);
             byte[] responseBytes = new byte[data.Length + headersBytes.Length];
 
@@ -106,11 +119,11 @@ namespace HSB
         /// <param name="data"></param>
         /// <param name="mimeType"></param>
         /// <param name="statusCode"></param>
-        public void SendFile(byte[] data, string mimeType, int statusCode = 200)
+        public void SendFile(byte[] data, string mimeType, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
         {
 
             string _mime = mimeType;
-            string headers = GetHeaders(statusCode, data.Length, _mime);
+            string headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);
             byte[] headersBytes = Encoding.UTF8.GetBytes(headers);
             byte[] responseBytes = new byte[data.Length + headersBytes.Length];
 
@@ -209,8 +222,9 @@ namespace HSB
         /// <param name="responseCode">The response status code</param>
         /// <param name="size">Size in bytes of the body</param>
         /// <param name="contentType">Mimetype of the body</param>
+        /// <param name="customHeaders">Optional headers</param>
         /// <returns></returns>
-        private string GetHeaders(int responseCode, int size, string contentType)
+        private string GetHeaders(int responseCode, int size, string contentType, Dictionary<string, string>? customHeaders = null)
         {
             CultureInfo ci = new("en-US");
 
@@ -222,6 +236,10 @@ namespace HSB
             headers += $"Last-Modified: {currentTime}{NEW_LINE}";
             headers += $"Content-Length: {size}{NEW_LINE}";
             headers += $"Content-Type: {contentType}{NEW_LINE}";
+
+            if (customHeaders != null)
+                foreach (var h in customHeaders)
+                    headers += $"{h.Key}: {h.Value}";
 
 
             /*   if (request.GetHeaders["Connection"] != null)

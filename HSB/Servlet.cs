@@ -58,27 +58,27 @@ namespace HSB
 
         public virtual void ProcessPost(Request req, Response res)
         {
-
+            res.SendCode(405);
         }
 
         public virtual void ProcessGet(Request req, Response res)
         {
-
+            res.SendCode(405);
         }
 
         public virtual void ProcessDelete(Request req, Response res)
         {
-
+            res.SendCode(405);
         }
 
         public virtual void ProcessPut(Request req, Response res)
         {
-
+            res.SendCode(405);
         }
 
         public virtual void ProcessHead(Request req, Response res)
         {
-
+            res.SendCode(405);
         }
     }
 }

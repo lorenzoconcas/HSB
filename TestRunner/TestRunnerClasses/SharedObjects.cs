@@ -14,7 +14,6 @@ namespace TestRunner
 
         public override void ProcessGet(Request req, Response res)
         {
-            base.ProcessGet(req, res);
             res.Send($"<h1>Prova SharedObjects -> {(int)configuration.GetSharedObject("test")}", "text/html");
         }
 

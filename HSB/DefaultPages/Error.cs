@@ -17,14 +17,20 @@ namespace HSB
         }
         public override void ProcessGet(Request req, Response res)
         {
+            string title = $"Error {errorCode}";
             string content = "";
             if (errorCode >= 500)
+
                 content = GetStacktracePage();
+
+
             else if (errorCode >= 400 && errorCode <= 499)
                 content = Get4XXPage();
-            content += "<hr>HSB-# Server " + Assembly.GetExecutingAssembly().GetName().Version;
-            content += "<hr><h6>(c) 2021 - 2023 Lorenzo L. Concas</h6>";
-            res.Send(content, MimeType.TEXT_HTML, errorCode);
+
+
+            Send(title, content);
+
+
         }
 
         private string GetStacktracePage()
@@ -38,9 +44,28 @@ namespace HSB
 
         private string Get4XXPage()
         {
-            string content = $"<h2>Errore {errorCode}</h2><hr>\n<h3>La risorsa cercata non &egrave; stata trovata su questo server</h3>";
+
+            string content = $"<h3>La risorsa cercata non &egrave; stata trovata su questo server</h3>";
             return content;
         }
+
+        private void Send(string title, string msg)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("error.html"));
+            string result;
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName)!)
+            using (StreamReader reader = new(stream))
+            {
+                result = reader.ReadToEnd();
+            }
+            res.AddAttribute("hsbVersion", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            res.AddAttribute("title", title);
+            res.AddAttribute("errorMsg", msg);
+            res.SendHTMLContent(result, true);
+
+        }
+
     }
 }
 

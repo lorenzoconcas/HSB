@@ -22,9 +22,22 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="DefaultPages\" />
+		<None Remove="DefaultPages\index.html" />
+		<None Remove="DefaultPages\error.html" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="DefaultPages\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="DefaultPages\index.html" />
+	  <EmbeddedResource Include="DefaultPages\error.html">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="DefaultPages\error.html">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 	<ProjectExtensions>
 	  <MonoDevelop>

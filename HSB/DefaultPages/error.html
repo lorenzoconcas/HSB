@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<head>
+    <style>
+        body {
+            font-family: "system-ui", "eSans", "Roboto", "serif";
+            background: rgb(241, 248, 233);
+            background: linear-gradient(0deg, rgba(241, 248, 233, 1) 0%, rgba(225, 245, 254, 1) 100%);
+            background-attachment: fixed;
+            margin: 0;
+        }
+
+        #root {
+            position: absolute;
+            width: 75%;
+            height: auto;
+            left: 12.5%;
+            top: 25%;
+            border: 0.5px solid #C5C5C5;
+            border-radius: 4px;
+            box-shadow: -1px 4px 9px 3px #b9b9b94f;
+            /* margin: 24px; */
+            text-align: center;
+            background-color: white;
+            padding: 0px;
+        }
+
+        #title {
+            border-radius: 4px 4px 0 0;
+            border-bottom: 0.5px solid #C5C5C5;
+            background: #fbfbfb;
+            padding: 8px 0px;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .footer {
+            border-radius: 0 0 4px 4px;
+            border-top: 0.5px solid #C5C5C5;
+            background: #fbfbfb;
+            padding: 10px 10px;
+            font-family: monospace;
+        }
+
+        .row {
+            padding: 6px;
+        }
+
+            .row:nth-child(odd) {
+            }
+
+            .row:nth-child(even) {
+                background-color: #fafafa;
+            }
+    </style>
+
+</head>
+
+<body>
+    <div id="root">
+        <div id="title">#{title}</div>
+        <div>
+            #{errorMsg}
+        </div>
+        <div class="footer">HSB-# #{hsbVersion}</div>
+        <div class="footer">Copyright (c) 2021-2023 Lorenzo L. Concas</div>
+    </div>
+</body>
+
+</html>

@@ -13,13 +13,11 @@ namespace TestRunner
 
         public override void ProcessGet(Request req, Response res)
         {
-            base.ProcessGet(req, res);
             res.Send($"<h1>Hello GET -> {req.URL}</h1>");
         }
 
         public override void ProcessPost(Request req, Response res)
         {
-            base.ProcessPost(req, res);
             res.Send($"<h1>Hello POST -> {req.URL}</h1>");
         }
 

@@ -144,7 +144,7 @@ public void JSON<T>(T, JsonSerializerOptions) : Same as JSON<T>(T, bool) but wit
 ```
 Methods realated to the process of the HTML files, it works like JSP SetAttribute 
 The values inside this characters:  #{} will be replaced
-example : 
+Example : 
 ```
 //C# Code
 res.AddAttribute("valueToBeReplaced", "value");
@@ -160,6 +160,9 @@ Will result In :
 //HTML Code
 <h1>value</h1>
 ```
+
+An example usage of this function is in the default pages of the server, located at HSB.DefaultPages, in the classes Index.cs and Error.cs, where the HSB version is set this way
+
 Methods
 ```
 public void AddAttribute(string, string) : Adds a parameter to be replaced with the given value

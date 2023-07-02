@@ -137,6 +137,10 @@ void SendHTMLPage(string, bool, Dictionary<string, string>?) : Sends and HTML Pa
 void SendHTMLContent(string, bool, string, Dictionary<string, string>?) : Sends an HTML content, optional processing, optional custom headers, is analog to SendHTMLPage but content is passed as parameter
 void SendFile(string, string?, int, Dictionary<string, string>?) : Send a file loaded from the given path (absolute), optional mimetype (default autodetected), optionl headers
 void SendFile(byte[] data, string?, int, Dictionary<string, string>?) : Same as the other SendFile, but instead of path takes the byte array to be sent
+
+public void JSON(string) : Sends a string as JSON
+public void JSON<T>(T, bool) : Sends an object that will be serialized and sent as JSON string, boolean to set if include fields or not, default true
+public void JSON<T>(T, JsonSerializerOptions) : Same as JSON<T>(T, bool) but with possibily to set option of the serializer
 ```
 Methods realated to the process of the HTML files, it works like JSP SetAttribute 
 The values inside this characters:  #{} will be replaced

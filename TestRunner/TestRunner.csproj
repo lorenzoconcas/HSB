@@ -9,10 +9,12 @@
 	<ItemGroup>
 		<None Remove="TestRunnerClasses\" />
 		<None Remove="static\" />
+		<None Remove="TestRunnerModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="TestRunnerClasses\" />
 		<Folder Include="static\" />
+		<Folder Include="TestRunnerModels\" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HSB\HSB.csproj" />

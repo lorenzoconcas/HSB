@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Net.Sockets;
 using System.Text;
 
 namespace HSB
@@ -17,9 +19,9 @@ namespace HSB
         HTTP_PROTOCOL _protocol = HTTP_PROTOCOL.UNKNOWN; //HTTP1.0 ecc
         string _url = "";
         string body = "";
-        Dictionary<string, string> headers = new();
-        Dictionary<string, string> parameters = new();
-        List<string> rawHeaders = new();
+        readonly Dictionary<string, string> headers = new();
+        readonly Dictionary<string, string> parameters = new();
+        readonly List<string> rawHeaders = new();
 
 
         public Request(byte[] data, Socket socket)
@@ -33,10 +35,10 @@ namespace HSB
             reqText = Encoding.UTF8.GetString(data);
             requestContent = reqText.Split("\r\n").ToList();
 
-            parseRequest();
+            ParseRequest();
 
         }
-        private void parseRequest()
+        private void ParseRequest()
         {
             try
             {
@@ -85,21 +87,23 @@ namespace HSB
             validRequest = true;
         }
 
-
-
         public override string ToString()
         {
-            String str = _method.ToString() + " - " + _url + " - " + _protocol.ToString();
+            string str = _method.ToString() + " - " + _url + " - " + _protocol.ToString();
             return str;
         }
-        public HTTP_METHOD METHOD => this._method;
+        public HTTP_METHOD METHOD => _method;
         public HTTP_PROTOCOL PROTOCOL => _protocol;
         public string URL => _url;
-        public string rawBody => body;
+        public string RawBody => body;
         public Dictionary<string, string> GetHeaders => headers;
         public List<string> GetRawHeaders => rawHeaders;
         public Dictionary<string, string> GetParameters => parameters;
         internal string GetRawRequest => reqText;
+
+
+        //utilities functions
+        public bool IsJSON() => headers["Content-Type"].StartsWith("application/json");
 
     }
 

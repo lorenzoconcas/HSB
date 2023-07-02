@@ -18,7 +18,7 @@ namespace TestRunner.TestRunnerClasses
             if (req.GetHeaders["Content-Type"] == "image/jpeg")
             {
 
-                string body = req.rawBody;
+                string body = req.RawBody;
 
 
                 File.WriteAllBytes("./static/test.jpeg", Convert.FromBase64String(body));

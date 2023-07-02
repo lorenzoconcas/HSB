@@ -26,6 +26,12 @@ namespace HSB
 
 
         //Send methods
+
+
+        /// <summary>
+        /// Send an un modified byte array to to the socket
+        /// </summary>
+        /// <param name="data"></param>
         public void Send(byte[] data)
         {
             try
@@ -38,7 +44,12 @@ namespace HSB
                 Terminal.ERROR($"Error sending data ->\n {e}");
             }
         }
-
+        /// <summary>
+        /// Sends an HTTP Response with the body passed as parameter
+        /// </summary>
+        /// <param name="data">Body of the response</param>
+        /// <param name="mimeType">MimeType of the body</param>
+        /// <param name="statusCode">Response status code</param>
         public void Send(string data, string? mimeType = null, int statusCode = 200)
         {
             string _mime = mimeType ?? MimeTypeMap.GetMimeType(data);
@@ -47,6 +58,12 @@ namespace HSB
 
             Send(Encoding.UTF8.GetBytes(resp));
         }
+        /// <summary>
+        /// Loads and HTML file from path and sends it as HTTP Response with mimeType = text/html
+        /// Optionally it can provides a basic processor function
+        /// </summary>
+        /// <param name="path">Path of the HTML file</param>
+        /// <param name="process">Whether or not or not process the document before sending</param>
         public void SendHTMLPage(string path, bool process = false)
         {
             try
@@ -63,6 +80,12 @@ namespace HSB
                 Terminal.ERROR("Error sending file : " + path);
             }
         }
+        /// <summary>
+        /// Loads a file from a given path and sends an HTTP Response
+        /// </summary>
+        /// <param name="absPath">Path (absolute) of the file</param>
+        /// <param name="mimeType">MimeType of the file</param>
+        /// <param name="statusCode">Response status code</param>
         public void SendFile(string absPath, string? mimeType = null, int statusCode = 200)
         {
             var data = File.ReadAllBytes(absPath);
@@ -77,6 +100,10 @@ namespace HSB
 
             Send(responseBytes);
         }
+        /// <summary>
+        /// Send an HTTP Response with no body but with given status code
+        /// </summary>
+        /// <param name="httpCode"></param>
         public void SendCode(int httpCode)
         {
             string resp = GetHeaders(httpCode, 0, "text/plain") + "\r\n";
@@ -85,9 +112,9 @@ namespace HSB
         }
 
         /// <summary>
-        /// Sends a json string
+        /// Sends a HTTP Response with a JSON body passed as parameter
         /// </summary>
-        /// <param name="content"></param>
+        /// <param name="content">String of the body in JSON format</param>
         public void JSON(string content)
         {
             Send(content, "application/json");
@@ -95,23 +122,41 @@ namespace HSB
         /// <summary>
         /// Serializes and sends an Object in JSON format
         /// </summary>
-        /// <param name="o"></param>
-        public void JSON(object o)
+        /// <param name="o">Object to be serialized and sended as response</param>
+        /// <param name="options">Options for the serializer (System.Text.Json.JsonSerializer)</param>
+        public void JSON<T>(T o, JsonSerializerOptions options)
         {
-            JSON(JsonSerializer.Serialize(o));
+            JSON(JsonSerializer.Serialize(o, options));
         }
+        /// <summary>
+        /// Serialize and sends an Object in JSON Format
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <param name="includeFields">Whether or not or not include fields of the object</param>
+        public void JSON<T>(T o, bool includeFields = true)
+        {
+            JsonSerializerOptions jo = new()
+            {
+                IncludeFields = includeFields
+            };
+
+            JSON(JsonSerializer.Serialize(o, jo));
+        }
+
 
         private string GetHeaders(int responseCode, int size, string contentType)
         {
             CultureInfo ci = new("en-US");
 
             string currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss GMT", ci);
-            string headers = HttpUtils.ProtocolAsString(request.PROTOCOL) + " " + responseCode + " " + request.URL + NEW_LINE;
+
+            string headers = $"{HttpUtils.ProtocolAsString(request.PROTOCOL)} {responseCode} {request.URL} {NEW_LINE}";
             headers += "Date: " + currentTime + NEW_LINE;
             headers += $"Server : HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({Environment.OSVersion})" + NEW_LINE;
-            headers += "Last-Modified: " + currentTime + NEW_LINE;
-            headers += "Content-Length: " + size + NEW_LINE;
-            headers += "Content-Type: " + contentType + NEW_LINE;
+            headers += $"Last-Modified: {currentTime}{NEW_LINE}";
+            headers += $"Content-Length: {size}{NEW_LINE}";
+            headers += $"Content-Type: {contentType}{NEW_LINE}";
 
 
             /*   if (request.GetHeaders["Connection"] != null)

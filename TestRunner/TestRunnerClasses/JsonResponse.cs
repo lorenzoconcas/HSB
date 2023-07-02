@@ -1,5 +1,7 @@
 ﻿using System;
 using HSB;
+using TestRunner.TestRunnerModels;
+
 namespace TestRunner
 {
     [Binding("/json")]
@@ -13,7 +15,7 @@ namespace TestRunner
         public override void ProcessGet(Request req, Response res)
         {
             base.ProcessGet(req, res);
-            res.JSON("{'success':true}");
+            res.JSON(new SimpleObject());
         }
 
         public override void ProcessPost(Request req, Response res)

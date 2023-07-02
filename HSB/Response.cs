@@ -101,14 +101,72 @@ namespace HSB
             Send(responseBytes);
         }
         /// <summary>
+        /// Sends data to the client
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="mimeType"></param>
+        /// <param name="statusCode"></param>
+        public void SendFile(byte[] data, string mimeType, int statusCode = 200)
+        {
+
+            string _mime = mimeType;
+            string headers = GetHeaders(statusCode, data.Length, _mime);
+            byte[] headersBytes = Encoding.UTF8.GetBytes(headers);
+            byte[] responseBytes = new byte[data.Length + headersBytes.Length];
+
+            headersBytes.CopyTo(responseBytes, 0);
+            data.CopyTo(responseBytes, headersBytes.Length);
+
+            Send(responseBytes);
+        }
+
+        /// <summary>
         /// Send an HTTP Response with no body but with given status code
         /// </summary>
-        /// <param name="httpCode"></param>
-        public void SendCode(int httpCode)
+        /// <param name="statusCode"></param>
+        public void SendCode(int statusCode)
         {
-            string resp = GetHeaders(httpCode, 0, "text/plain") + "\r\n";
+            string resp = GetHeaders(statusCode, 0, "text/plain") + "\r\n";
 
             Send(Encoding.UTF8.GetBytes(resp));
+        }
+        /// <summary>
+        /// Shorthand for SendCode
+        /// </summary>
+        /// <param name="statusCode"></param>
+        public void Send(int statusCode)
+        {
+            SendCode(statusCode);
+        }
+        //common status codes
+
+        /// <summary>
+        /// Bad Request
+        /// </summary>
+        public void E400()
+        {
+            SendCode(400);
+        }
+        /// <summary>
+        /// Unauthorized
+        /// </summary>
+        public void E401()
+        {
+            SendCode(401);
+        }
+        /// <summary>
+        /// Not Found
+        /// </summary>
+        public void E404()
+        {
+            SendCode(404);
+        }
+        /// <summary>
+        /// Internal Server Error
+        /// </summary>
+        public void E500()
+        {
+            SendCode(500);
         }
 
         /// <summary>
@@ -138,13 +196,20 @@ namespace HSB
         {
             JsonSerializerOptions jo = new()
             {
-                IncludeFields = includeFields
+                IncludeFields = includeFields,
+                MaxDepth = 0
             };
 
             JSON(JsonSerializer.Serialize(o, jo));
         }
 
-
+        /// <summary>
+        /// Calculate the header of an HTTP Response
+        /// </summary>
+        /// <param name="responseCode">The response status code</param>
+        /// <param name="size">Size in bytes of the body</param>
+        /// <param name="contentType">Mimetype of the body</param>
+        /// <returns></returns>
         private string GetHeaders(int responseCode, int size, string contentType)
         {
             CultureInfo ci = new("en-US");
@@ -176,23 +241,41 @@ namespace HSB
 
 
         //function related to a basic preprocessing feature
+
+        /// <summary>
+        /// Adds an attribute to the HTML file that will be processed
+        /// </summary>
+        /// <param name="name">Name of the attribute</param>
+        /// <param name="value">Value of the attribute</param>
         public void AddAttribute(string name, string value)
         {
             attributes.Add(name, value);
         }
+        /// <summary>
+        /// Removes an attribute to the HTML file that will be processed
+        /// </summary>
+        /// <param name="name">Name of the attribute</param>
         public void RemoveAttribute(string name)
         {
             attributes.Remove(name);
         }
+        /// <summary>
+        /// Retrieves the value of an attribute to the HTML file that will be processed
+        /// </summary>
+        /// <param name="name">Name of the attribute</param>
         public string GetAttribute(string name)
         {
             return attributes[name];
         }
+        /// <summary>
+        /// Does a basic content-processing of a given HTML file
+        /// </summary>
+        /// <param name="name">Name of the attribute</param>
+        /// <param name="value">Value of the attribute</param>
         private string ProcessContent(string content)
         {
             foreach (var attr in attributes)
             {
-                //  Terminal.WriteLine($"Replacing key: {attr.Key} with {attr.Value}", BG_COLOR.DEFAULT, FG_COLOR.BLU);
                 content = content.Replace($"#{{{attr.Key}}}", attr.Value);
             }
             return content;

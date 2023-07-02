@@ -50,7 +50,7 @@ namespace HSB
                     Socket socket = listener.Accept();
                     new Task(() =>
                     {
-                        byte[] bytes = new byte[1024];
+                        byte[] bytes = new byte[config.requestMaxSize];
                         int bytesRec = socket.Receive(bytes);
                         Request req = new(bytes, socket);
                         Response res = new(socket, req);

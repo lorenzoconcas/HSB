@@ -18,7 +18,7 @@ namespace HSB
         public int port;
         public string staticFolderPath = "";
         public bool verbose = true;
-
+        public int requestMaxSize;
         //utile per condividere oggetti fra le servlet
         protected Dictionary<string, object> sharedObjects = new();
 
@@ -32,6 +32,7 @@ namespace HSB
             port = 8080;
             staticFolderPath = "./static";
             verbose = true;
+            requestMaxSize = 1024; //max 1MB Requests default
         }
 
         public Configuration(string json)
@@ -45,6 +46,7 @@ namespace HSB
             port = root.GetProperty("port").GetInt16();
             staticFolderPath = root.GetProperty("staticFolderPath").GetString() ?? "";
             verbose = root.GetProperty("verbose").GetBoolean();
+            requestMaxSize = root.GetProperty("port").GetInt32();
 
         }
 
@@ -55,6 +57,7 @@ namespace HSB
             this.port = port;
             staticFolderPath = staticPath;
             this.verbose = verbose;
+            requestMaxSize = 1024;
         }
 
         private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)
@@ -63,9 +66,6 @@ namespace HSB
             Tuple<string, Tuple<HTTP_METHOD, Delegate>> tuple = new(path, x);
             expressMapping.Add(tuple);
         }
-
-
-
 
         public void Process(Request req, Response res)
         {

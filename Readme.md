@@ -1,5 +1,5 @@
 # HSB-#
-*HSB-Sharp*
+![alt text](banner.png)
 ## 🇬🇧🇺🇸 Description
 
 This is a toy project written to study how a web server works

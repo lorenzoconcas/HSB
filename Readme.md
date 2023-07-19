@@ -28,7 +28,7 @@ So the minimal code to run the server is something like:
 import HSB;
 
 Configuration c = new();
-_ = new Server(c);
+new Server(c).Start();
 ```
 
 The server will start as soon as you instantiate the class
@@ -80,7 +80,7 @@ Configuration c = new();
 c.GET("/", (Request req, Response res) =>{
     res.SendHTMLContent("<h1>Hello World</h1>");
 });
-_ = new Server(c);
+new Server(c).Start();
 ```
 
 will route the index page to that delegate, printing 'Hello World' while visiting the root page

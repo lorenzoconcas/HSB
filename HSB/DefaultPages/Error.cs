@@ -28,14 +28,14 @@ namespace HSB
                 content = Get4XXPage();
 
 
-            Send(title, content);
+            Send(title, content, errorCode);
 
 
         }
 
         private string GetStacktracePage()
         {
-            string content = $"<h2>Errore {errorCode}</h2><hr>";
+            string content = "";// = $"<h2>Error {errorCode}</h2><hr>";
             content += "Stacktrace:<br>";
             content += errorMsg.Replace("\n", "<br>");
 
@@ -49,7 +49,7 @@ namespace HSB
             return content;
         }
 
-        private void Send(string title, string msg)
+        private void Send(string title, string msg, int statusCode)
         {
             var assembly = Assembly.GetExecutingAssembly();
             string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("error.html"));
@@ -62,7 +62,7 @@ namespace HSB
             res.AddAttribute("hsbVersion", Assembly.GetExecutingAssembly().GetName().Version.ToString());
             res.AddAttribute("title", title);
             res.AddAttribute("errorMsg", msg);
-            res.SendHTMLContent(result, true);
+            res.SendHTMLContent(result, true, statusCode: statusCode);
 
         }
 

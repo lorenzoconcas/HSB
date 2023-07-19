@@ -1,31 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HSB
 {
+    /// <summary>
+    /// This class contains all the settings of the server
+    /// </summary>
     public class Configuration
     {
+        /// <summary>
+        /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) //check this
+        /// </summary>
         public string address;
+        /// <summary>
+        /// The server listening port
+        /// </summary>
         public int port;
+        /// <summary>
+        /// Indicates the location where all static files will be searched and served from
+        /// </summary>
         public string staticFolderPath = "";
+        /// <summary>
+        /// Whether or not print the log to the console
+        /// </summary>
         public bool verbose = true;
+        /// <summary>
+        /// Specifies the size of the buffer that will contain the HTTP request
+        /// </summary>
         public int requestMaxSize;
-        //utile per condividere oggetti fra le servlet
+        /// <summary>
+        /// Useful to share objects between servlets without using the singleton tecnique
+        /// </summary>
         protected Dictionary<string, object> sharedObjects = new();
+        /// <summary>
+        /// headers added to ANY response
+        /// </summary>
+        protected Dictionary<string, string> customGlobalHeaders = new();
+        /// <summary>
+        /// Expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
+        /// </summary>
+        private readonly List<Tuple<string, Tuple<HTTP_METHOD, Delegate>>> expressMapping = new();
 
-        //expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
-
-        private List<Tuple<string, Tuple<HTTP_METHOD, Delegate>>> expressMapping = new();
-
+        /// <summary>
+        /// Creates a default fail-safe configuration (still, the port could be in use)
+        /// </summary>
         public Configuration()
         {
             address = "127.0.0.1";
@@ -35,10 +54,14 @@ namespace HSB
             requestMaxSize = 1024; //max 1MB Requests default
         }
 
-        public Configuration(string json)
+        /// <summary>
+        /// Instantiate configuration from a json file (content passed as string)
+        /// </summary>
+        /// <param name="jsonContent">The content of the JSON file</param>
+        public Configuration(string jsonContent)
         {
 
-            using var doc = JsonDocument.Parse(json);
+            using var doc = JsonDocument.Parse(jsonContent);
             var root = doc.RootElement;
 
 
@@ -49,7 +72,13 @@ namespace HSB
             requestMaxSize = root.GetProperty("port").GetInt32();
 
         }
-
+        /// <summary>
+        /// Instantiate a configuration with the base settings
+        /// </summary>
+        /// <param name="address">Listening address (es: "127.0.0.1" or "192.168.1.2")</param>
+        /// <param name="port">Listening port</param>
+        /// <param name="staticPath">Path of the static folder</param>
+        /// <param name="verbose">Whether or not print the log to the console</param>
         public Configuration(string address, int port, string staticPath, bool verbose)
         {
 
@@ -67,7 +96,7 @@ namespace HSB
             expressMapping.Add(tuple);
         }
 
-        public void Process(Request req, Response res)
+        protected internal void Process(Request req, Response res)
         {
             new Task(() =>
             {
@@ -263,7 +292,10 @@ namespace HSB
             return null;
 
         }
-
+        /// <summary>
+        /// String rappresentation of the configuration
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             string str = $"Current configuration:\nListening address and port: {address}:{port}";
@@ -291,20 +323,73 @@ namespace HSB
             return str;
         }
 
-
+        /// <summary>
+        /// Map a function to a path that will reply with a GET response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
         public void GET(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.GET, func);
-
+        /// <summary>
+        /// Map a function to a path that will reply with a POST response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
         public void POST(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.POST, func);
-
+        /// <summary>
+        /// Map a function to a path that will reply with a HEAD response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
         public void HEAD(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.HEAD, func);
-
+        /// <summary>
+        /// Map a function to a path that will reply with a HEAD response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
         public void PUT(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.PUT, func);
-
+        /// <summary>
+        /// Map a function to a path that will reply with a DELETE response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
         public void DELETE(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.DELETE, func);
 
+        /// <summary>
+        /// Add an object shared between all servlet
+        /// </summary>
+        /// <param name="name">Name of the object</param>
+        /// <param name="o">Object to share</param>
         public void AddSharedObject(string name, object o) => sharedObjects.Add(name, o);
-
+        /// <summary>
+        /// Get an object shared between all servlet
+        /// </summary>
+        /// <param name="name">Name of the shared object</param>
         public object GetSharedObject(string name) => sharedObjects[name];
+        /// <summary>
+        /// Remove an object shared between all servlet
+        /// </summary>
+        /// <param name="name">Name of the shared object</param>
+        public void RemoveSharedObject(string name) => sharedObjects.Remove(name);
 
+        /// <summary>
+        /// Add an HTTP Response header that will be added to ALL the responses
+        /// </summary>
+        /// <param name="name">Name of the header</param>
+        /// <param name="value">Value of the header</param>
+        public void AddCustomGlobalHeader(string name, string value) => customGlobalHeaders.Add(name, value);
+        /// <summary>
+        /// Remove a global HTTP Response header previously added
+        /// </summary>
+        /// <param name="name">Name of the header</param>
+        public void RemoveCustomGlobalHeader(string name) => customGlobalHeaders.Remove(name);
+        /// <summary>
+        /// Gets the value of a global HTTP Response header previously added
+        /// </summary>
+        /// <param name="name">Name of the header</param>
+        public string GetCustomGlobalHeader(string name) => customGlobalHeaders[name];
+        /// <summary>
+        /// Gets all globabl HTTP Response headers 
+        /// </summary>
+        public Dictionary<string, string> GetCustomGlobalHeaders => customGlobalHeaders;
     }
 }

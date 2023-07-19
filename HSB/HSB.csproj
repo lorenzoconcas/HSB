@@ -31,7 +31,6 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="DefaultPages\index.html" />
 	  <EmbeddedResource Include="DefaultPages\error.html">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>

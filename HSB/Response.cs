@@ -3,25 +3,24 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using MimeTypes;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HSB
 {
 
     public class Response
     {
-        Socket socket;
-        Request request;
-
+        private Socket socket;
+        private Request request;
+        private Configuration config;
         Dictionary<string, string> attributes = new();
 
         private const string NEW_LINE = "\r\n";
-        public Response(Socket socket, Request request)
+        public Response(Socket socket, Request request, Configuration c)
         {
             this.socket = socket;
             this.request = request;
+            config = c;
         }
 
 
@@ -53,8 +52,7 @@ namespace HSB
         public void Send(string data, string? mimeType = null, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
         {
             string _mime = mimeType ?? MimeTypeMap.GetMimeType(data);
-            Terminal.INFO(_mime);
-            string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime) + data;
+            string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
 
             Send(Encoding.UTF8.GetBytes(resp));
         }
@@ -85,11 +83,11 @@ namespace HSB
         /// </summary>
         /// <param name="path">HTML content</param>
         /// <param name="process">Whether or not or not process the document before sending</param>
-        public void SendHTMLContent(string content, bool process = false, string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null)
+        public void SendHTMLContent(string content, bool process = false, string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null, int statusCode = 200)
         {
             if (process)
                 content = ProcessContent(content);
-            Send(content, MimeType.TEXT_HTML + $"; charset={encoding}");
+            Send(content, MimeType.TEXT_HTML + $"; charset={encoding}", statusCode);
         }
 
 
@@ -239,8 +237,15 @@ namespace HSB
 
             if (customHeaders != null)
                 foreach (var h in customHeaders)
-                    headers += $"{h.Key}: {h.Value}";
+                    headers += $"{h.Key}: {h.Value}{NEW_LINE}";
 
+            if (config.GetCustomGlobalHeaders.Any())
+            {
+                foreach (var h in config.GetCustomGlobalHeaders)
+                {
+                    headers += $"{h.Key}: {h.Value}{NEW_LINE}";
+                }
+            }
 
             /*   if (request.GetHeaders["Connection"] != null)
                {

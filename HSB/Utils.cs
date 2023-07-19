@@ -54,6 +54,37 @@ namespace HSB
             return s;
         }
 
+        public static string LoadResourceString(string resName)
+        {
+            var assembly = Assembly.GetCallingAssembly();
+            string resourceName;
+
+            try
+            {
+
+                resourceName = assembly.GetManifestResourceNames().First(str => str.EndsWith(resName));
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+
+
+            string result;
+
+            Stream? stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                return "";
+            }
+
+            using (StreamReader reader = new(stream))
+            {
+                result = reader.ReadToEnd();
+            }
+            return result;
+        }
+
     }
 }
 

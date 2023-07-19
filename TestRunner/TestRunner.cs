@@ -21,7 +21,7 @@ namespace TestRunner
             c.GET("/expressget", TestExpressRoutingGET);
             c.POST("/expresspost", TestExpressRoutingPOST);
             c.AddSharedObject("test", 1996);
-            _ = new Server(c);
+            new Server(c).Start();
         }
 
         private static void TestExpressRoutingGET(Request req, Response res)

@@ -85,6 +85,7 @@ namespace HSB
                 return;
             }
             validRequest = true;
+
         }
 
         public override string ToString()
@@ -103,6 +104,11 @@ namespace HSB
 
 
         //utilities functions
+
+        /// <summary>
+        /// Test if a request contains a JSON document in the body
+        /// </summary>
+        /// <returns></returns>
         public bool IsJSON() => headers["Content-Type"].StartsWith("application/json");
 
     }

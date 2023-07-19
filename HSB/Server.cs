@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -7,6 +8,13 @@ namespace HSB
 {
     public class Server
     {
+
+        private readonly IPAddress[] addresses;
+        private readonly IPAddress ipAddress;
+        private readonly IPEndPoint localEndPoint;
+        private readonly Configuration config;
+        private readonly Socket listener;
+
 
         public static void Main(string[] args)
         {
@@ -25,35 +33,49 @@ namespace HSB
             if (config.port > 65535)
                 throw new ArgumentOutOfRangeException("port");
 
+            this.config = config;
+
             Terminal.INFO($"Listening at address http://{config.address}:{config.port}/");
 
             //buffer per dati in ingresso
 
 
             //ricerca indirizzo ip 
-            var addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork);
-            IPAddress ipAddress = addresses[0];
-            IPEndPoint localEndPoint = new(ipAddress, config.port);
+            addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork);
+            ipAddress = addresses[0];
+            localEndPoint = new(ipAddress, config.port);
 
-            Socket listener = new(ipAddress.AddressFamily,
+            listener = new(ipAddress.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
+        }
 
+        public void Start(bool openInBrowser = false)
+        {
 
             try
             {
                 listener.Bind(localEndPoint);
                 listener.Listen(100);
 
+                if (openInBrowser)
+                {
+
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = "http://localhost:65001",
+                        UseShellExecute = true
+                    };
+                    Process.Start(psi);
+                }
                 while (true)
                 {
-                    //attendiamo una connessione
                     Socket socket = listener.Accept();
                     new Task(() =>
                     {
                         byte[] bytes = new byte[config.requestMaxSize];
                         int bytesRec = socket.Receive(bytes);
                         Request req = new(bytes, socket);
-                        Response res = new(socket, req);
+                        Response res = new(socket, req, config);
                         config.Process(req, res);
 
                     }).Start();

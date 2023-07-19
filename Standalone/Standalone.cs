@@ -8,11 +8,11 @@ namespace HSBStandalone
 
         private static void Main(string[] args)
         {
-            /*#if DEBUG
-            #else*/
-            string[] fakeArgs = new[] { "--config-path=./config.json" };
-            HSBMain(fakeArgs);
-            // HSBMain(args);
+            //#if DEBUG
+            //string[] fakeArgs = new[] { "--config-path=./config.json" };
+            //HSBMain(fakeArgs);
+            //#else*/
+            HSBMain(args);
             //#endif
 
         }
@@ -22,7 +22,7 @@ namespace HSBStandalone
             Terminal.Write("HSB-# Standalone Preloader\n");
 
             Configuration conf = new();
-            String path = "config.json";
+            string path = "config.json";
             List<string> assemblies = new();
 
             if (args.Length > 0)
@@ -147,7 +147,7 @@ namespace HSBStandalone
             }
             try
             {
-                _ = new Server(conf!);
+                new Server(conf!).Start();
             }
             catch (Exception e)
             {

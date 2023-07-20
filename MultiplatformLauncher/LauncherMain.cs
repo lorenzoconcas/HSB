@@ -29,6 +29,12 @@ public static class LauncherMain
 {
     public static void Main(string[] args)
     {
+        if (args.Contains("--debug"))
+        {
+            Console.WriteLine("Press any key when debugger is connected");
+            Console.ReadKey();
+        }
+
         Console.WriteLine("Listing DLLs...");
         List<string> dlls = ListDLLs();
 
@@ -59,9 +65,15 @@ public static class LauncherMain
             Type? t = info.Item2;
             MethodInfo? m = info.Item1;
             Console.WriteLine("HSBMain found, clearing console and passing execution control to it");
+            if (args.Contains("--pause"))
+            {
+                Console.WriteLine("Program ready, press any key to start...");
+                Console.ReadKey();
+            }
+
+            Console.Clear();
             try
             {
-                Console.Clear();
                 m!.Invoke(Activator.CreateInstance(t!), new object[] { args });
             }
             catch (Exception e)
@@ -152,7 +164,11 @@ public static class LauncherMain
     private static List<string> ListDLLs()
     {
         //get executable path
-        string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+
+        string path = AppContext.BaseDirectory; //System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+        Console.WriteLine("Searching in folder : " + path);
         //get directory
         string? dir = Path.GetDirectoryName(path);
         if (dir == null) return new List<string>();
@@ -160,6 +176,7 @@ public static class LauncherMain
         List<string> lst = new();
         foreach (var l in Directory.GetFiles(dir, "*.dll").ToList())
         {
+            Console.WriteLine("File: " + l);
             lst.Add($"{Path.GetFullPath(l)}");
         }
 

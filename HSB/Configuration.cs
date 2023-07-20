@@ -13,30 +13,37 @@ namespace HSB
         /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) //check this
         /// </summary>
         public string address;
+
         /// <summary>
         /// The server listening port
         /// </summary>
         public int port;
+
         /// <summary>
         /// Indicates the location where all static files will be searched and served from
         /// </summary>
-        public string staticFolderPath = "";
+        public string staticFolderPath;
+
         /// <summary>
-        /// Whether or not print the log to the console
+        /// Holds all debug information and routines
         /// </summary>
-        public bool verbose = true;
+        public Debugger debug;
+
         /// <summary>
         /// Specifies the size of the buffer that will contain the HTTP request
         /// </summary>
-        public int requestMaxSize;
+        public readonly int requestMaxSize;
+
         /// <summary>
         /// Useful to share objects between servlets without using the singleton tecnique
         /// </summary>
         protected Dictionary<string, object> sharedObjects = new();
+
         /// <summary>
         /// headers added to ANY response
         /// </summary>
         protected Dictionary<string, string> customGlobalHeaders = new();
+
         /// <summary>
         /// Expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
         /// </summary>
@@ -50,7 +57,7 @@ namespace HSB
             address = "127.0.0.1";
             port = 8080;
             staticFolderPath = "./static";
-            verbose = true;
+            debug = new Debugger();
             requestMaxSize = 1024; //max 1MB Requests default
         }
 
@@ -60,7 +67,6 @@ namespace HSB
         /// <param name="jsonContent">The content of the JSON file</param>
         public Configuration(string jsonContent)
         {
-
             using var doc = JsonDocument.Parse(jsonContent);
             var root = doc.RootElement;
 
@@ -68,24 +74,23 @@ namespace HSB
             address = root.GetProperty("address").GetString() ?? "127.0.0.1";
             port = root.GetProperty("port").GetInt16();
             staticFolderPath = root.GetProperty("staticFolderPath").GetString() ?? "";
-            verbose = root.GetProperty("verbose").GetBoolean();
+            debug = Debugger.FromJson(root.GetProperty("debugInfo"));
             requestMaxSize = root.GetProperty("port").GetInt32();
-
         }
+
         /// <summary>
         /// Instantiate a configuration with the base settings
         /// </summary>
         /// <param name="address">Listening address (es: "127.0.0.1" or "192.168.1.2")</param>
         /// <param name="port">Listening port</param>
         /// <param name="staticPath">Path of the static folder</param>
-        /// <param name="verbose">Whether or not print the log to the console</param>
-        public Configuration(string address, int port, string staticPath, bool verbose)
+        /// <param name="debugInfo">Class holding debuggin information</param>
+        public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null)
         {
-
             this.address = address;
             this.port = port;
             staticFolderPath = staticPath;
-            this.verbose = verbose;
+            debug = debugInfo ?? new Debugger();
             requestMaxSize = 1024;
         }
 
@@ -102,7 +107,7 @@ namespace HSB
             {
                 try
                 {
-                    Terminal.INFO($"Requested '{req.URL}'", true);
+                    debug.INFO($"Requested '{req.URL}'", true);
 
                     if (RunIfExpressMapping(req, res))
                         return;
@@ -136,30 +141,28 @@ namespace HSB
                             Regex rgx = new(UNSAFE_PATH_REGEX);
                             if (rgx.Match(req.URL).Success)
                             {
-                                Terminal.WARNING("Requested unsafe path");
+                                debug.WARNING("Requested unsafe path");
                                 new Error(req, res, "", 404).Process();
-
                             }
+
                             if (File.Exists(staticFolderPath + "/" + req.URL))
                             {
-                                Terminal.INFO($"Static file found, serving '{req.URL}'", true);
+                                debug.INFO($"Static file found, serving '{req.URL}'", true);
                                 res.SendFile(staticFolderPath + "/" + req.URL);
-
                             }
                             else
                             {
                                 //potrebbe non venire trovata la giusta servlet, rimandiamo un errore 404
-                                Terminal.WARNING($"No servlet or static found for URL : {req.URL}", true);
+                                debug.WARNING($"No servlet or static found for URL : {req.URL}", true);
                                 new Error(req, res, "Page not found", 404).Process();
                             }
                         }
                     }
-
                 }
                 catch (Exception e)
                 {
-                    Terminal.ERROR("Error handling request ->\n " + e, true);
-                    // Terminal.ERROR(e.Message);
+                    debug.ERROR("Error handling request ->\n " + e, true);
+                    // debug.ERROR(e.Message);
 
                     new Error(req, res, e.ToString(), 500).Process();
                     return;
@@ -173,9 +176,10 @@ namespace HSB
 
             if (e != null)
             {
-                (e.Item2.Item2).DynamicInvoke(new object[] { req, res });
+                e.Item2.Item2.DynamicInvoke(new object[] { req, res });
                 return true;
             }
+
             return false;
         }
 
@@ -214,17 +218,13 @@ namespace HSB
                                     routes.Add(new(b.Path, b.StartsWith), c);
                                 // routes.Add(new(b.Path, c, b.StartsWith));
                             }
-
                         }
                         else
                         {
                             Binding? attr = c.GetCustomAttribute<Binding>(false);
                             if (attr != null && attr.Path != "")
                                 routes.Add(new(attr.Path, attr.StartsWith), c);
-
                         }
-
-
                     }
                     catch (Exception)
                     {
@@ -238,7 +238,6 @@ namespace HSB
 
         private object? GetInstance(Request req, Response res)
         {
-
             Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
 
 
@@ -273,7 +272,6 @@ namespace HSB
                 }
 
 
-
                 //WIP
                 /* //controllare se usa una regex
                  Dictionary<string, Type> regexRoutes = new();
@@ -286,12 +284,13 @@ namespace HSB
                  if (p.First().Success)
                  {
                      //trovato il routing regex
-                     Terminal.INFO("lol");
+                     debug.INFO("lol");
                  }*/
             }
-            return null;
 
+            return null;
         }
+
         /// <summary>
         /// String rappresentation of the configuration
         /// </summary>
@@ -319,7 +318,6 @@ namespace HSB
             }
 
 
-
             return str;
         }
 
@@ -329,24 +327,28 @@ namespace HSB
         /// <param name="path">Mapping</param>
         /// <param name="func">Function that will handle the request</param>
         public void GET(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.GET, func);
+
         /// <summary>
         /// Map a function to a path that will reply with a POST response 
         /// </summary>
         /// <param name="path">Mapping</param>
         /// <param name="func">Function that will handle the request</param>
         public void POST(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.POST, func);
+
         /// <summary>
         /// Map a function to a path that will reply with a HEAD response 
         /// </summary>
         /// <param name="path">Mapping</param>
         /// <param name="func">Function that will handle the request</param>
         public void HEAD(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.HEAD, func);
+
         /// <summary>
         /// Map a function to a path that will reply with a HEAD response 
         /// </summary>
         /// <param name="path">Mapping</param>
         /// <param name="func">Function that will handle the request</param>
         public void PUT(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.PUT, func);
+
         /// <summary>
         /// Map a function to a path that will reply with a DELETE response 
         /// </summary>
@@ -360,11 +362,13 @@ namespace HSB
         /// <param name="name">Name of the object</param>
         /// <param name="o">Object to share</param>
         public void AddSharedObject(string name, object o) => sharedObjects.Add(name, o);
+
         /// <summary>
         /// Get an object shared between all servlet
         /// </summary>
         /// <param name="name">Name of the shared object</param>
         public object GetSharedObject(string name) => sharedObjects[name];
+
         /// <summary>
         /// Remove an object shared between all servlet
         /// </summary>
@@ -377,16 +381,19 @@ namespace HSB
         /// <param name="name">Name of the header</param>
         /// <param name="value">Value of the header</param>
         public void AddCustomGlobalHeader(string name, string value) => customGlobalHeaders.Add(name, value);
+
         /// <summary>
         /// Remove a global HTTP Response header previously added
         /// </summary>
         /// <param name="name">Name of the header</param>
         public void RemoveCustomGlobalHeader(string name) => customGlobalHeaders.Remove(name);
+
         /// <summary>
         /// Gets the value of a global HTTP Response header previously added
         /// </summary>
         /// <param name="name">Name of the header</param>
         public string GetCustomGlobalHeader(string name) => customGlobalHeaders[name];
+
         /// <summary>
         /// Gets all globabl HTTP Response headers 
         /// </summary>

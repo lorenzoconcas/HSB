@@ -35,7 +35,7 @@ namespace HSB
 
             this.config = config;
 
-            Terminal.INFO($"Listening at address http://{config.address}:{config.port}/");
+            config.debug.INFO($"Listening at address http://{config.address}:{config.port}/");
 
             //buffer per dati in ingresso
 
@@ -62,7 +62,7 @@ namespace HSB
 
                     var psi = new ProcessStartInfo
                     {
-                        FileName = "http://localhost:65001",
+                        FileName = $"http://{config.address}:{config.port}",
                         UseShellExecute = true
                     };
                     Process.Start(psi);

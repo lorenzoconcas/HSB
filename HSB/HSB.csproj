@@ -29,23 +29,23 @@
 		<Folder Include="DefaultPages\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <EmbeddedResource Include="DefaultPages\index.html" />
-	  <EmbeddedResource Include="DefaultPages\error.html">
-	  </EmbeddedResource>
+		<EmbeddedResource Include="DefaultPages\index.html" />
+		<EmbeddedResource Include="DefaultPages\error.html">
+		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="DefaultPages\error.html">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="DefaultPages\error.html">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ProjectExtensions>
-	  <MonoDevelop>
-	    <Properties>
-	      <Policies>
-	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-	        <StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
-	      </Policies>
-	    </Properties>
-	  </MonoDevelop>
+		<MonoDevelop>
+			<Properties>
+				<Policies>
+					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+					<StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
+				</Policies>
+			</Properties>
+		</MonoDevelop>
 	</ProjectExtensions>
 </Project>

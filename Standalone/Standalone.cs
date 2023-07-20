@@ -9,7 +9,7 @@ namespace HSBStandalone
         private static void Main(string[] args)
         {
             //#if DEBUG
-            //string[] fakeArgs = new[] { "--config-path=./config.json" };
+            //string[] fakeArgs = new[] { "--create-default" };
             //HSBMain(fakeArgs);
             //#else*/
             HSBMain(args);
@@ -33,7 +33,8 @@ namespace HSBStandalone
                 {
                     if (s.StartsWith("--no-verbose"))
                     {
-                        conf.verbose = false;
+                        conf.debug = new Debugger();
+                        conf.debug.verbose = false;
                     }
                     if (s.StartsWith("--config-path="))
                     {
@@ -116,7 +117,7 @@ namespace HSBStandalone
                         return;
                     }
 
-                    if (conf.verbose)
+                    if (conf.debug.verbose)
                     {
                         Terminal.INFO("Configuration file loaded successfully:");
                         Console.WriteLine(conf.ToString());

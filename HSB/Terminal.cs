@@ -68,39 +68,36 @@
 
         public static void INFO<T>(T o, bool printExtraInfo = false)
         {
-            if (printExtraInfo)
-            {
-                Write($"[{DateTime.Now.ToString()}][I][", BG_COLOR.DEFAULT, FG_COLOR.VERDE);
-            }
-            Write(o, BG_COLOR.DEFAULT, FG_COLOR.VERDE);
-            if (printExtraInfo)
-                Write("]", BG_COLOR.DEFAULT, FG_COLOR.VERDE);
-            WriteLine();
+            LOG(o,"I",  FG_COLOR.BLU, BG_COLOR.NERO, printExtraInfo);
         }
         public static void WARNING<T>(T o, bool printExtraInfo = false)
         {
-            if (printExtraInfo)
-            {
-                Write($"[{DateTime.Now.ToString()}][W][", BG_COLOR.NERO, FG_COLOR.GIALLO);
-            }
-
-            Write(o, BG_COLOR.NERO, FG_COLOR.GIALLO);
-            if (printExtraInfo)
-                Write("]", BG_COLOR.NERO, FG_COLOR.GIALLO);
-            WriteLine();
+            LOG(o,"W",  FG_COLOR.GIALLO, BG_COLOR.NERO, printExtraInfo);
         }
         public static void ERROR<T>(T o, bool printExtraInfo = false)
         {
-            if (printExtraInfo)
-            {
-                Write($"[{DateTime.Now.ToString()}][E][", BG_COLOR.NERO, FG_COLOR.ROSSO);
-            }
-            Write(o, BG_COLOR.NERO, FG_COLOR.ROSSO);
-            if (printExtraInfo)
-                Write("]", BG_COLOR.NERO, FG_COLOR.ROSSO);
-            WriteLine();
+            LOG(o,"E",  FG_COLOR.ROSSO, BG_COLOR.NERO, printExtraInfo);
+        }
+        
+        public static void DEBUG<T>(T o, bool printExtraInfo = false)
+        {
+            LOG(o,"D",  FG_COLOR.VERDE, BG_COLOR.NERO, printExtraInfo);
         }
 
+        private static void LOG<T>(T o, string lvl, FG_COLOR foreground,
+            BG_COLOR background = BG_COLOR.NERO, bool printExtraInfo = false )
+        {
+            if (printExtraInfo)
+            {
+                Write($"[{DateTime.Now.ToString()}][{lvl}][", background, foreground);
+            }
+            Write(o,  background, foreground);
+            if (printExtraInfo)
+                Write("]",  background, foreground);
+            WriteLine();
+        }
+        
+        
         public static void Reset()
         {
             Console.ResetColor();

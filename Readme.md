@@ -28,3 +28,16 @@ Repository organization
 
 More info can be found in the Documentation folder
 [](./Documentation/)
+
+
+#### Roadmap
+Small roadmap planned
+
+
+| Version | Feature Planned             |
+|---------|-----------------------------|
+| 0.0.5R2 | Better debugging            |
+| 0.0.6   | Http Session implementation |
+| 0.0.7   | Http Authentication         |
+| 0.0.8   | Refactor/Clean-up           |
+| 0.0.9   | To be decided               |

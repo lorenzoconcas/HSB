@@ -1,4 +1,4 @@
-# Library 
+# Library
 Here will be explained how to use the core library (HSB.dll)
 
 ### Basic information
@@ -30,6 +30,26 @@ The default Configuration constructor holds the following properties:
 | ```staticFolderPath``` | ```./static```      | string  | This is the folder where the server will attempt to find public files                                                                                |
 | ```requestMaxSize```   | ```1024``` (1MB)    | int     | Set the max size of an HTTP request                                                                                                                  |
 | ```verbose```          | ```true```          | boolean | Whether or not print the log to the console                                                                                                          |
+
+The configuration class provides also some utilities, like object sharing between servlets (so you can avoid to use the singleton tecnique) and global headers (used to append custom headers to ALL responses)
+
+##### Shared Objects
+
+| Signature                                  | Description                              |
+|--------------------------------------------|------------------------------------------|
+| ```void AddSharedObject(string, object)``` | Add an object shared between all servlet |
+| ```object GetSharedObject(string)``` | Get an object shared between all servlet |
+| ```object RemoveSharedObject(string)``` | Remove an object shared between all servlet |
+
+##### Global Headers
+
+
+| Signature                                  | Description                              |
+|--------------------------------------------|------------------------------------------|
+| ```void AddCustomGlobalHeader(string, string)``` | Add an HTTP Response header that will be added to ALL the responses |
+| ```void RemoveCustomGlobalHeader(string, string)``` | Remove a global HTTP Response header previously added |
+| ```void GetCustomGlobalHeader(string, string)``` | Gets the value of a global HTTP Response header previously added |
+| ```void Dictionary<string, string> GetCustomGlobalHeaders``` |  Gets all globabl HTTP Response headers  |
 
 -----
 
@@ -115,6 +135,24 @@ namespace Test{
     }
 }
 ```
+
+# The Request Class
+
+In this class there are some utilities to better handle the request itself
+
+
+| Signature                                | Type     | Description                                                 |
+|------------------------------------------|----------|:------------------------------------------------------------|
+| ```HTTP_METHOD METHOD```                      | Property | Returns an enum reppresentating the request method          |
+| ```HTTP_PROTOCOL PROTOCOL```                   | Property | Returns an enum reppresentating the request protocol        |
+| ```string URL```                               | Property | Returns the request URL                                     |
+| ```string RawBody```                           | Property | Returns the raw request body (useful in case like json ecc) |
+| ```Dictionary<string, string> GetHeaders```    | Property | Returns the parsed headers of the request                   |
+| ```List<string> GetRawHeaders```              | Property | Returns the raw headers of the request                      |
+| ```Dictionary<string, string> GetParameters``` | Property | Returns the parameters present in the URL                   |
+| ```bool IsJSON()```                         | Function | Returns whether a request contains a json file or not       |
+
+
 
 # The Response Class
 

@@ -14,11 +14,11 @@ namespace HSB
         public static void PrintLogo()
         {
             Terminal.Write("Welcome to ");
-            Terminal.Write("H", BG_COLOR.DEFAULT, FG_COLOR.ROSSO);
-            Terminal.Write("S", BG_COLOR.DEFAULT, FG_COLOR.VERDE);
-            Terminal.Write("B", BG_COLOR.DEFAULT, FG_COLOR.BLU);
-            Terminal.Write("-", BG_COLOR.DEFAULT, FG_COLOR.BIANCO);
-            Terminal.Write("#", BG_COLOR.DEFAULT, FG_COLOR.GIALLO);
+            Terminal.Write("H", BG_COLOR.DEFAULT, FG_COLOR.RED);
+            Terminal.Write("S", BG_COLOR.DEFAULT, FG_COLOR.GREEN);
+            Terminal.Write("B", BG_COLOR.DEFAULT, FG_COLOR.BLUE);
+            Terminal.Write("-", BG_COLOR.DEFAULT, FG_COLOR.WHITE);
+            Terminal.Write("#", BG_COLOR.DEFAULT, FG_COLOR.YELLOW);
             Terminal.WriteLine($" Server ({Assembly.GetExecutingAssembly().GetName().Version})");
         }
 
@@ -38,7 +38,7 @@ namespace HSB
                 List<Type> classes = assem.GetTypes().ToList();
 
                 foreach (var c in classes)
-                    Terminal.WriteLine(c.FullName, BG_COLOR.BIANCO, FG_COLOR.BLU);
+                    Terminal.WriteLine(c.FullName, BG_COLOR.WHITE, FG_COLOR.BLUE);
             }
         }
 

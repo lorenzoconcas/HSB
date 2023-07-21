@@ -49,9 +49,9 @@ namespace HSB
         /// <param name="data">Body of the response</param>
         /// <param name="mimeType">MimeType of the body</param>
         /// <param name="statusCode">Response status code</param>
-        public void Send(string data, string? mimeType = null, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
+        public void Send(string data, string mimeType = "text/plain", int statusCode = 200, Dictionary<string, string>? customHeaders = null)
         {
-            string _mime = mimeType ?? MimeTypeMap.GetMimeType(data);
+            string _mime = mimeType;
             string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
 
             Send(Encoding.UTF8.GetBytes(resp));

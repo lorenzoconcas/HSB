@@ -84,7 +84,7 @@ namespace HSB
         /// <param name="address">Listening address (es: "127.0.0.1" or "192.168.1.2")</param>
         /// <param name="port">Listening port</param>
         /// <param name="staticPath">Path of the static folder</param>
-        /// <param name="debugInfo">Class holding debuggin information</param>
+        /// <param name="debugInfo">Class holding debugging information</param>
         public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null)
         {
             this.address = address;
@@ -115,30 +115,29 @@ namespace HSB
                     object? o = GetInstance(req, res);
                     if (o != null)
                     {
-                        Servlet servlet = (Servlet)o;
+                        Servlet servlet = (Servlet) o;
                         servlet.Process();
                     }
                     else
                     {
-                        //controlliamo se esistono routing che usano regex
-
-
-                        //non è stata trovata una mappatura valida
-                        //se siamo qui non c'è una pagina di root preimpostata, restituiamo quella di default
+                        //the client searched for a route that is not mapped by any servlet
+                        //so we do some other checks like root page or static resource
+                        //if no root page is set we search for and index.html file, else we show the default home page
                         if (req.URL == "/")
-                            //controlliamo che ci sia un file "index.html" else base servlet
+                            //if the client is requesting the root file, we check if there is an index.html file
+                            //if not, we use the default servlet
                             if (File.Exists(staticFolderPath + "/index.html"))
                                 res.SendFile(staticFolderPath + "/index.html", "text/html");
                             else
                                 new Index(req, res).Process();
                         else
                         {
-                            //controlliamo se si cerca una risorsa, altrimenti 404 non trovato
-
-                            //usiamo la regex usata nella libreria send.js ()
+                            //we check if the client is requesting a resource, else 404 not found
+                            //to check if the path is safe we use the same regex used in send.js
                             //see: https://github.com/pillarjs/send/blob/master/index.js#L63
-                            var UNSAFE_PATH_REGEX = "/(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)/";
-                            Regex rgx = new(UNSAFE_PATH_REGEX);
+
+                            const string unsafePathRegex = "/(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)/";
+                            Regex rgx = new(unsafePathRegex);
                             if (rgx.Match(req.URL).Success)
                             {
                                 debug.WARNING("Requested unsafe path");
@@ -152,7 +151,7 @@ namespace HSB
                             }
                             else
                             {
-                                //potrebbe non venire trovata la giusta servlet, rimandiamo un errore 404
+                                //if no servlet or static file found, send 404
                                 debug.WARNING($"No servlet or static found for URL : {req.URL}", true);
                                 new Error(req, res, "Page not found", 404).Process();
                             }
@@ -162,10 +161,8 @@ namespace HSB
                 catch (Exception e)
                 {
                     debug.ERROR("Error handling request ->\n " + e, true);
-                    // debug.ERROR(e.Message);
-
+                    //we show an error page with the message and code 500
                     new Error(req, res, e.ToString(), 500).Process();
-                    return;
                 }
             }).Start();
         }
@@ -174,13 +171,9 @@ namespace HSB
         {
             var e = expressMapping.Find(e => (e.Item1 == req.URL && e.Item2.Item1 == req.METHOD));
 
-            if (e != null)
-            {
-                e.Item2.Item2.DynamicInvoke(new object[] { req, res });
-                return true;
-            }
-
-            return false;
+            if (e == null) return false;
+            e.Item2.Item2.DynamicInvoke(req, res);
+            return true;
         }
 
 
@@ -196,10 +189,7 @@ namespace HSB
             Dictionary<Tuple<string, bool>, Type> routes = new();
 
 
-            // List<Tuple<string, Type, bool>> routes = new();
-
-
-            foreach (Assembly assem in assems)
+            foreach (var assem in assems)
             {
                 List<Type> classes = assem.GetTypes().ToList();
 
@@ -209,14 +199,13 @@ namespace HSB
                     {
                         IEnumerable<Binding> multiBindings = c.GetCustomAttributes<Binding>(false);
 
-                        //se non ci sono classi che hanno più binding, cerchiamo chi ne ha una sola
+                        //if no class have more than one binding, we search the ones with only one
                         if (multiBindings.Any())
                         {
                             foreach (Binding b in multiBindings)
                             {
                                 if (b.Path != "")
                                     routes.Add(new(b.Path, b.StartsWith), c);
-                                // routes.Add(new(b.Path, c, b.StartsWith));
                             }
                         }
                         else
@@ -252,47 +241,25 @@ namespace HSB
                     _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
                 };
             }
-            else
-            {
-                //controllare se esiste un url che inizia come quello della richiesta
-                foreach (var r in routes)
+
+            //we omit the else branch 
+            //we check if there is a a path that starts like the request url
+            return (from r in routes
+                let path = r.Key.Item1
+                where req.URL.StartsWith(path)
+                select r.Value
+                into c
+                let x = c.GetConstructors()[0]
+                select x.GetParameters().Length switch
                 {
-                    string path = r.Key.Item1;
-                    if (req.URL.StartsWith(path))
-                    {
-                        Type c = r.Value;
-                        var x = c.GetConstructors()[0];
-                        return x.GetParameters().Length switch
-                        {
-                            3 => Activator.CreateInstance(c, req, res, this),
-                            2 => Activator.CreateInstance(c, req, res),
-                            _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
-                        };
-                    }
-                }
-
-
-                //WIP
-                /* //controllare se usa una regex
-                 Dictionary<string, Type> regexRoutes = new();
-                 foreach (var r in routes)
-                     regexRoutes.Add(r.Key.Replace("/", @"\/"), r.Value);
-
-
-                 IEnumerable<Match> p = regexRoutes.Keys.Select(s => new Regex(s).Match(req.URL));
-
-                 if (p.First().Success)
-                 {
-                     //trovato il routing regex
-                     debug.INFO("lol");
-                 }*/
-            }
-
-            return null;
+                    3 => Activator.CreateInstance(c, req, res, this),
+                    2 => Activator.CreateInstance(c, req, res),
+                    _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                }).FirstOrDefault();
         }
 
         /// <summary>
-        /// String rappresentation of the configuration
+        /// String representing the configuration
         /// </summary>
         /// <returns></returns>
         public override string ToString()

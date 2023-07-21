@@ -19,15 +19,11 @@ namespace HSB
         public static void Main(string[] args)
         {
             Terminal.INFO("HSB-# has wrongfully been compiled has executable and will not run!");
-            Terminal.INFO("To run as standalone you must compile/execute the \"Standalone\" project");
+            Terminal.INFO("To run as standalone you must compile/execute the \"Standalone\" or the \"Launcher\" project");
+            Terminal.INFO("Check the documentation for more info (\"https://github.com/lorenzoconcas/HSB-Sharp\")");
         }
         public Server(Configuration config)
         {
-            /* if (!CheckIfRequiredDLLAreLoaded())
-             {
-                 Terminal.ERROR("Error some library are missing, install them via nuget:\nMimeTypeMapOfficial");
-                 return;
-             }*/
             Utils.PrintLogo();
 
             if (config.port > 65535)
@@ -37,10 +33,7 @@ namespace HSB
 
             config.debug.INFO($"Listening at address http://{config.address}:{config.port}/");
 
-            //buffer per dati in ingresso
-
-
-            //ricerca indirizzo ip 
+            
             addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork);
             ipAddress = addresses[0];
             localEndPoint = new(ipAddress, config.port);

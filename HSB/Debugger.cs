@@ -1,11 +1,10 @@
-using System.Diagnostics;
 using System.Text.Json;
 
 namespace HSB;
 
 public class Debugger
 {
-    public enum LOG_LEVEL
+    public enum LogLevel
     {
         ERROR,
         WARNING,
@@ -18,7 +17,10 @@ public class Debugger
     public int port;
     public string address;
     public string logPath;
-    public LOG_LEVEL logLevel;
+    public LogLevel logLevel;
+
+    //Todo : add an authentication method to access the socket of the debugger
+    //Todo : establish communication rules between debugger and client
 
     public Debugger()
     {
@@ -27,14 +29,14 @@ public class Debugger
         port = 8081;
         address = "127.0.0.1";
         logPath = $"{AppContext.BaseDirectory}/log_{GetDateFormatted()}";
-        logLevel = LOG_LEVEL.INFO;
+        logLevel = LogLevel.INFO;
 
         StartDebugServer();
     }
 
 
     public Debugger(bool enabled, bool verbose, int port, string address, string logPath = "",
-        LOG_LEVEL logLevel = LOG_LEVEL.INFO)
+        LogLevel logLevel = LogLevel.INFO)
     {
         this.enabled = enabled;
         this.verbose = verbose;
@@ -51,11 +53,12 @@ public class Debugger
         if (enabled)
         {
             Terminal.DEBUG("Debug server has not been written yet");
+            //The writing of this feature is complex as is the rest of the entire project
         }
     }
 
 
-    private string GetDateFormatted()
+    private static string GetDateFormatted()
     {
         return new DateTime().ToString("yyyy_mm_dd_hh_MM");
     }
@@ -68,7 +71,7 @@ public class Debugger
             json.GetProperty("port").GetInt16(),
             json.GetProperty("address").GetString() ?? "127.0.0.1",
             json.GetProperty("logPath").GetString() ?? "",
-            (LOG_LEVEL)json.GetProperty("logLevel").GetInt16()
+            (LogLevel) json.GetProperty("logLevel").GetInt16()
         );
     }
 
@@ -76,8 +79,8 @@ public class Debugger
     {
         if (verbose)
             Terminal.ERROR(o, printExtraInfo);
-
-        AppendToFile(getMessage("E", o.ToString()));
+        if (o != null)
+            AppendToFile(GetMessage("E", o.ToString()));
     }
 
     public void WARNING<T>(T o, bool printExtraInfo = false)
@@ -85,8 +88,8 @@ public class Debugger
         if (verbose)
             Terminal.WARNING(o, printExtraInfo);
 
-        if (logLevel == LOG_LEVEL.INFO && logLevel == LOG_LEVEL.WARNING && logLevel == LOG_LEVEL.ALL)
-            AppendToFile(getMessage("W", o.ToString()));
+        if (logLevel == LogLevel.INFO && logLevel == LogLevel.WARNING && logLevel == LogLevel.ALL && o != null)
+            AppendToFile(GetMessage("W", o.ToString()));
     }
 
     public void INFO<T>(T o, bool printExtraInfo = false)
@@ -94,17 +97,16 @@ public class Debugger
         if (verbose)
             Terminal.INFO(o, printExtraInfo);
 
-        if (logLevel == LOG_LEVEL.INFO && logLevel == LOG_LEVEL.ALL)
-            AppendToFile(getMessage("I", o.ToString()));
+        if (logLevel == LogLevel.INFO && logLevel == LogLevel.ALL && o != null)
+            AppendToFile(GetMessage("I", o.ToString()));
     }
 
     public void DEBUG<T>(T o, bool printExtraInfo = false)
     {
         if (verbose)
             Terminal.DEBUG(o, printExtraInfo);
-
-        if (logLevel == LOG_LEVEL.ALL)
-            AppendToFile(getMessage("D", o.ToString()));
+        if (logLevel == LogLevel.ALL && o != null)
+            AppendToFile(GetMessage("D", o.ToString()));
     }
 
     private void AppendToFile(string content)
@@ -115,8 +117,8 @@ public class Debugger
         }
     }
 
-    private static string getMessage(string lvl, string msg)
+    private static string GetMessage(string lvl, string msg)
     {
-        return $"[{DateTime.Now.ToString()}][{lvl}][{msg}]";
+        return $"[{GetDateFormatted()}][{lvl}][{msg}]";
     }
 }

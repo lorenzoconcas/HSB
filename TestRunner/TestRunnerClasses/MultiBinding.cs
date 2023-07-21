@@ -1,5 +1,4 @@
-﻿using System;
-using HSB;
+﻿using HSB;
 namespace TestRunner
 {
     [Binding("/multi1")]
@@ -13,12 +12,12 @@ namespace TestRunner
 
         public override void ProcessGet(Request req, Response res)
         {
-            res.Send($"<h1>Hello GET -> {req.URL}</h1>");
+            res.SendHTMLContent($"<h1>Hello GET -> {req.URL}</h1>");
         }
 
         public override void ProcessPost(Request req, Response res)
         {
-            res.Send($"<h1>Hello POST -> {req.URL}</h1>");
+            res.SendHTMLContent($"<h1>Hello POST -> {req.URL}</h1>");
         }
 
 

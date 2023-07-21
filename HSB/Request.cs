@@ -53,7 +53,7 @@ namespace HSB
 
                     foreach (string p in prms)
                     {
-                        if (p != "")
+                        if (p != "" && !parameters.ContainsKey(p)) //skip empty parameters and no duplicates
                             parameters.Add(p.Split("=")[0], p.Split("=")[1]);
                     }
                 }
@@ -80,7 +80,7 @@ namespace HSB
             }
             catch (Exception e)
             {
-                Terminal.WriteLine("Invalid request, reason : " + e.Message, BG_COLOR.NERO, FG_COLOR.ROSSO);
+                Terminal.WriteLine("Invalid request, reason : " + e.Message, BG_COLOR.BLACK, FG_COLOR.RED);
                 validRequest = false;
                 return;
             }

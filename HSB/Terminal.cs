@@ -3,26 +3,26 @@
     public enum BG_COLOR
     {
         DEFAULT,
-        NERO,
-        ROSSO,
-        VERDE,
-        GIALLO,
-        BLU,
+        BLACK,
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE,
         MAGENTA,
-        CIANO,
-        BIANCO
+        CYAN,
+        WHITE
     }
     public enum FG_COLOR
     {
         DEFAULT,
-        NERO,
-        ROSSO,
-        VERDE,
-        GIALLO,
-        BLU,
+        BLACK,
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE,
         MAGENTA,
-        CIANO,
-        BIANCO
+        CYAN,
+        WHITE
     }
 
     public static class Terminal
@@ -68,24 +68,24 @@
 
         public static void INFO<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"I",  FG_COLOR.BLU, BG_COLOR.NERO, printExtraInfo);
+            LOG(o,"I",  FG_COLOR.BLUE, BG_COLOR.BLACK, printExtraInfo);
         }
         public static void WARNING<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"W",  FG_COLOR.GIALLO, BG_COLOR.NERO, printExtraInfo);
+            LOG(o,"W",  FG_COLOR.YELLOW, BG_COLOR.BLACK, printExtraInfo);
         }
         public static void ERROR<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"E",  FG_COLOR.ROSSO, BG_COLOR.NERO, printExtraInfo);
+            LOG(o,"E",  FG_COLOR.RED, BG_COLOR.BLACK, printExtraInfo);
         }
         
         public static void DEBUG<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"D",  FG_COLOR.VERDE, BG_COLOR.NERO, printExtraInfo);
+            LOG(o,"D",  FG_COLOR.GREEN, BG_COLOR.BLACK, printExtraInfo);
         }
 
         private static void LOG<T>(T o, string lvl, FG_COLOR foreground,
-            BG_COLOR background = BG_COLOR.NERO, bool printExtraInfo = false )
+            BG_COLOR background = BG_COLOR.BLACK, bool printExtraInfo = false )
         {
             if (printExtraInfo)
             {
@@ -116,28 +116,28 @@
         private static string BG_TO_STRING(BG_COLOR color) => color switch
         {
             BG_COLOR.DEFAULT => "",
-            BG_COLOR.NERO => "\x1b[40m",
-            BG_COLOR.ROSSO => "\x1b[41m",
-            BG_COLOR.VERDE => "\x1b[42m",
-            BG_COLOR.GIALLO => "\x1b[43m",
-            BG_COLOR.BLU => "\x1b[44m",
+            BG_COLOR.BLACK => "\x1b[40m",
+            BG_COLOR.RED => "\x1b[41m",
+            BG_COLOR.GREEN => "\x1b[42m",
+            BG_COLOR.YELLOW => "\x1b[43m",
+            BG_COLOR.BLUE => "\x1b[44m",
             BG_COLOR.MAGENTA => "\x1b[45m",
-            BG_COLOR.CIANO => "\x1b[46m",
-            BG_COLOR.BIANCO => "\x1b[47m",
+            BG_COLOR.CYAN => "\x1b[46m",
+            BG_COLOR.WHITE => "\x1b[47m",
             _ => ""
         };
 
         private static string FG_TO_STRING(FG_COLOR color) => color switch
         {
             FG_COLOR.DEFAULT => "",
-            FG_COLOR.NERO => "\x1b[30m",
-            FG_COLOR.ROSSO => "\x1b[31m",
-            FG_COLOR.VERDE => "\x1b[32m",
-            FG_COLOR.GIALLO => "\x1b[33m",
-            FG_COLOR.BLU => "\x1b[34m",
+            FG_COLOR.BLACK => "\x1b[30m",
+            FG_COLOR.RED => "\x1b[31m",
+            FG_COLOR.GREEN => "\x1b[32m",
+            FG_COLOR.YELLOW => "\x1b[33m",
+            FG_COLOR.BLUE => "\x1b[34m",
             FG_COLOR.MAGENTA => "\x1b[35m",
-            FG_COLOR.CIANO => "\x1b[36m",
-            FG_COLOR.BIANCO => "\x1b[37m",
+            FG_COLOR.CYAN => "\x1b[36m",
+            FG_COLOR.WHITE => "\x1b[37m",
             _ => ""
         };
     }

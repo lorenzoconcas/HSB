@@ -1,6 +1,6 @@
 @font-face {
     font-family: "CascadiaMonoPL";
-    src: local("CascadiaMonoPL"), url("/CascadiaMonoPL.ttf") ;
+    src: local("CascadiaMonoPL"), url("CascadiaMonoPL.ttf") ;
 }
 
 body {

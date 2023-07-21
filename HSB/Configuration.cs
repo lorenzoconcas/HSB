@@ -74,7 +74,7 @@ namespace HSB
             address = root.GetProperty("address").GetString() ?? "127.0.0.1";
             port = root.GetProperty("port").GetInt16();
             staticFolderPath = root.GetProperty("staticFolderPath").GetString() ?? "";
-            debug = Debugger.FromJson(root.GetProperty("debugInfo"));
+            debug = Debugger.FromJson(root.GetProperty("debug"));
             requestMaxSize = root.GetProperty("port").GetInt32();
         }
 

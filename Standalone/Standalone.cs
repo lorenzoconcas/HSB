@@ -22,7 +22,7 @@ namespace HSBStandalone
             Terminal.Write("HSB-# Standalone Preloader\n");
 
             Configuration conf = new();
-            string path = "config.json";
+            string path = "./config.json";
             List<string> assemblies = new();
 
             if (args.Length > 0)
@@ -110,10 +110,11 @@ namespace HSBStandalone
                     {
                         conf = new Configuration(json);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
 
                         Terminal.ERROR("Invalid configuration file");
+                        Terminal.ERROR(e);
                         return;
                     }
 

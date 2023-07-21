@@ -42,7 +42,7 @@ public class Debugger
         this.verbose = verbose;
         this.port = port;
         this.address = address;
-        this.logPath = logPath == "" ? $"{AppContext.BaseDirectory}/log_{GetDateFormatted()}" : logPath;
+        this.logPath = logPath == "" ? $"{AppContext.BaseDirectory}log_{GetDateFormatted()}" : logPath;
         this.logLevel = logLevel;
 
         StartDebugServer();

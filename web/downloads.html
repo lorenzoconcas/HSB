@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Http Server Boxed</title>
+    <link rel="stylesheet" href="css/style_downloads.css">
+    <!--favicon -->
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <!--update every 2 seconds-->
+    <!--  <meta http-equiv="refresh" content="2">-->
+</head>
+
+<body>
+    <script>
+        function getButton(link, background, version, title, iconClass, iconSrc) {
+
+            let a = document.createElement("a");
+            let btnDndlWrapper = document.createElement("div");
+            let btnDndl = document.createElement("div");
+            let divVersion = document.createElement("div");
+            let divTitle = document.createElement("div");
+            let divIcon = document.createElement("div");
+            let imgIcon = document.createElement("img");
+
+            a.href = link;
+            btnDndlWrapper.className = "btnDndlWrapper " + background;
+            btnDndl.className = "btnDndl " + background;
+            divVersion.className = "btnDndlVersion";
+            divTitle.className = "btnDndlTitle";
+            imgIcon.className = iconClass;
+            imgIcon.src = iconSrc;
+
+            divVersion.innerHTML = version;
+            divTitle.innerHTML = title;
+
+
+            divIcon.appendChild(imgIcon);
+            btnDndl.appendChild(divVersion);
+            btnDndl.appendChild(divTitle);
+            btnDndl.appendChild(divIcon);
+            btnDndlWrapper.appendChild(btnDndl);
+            a.appendChild(btnDndlWrapper);
+
+            return a;
+        }
+    </script>
+
+    <div id="container">
+        <div class="header">
+            <img class="icon" src="icon.png" alt="banner" width="128px" height="128px">
+            <div>
+                <h1 class="font_cascadia">Downloads</h1>
+                <h3 class="font_cascadia">Http Server Boxed</h3>
+            </div>
+        </div>
+
+
+        <div class="subcontainer">
+            <section id="librarySection">
+                <h2>Library</h2>
+            </section>
+            <section id="utilitiesSection">
+                <h2>Utilities</h2>
+                <h3>Multiplatform Launcher</h3>
+                <h4>Precompiled binaries for the launcher, more info : <a href="">Launcher project page</a></h4>
+                <div class="twoItemsCol" id="windows">
+
+                </div>
+                <br />
+                <div class="twoItemsCol" id="mac">
+
+                </div>
+                <br />
+                <div class="twoItemsCol" id="linux">
+
+                </div>
+            </section>
+        </div>
+        <br />
+        <div class="footer">
+            <span>HSB-#</span>
+            <span>&bull;</span>
+            <span>&copy; 2021-2023 Lorenzo L. Concas</span>
+            <span>&bull;</span>
+            <span>License: TBD</span>
+            <span>&bull;</span>
+            <span>Version 0.0.6</span>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("librarySection").appendChild(
+            getButton("", "background2", "v0.0.5", "Release", "downloadIcon", "icon.png")
+        );
+        document.getElementById("librarySection").appendChild(document.createElement("br"));
+
+        document.getElementById("librarySection").appendChild(
+            getButton("", "background1", "v0.0.5", "Debug", "downloadIcon", "icon.png"
+            ));
+
+        document.getElementById("librarySection").appendChild(document.createElement("br"));
+
+        //utils section
+
+        let version = "v1.0.0";
+        //windows
+        document.getElementById("windows").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_x64.exe.zip", "background2", version, "Windows 10+ (x64)", "downloadIcon", "icon.png")
+        );
+        document.getElementById("windows").appendChild(document.createElement("br"));
+
+        document.getElementById("windows").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_arm64.exe.zip", "background2", version, "Windows 10+ (arm64)", "downloadIcon", "icon.png")
+        );
+        document.getElementById("windows").appendChild(document.createElement("br"));
+
+        //mac
+        document.getElementById("mac").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_macOS_intel.zip", "background1", version, "MacOS 10.15+ (x64)", "downloadIcon", "icon.png")
+        );
+        document.getElementById("mac").appendChild(document.createElement("br"));
+
+        document.getElementById("mac").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_appleSilicon.zip", "background1", version, "MacOS 11+ (arm64)", "downloadIcon", "icon.png")
+        );
+        document.getElementById("mac").appendChild(document.createElement("br"));
+
+        //linux
+        document.getElementById("linux").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_x64.zip", "background2", version, "Linux (x64)", "downloadIcon", "icon.png")
+        );
+        document.getElementById("linux").appendChild(document.createElement("br"));
+
+        document.getElementById("linux").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_arm64.zip", "background2", version, "Linux (arm64)", "downloadIcon", "icon.png")
+        );
+        document.getElementById("linux").appendChild(document.createElement("br"));
+
+
+        var items = document.getElementsByClassName("twoItemsCol");
+        for (let i in items)
+            items[i].addEventListener("wheel", function (e) {
+                if (e.deltaY > 0) items[i].scrollLeft += 75;
+                else items[i].scrollLeft -= 75;
+            });
+
+    </script>
+
+</body>
+
+</html>

@@ -115,7 +115,7 @@ namespace HSB
                     object? o = GetInstance(req, res);
                     if (o != null)
                     {
-                        Servlet servlet = (Servlet) o;
+                        Servlet servlet = (Servlet)o;
                         servlet.Process();
                     }
                     else
@@ -127,9 +127,16 @@ namespace HSB
                             //if the client is requesting the root file, we check if there is an index.html file
                             //if not, we use the default servlet
                             if (File.Exists(staticFolderPath + "/index.html"))
-                                res.SendFile(staticFolderPath + "/index.html", "text/html");
+                            {
+                                debug.INFO("Serving home page from disk");
+                                res.SendHTMLPage(staticFolderPath + "/index.html");
+                            }
+
                             else
+                            {
+                                debug.INFO("Serving default home page");
                                 new Index(req, res).Process();
+                            }
                         else
                         {
                             //we check if the client is requesting a resource, else 404 not found
@@ -245,17 +252,17 @@ namespace HSB
             //we omit the else branch 
             //we check if there is a a path that starts like the request url
             return (from r in routes
-                let path = r.Key.Item1
-                where req.URL.StartsWith(path)
-                select r.Value
+                    let path = r.Key.Item1
+                    where req.URL.StartsWith(path)
+                    select r.Value
                 into c
-                let x = c.GetConstructors()[0]
-                select x.GetParameters().Length switch
-                {
-                    3 => Activator.CreateInstance(c, req, res, this),
-                    2 => Activator.CreateInstance(c, req, res),
-                    _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
-                }).FirstOrDefault();
+                    let x = c.GetConstructors()[0]
+                    select x.GetParameters().Length switch
+                    {
+                        3 => Activator.CreateInstance(c, req, res, this),
+                        2 => Activator.CreateInstance(c, req, res),
+                        _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                    }).FirstOrDefault();
         }
 
         /// <summary>

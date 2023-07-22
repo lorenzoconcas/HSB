@@ -50,7 +50,7 @@
             <img class="icon" src="icon.png" alt="banner" width="128px" height="128px">
             <div>
                 <h1 class="font_cascadia">Downloads</h1>
-                <h3 class="font_cascadia">Http Server Boxed</h3>
+                <h3 class="font_cascadia">Http Server Boxed <sup>&reg;</sup></h3>
             </div>
         </div>
 
@@ -63,17 +63,16 @@
                 <h2>Utilities</h2>
                 <h3>Multiplatform Launcher</h3>
                 <h4>Precompiled binaries for the launcher, more info : <a href="">Launcher project page</a></h4>
-                <div class="twoItemsCol" id="windows">
-
-                </div>
+                <div class="twoItemsCol" id="windows"></div>
                 <br />
-                <div class="twoItemsCol" id="mac">
-
-                </div>
+                <div class="twoItemsCol" id="mac"></div>
                 <br />
-                <div class="twoItemsCol" id="linux">
-
-                </div>
+                <div class="twoItemsCol" id="linux"></div>
+                <br>
+                
+                <h3>.NET Framework</h3>
+                <h4>HSB is written in C# (hence the name HSB-#) and targets .NET 7</h4>
+                <div class="oneItemCol" id="dotnet"></div>
             </section>
         </div>
         <br />
@@ -136,6 +135,12 @@
         );
         document.getElementById("linux").appendChild(document.createElement("br"));
 
+        let dotnetPage = "https://dotnet.microsoft.com/en-us/download";
+
+        document.getElementById("dotnet").appendChild(
+            getButton(dotnetPage, "background1", "v7.0.0", "Download .NET 7", "downloadIcon", "icon.png")
+        );
+        document.getElementById("dotnet").appendChild(document.createElement("br"));
 
         var items = document.getElementsByClassName("twoItemsCol");
         for (let i in items)

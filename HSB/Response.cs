@@ -69,7 +69,9 @@ namespace HSB
                 string content = File.ReadAllText(path);
                 if (process)
                     content = ProcessContent(content);
-                Send(content, MimeType.TEXT_HTML, customHeaders: customHeaders);
+                Encoding encoding = Utils.GetEncoding(path);
+
+                Send(content, MimeType.TEXT_HTML + $"; charset={encoding.BodyName}", customHeaders: customHeaders);
             }
             catch (Exception)
             {

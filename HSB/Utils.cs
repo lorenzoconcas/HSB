@@ -20,7 +20,8 @@ namespace HSB
             Terminal.Write("B", BG_COLOR.DEFAULT, FG_COLOR.BLUE);
             Terminal.Write("-", BG_COLOR.DEFAULT, FG_COLOR.WHITE);
             Terminal.Write("#", BG_COLOR.DEFAULT, FG_COLOR.YELLOW);
-            Terminal.WriteLine($" Server ({Assembly.GetExecutingAssembly().GetName().Version})");
+            Terminal.Write(" (Http Server Boxed)");
+            Terminal.WriteLine($" v{Assembly.GetExecutingAssembly().GetName().Version}");
         }
 
         public static void printLoadedAssemblies(bool filter = true)

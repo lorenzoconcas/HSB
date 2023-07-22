@@ -68,36 +68,36 @@
 
         public static void INFO<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"I",  FG_COLOR.BLUE, BG_COLOR.BLACK, printExtraInfo);
+            LOG(o, "I", FG_COLOR.BLUE, BG_COLOR.DEFAULT, printExtraInfo);
         }
         public static void WARNING<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"W",  FG_COLOR.YELLOW, BG_COLOR.BLACK, printExtraInfo);
+            LOG(o, "W", FG_COLOR.YELLOW, BG_COLOR.BLACK, printExtraInfo);
         }
         public static void ERROR<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"E",  FG_COLOR.RED, BG_COLOR.BLACK, printExtraInfo);
+            LOG(o, "E", FG_COLOR.RED, BG_COLOR.BLACK, printExtraInfo);
         }
-        
+
         public static void DEBUG<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o,"D",  FG_COLOR.GREEN, BG_COLOR.BLACK, printExtraInfo);
+            LOG(o, "D", FG_COLOR.GREEN, BG_COLOR.BLACK, printExtraInfo);
         }
 
         private static void LOG<T>(T o, string lvl, FG_COLOR foreground,
-            BG_COLOR background = BG_COLOR.BLACK, bool printExtraInfo = false )
+            BG_COLOR background = BG_COLOR.BLACK, bool printExtraInfo = false)
         {
             if (printExtraInfo)
             {
                 Write($"[{DateTime.Now.ToString()}][{lvl}][", background, foreground);
             }
-            Write(o,  background, foreground);
+            Write(o, background, foreground);
             if (printExtraInfo)
-                Write("]",  background, foreground);
+                Write("]", background, foreground);
             WriteLine();
         }
-        
-        
+
+
         public static void Reset()
         {
             Console.ResetColor();

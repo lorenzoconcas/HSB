@@ -231,6 +231,12 @@ namespace HSB
         /// <param name="o"></param>
         /// <param name="options"></param>
         public void SendJSON<T>(T o, bool includeFields = true) => JSON(o, includeFields);
+        
+        ///<summary>
+        /// Alternate name for function JSON
+        /// </summary>
+        /// <param name="content"></param>                
+        public void SendJSON(string content) => JSON(content);
 
 
         /// <summary>

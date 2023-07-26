@@ -346,6 +346,7 @@ namespace HSB
         /// <param name="func">Function that will handle the request</param>
         public void HEAD(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.HEAD, func);
 
+
         /// <summary>
         /// Map a function to a path that will reply with a HEAD response 
         /// </summary>
@@ -359,6 +360,34 @@ namespace HSB
         /// <param name="path">Mapping</param>
         /// <param name="func">Function that will handle the request</param>
         public void DELETE(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.DELETE, func);
+
+        /// <summary>
+        /// Map a function to a path that will reply with a PATCH response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
+        public void PATCH(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.PATCH, func);
+
+        /// <summary>
+        /// Map a function to a path that will reply with a TRACE response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
+        public void TRACE(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.TRACE, func);
+
+        /// <summary>
+        /// Map a function to a path that will reply with a OPTIONS response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
+        public void OPTIONS(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.OPTIONS, func);
+
+        /// <summary>
+        /// Map a function to a path that will reply with a CONNECT response 
+        /// </summary>
+        /// <param name="path">Mapping</param>
+        /// <param name="func">Function that will handle the request</param>
+        public void CONNECT(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.CONNECT, func);
 
         /// <summary>
         /// Add an object shared between all servlet

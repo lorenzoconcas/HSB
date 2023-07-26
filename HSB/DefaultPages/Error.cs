@@ -6,16 +6,17 @@ namespace HSB
 {
     public class Error : Servlet
     {
-        private string errorMsg;
+        private readonly string errorMsg;
         //http error code
-        private int errorCode;
+        private readonly int errorCode;
         public Error(Request req, Response res, string errorMessage, int errorCode) : base(req, res)
         {
-
             this.errorCode = errorCode;
-            this.errorMsg = errorMessage;
+            errorMsg = errorMessage;
+
+            handlerFallback = ProcessGet;
         }
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             string title = $"Error {errorCode}";
             string content = "";
@@ -23,14 +24,10 @@ namespace HSB
 
                 content = GetStacktracePage();
 
-
             else if (errorCode >= 400 && errorCode <= 499)
                 content = Get4XXPage();
 
-
             Send(title, content, errorCode);
-
-
         }
 
         private string GetStacktracePage()
@@ -42,10 +39,10 @@ namespace HSB
             return content;
         }
 
-        private string Get4XXPage()
+        private static string Get4XXPage()
         {
 
-            string content = $"<h3>La risorsa cercata non &egrave; stata trovata su questo server</h3>";
+            string content = $"<h3>The searched resource was not found on this server</h3>";
             return content;
         }
 
@@ -59,7 +56,14 @@ namespace HSB
             {
                 result = reader.ReadToEnd();
             }
-            res.AddAttribute("hsbVersion", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
+            string version = "";
+            if (Assembly.GetExecutingAssembly().GetName().Version != null)
+            {
+                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+            }
+
+            res.AddAttribute("hsbVersion", version);
             res.AddAttribute("title", title);
             res.AddAttribute("errorMsg", msg);
             res.SendHTMLContent(result, true, statusCode: statusCode);

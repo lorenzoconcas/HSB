@@ -12,7 +12,7 @@ namespace TestRunner.TestRunnerClasses
         {
         }
 
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
             if (req.GetHeaders["Content-Type"] == "image/jpeg")
             {

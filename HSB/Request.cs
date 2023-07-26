@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 
 namespace HSB
@@ -12,6 +11,8 @@ namespace HSB
         readonly string reqText = "";
         readonly List<string> requestContent;
         internal Socket connectionSocket;
+        private Configuration config;
+
 
         //Request variables
         public bool validRequest = false;
@@ -22,24 +23,70 @@ namespace HSB
         readonly Dictionary<string, string> headers = new();
         readonly Dictionary<string, string> parameters = new();
         readonly List<string> rawHeaders = new();
+        readonly Dictionary<string, Cookie> cookies = new();
+
+        private Session session = new();
 
 
-        public Request(byte[] data, Socket socket)
+
+        public Request(byte[] data, Socket socket, Configuration config)
         {
             connectionSocket = socket;
+            this.config = config;
+            requestContent = new();
             if (data == null)
             {
-                requestContent = new();
+
                 return;
             }
+
+
+
+            switch (Utils.GetEncoding(data))
+            {
+                case UTF8Encoding:
+                    reqText = Encoding.UTF8.GetString(data);
+                    break;
+                case UTF32Encoding:
+                    reqText = Encoding.UTF32.GetString(data);
+                    break;
+                case ASCIIEncoding:
+                    reqText = Encoding.ASCII.GetString(data);
+                    break;
+            }
+
+            if (reqText.Replace("\0", "") == "")
+            {
+                //note:
+                //it can happen in programs like postman that a request to localhost produces two requests
+                //one for IPv6 and one for IPv4
+                //i don't know why but the second request is invalid
+                validRequest = false;
+                config.debug.INFO("Got an invalid request, ignoring...");
+                requestContent.Add(" ");
+                return;
+            }
+
             reqText = Encoding.UTF8.GetString(data);
             requestContent = reqText.Split("\r\n").ToList();
-
             ParseRequest();
 
         }
+
         private void ParseRequest()
         {
+            if (reqText == "")
+            {
+                //empty request
+                _url = "/";
+                _protocol = HTTP_PROTOCOL.HTTP1_0;
+                _method = HTTP_METHOD.GET;
+                body = "";
+                session = new Session(); //default, invalid session
+                Terminal.INFO("Got an empty request, setting default values");
+                return;
+            }
+
             try
             {
                 string[] firstLine = requestContent.First().Split(" ");
@@ -47,6 +94,7 @@ namespace HSB
                 _url = firstLine[1].Split("?")[0];
                 _protocol = HttpUtils.GetProtocol(firstLine[2]);
 
+                //collect parameters
                 if (firstLine[1].Replace(_url, "") != "")
                 {
                     List<string> prms = firstLine[1].Split("?")[1].Split("&").ToList();
@@ -59,7 +107,7 @@ namespace HSB
                 }
 
 
-                //get headers
+                //collect headers
                 foreach (string r in requestContent)
                 {
                     //skip if first element
@@ -75,6 +123,46 @@ namespace HSB
                     headers.Add(header[0], header[1]);
 
                 }
+
+                //parse cookies
+                if (headers.ContainsKey("Cookie"))
+                {
+                    var cookieString = headers["Cookie"];
+                    var strings = cookieString.Split("; ");
+                    foreach (var s in strings)
+                    {
+
+                        cookies.Add(s.Split("=")[0], new Cookie(s));
+                    }
+                }
+
+                //search for a session token
+                if (cookies.ContainsKey("hsbst") && SessionManager.GetInstance().IsValidSession(cookies["hsbst"].value))
+                {
+                    session = SessionManager.GetInstance().GetSession(cookies["hsbst"].value);
+                }
+                else
+                {
+
+                    session = new()
+                    {
+                        ExpirationTime = DateTime.Now.AddTicks(config.defaultSessionExpirationTime).Ticks
+                    };
+                    string sessionToken = SessionManager.GetInstance().CreateSession(session);
+
+                    Cookie c = new()
+                    {
+                        name = "hsbst",
+                        value = sessionToken,
+                        expiration = DateTime.Now.AddTicks(config.defaultSessionExpirationTime),
+                        path = "/",
+                        priority = Cookie.CookiePriority.HIGH
+                    };
+
+                    config.AddCustomGlobalCookie(c);
+                }
+
+                //extract body
                 body = requestContent.Last();
 
             }
@@ -100,8 +188,9 @@ namespace HSB
         public Dictionary<string, string> GetHeaders => headers;
         public List<string> GetRawHeaders => rawHeaders;
         public Dictionary<string, string> GetParameters => parameters;
+        public Session GetSession() => session;
         internal string GetRawRequest => reqText;
-
+        internal string RawMethod => requestContent.First().Split(" ")[0];
 
         //utilities functions
 
@@ -110,6 +199,7 @@ namespace HSB
         /// </summary>
         /// <returns></returns>
         public bool IsJSON() => headers["Content-Type"].StartsWith("application/json");
+
 
     }
 
@@ -123,6 +213,10 @@ namespace HSB
             HTTP_METHOD.PUT => "PUT",
             HTTP_METHOD.DELETE => "DELETE",
             HTTP_METHOD.HEAD => "HEAD",
+            HTTP_METHOD.PATCH => "PATCH",
+            HTTP_METHOD.OPTIONS => "OPTIONS",
+            HTTP_METHOD.TRACE => "TRACE",
+            HTTP_METHOD.CONNECT => "CONNECT",
             _ => "GET", //failsafe?
         };
 
@@ -141,7 +235,11 @@ namespace HSB
             "PUT" => HTTP_METHOD.PUT,
             "DELETE" => HTTP_METHOD.DELETE,
             "HEAD" => HTTP_METHOD.HEAD,
-            _ => throw new Exception("Unsupported Http Method"),
+            "PATCH" => HTTP_METHOD.PATCH,
+            "OPTIONS" => HTTP_METHOD.OPTIONS,
+            "TRACE" => HTTP_METHOD.TRACE,
+            "CONNECT" => HTTP_METHOD.CONNECT,
+            _ => HTTP_METHOD.UNKNOWN
         };
 
         public static HTTP_PROTOCOL GetProtocol(string data) => data switch

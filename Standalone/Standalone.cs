@@ -9,10 +9,14 @@ namespace HSBStandalone
         private static void Main(string[] args)
         {
             //#if DEBUG
-            //string[] fakeArgs = new[] { "--create-default" };
-            //HSBMain(fakeArgs);
-            //#else*/
-            HSBMain(args);
+            string[] fakeArgs = args;
+#if DEBUG
+            //fakeArgs = new[] { "--create-default" };
+           // fakeArgs = new[] { "--address=''" };
+#endif
+
+
+            HSBMain(fakeArgs);
             //#endif
 
         }
@@ -27,14 +31,14 @@ namespace HSBStandalone
 
             if (args.Length > 0)
             {
-                //sicuramente c'è un modo migliore per parsare gli argomenti
-
                 foreach (string s in args)
                 {
                     if (s.StartsWith("--no-verbose"))
                     {
-                        conf.debug = new Debugger();
-                        conf.debug.verbose = false;
+                        conf.debug = new Debugger
+                        {
+                            verbose = false
+                        };
                     }
                     if (s.StartsWith("--config-path="))
                     {

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HSB
+﻿namespace HSB
 {
     public class Servlet
     {
         protected Request req;
         protected Response res;
         protected Configuration configuration;
+        //in case of an unsupported http method, we can specify a generic handler
+        protected Delegate? handlerFallback;
+
+        private Dictionary<string, Delegate> CustomMethodsMap;
         public Servlet(Request req, Response res)
         {
             if (req == null || res == null)
@@ -18,6 +16,7 @@ namespace HSB
             this.req = req;
             this.res = res;
             configuration = new();
+            CustomMethodsMap = new();
         }
 
         public Servlet(Request req, Response res, Configuration conf)
@@ -27,6 +26,17 @@ namespace HSB
             this.req = req;
             this.res = res;
             configuration = conf;
+            CustomMethodsMap = new();
+        }
+
+        public void AddCustomMethodHandler(string name, Delegate handler)
+        {
+            CustomMethodsMap.Add(name.ToUpper(), handler);
+        }
+
+        public void RemoveCustomMethodHandler(string name)
+        {
+            CustomMethodsMap.Remove(name);
         }
 
 
@@ -35,50 +45,99 @@ namespace HSB
             switch (req.METHOD)
             {
                 case HTTP_METHOD.GET:
-                    ProcessGet(req, res);
+                    ProcessGet();
                     break;
                 case HTTP_METHOD.POST:
-                    ProcessPost(req, res);
+                    ProcessPost();
                     break;
                 case HTTP_METHOD.PUT:
-                    ProcessPut(req, res);
+                    ProcessPut();
                     break;
                 case HTTP_METHOD.DELETE:
-                    ProcessDelete(req, res);
+                    ProcessDelete();
                     break;
                 case HTTP_METHOD.HEAD:
-                    ProcessHead(req, res);
+                    ProcessHead();
                     break;
+                case HTTP_METHOD.PATCH:
+                    ProcessPatch();
+                    break;
+                case HTTP_METHOD.OPTIONS:
+                    ProcessOptions();
+                    break;
+                case HTTP_METHOD.TRACE:
+                    ProcessTrace();
+                    break;
+                case HTTP_METHOD.CONNECT:
+                    ProcessConnect();
+                    break;
+
+
                 default:
-                    Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}");
+
+
+                    if (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))
+                    {
+                        Terminal.INFO($"Custom method requested for route '{req.URL}'", true);
+                        CustomMethodsMap[req.RawMethod].DynamicInvoke(req, res);
+                        return;
+                    }
+                    if (handlerFallback != null)
+                    {
+                        handlerFallback.DynamicInvoke();
+                        return;
+                    }
+                    Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}", true);
+                    res.SendCode(405);
                     break;
 
             }
         }
 
-        public virtual void ProcessPost(Request req, Response res)
+        public virtual void ProcessPost()
         {
             res.SendCode(405);
         }
 
-        public virtual void ProcessGet(Request req, Response res)
+        public virtual void ProcessGet()
         {
             res.SendCode(405);
         }
 
-        public virtual void ProcessDelete(Request req, Response res)
+        public virtual void ProcessDelete()
         {
             res.SendCode(405);
         }
 
-        public virtual void ProcessPut(Request req, Response res)
+        public virtual void ProcessPut()
         {
             res.SendCode(405);
         }
 
-        public virtual void ProcessHead(Request req, Response res)
+        public virtual void ProcessHead()
         {
             res.SendCode(405);
+        }
+
+        public virtual void ProcessPatch()
+        {
+            res.SendCode(405);
+        }
+
+        public virtual void ProcessOptions()
+        {
+            res.SendCode(405);
+        }
+
+        public virtual void ProcessTrace()
+        {
+            res.SendCode(405);
+        }
+
+        public virtual void ProcessConnect()
+        {
+            res.SendCode(405);
+
         }
     }
 }

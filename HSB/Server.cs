@@ -1,22 +1,21 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using HSB.Exceptions;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 
 namespace HSB
 {
     public class Server
     {
 
-        private readonly IPAddress[] addresses;
+
         private readonly IPAddress ipAddress;
         private readonly IPEndPoint localEndPoint;
         private readonly Configuration config;
         private readonly Socket listener;
 
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             Terminal.INFO("HSB-# has wrongfully been compiled has executable and will not run!");
             Terminal.INFO("To run as standalone you must compile/execute the \"Standalone\" or the \"Launcher\" project");
@@ -27,19 +26,35 @@ namespace HSB
             Utils.PrintLogo();
 
             if (config.port > 65535)
-                throw new ArgumentOutOfRangeException("port");
+                throw new InvalidConfigurationParameterException("Port", "Port number is over the maximum allowed (65535)");
 
             this.config = config;
+            //config.UseIPv4Only = true;
+            if (config.address == "")
+            {
+                //address must be ANY
+                ipAddress = config.UseIPv4Only ? IPAddress.Any : IPAddress.IPv6Any;
+            }
+            else
+            {
+                List<IPAddress> addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork).ToList();
 
-            config.debug.INFO($"Listening at address http://{config.address}:{config.port}/");
 
-            
-            addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork);
-            ipAddress = addresses[0];
+                addresses.Clear();
+                addresses.AddRange(Dns.GetHostAddresses(config.address, AddressFamily.InterNetworkV6).ToList());
+
+                ipAddress = addresses.First();
+            }
+
             localEndPoint = new(ipAddress, config.port);
 
             listener = new(ipAddress.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
+
+            listener.DualMode = !config.UseIPv4Only;
+
+
+            config.debug.INFO($"Listening at http://{localEndPoint}/");
         }
 
         public void Start(bool openInBrowser = false)
@@ -52,7 +67,6 @@ namespace HSB
 
                 if (openInBrowser)
                 {
-
                     var psi = new ProcessStartInfo
                     {
                         FileName = $"http://{config.address}:{config.port}",
@@ -63,11 +77,13 @@ namespace HSB
                 while (true)
                 {
                     Socket socket = listener.Accept();
+
                     new Task(() =>
                     {
+                        //socket.DualMode = true;
                         byte[] bytes = new byte[config.requestMaxSize];
                         int bytesRec = socket.Receive(bytes);
-                        Request req = new(bytes, socket);
+                        Request req = new(bytes, socket, config);
                         Response res = new(socket, req, config);
                         config.Process(req, res);
 
@@ -82,6 +98,8 @@ namespace HSB
             }
         }
 
+        //for future use or to be removed
+        /*
         private bool CheckIfRequiredDLLAreLoaded()
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -95,6 +113,7 @@ namespace HSB
             }
             return ok;
         }
+        */
     }
 
 

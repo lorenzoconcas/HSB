@@ -10,12 +10,12 @@ namespace TestRunner
 
         }
 
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             res.SendHTMLContent($"<h1>Prova GET -> {req.URL}</h1>\nParams:{req.GetParameters.DictToString()}");
         }
 
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
             res.SendHTMLContent($"<h1>Prova POST -> {req.URL}</h1>");
         }

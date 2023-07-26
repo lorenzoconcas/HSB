@@ -10,7 +10,7 @@ namespace Example
         }
 
         //we override the function that handle the GET response processing
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             //reply to request with an hello world
             res.SendHTMLContent("<h1>Hello world</h1>");
@@ -18,9 +18,8 @@ namespace Example
 
 
         //same for the post request
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
-            base.ProcessPost(req, res);
             //if no change are made, the server will reply with code 405
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using MimeTypes;
@@ -217,6 +218,22 @@ namespace HSB
         }
 
         /// <summary>
+        /// Alternate name for function JSON
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <param name="options"></param>
+        public void SendJSON<T>(T o, JsonSerializerOptions options) => JSON(o, options);
+        /// <summary>
+        /// Alternate name for function JSON
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <param name="options"></param>
+        public void SendJSON<T>(T o, bool includeFields = true) => JSON(o, includeFields);
+
+
+        /// <summary>
         /// Calculate the header of an HTTP Response
         /// </summary>
         /// <param name="responseCode">The response status code</param>
@@ -232,7 +249,8 @@ namespace HSB
 
             string headers = $"{HttpUtils.ProtocolAsString(request.PROTOCOL)} {responseCode} {request.URL} {NEW_LINE}";
             headers += "Date: " + currentTime + NEW_LINE;
-            headers += $"Server : HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({Environment.OSVersion})" + NEW_LINE;
+
+            headers += $"Server : HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({GetOSInfo()})" + NEW_LINE;
             headers += $"Last-Modified: {currentTime}{NEW_LINE}";
             headers += $"Content-Length: {size}{NEW_LINE}";
             headers += $"Content-Type: {contentType}{NEW_LINE}";
@@ -249,6 +267,14 @@ namespace HSB
                 }
             }
 
+            if (config.GetCustomGlobalCookies.Any())
+            {
+                foreach (var c in config.GetCustomGlobalCookies)
+                {
+                    headers += $"Set-Cookie: {c.Value}{NEW_LINE}";
+                }
+            }
+
             /*   if (request.GetHeaders["Connection"] != null)
                {
                    headers += $"Connection: {request.GetHeaders["Connection"]}";
@@ -262,6 +288,17 @@ namespace HSB
             //}
             headers += NEW_LINE + NEW_LINE;
             return headers;
+        }
+
+        private static object GetOSInfo()
+        {
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return Environment.OSVersion.ToString().Replace("Unix", "macOS");
+            }
+
+            return Environment.OSVersion;
         }
 
 

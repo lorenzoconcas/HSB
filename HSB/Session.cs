@@ -1,65 +1,83 @@
-﻿using System;
-namespace HSB
+﻿namespace HSB
 {
-    public class Session
+    public class SessionManager
     {
-        private Dictionary<string, SessionData> data = new();
-        private static Session? instance = null;
-        private Session()
+        private readonly Dictionary<string, Session> data = new();
+        private static SessionManager? instance = null;
+        private SessionManager()
         {
         }
 
-        public static Session GetSession()
+        public static SessionManager GetInstance()
         {
-            if (instance == null)
-                instance = new();
+            instance ??= new();
             return instance;
         }
 
-        public void CreateSession(string UUID, SessionData sessionData)
+        public void CreateSession(string UUID, Session sessionData)
         {
             data.Add(UUID, sessionData);
         }
 
-        public string CreateSession(SessionData sessionData)
+        public string CreateSession(Session sessionData)
         {
             //generate a string with a random uuid
             string uuid;
             do
             {
-                uuid = Guid.NewGuid().ToString();
+                uuid = Guid.NewGuid().ToString().Replace("-", "");
 
             } while (data.ContainsKey(uuid));
             CreateSession(uuid, sessionData);
             return uuid;
         }
 
-        
-        
+        public Session GetSession(string token)
+        {
+            return data[token];
+        }
+
+        internal bool IsValidSession(string value)
+        {
+            return data.ContainsKey(value);
+        }
     }
 
-    public class SessionData
+    public class Session
     {
-        Dictionary<string, string> cookies {get; set;}
-        private string sourceIP { get; set; }
-        long expirationTime { get; set; }
-        //for future
-        //Authentication Data
+        protected internal bool valid = false;
+        public long ExpirationTime { get; set; }
+        public readonly Dictionary<string, object> attributes;
 
 
-        public SessionData()
+        public Session()
+        {
+            attributes = new();
+            ExpirationTime = -1;
+            //  SourceIP = "";
+        }
+
+        public Session(long expirationTime)
         {
 
+            ExpirationTime = expirationTime;
+            attributes = new();
+            valid = true;
         }
-        
-        public SessionData(string sourceIP, long expirationTime, Dictionary<string, string>? cookies = null)
+
+
+
+        public T? GetAttribute<T>(string name)
         {
-            this.sourceIP = sourceIP;
-            this.expirationTime = expirationTime;
-            this.cookies = cookies ?? new Dictionary<string, string>();
+            return (T)attributes[name];
         }
-        
-        
+
+
+        public void SetAttribute<T>(string name, T item)
+        {
+            attributes.Add(name, item!);
+        }
+
     }
 }
 

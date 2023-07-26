@@ -1,14 +1,13 @@
-﻿using System;
-using HSB;
+﻿using HSB;
 namespace TestRunner
 {
     public class HSBTestRunner
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             Configuration c = new()
             {
-                address = "127.0.0.1",
+                address = "", //listen any address
                 port = 8080
             };
 

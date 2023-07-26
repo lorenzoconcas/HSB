@@ -9,15 +9,17 @@ namespace TestRunner
 
         }
         //example : http://localhost:8080/parameters?param1=1&param2=2&param3=3
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
-            res.Send($"<h1>Prova GET -> {req.URL}</h1>\nParams:{req.GetParameters.DictToString()}",
+            res.Send($"<h1>Prova GET -> {req.URL}</h1>\nParams : {req.GetParameters.DictToString()}",
                 mimeType: MimeType.TEXT_HTML);
         }
 
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
-            res.Send($"<h1>Prova POST -> {req.URL}</h1>", mimeType: MimeType.TEXT_HTML);
+            res.JSON(req.GetParameters);
+
+            // res.Send($"<h1>Prova POST -> {req.URL}</h1>", mimeType: MimeType.TEXT_HTML);
         }
 
 

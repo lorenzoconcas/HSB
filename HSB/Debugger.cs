@@ -71,11 +71,11 @@ public class Debugger
             json.GetProperty("port").GetInt16(),
             json.GetProperty("address").GetString() ?? "127.0.0.1",
             json.GetProperty("logPath").GetString() ?? "",
-            (LogLevel) json.GetProperty("logLevel").GetInt16()
+            (LogLevel)json.GetProperty("logLevel").GetInt16()
         );
     }
 
-    public void ERROR<T>(T o, bool printExtraInfo = false)
+    public void ERROR<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
             Terminal.ERROR(o, printExtraInfo);
@@ -83,7 +83,7 @@ public class Debugger
             AppendToFile(GetMessage("E", o.ToString()));
     }
 
-    public void WARNING<T>(T o, bool printExtraInfo = false)
+    public void WARNING<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
             Terminal.WARNING(o, printExtraInfo);
@@ -92,7 +92,7 @@ public class Debugger
             AppendToFile(GetMessage("W", o.ToString()));
     }
 
-    public void INFO<T>(T o, bool printExtraInfo = false)
+    public void INFO<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
             Terminal.INFO(o, printExtraInfo);
@@ -101,7 +101,7 @@ public class Debugger
             AppendToFile(GetMessage("I", o.ToString()));
     }
 
-    public void DEBUG<T>(T o, bool printExtraInfo = false)
+    public void DEBUG<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
             Terminal.DEBUG(o, printExtraInfo);

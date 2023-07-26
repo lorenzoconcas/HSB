@@ -9,9 +9,9 @@ namespace HSB
         {
 
         }
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            Assembly assembly = Assembly.GetExecutingAssembly();
             string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("index.html"));
             string result;
             using (Stream stream = assembly.GetManifestResourceStream(resourceName)!)
@@ -19,7 +19,13 @@ namespace HSB
             {
                 result = reader.ReadToEnd();
             }
-            res.AddAttribute("hsbVersion", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
+            string version = "";
+            if(Assembly.GetExecutingAssembly().GetName().Version != null)
+            {
+                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+            }
+            res.AddAttribute("hsbVersion", version);
             res.SendHTMLContent(result, true);
 
 

@@ -9,7 +9,7 @@ namespace TestRunner
         {
         }
 
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             res.SendHTMLPage("./static/index.html");
         }

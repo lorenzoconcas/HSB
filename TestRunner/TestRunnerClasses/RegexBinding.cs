@@ -10,7 +10,7 @@ namespace TestRunner.TestRunnerClasses
         {
         }
 
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             res.Send("<h1>Ciao</h1>", "text/html");
         }

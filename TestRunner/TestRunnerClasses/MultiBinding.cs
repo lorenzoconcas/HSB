@@ -10,12 +10,12 @@ namespace TestRunner
 
         }
 
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             res.SendHTMLContent($"<h1>Hello GET -> {req.URL}</h1>");
         }
 
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
             res.SendHTMLContent($"<h1>Hello POST -> {req.URL}</h1>");
         }

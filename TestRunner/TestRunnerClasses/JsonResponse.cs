@@ -12,12 +12,12 @@ namespace TestRunner
 
         }
 
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             res.JSON(new SimpleObject());
         }
 
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
             res.JSON("{'success':true}");
         }

@@ -39,13 +39,13 @@
 		</None>
 	</ItemGroup>
 	<ProjectExtensions>
-		<MonoDevelop>
-			<Properties>
-				<Policies>
-					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-					<StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
-				</Policies>
-			</Properties>
-		</MonoDevelop>
+	  <MonoDevelop>
+	    <Properties>
+	      <Policies>
+	        <DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+	        <StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
+	      </Policies>
+	    </Properties>
+	  </MonoDevelop>
 	</ProjectExtensions>
 </Project>

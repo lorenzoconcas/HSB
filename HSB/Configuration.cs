@@ -346,7 +346,6 @@ namespace HSB
         /// <param name="func">Function that will handle the request</param>
         public void HEAD(string path, Delegate func) => AddExpressMapping(path, HTTP_METHOD.HEAD, func);
 
-
         /// <summary>
         /// Map a function to a path that will reply with a HEAD response 
         /// </summary>
@@ -428,13 +427,13 @@ namespace HSB
         public string GetCustomGlobalHeader(string name) => customGlobalHeaders[name];
 
         /// <summary>
-        /// Gets all globabl HTTP Response headers 
+        /// Gets all global HTTP Response headers 
         /// </summary>
         public Dictionary<string, string> GetCustomGlobalHeaders => customGlobalHeaders;
 
 
         /// <summary>
-        /// Add (Or replaces) an HTTP Response header that will be added to ALL the responses
+        /// Add (Or replaces) a cookie that will be added to ALL the responses
         /// </summary>
         /// <param name="name">Name of the cookie</param>
         /// <param name="value">Value of the cookie</param>
@@ -445,20 +444,20 @@ namespace HSB
         }
 
         /// <summary>
-        /// Remove a global HTTP Response header previously added
+        /// Remove a global cookie previously added
         /// </summary>
         /// <param name="name">Name of the cookie</param>
         public void RemoveCustomGlobalCookie(string name) => customGlobalCookies.Remove(name);
 
         /// <summary>
-        /// Gets the value of a global HTTP Response header previously added
+        /// Gets the value of a global cookie previously added
         /// </summary>
         /// <param name="name">Name of the cookie</param>
         /// 
         public Cookie GetCustomGlobalCookie(string name) => customGlobalCookies[name];
 
         /// <summary>
-        /// Gets all globabl cookies
+        /// Gets all global cookies
         /// </summary>
         public Dictionary<string, Cookie> GetCustomGlobalCookies => customGlobalCookies;
 

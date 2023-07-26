@@ -1,6 +1,7 @@
-# # HSB-#
+# HttpServerBoxed
+
 ![alt text](banner.png)
-## 🇬🇧🇺🇸 Description
+### 🇬🇧🇺🇸 Description
 
 This is a toy project written to study how a web server works
 
@@ -24,6 +25,7 @@ Repository organization
 | StandaloneLauncherExampleAndTest | Example/Test | Provides an example for the Multiplatform launcher, just build it as library then copy the two DLLs to the executable path of the launcher to see it in action |
 | Template                         | Template     | Provides a template for Visual Studio                                                                                                                          |
 | TestRunner                       | Test         | Contains all test created to build new HSB features                                                                                                            |
+| Examples | Folder| Contains example projects that illustrates the API|
 
 
 More info can be found in the Documentation folder
@@ -34,10 +36,11 @@ More info can be found in the Documentation folder
 Small roadmap planned
 
 
-| Version | Feature Planned             |
-|---------|-----------------------------|
-| 0.0.5R2 | Better debugging            |
-| 0.0.6   | Http Session implementation |
-| 0.0.7   | Http Authentication         |
-| 0.0.8   | Refactor/Clean-up           |
-| 0.0.9   | To be decided               |
+| Version | Feature Planned             | Status               |
+|---------|-----------------------------|----------------------|
+| 0.0.5R2 | Better debugging            | ✅ Ready             |
+| 0.0.6   | Http Session implementation | ✅ Ready for Testing |
+| 0.0.7   | SSL/TLS                     | ⏸️ Pending           |
+| 0.0.8   | Http Authentication         | ⏸️ Pending           |
+| 0.0.9   | Refactor/Clean-up           | ⏸️ Pending           |
+| 0.0.10  | To be decided               | ⏸️ Pending           |

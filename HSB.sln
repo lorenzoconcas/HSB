@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldServlet", "Exampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSONResponse", "JSONResponse\JSONResponse.csproj", "{618BE9AE-06A1-48B7-A976-DBA983C1362B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHTTPMethods", "CustomHTTPMethods\CustomHTTPMethods.csproj", "{6F48CFF1-4351-47F0-82BE-12818F548731}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHTTPMethods", "Examples\CustomHTTPMethods\CustomHTTPMethods.csproj", "{6F48CFF1-4351-47F0-82BE-12818F548731}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

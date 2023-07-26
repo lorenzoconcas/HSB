@@ -6,3 +6,6 @@ bin/
 MultiplatformLauncher/build/
 .idea/
 .vscode/
+Temp/
+docs/doxygen/
+

@@ -40,8 +40,6 @@ namespace HSB
                 return;
             }
 
-
-
             switch (Utils.GetEncoding(data))
             {
                 case UTF8Encoding:

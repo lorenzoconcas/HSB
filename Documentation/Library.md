@@ -2,7 +2,7 @@
 Here will be explained how to use the core library (HSB.dll)
 
 ### Basic information
-This information is up to date until commit [cb7ad79](https://github.com/lorenzoconcas/HSB-Sharp/commit/cb7ad799ded3a7bc948ec6e5f4b1ba2e229d15fa)
+This information is up to date until commit [6a776ad](https://github.com/lorenzoconcas/HSB/commit/6a776ade800e7d323a00361c02a2a300b71d5066)
 
 To include the library you must follow your IDE instruction
 
@@ -30,6 +30,8 @@ The default Configuration constructor holds the following properties:
 | ```staticFolderPath``` | ```./static```      | string  | This is the folder where the server will attempt to find public files                                                                                |
 | ```requestMaxSize```   | ```1024``` (1MB)    | int     | Set the max size of an HTTP request                                                                                                                  |
 | ```verbose```          | ```true```          | boolean | Whether or not print the log to the console                                                                                                          |
+| ```defaultSessionExpirationTime```          | ```true```          | long | The lifespan in Ticks of the Session                                                                                                          |
+
 
 The configuration class provides also some utilities, like object sharing between servlets (so you can avoid to use the singleton tecnique) and global headers (used to append custom headers to ALL responses)
 
@@ -43,13 +45,23 @@ The configuration class provides also some utilities, like object sharing betwee
 
 ##### Global Headers
 
-
 | Signature                                  | Description                              |
 |--------------------------------------------|------------------------------------------|
 | ```void AddCustomGlobalHeader(string, string)``` | Add an HTTP Response header that will be added to ALL the responses |
 | ```void RemoveCustomGlobalHeader(string, string)``` | Remove a global HTTP Response header previously added |
 | ```void GetCustomGlobalHeader(string, string)``` | Gets the value of a global HTTP Response header previously added |
 | ```void Dictionary<string, string> GetCustomGlobalHeaders``` |  Gets all globabl HTTP Response headers  |
+
+##### Global Cookies
+Cookies added to each request
+
+| Signature                                  | Description                              |
+|--------------------------------------------|------------------------------------------|
+| ```void AddCustomGlobalCookie(string, string)``` | Add (Or replaces) a cookie that will be added to ALL the responses |
+| ```void RemoveCustomGlobalCookie(string, string)``` | Remove a global cookie previously added |
+| ```void GetCustomGlobalCookie(string, string)``` | Gets the value of a global cookie previously added |
+| ```void Dictionary<string, string> GetCustomGlobalCookies``` |  Gets all global cookies  |
+
 
 -----
 
@@ -65,7 +77,7 @@ There are two ways, one is like the nodejs library ExpressJS, the other is follo
 
 ### ExpressJS-like
 
-The configuration class provides 5 methods to handle the various HTTP methods :  `GET; POST; HEAD; PUT; DELETE`
+The configuration class provides 5 methods to handle the various HTTP methods :  `GET; POST; HEAD; PUT; DELETE; PATCH; TRACE; OPTIONS; CONNECT`
 These methods require two arguments, one is the path and the other one is a delegate that will handle the call.
 Example:
 
@@ -80,6 +92,7 @@ new Server(c).Start();
 
 will route the index page to that delegate, printing 'Hello World' while visiting the root page
 
+Note that custom HTTP Methods are not supported by this routing style, therefore the Servlet method must be used
 
 ### "Classic" method
 
@@ -94,14 +107,14 @@ namespace Test{
     [Binding("/")]
     public class Route: Servlet{
         
-        Route(Request req, Response res): base(req, res){}
+        public Route(Request req, Response res): base(req, res){}
         
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
              res.SendHTMLContent("<h1>Hello World</h1>");
         }
     
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
             res.SendHTMLContent("<h1>Hello World</h1>");
         }
@@ -121,19 +134,48 @@ namespace Test{
     [Binding("/")]
     public class Route: Servlet{
         
-        Route(Request req, Response res, Configuration c): base(req, res, c){}
+        public Route(Request req, Response res, Configuration c): base(req, res, c){}
         
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
              res.SendHTMLContent("<h1>Hello World</h1>");
         }
     
-        public override void ProcessPost(Request req, Response res)
+        public override void ProcessPost()
         {
             res.SendHTMLContent("<h1>Hello World</h1>");
         }
     }
 }
+```
+
+### Custom method handling
+To handle a request with a non standard HTTP Request method, yuor server must map the handler function.
+For example:
+```cs
+import HSB;
+
+namespace Test{
+    [Binding("/")]
+    public class Route: Servlet{
+        
+        public Route(Request req, Response res, Configuration c): base(req, res, c){
+            AddCustomMethodHandler("MyCustomHTTPMethod", ProcessMyCustomHTTPMethod);
+        }
+        
+        private void ProcessMyCustomHTTPMethod()
+        {
+            res.SendHTMLContent("<h1>Hello</h1>");
+        }
+        
+    }
+}
+```
+
+This code will handle ONLY the requests that have the method "MyCustomHTTPMethod".
+Example request header:
+```
+MyCustomHTTPMethod / HTTP/1.1
 ```
 
 # The Request Class
@@ -150,8 +192,11 @@ In this class there are some utilities to better handle the request itself
 | ```Dictionary<string, string> GetHeaders```    | Property | Returns the parsed headers of the request                   |
 | ```List<string> GetRawHeaders```              | Property | Returns the raw headers of the request                      |
 | ```Dictionary<string, string> GetParameters``` | Property | Returns the parameters present in the URL                   |
+| ```Session GetSession()```                         | Function | Returns the session associated with the request       |
 | ```bool IsJSON()```                         | Function | Returns whether a request contains a json file or not       |
 
+# The Session Class
+A session is created every time a request without the cookie "hsbst" is made.
 
 
 # The Response Class
@@ -195,6 +240,9 @@ All methods have void return type, so it's omitted here.
 | ```JSON(string)``` | Sends a string as JSON |
 | ```JSON<T>(T, bool)``` | Sends an object that will be serialized and sent as JSON string, boolean to set if include fields or not, default true |
 | ```JSON<T>(T, JsonSerializerOptions)``` | Same as JSON<T>(T, bool) but with possibily to set option of the serializer |
+| ```SendJSON(string)``` | Not-so shorthand for JSON(string) |
+| ```SendJSON<T>(T, bool)``` | Not-so shorthand for JSON<T>(T, bool) |
+| ```SendJSON<T>(T, JsonSerializerOptions)``` | Not-so shorthand for JSON<T>(T, JsonSerializerOptions)  |
 
 
 ##### HTML-processing related response methods

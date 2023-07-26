@@ -58,6 +58,14 @@
         <div class="subcontainer">
             <section id="librarySection">
                 <h2>Library</h2>
+                <h3>Stable</h3>
+                <section id="libStable" class="twoItemsCol">
+
+                </section>
+                <br />
+                <h3>Alpha</h3>
+                <section id="libAlpha" class="twoItemsCol">
+                </section>
             </section>
             <section id="utilitiesSection">
                 <h2>Utilities</h2>
@@ -69,7 +77,7 @@
                 <br />
                 <div class="twoItemsCol" id="linux"></div>
                 <br>
-                
+
                 <h3>.NET Framework</h3>
                 <h4>HSB is written in C# (hence the name HSB-#) and targets .NET 7</h4>
                 <div class="oneItemCol" id="dotnet"></div>
@@ -83,21 +91,33 @@
             <span>&bull;</span>
             <span>License: TBD</span>
             <span>&bull;</span>
-            <span>Version 0.0.6</span>
+            <span>Version 0.0.5 Stable | 0.0.6 Alpha</span>
         </div>
     </div>
 
     <script>
-        document.getElementById("librarySection").appendChild(
+        document.getElementById("libStable").appendChild(
             getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_RELEASE.zip", "background2", "v0.0.5", "Release", "downloadIcon", "icon.png")
         );
-        document.getElementById("librarySection").appendChild(document.createElement("br"));
+        document.getElementById("libStable").appendChild(document.createElement("br"));
 
-        document.getElementById("librarySection").appendChild(
+        document.getElementById("libStable").appendChild(
             getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_DEBUG.zip", "background1", "v0.0.5", "Debug", "downloadIcon", "icon.png"
             ));
+        document.getElementById("libAlpha").appendChild(document.createElement("br"));
 
-        document.getElementById("librarySection").appendChild(document.createElement("br"));
+
+
+        document.getElementById("libAlpha").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.6-alpha/HSB_v0.0.6_Alpha_RELEASE.zip", "background2", "v0.0.6a", "Release", "downloadIcon", "icon.png")
+        );
+        document.getElementById("libAlpha").appendChild(document.createElement("br"));
+
+        document.getElementById("libAlpha").appendChild(
+            getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.6-alpha/HSB_v0.0.6_Alpha_DEBUG.zip", "background1", "v0.0.6a", "Debug", "downloadIcon", "icon.png")
+        );
+        document.getElementById("libAlpha").appendChild(document.createElement("br"));
+
 
         //utils section
 

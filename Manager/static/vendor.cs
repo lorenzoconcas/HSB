@@ -10,7 +10,7 @@ namespace Manager.@static
         {
         }
 
-        public override void ProcessGet(Request req, Response res)
+        public override void ProcessGet()
         {
             if (req.GetParameters.ContainsKey("file"))
             {

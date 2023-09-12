@@ -2,7 +2,7 @@
 using HSB;
 using MimeTypes;
 
-namespace TestRunner
+namespace Runner
 {
     [Binding("/sharedbjects")]
     public class SharedObjects : Servlet

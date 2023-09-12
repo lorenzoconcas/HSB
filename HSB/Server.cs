@@ -2,10 +2,12 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace HSB
 {
-    public class Server
+    public partial class Server
     {
 
 
@@ -14,6 +16,8 @@ namespace HSB
         private readonly Configuration config;
         private readonly Socket listener;
 
+        [GeneratedRegex("/(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)/")]
+        private static partial Regex SafePathRegex();
 
         public static void Main()
         {
@@ -29,7 +33,7 @@ namespace HSB
                 throw new InvalidConfigurationParameterException("Port", "Port number is over the maximum allowed (65535)");
 
             this.config = config;
-            //config.UseIPv4Only = true;
+
             if (config.address == "")
             {
                 //address must be ANY
@@ -39,11 +43,15 @@ namespace HSB
             {
                 List<IPAddress> addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork).ToList();
 
+                if (!config.UseIPv4Only)
+                {
+                    addresses.AddRange(Dns.GetHostAddresses(config.address, AddressFamily.InterNetworkV6).ToList());
+                }
 
-                addresses.Clear();
-                addresses.AddRange(Dns.GetHostAddresses(config.address, AddressFamily.InterNetworkV6).ToList());
-
-                ipAddress = addresses.First();
+                if (addresses.Any())
+                    ipAddress = addresses.First();
+                else
+                    throw new Exception("Cannot found address to listen to");
             }
 
             localEndPoint = new(ipAddress, config.port);
@@ -51,9 +59,7 @@ namespace HSB
             listener = new(ipAddress.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
 
-            listener.DualMode = !config.UseIPv4Only;
-
-
+            config.debug.INFO("Starting logging...");
             config.debug.INFO($"Listening at http://{localEndPoint}/");
         }
 
@@ -69,7 +75,7 @@ namespace HSB
                 {
                     var psi = new ProcessStartInfo
                     {
-                        FileName = $"http://{config.address}:{config.port}",
+                        FileName = $"http:{localEndPoint}",
                         UseShellExecute = true
                     };
                     Process.Start(psi);
@@ -84,8 +90,11 @@ namespace HSB
                         byte[] bytes = new byte[config.requestMaxSize];
                         int bytesRec = socket.Receive(bytes);
                         Request req = new(bytes, socket, config);
-                        Response res = new(socket, req, config);
-                        config.Process(req, res);
+                        if (req.proceedWithElaboration)
+                        {
+                            Response res = new(socket, req, config);
+                            ProcessRequest(req, res);
+                        }
 
                     }).Start();
 
@@ -97,24 +106,190 @@ namespace HSB
                 Terminal.ERROR(e);
             }
         }
+        private bool RunIfExpressMapping(Request req, Response res)
+        {
+            var e = config.ExpressRoutes.Find(e => e.Item1 == req.URL && e.Item2.Item1 == req.METHOD);
 
-        //for future use or to be removed
-        /*
-        private bool CheckIfRequiredDLLAreLoaded()
+            if (e == null) return false;
+            e.Item2.Item2.DynamicInvoke(req, res);
+            return true;
+        }
+
+        protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            List<Assembly> assems = currentDomain.GetAssemblies().ToList();
-            //required dlls: MimeTypeMapOfficial
-            bool ok = false;
-            foreach (var a in assems)
+            List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
+
+            assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
+            assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
+            assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+
+            Dictionary<Tuple<string, bool>, Type> routes = new();
+
+
+            foreach (var assem in assemblies)
             {
-                if (a.FullName!.Contains("MimeTypes"))
-                    ok = true;
+                List<Type> classes = assem.GetTypes().ToList();
+
+                foreach (var c in classes)
+                {
+                    try
+                    {
+                        IEnumerable<Binding> multiBindings = c.GetCustomAttributes<Binding>(false);
+
+                        //if no class have more than one binding, we search the ones with only one
+                        if (multiBindings.Any())
+                        {
+                            foreach (Binding b in multiBindings)
+                            {
+                                if (b.Path != "")
+                                    routes.Add(new(b.Path, b.StartsWith), c);
+                            }
+                        }
+                        else
+                        {
+                            Binding? attr = c.GetCustomAttribute<Binding>(false);
+                            if (attr != null && attr.Path != "")
+                                routes.Add(new(attr.Path, attr.StartsWith), c);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
             }
-            return ok;
+
+            return routes;
         }
-        */
+
+        protected internal string GetStaticRoutesInfo()
+        {
+            string str = "";
+            var staticRoutes = CollectStaticRoutes();
+
+            if (staticRoutes.Any())
+            {
+                str += "\nStatic routes:";
+                staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");
+            }
+            return str;
+        }
+
+        private object? GetInstance(Request req, Response res)
+        {
+            Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
+
+
+            if (routes.ContainsKey(new(req.URL, false)))
+            {
+                Type c = routes[new(req.URL, false)];
+                var x = c.GetConstructors()[0];
+                return x.GetParameters().Length switch
+                {
+                    3 => Activator.CreateInstance(c, req, res, this),
+                    2 => Activator.CreateInstance(c, req, res),
+                    _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                };
+            }
+
+            //we omit the else branch 
+            //we check if there is a a path that starts like the request url
+            return (from r in routes
+                    let path = r.Key.Item1
+                    where req.URL.StartsWith(path)
+                    select r.Value
+                into c
+                    let x = c.GetConstructors()[0]
+                    select x.GetParameters().Length switch
+                    {
+                        3 => Activator.CreateInstance(c, req, res, this),
+                        2 => Activator.CreateInstance(c, req, res),
+                        _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                    }).FirstOrDefault();
+        }
+
+
+        private void ProcessRequest(Request req, Response res)
+        {
+            new Task(() =>
+                      {
+                          try
+                          {
+                              //check if request is valid                    
+                              if (!req.validRequest)
+                              {
+                                  new Error(req, res, "Invalid Request", 400).Process();
+                                  return;
+                              }
+                              config.debug.INFO($"Requested '{req.URL}'", true);
+
+
+                              if (RunIfExpressMapping(req, res))
+                                  return;
+
+                              object? o = GetInstance(req, res);
+                              if (o != null)
+                              {
+                                  Servlet servlet = (Servlet)o;
+                                  servlet.Process();
+                              }
+                              else
+                              {
+                                  //the client searched for a route that is not mapped by any servlet
+                                  //so we do some other checks like root page or static resource
+                                  //if no root page is set we search for and index.html file, else we show the default home page
+                                  if (req.URL == "/")
+                                  {
+                                      //if the client is requesting the root file, we check if there is an index.html file
+                                      //if not, we use the default servlet
+                                      if (File.Exists(config.staticFolderPath + "/index.html"))
+                                      {
+                                          res.SendHTMLPage(config.staticFolderPath + "/index.html");
+                                      }
+
+                                      else
+                                      {
+                                          new Index(req, res).Process();
+                                      }
+                                  }
+                                  else
+                                  {
+                                      //we check if the client is requesting a resource, else 404 not found
+                                      //to check if the path is safe we use the same regex used in send.js
+                                      //see: https://github.com/pillarjs/send/blob/master/index.js#L63
+
+                                      Regex rgx = SafePathRegex();
+                                      if (rgx.Match(req.URL).Success)
+                                      {
+                                          config.debug.WARNING("Requested unsafe path");
+                                          new Error(req, res, "", 404).Process();
+                                      }
+
+                                      if (File.Exists(config.staticFolderPath + "/" + req.URL))
+                                      {
+                                          config.debug.INFO($"Static file found, serving '{req.URL}'");
+                                          res.SendFile(config.staticFolderPath + "/" + req.URL);
+                                      }
+                                      else
+                                      {
+                                          //if no servlet or static file found, send 404
+                                          config.debug.WARNING($"No servlet or static found for URL : {req.URL}");
+                                          new Error(req, res, "Page not found", 404).Process();
+                                      }
+                                  }
+                              }
+                          }
+                          catch (Exception e)
+                          {
+                              config.debug.ERROR("Error handling request ->\n " + e);
+                              //we show an error page with the message and code 500
+                              new Error(req, res, e.ToString(), 500).Process();
+                          }
+                      }).Start();
+        }
     }
+
+
 
 
 }

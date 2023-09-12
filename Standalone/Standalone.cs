@@ -12,7 +12,7 @@ namespace HSBStandalone
             string[] fakeArgs = args;
 #if DEBUG
             //fakeArgs = new[] { "--create-default" };
-           // fakeArgs = new[] { "--address=''" };
+            // fakeArgs = new[] { "--address=''" };
 #endif
 
 
@@ -23,15 +23,18 @@ namespace HSBStandalone
 
         public static void HSBMain(string[] args)
         {
-            Terminal.Write("HSB-# Standalone Preloader\n");
+            List<string> _args = new(args);
+
+            Terminal.Write("====================================================");
+            Terminal.Write("\nHSB-# Standalone Bootstrapper\n");
 
             Configuration conf = new();
             string path = "./config.json";
             List<string> assemblies = new();
 
-            if (args.Length > 0)
+            if (_args.Any())
             {
-                foreach (string s in args)
+                foreach (string s in _args)
                 {
                     if (s.StartsWith("--no-verbose"))
                     {
@@ -48,18 +51,19 @@ namespace HSBStandalone
                     {
                         Console.WriteLine("Creating default configuration and exiting...");
 
-                        conf = new Configuration
-                        {
-                            address = "127.0.0.1",
-                            port = 8080,
-                            staticFolderPath = "./static"
-                        };
+                        conf = new Configuration();
+                        conf.AddCustomGlobalHeader("content-encoding", "utf-8");
                         JsonSerializerOptions sr = new()
                         {
-                            IncludeFields = true
+                            IncludeFields = true,
+                            WriteIndented = true,
                         };
                         var str = JsonSerializer.Serialize(conf, sr);//JsonConvert.SerializeObject(conf);
-                        File.WriteAllText("./config.json", str);
+                        File.WriteAllText(path, str);
+                        Terminal.INFO("This is the default configuration : ");
+                        Terminal.INFO(str);
+                        Terminal.Write("Goodbye\n");
+                        Terminal.Write("====================================================");
                         return;
                     }
                     if (s.StartsWith("--assembly="))
@@ -103,62 +107,66 @@ namespace HSBStandalone
 
             // Utils.printLoadedAssemblies();
 
-            try
+            if (File.Exists(path))
             {
-                if (File.Exists(path))
+                using StreamReader r = new(path);
+                string json = r.ReadToEnd();
+
+                try
                 {
-                    using StreamReader r = new(path);
-                    string json = r.ReadToEnd();
-
-                    try
-                    {
-                        conf = new Configuration(json);
-                    }
-                    catch (Exception e)
-                    {
-
-                        Terminal.ERROR("Invalid configuration file");
-                        Terminal.ERROR(e);
-                        return;
-                    }
-
-                    if (conf.debug.verbose)
-                    {
-                        Terminal.INFO("Configuration file loaded successfully:");
-                        Console.WriteLine(conf.ToString());
-                    }
+                    conf = new Configuration(json);
                 }
-                else
+                catch (Exception e)
                 {
-                    Terminal.WARNING("Configuration file not found");
-                    Terminal.WriteLine("Insert one or create one with the following commands:");
-                    Terminal.WriteLine("Usage :");
-                    Terminal.WriteLine("\t--config-path : \tSpecifies a path for the json configuration of the server");
-                    Terminal.WriteLine("\t--create-default : \tCreates a default configuration");
-                    Terminal.WriteLine("\t--info : \tShow this message screen");
-                    Terminal.WriteLine("\t--no-verbose : \tDisables verbose writing");
-                    Terminal.WriteLine("\t--port : \t Set server listening port");
-                    Terminal.WriteLine("\t--address : \t Set server listening address");
-                    Terminal.WriteLine("\t--assembly : \tUse it to load custom assemblies (use it to run without embedding HSB");
-                    Terminal.WriteLine("HSB-# will start with default failsafe configuration\n\n");
-                    //conf = new Configuration();
+
+                    Terminal.ERROR("Invalid configuration file");
+                    Terminal.ERROR(e);
+                    return;
                 }
 
+                if (conf.debug.verbose)
+                {
+                    Terminal.INFO("Configuration file loaded successfully, preview:");
+                    Terminal.INFO(json);
+                }
             }
-            catch (Exception e)
+            else
             {
+                Terminal.WARNING("Configuration file not found");
+                Terminal.WriteLine("Insert one or create one with the following commands:");
+                Terminal.WriteLine("Usage :");
+                Terminal.WriteLine("\t--config-path : \tSpecifies a path for the json configuration of the server");
+                Terminal.WriteLine("\t--create-default : \tCreates a default configuration");
+                Terminal.WriteLine("\t--info : \tShow this message screen");
+                Terminal.WriteLine("\t--no-verbose : \tDisables verbose writing");
+                Terminal.WriteLine("\t--port : \t Set server listening port");
+                Terminal.WriteLine("\t--address : \t Set server listening address");
+                Terminal.WriteLine("\t--assembly : \tUse it to load custom assemblies (use it to run without embedding HSB");
+                Terminal.WriteLine("HSB-# will start with default failsafe configuration\n\n");
+                //conf = new Configuration();
+            }
 
-                Terminal.ERROR("Errore while starting server ->\n" + e);
+            if (conf == null)
+            {
+                Terminal.ERROR("Something appened building the server configuration, exiting...");
                 return;
             }
+            else
+            {
+                Terminal.INFO("The bootstrap has finished, HSB will start now");
+                Terminal.Write("====================================================\n");
+            }
+
             try
             {
-                new Server(conf!).Start();
+                new Server(conf).Start();
             }
             catch (Exception e)
             {
                 Terminal.ERROR("Error starting server ->");
                 Terminal.ERROR(e.Message);
+                Terminal.ERROR("The server has crashed! Exiting...");
+                return;
             }
 
         }

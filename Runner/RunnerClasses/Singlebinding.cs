@@ -1,6 +1,6 @@
 ﻿using System;
 using HSB;
-namespace TestRunner
+namespace Runner
 {
     [Binding("/single1")]
     public class SingleBinding : Servlet

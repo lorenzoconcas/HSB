@@ -89,7 +89,7 @@
         {
             if (printExtraInfo)
             {
-                Write($"[{DateTime.Now:yyyy/MM/dd # HH:mm:ss}][{lvl}][", background, foreground);
+                Write($"[{DateTime.Now:yyyy/MM/dd # HH:mm:ss.ffff}][{lvl}][", background, foreground);
             }
             Write(o, background, foreground);
             if (printExtraInfo)

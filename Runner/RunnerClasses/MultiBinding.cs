@@ -1,5 +1,5 @@
 ﻿using HSB;
-namespace TestRunner
+namespace Runner
 {
     [Binding("/multi1")]
     [Binding("/multi2")]

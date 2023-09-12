@@ -1,5 +1,5 @@
 ﻿using System;
-namespace TestRunner.TestRunnerModels
+namespace Runner.RunnerModels
 {
     public class SimpleObject
     {

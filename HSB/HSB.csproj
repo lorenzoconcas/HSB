@@ -24,6 +24,9 @@
 		<None Remove="DefaultPages\" />
 		<None Remove="DefaultPages\index.html" />
 		<None Remove="DefaultPages\error.html" />
+		<None Remove="TLS\.DS_Store" />
+		<None Remove="TLS\Certificates\key.pem" />
+		<None Remove="TLS\Certificates\cert.pem" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="DefaultPages\" />
@@ -37,6 +40,33 @@
 		<None Update="DefaultPages\error.html">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="TLS\TLSCompressed.cs" />
+	  <Compile Remove="TLS\ContentType.cs" />
+	  <Compile Remove="TLS\GenericBlockCipher.cs" />
+	  <Compile Remove="TLS\PRFAlgorithm.cs" />
+	  <Compile Remove="TLS\TLSPlaintext.cs" />
+	  <Compile Remove="TLS\ClientHello.cs" />
+	  <Compile Remove="TLS\Random.cs" />
+	  <Compile Remove="TLS\AlertMessages.cs" />
+	  <Compile Remove="TLS\ConnectionEnd.cs" />
+	  <Compile Remove="TLS\CompressionMethod.cs" />
+	  <Compile Remove="TLS\Handshake.cs" />
+	  <Compile Remove="TLS\GenericAEADCipher.cs" />
+	  <Compile Remove="TLS\ProtocolVersion.cs" />
+	  <Compile Remove="TLS\TLSCiphertext.cs" />
+	  <Compile Remove="TLS\SecurityParameters.cs" />
+	  <Compile Remove="TLS\GenericStreamCipher.cs" />
+	  <Compile Remove="TLS\CipherType.cs" />
+	  <Compile Remove="TLS\HelloRequest.cs" />
+	  <Compile Remove="TLS\Alert.cs" />
+	  <Compile Remove="TLS\ChangeCipherSpec.cs" />
+	  <Compile Remove="TLS\BulkCipherAlgorithm.cs" />
+	  <Compile Remove="TLS\Uint24.cs" />
+	  <Compile Remove="TLS\MACAlgorithm.cs" />
+	  <Compile Remove="TLS\CipherSuite.cs" />
+	  <Compile Remove="TLS\Certificates\FakeCert.cs" />
 	</ItemGroup>
 	<ProjectExtensions>
 	  <MonoDevelop>

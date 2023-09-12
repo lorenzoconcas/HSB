@@ -3,7 +3,7 @@ using System.Text.Unicode;
 using HSB;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace TestRunner.TestRunnerClasses
+namespace Runner.TestRunnerClasses
 {
     [Binding("/auth")]
     public class PostWithAuth : Servlet

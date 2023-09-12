@@ -8,4 +8,6 @@ MultiplatformLauncher/build/
 .vscode/
 Temp/
 docs/doxygen/
-
+HSB/TLS/
+*.cs.bak
+TLSTesting/

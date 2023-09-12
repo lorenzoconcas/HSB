@@ -1,5 +1,5 @@
 ﻿using HSB;
-namespace TestRunner
+namespace Runner
 {
     [Binding("/parameters")]
     public class Parameters : Servlet

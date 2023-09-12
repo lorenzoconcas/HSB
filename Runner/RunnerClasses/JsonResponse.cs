@@ -1,8 +1,8 @@
 ﻿using System;
 using HSB;
-using TestRunner.TestRunnerModels;
+using Runner.RunnerModels;
 
-namespace TestRunner
+namespace Runner
 {
     [Binding("/json")]
     public class JsonResponse : Servlet

@@ -19,13 +19,14 @@ Repository organization
 | Project Name                     | Type         | Description                                                                                                                                                    |
 |----------------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | HSB                              | Library      | Is the core library that contains the entire server                                                                                                            |
+| Runner                           | DevExtension | Contains the code used to test HSB in action                                                                                                                   |
 | Manager                          | Tool         | (WIP) Project that aims to create a instances manager                                                                                                          |
 | MultiplatformLauncher            | Tool         | Standalone, multiplatform launcher for HSB projects                                                                                                            |
 | Standalone                       | Extension    | Utility to make the HSB core library directly runnable, provides additional functionaly                                                                        |
-| StandaloneLauncherExampleAndTest | Example/Test | Provides an example for the Multiplatform launcher, just build it as library then copy the two DLLs to the executable path of the launcher to see it in action |
+| LaunchableExample                | Example/Test | Provides an example for the Multiplatform launcher, just build it as library then copy the two DLLs to the executable path of the launcher to see it in action |
 | Template                         | Template     | Provides a template for Visual Studio                                                                                                                          |
-| TestRunner                       | Test         | Contains all test created to build new HSB features                                                                                                            |
-| Examples | Folder| Contains example projects that illustrates the API|
+| Examples                         | Folder| Contains example projects that illustrates the API                                                                                                                    |
+
 
 
 More info can be found in the Documentation folder
@@ -39,8 +40,10 @@ Small roadmap planned
 | Version | Feature Planned             | Status               |
 |---------|-----------------------------|----------------------|
 | 0.0.5R2 | Better debugging            | ✅ Ready             |
-| 0.0.6   | Http Session implementation | ✅ Ready for Testing |
-| 0.0.7   | SSL/TLS                     | ⏸️ Pending           |
-| 0.0.8   | Http Authentication         | ⏸️ Pending           |
-| 0.0.9   | Refactor/Clean-up           | ⏸️ Pending           |
-| 0.0.10  | To be decided               | ⏸️ Pending           |
+| 0.0.6   | Http Session implementation | ✅ Ready             |
+| 0.0.7   | Refactor/Clean-up           | ✅ Ready 1*, 2**     |
+| 0.0.8   | Http Authentication         | ✅ Ready for Testing*|
+| 0.0.*   | SSL/TLS  (internal WIP)     | ⏸️ Pending           |
+
+1* Version present in the master branch but not released
+2** Version 0.0.7 will be skipped

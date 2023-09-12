@@ -231,7 +231,7 @@ namespace HSB
         /// <param name="o"></param>
         /// <param name="options"></param>
         public void SendJSON<T>(T o, bool includeFields = true) => JSON(o, includeFields);
-        
+
         ///<summary>
         /// Alternate name for function JSON
         /// </summary>
@@ -265,17 +265,17 @@ namespace HSB
                 foreach (var h in customHeaders)
                     headers += $"{h.Key}: {h.Value}{NEW_LINE}";
 
-            if (config.GetCustomGlobalHeaders.Any())
+            if (config.CustomGlobalHeaders.Any())
             {
-                foreach (var h in config.GetCustomGlobalHeaders)
+                foreach (var h in config.CustomGlobalHeaders)
                 {
                     headers += $"{h.Key}: {h.Value}{NEW_LINE}";
                 }
             }
 
-            if (config.GetCustomGlobalCookies.Any())
+            if (config.CustomGlobalCookies.Any())
             {
-                foreach (var c in config.GetCustomGlobalCookies)
+                foreach (var c in config.CustomGlobalCookies)
                 {
                     headers += $"Set-Cookie: {c.Value}{NEW_LINE}";
                 }

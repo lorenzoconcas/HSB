@@ -1,16 +1,17 @@
 ﻿using HSB;
-namespace TestRunner
+
+namespace Runner
 {
-    public class HSBTestRunner
+    public class HSBRunner
     {
         private static void Main()
         {
             Configuration c = new()
             {
                 address = "", //listen any address
-                port = 8080
+                port = 8080,
+                requestMaxSize = Configuration.MEGABYTE * 16
             };
-
 
             //test expressjs-like routing
             //note that these are controlled first, so eventual servlet
@@ -19,7 +20,11 @@ namespace TestRunner
             //but a POST call to the same route will be handled by the servlet
             c.GET("/expressget", TestExpressRoutingGET);
             c.POST("/expresspost", TestExpressRoutingPOST);
+            c.GET("/printheaders", PrintHeaders);
+            c.GET("/echo", Echo);
+            c.POST("/echo", Echo);
             c.AddSharedObject("test", 1996);
+            //Utils.PrintLoadedAssemblies();
             new Server(c).Start();
         }
 
@@ -34,8 +39,18 @@ namespace TestRunner
             res.Send(@"{""value"": 1}", "application/json");
         }
 
-    }
+        private static void PrintHeaders(Request req, Response res)
+        {
+            res.JSON(req.GetHeaders);
+        }
 
+        private static void Echo(Request req, Response res)
+        {
+            Console.Clear();
+            req.FullPrint();
+            res.Send(req.RawBody);
+        }
+    }
 
 }
 

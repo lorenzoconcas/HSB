@@ -5,13 +5,26 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Configurations>Release;Debug</Configurations>
+    <Configurations>Release;DebugWithDefaults;Debug</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType></DebugType>
     <WarningLevel>4</WarningLevel>
     <AssemblyName>HSB_Standalone</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWithDefaults|AnyCPU' ">
+    <IntermediateOutputPath>obj\Debug\net7.0</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\DebugWithDefaults\net7.0</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET;NET7_0;NETCOREAPP</DefineConstants>
+    <WarningLevel>7</WarningLevel>
+    <AssemblyName>Standalone</AssemblyName>
+    <NoWarn>1701;1702</NoWarn>
+    <NoStdLib>true</NoStdLib>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\HSB\HSB.csproj" />

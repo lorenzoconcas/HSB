@@ -4,7 +4,7 @@ VisualStudioVersion = 17.7.33920.267
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HSB", "HSB\HSB.csproj", "{3D78A983-50D8-4605-98B5-DD0DFA8D979C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestRunner", "TestRunner\TestRunner.csproj", "{370F5E96-BF40-4036-9E2C-E6C840177063}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runner", "Runner\Runner.csproj", "{370F5E96-BF40-4036-9E2C-E6C840177063}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Standalone", "Standalone\Standalone.csproj", "{0DE25B84-6320-42CD-8C07-354B5BE1EC18}"
 EndProject
@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template", "Template\Templa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplatformLauncher", "MultiplatformLauncher\MultiplatformLauncher.csproj", "{F7472E27-F302-4BBA-9695-8EA79A774F03}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StandaloneLauncherExampleAndTest", "StandaloneLauncherExampleAndTest\StandaloneLauncherExampleAndTest.csproj", "{3A5CE49F-3D5A-4D59-92F0-A2E4A44A8846}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaunchableExample", "Examples\LaunchableExample\LaunchableExample.csproj", "{3A5CE49F-3D5A-4D59-92F0-A2E4A44A8846}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{0DE81A42-C946-4FD6-93D6-7C3F236282D5}"
 EndProject
@@ -22,9 +22,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorld", "Examples\Hell
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldServlet", "Examples\HelloWorldServlet\HelloWorldServlet.csproj", "{5E826C71-5144-40F3-8B9A-B15904DBC80A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSONResponse", "JSONResponse\JSONResponse.csproj", "{618BE9AE-06A1-48B7-A976-DBA983C1362B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JSONResponse", "JSONResponse\JSONResponse.csproj", "{618BE9AE-06A1-48B7-A976-DBA983C1362B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomHTTPMethods", "Examples\CustomHTTPMethods\CustomHTTPMethods.csproj", "{6F48CFF1-4351-47F0-82BE-12818F548731}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomHTTPMethods", "Examples\CustomHTTPMethods\CustomHTTPMethods.csproj", "{6F48CFF1-4351-47F0-82BE-12818F548731}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TLSTesting", "Tests\TLSTesting\TLSTesting.csproj", "{7EFE8E90-965F-46E1-9951-B214757A8D3D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{40FD9F8E-0EDB-491C-8DB1-0B2946646F86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +80,10 @@ Global
 		{6F48CFF1-4351-47F0-82BE-12818F548731}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F48CFF1-4351-47F0-82BE-12818F548731}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F48CFF1-4351-47F0-82BE-12818F548731}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EFE8E90-965F-46E1-9951-B214757A8D3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EFE8E90-965F-46E1-9951-B214757A8D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EFE8E90-965F-46E1-9951-B214757A8D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EFE8E90-965F-46E1-9951-B214757A8D3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +93,8 @@ Global
 		{5E826C71-5144-40F3-8B9A-B15904DBC80A} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
 		{618BE9AE-06A1-48B7-A976-DBA983C1362B} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
 		{6F48CFF1-4351-47F0-82BE-12818F548731} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
+		{3A5CE49F-3D5A-4D59-92F0-A2E4A44A8846} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
+		{7EFE8E90-965F-46E1-9951-B214757A8D3D} = {40FD9F8E-0EDB-491C-8DB1-0B2946646F86}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB06B193-55A8-4511-BBE7-B6E49532B2B3}

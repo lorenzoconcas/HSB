@@ -46,6 +46,12 @@ namespace HSB
 
         public static T Safe<T>(T? o, T safe) => o ?? safe!;
 
+        public static T TryGetValueFromDict<T>(this Dictionary<string, T> dict, string key, T safe)
+        {
+            if (dict.ContainsKey(key)) return dict[key];
+            else return safe;
+        }
+
         public static string DictToString(this Dictionary<string, string> obj)
         {
             string s = "";
@@ -159,7 +165,12 @@ namespace HSB
             return rndStr;
         }
 
-
+        public static T[] SubArray<T>(this T[] array, int offset, int length)
+        {
+            T[] result = new T[length];
+            Array.Copy(array, offset, result, 0, length);
+            return result;
+        }
 
     }
 }

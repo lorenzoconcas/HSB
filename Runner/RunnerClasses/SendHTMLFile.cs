@@ -1,6 +1,6 @@
 ﻿using HSB;
 
-namespace TestRunner
+namespace Runner
 {
     [Binding("/htmlfromdisk")]
     public class SendHTMLFile : Servlet

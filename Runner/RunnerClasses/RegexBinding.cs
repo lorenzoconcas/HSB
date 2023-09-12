@@ -1,7 +1,7 @@
 ﻿using System;
 using HSB;
 
-namespace TestRunner.TestRunnerClasses
+namespace Runner.TestRunnerClasses
 {
     [Binding("/regex/", true)]
     public class RegexBinding : Servlet

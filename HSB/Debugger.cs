@@ -28,7 +28,7 @@ public class Debugger
         verbose = true;
         port = 8081;
         address = "127.0.0.1";
-        logPath = $"{AppContext.BaseDirectory}/log_{GetDateFormatted()}";
+        logPath = Path.Combine(AppContext.BaseDirectory, $"log_{GetDateFormatted()}");
         logLevel = LogLevel.INFO;
 
         StartDebugServer();

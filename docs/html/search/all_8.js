@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['json_0',['JSON',['../class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440',1,'HSB::Response']]],
-  ['json_3c_20t_20_3e_1',['JSON&lt; T &gt;',['../class_h_s_b_1_1_response.html#a804f171d3cf5519057662a4dd3d7b44f',1,'HSB.Response.JSON&lt; T &gt;(T o, JsonSerializerOptions options)'],['../class_h_s_b_1_1_response.html#a8d7792e85fbf7285996fadfd9ee380c3',1,'HSB.Response.JSON&lt; T &gt;(T o, bool includeFields=true)']]],
-  ['jsonresponse_2',['JsonResponse',['../class_test_runner_1_1_json_response.html',1,'TestRunner']]]
+  ['included_20methods_0',['Included methods',['../md__documentation_2_library.html#included-methods',1,'']]],
+  ['index_1',['Index',['../class_h_s_b_1_1_index.html',1,'HSB']]],
+  ['information_2',['Basic information',['../md__documentation_2_library.html#basic-information',1,'']]],
+  ['invalidconfigurationparameterexception_3',['InvalidConfigurationParameterException',['../class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html',1,'HSB::Exceptions']]],
+  ['isjson_4',['IsJSON',['../class_h_s_b_1_1_request.html#abb4c80ab48a33d4ba170b6b22c28eebf',1,'HSB::Request']]]
 ];

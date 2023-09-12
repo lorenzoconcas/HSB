@@ -25,12 +25,12 @@ var class_h_s_b_1_1_configuration =
     [ "address", "class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33", null ],
     [ "customGlobalHeaders", "class_h_s_b_1_1_configuration.html#ac8a0ba17d4b5cce336ff17a20bce759c", null ],
     [ "debug", "class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f", null ],
-    [ "defaultSessionExpirationTime", "class_h_s_b_1_1_configuration.html#ad180b1fcf5cc2a3aee7a46bd8b54522e", null ],
+    [ "defaultSessionExpirationTime", "class_h_s_b_1_1_configuration.html#ad253db7ca802690ae4278904d67492d2", null ],
     [ "port", "class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439", null ],
-    [ "requestMaxSize", "class_h_s_b_1_1_configuration.html#a3baf0daf40618bbbca7097e5793e3804", null ],
+    [ "requestMaxSize", "class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98", null ],
     [ "sharedObjects", "class_h_s_b_1_1_configuration.html#a6c0ecab7b311c62c25ab46472305e5d0", null ],
     [ "staticFolderPath", "class_h_s_b_1_1_configuration.html#a706f609b54eb9a95f831993698808456", null ],
-    [ "GetCustomGlobalCookies", "class_h_s_b_1_1_configuration.html#ad88525117e480b5d2641726b1ae528da", null ],
-    [ "GetCustomGlobalHeaders", "class_h_s_b_1_1_configuration.html#a7a00c2ca6792386bc1a4a74fe3a42539", null ],
+    [ "CustomGlobalCookies", "class_h_s_b_1_1_configuration.html#a3579ab7ef02d563ba163a925f3e4171a", null ],
+    [ "CustomGlobalHeaders", "class_h_s_b_1_1_configuration.html#a76c7cfe6eb881da5ef5e7c3e39faaa7f", null ],
     [ "UseIPv4Only", "class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead", null ]
 ];

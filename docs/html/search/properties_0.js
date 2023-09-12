@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['getcustomglobalcookies_0',['GetCustomGlobalCookies',['../class_h_s_b_1_1_configuration.html#ad88525117e480b5d2641726b1ae528da',1,'HSB::Configuration']]],
-  ['getcustomglobalheaders_1',['GetCustomGlobalHeaders',['../class_h_s_b_1_1_configuration.html#a7a00c2ca6792386bc1a4a74fe3a42539',1,'HSB::Configuration']]]
+  ['customglobalcookies_0',['CustomGlobalCookies',['../class_h_s_b_1_1_configuration.html#a3579ab7ef02d563ba163a925f3e4171a',1,'HSB::Configuration']]],
+  ['customglobalheaders_1',['CustomGlobalHeaders',['../class_h_s_b_1_1_configuration.html#a76c7cfe6eb881da5ef5e7c3e39faaa7f',1,'HSB::Configuration']]]
 ];

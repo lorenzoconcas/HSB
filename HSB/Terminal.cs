@@ -43,7 +43,6 @@
             Console.Write(o);
             Console.Write(RESET);
         }
-
         public static void WriteLine<T>(T o, BG_COLOR background = BG_COLOR.DEFAULT, FG_COLOR foreground = FG_COLOR.DEFAULT)
         {
 
@@ -52,7 +51,6 @@
             Console.Write(o);
             Console.WriteLine(RESET);
         }
-
         public static void WriteLine()
         {
             Console.WriteLine();
@@ -65,7 +63,6 @@
         {
             Console.Write(o);
         }
-
         public static void INFO<T>(T o, bool printExtraInfo = false)
         {
             LOG(o, "I", FG_COLOR.BLUE, BG_COLOR.DEFAULT, printExtraInfo);
@@ -78,12 +75,10 @@
         {
             LOG(o, "E", FG_COLOR.RED, BG_COLOR.BLACK, printExtraInfo);
         }
-
         public static void DEBUG<T>(T o, bool printExtraInfo = false)
         {
             LOG(o, "D", FG_COLOR.GREEN, BG_COLOR.BLACK, printExtraInfo);
         }
-
         private static void LOG<T>(T o, string lvl, FG_COLOR foreground,
             BG_COLOR background = BG_COLOR.BLACK, bool printExtraInfo = false)
         {
@@ -96,8 +91,6 @@
                 Write("]", background, foreground);
             WriteLine();
         }
-
-
         public static void Reset()
         {
             Console.ResetColor();
@@ -126,7 +119,6 @@
             BG_COLOR.WHITE => "\x1b[47m",
             _ => ""
         };
-
         private static string FG_TO_STRING(FG_COLOR color) => color switch
         {
             FG_COLOR.DEFAULT => "",

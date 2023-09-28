@@ -251,7 +251,7 @@ namespace HSB
         {
             CultureInfo ci = new("en-US");
 
-            string currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss GMT", ci);
+            string currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss ", ci) + "GMT";
 
             string headers = $"{HttpUtils.ProtocolAsString(request.PROTOCOL)} {responseCode} {request.URL} {NEW_LINE}";
             headers += "Date: " + currentTime + NEW_LINE;

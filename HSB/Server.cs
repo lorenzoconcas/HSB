@@ -218,10 +218,11 @@ namespace HSB
                               //check if request is valid                    
                               if (!req.validRequest)
                               {
+                                  config.debug.WARNING($"{req.METHOD} '{req.URL}' 400 (Invalid Request)", true);
                                   new Error(req, res, "Invalid Request", 400).Process();
                                   return;
                               }
-                              config.debug.INFO($"Requested '{req.URL}'", true);
+                              //config.debug.INFO($"Requested '{req.URL}'", true);
 
 
                               if (RunIfExpressMapping(req, res))
@@ -245,11 +246,13 @@ namespace HSB
                                       if (File.Exists(config.staticFolderPath + "/index.html"))
                                       {
                                           res.SendHTMLPage(config.staticFolderPath + "/index.html");
+                                          config.debug.INFO($"{req.METHOD} '{req.URL}' 200");
                                       }
 
                                       else
                                       {
                                           new Index(req, res).Process();
+                                          config.debug.INFO($"{req.METHOD} '{req.URL}' 200 (Default Index Page)");
                                       }
                                   }
                                   else
@@ -261,19 +264,21 @@ namespace HSB
                                       Regex rgx = SafePathRegex();
                                       if (rgx.Match(req.URL).Success)
                                       {
-                                          config.debug.WARNING("Requested unsafe path");
+                                          config.debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
                                           new Error(req, res, "", 404).Process();
                                       }
 
                                       if (File.Exists(config.staticFolderPath + "/" + req.URL))
                                       {
-                                          config.debug.INFO($"Static file found, serving '{req.URL}'");
+                                          //config.debug.INFO($"Static file found, serving '{req.URL}'");
+                                          config.debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
                                           res.SendFile(config.staticFolderPath + "/" + req.URL);
                                       }
                                       else
                                       {
                                           //if no servlet or static file found, send 404
-                                          config.debug.WARNING($"No servlet or static found for URL : {req.URL}");
+
+                                          config.debug.INFO($"{req.METHOD} '{req.URL}' 404 (Resource not found)");
                                           new Error(req, res, "Page not found", 404).Process();
                                       }
                                   }
@@ -281,7 +286,8 @@ namespace HSB
                           }
                           catch (Exception e)
                           {
-                              config.debug.ERROR("Error handling request ->\n " + e);
+                              //config.debug.ERROR("Error handling request ->\n " + e);
+                               config.debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
                               //we show an error page with the message and code 500
                               new Error(req, res, e.ToString(), 500).Process();
                           }

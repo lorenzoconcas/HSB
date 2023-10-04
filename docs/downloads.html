@@ -12,39 +12,7 @@
 </head>
 
 <body>
-    <script>
-        function getButton(link, background, version, title, iconClass, iconSrc) {
-
-            let a = document.createElement("a");
-            let btnDndlWrapper = document.createElement("div");
-            let btnDndl = document.createElement("div");
-            let divVersion = document.createElement("div");
-            let divTitle = document.createElement("div");
-            let divIcon = document.createElement("div");
-            let imgIcon = document.createElement("img");
-
-            a.href = link;
-            btnDndlWrapper.className = "btnDndlWrapper " + background;
-            btnDndl.className = "btnDndl " + background;
-            divVersion.className = "btnDndlVersion";
-            divTitle.className = "btnDndlTitle";
-            imgIcon.className = iconClass;
-            imgIcon.src = iconSrc;
-
-            divVersion.innerHTML = version;
-            divTitle.innerHTML = title;
-
-
-            divIcon.appendChild(imgIcon);
-            btnDndl.appendChild(divVersion);
-            btnDndl.appendChild(divTitle);
-            btnDndl.appendChild(divIcon);
-            btnDndlWrapper.appendChild(btnDndl);
-            a.appendChild(btnDndlWrapper);
-
-            return a;
-        }
-    </script>
+    
     <img src="./assets/background.png" alt="background" id="background">
     <div id="actionbar" class="font_cascadia">
         <a class="actionbar_item">

@@ -87,12 +87,14 @@ body {
     gap: 16px;
     text-decoration: none;
 }
-.actionbar_item:visited{
+a:visited{
     color: white;
 }
-.actionbar_item:link{
+a:link{
     text-decoration: none;
 }
+
+
 
 .separator {
     width: 1px;

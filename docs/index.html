@@ -14,9 +14,9 @@
 <body>
     <img src="./assets/background.png" alt="background" id="background">
     <div id="actionbar" class="font_cascadia">
-        <a class="actionbar_item" href="https://github.com/lorenzoconcas/HSB">          
-                <img src="./assets/GithubIcon.png" alt="github">
-                <span>Explore on GitHub</span>            
+        <a class="actionbar_item" href="https://github.com/lorenzoconcas/HSB">
+            <img src="./assets/GithubIcon.png" alt="github">
+            <span>Explore on GitHub</span>
         </a>
         <div class="separator"></div>
         <a class="actionbar_item" href="./html/index.html">
@@ -30,18 +30,16 @@
             <img class="icon" src="icon.png" alt="banner">
             <span class="font_cascadia" role="title">Http Server Boxed <sup>&reg;</sup></span>
             <br />
-            <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_RELEASE.zip" class="button">
+            <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_RELEASE.zip"
+                class="button">
                 <img src="./assets/downloadIcon.png" alt="download">
-                <span>
+                <span class="font_cascadia">
                     Download Library
                 </span>
             </a>
             <br />
-            <a href="./downloads.html">
-
-                <span>
-                    Other downloads available here
-                </span>
+            <a href="./downloads.html" class="font_cascadia">
+                Other downloads available here
             </a>
         </div>
         <img id="codeExample" src="./assets/code_example.png">
@@ -61,9 +59,9 @@
     <script>
         let actionbarLinkableItems = document.querySelectorAll(".actionbar_item");
         //we make those divs clickable links without converting them into <a>
-        for(let e in actionbarLinkableItems){
+        for (let e in actionbarLinkableItems) {
             let itm = actionbarLinkableItems[e];
-            itm.onclick = function(e){
+            itm.onclick = function (e) {
                 window.location.href = itm.getAttribute("attr-href");
             }
         }

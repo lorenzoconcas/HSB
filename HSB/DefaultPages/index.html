@@ -51,10 +51,47 @@
             padding: 6px;
         }
 
-        .row:nth-child(odd) {}
 
-        .row:nth-child(even) {
+        @media (prefers-color-scheme: light) {}
+
+        .row:nth-child(odd) {
             background-color: #fafafa;
+        }
+
+        @media (prefers-color-scheme:dark) {
+            body {
+
+                background: #13222E;
+                background-image: linear-gradient(101deg, #004680 0%, #13222E 33%);
+                background-attachment: fixed;
+
+            }
+
+            .row:nth-child(odd) {
+                background-color: #203c52;
+            }
+
+            .row:nth-child(even) {
+                background-color: #13222E;
+            }
+
+            #root {
+                border: 0.5px solid #1f3a5c;
+                box-shadow: -1px 4px 9px 3px #0000004f;
+                background-color: #13222E;
+                color: white;
+            }
+
+            #title {
+                background: #13222E;
+                color: white;
+                border-bottom: 0.5px solid transparent;
+            }
+
+            .footer {
+                background: #13222E;
+                border-top: 0.5px solid #1f3a5c;
+            }
         }
     </style>
 

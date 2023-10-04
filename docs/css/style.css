@@ -1,67 +1,121 @@
-@font-face {
-    font-family: "CascadiaMonoPL";
-    src:
-      local("CascadiaMonoPL"),
-      url("CascadiaMonoPL.ttf") ;
-  }
-  
 
-body {
-    font-family: "system-ui", "eSans", "Roboto", "serif";
-    background: rgb(241, 248, 233);
-    background: linear-gradient(0deg, rgba(241, 248, 233, 1) 0%, rgba(225, 245, 254, 1) 100%);
-    background-attachment: fixed;
-    margin: 0;
+
+.icon {
+
+    width: 160px;
 }
 
-
-.icon{
-    margin-top:-190px; /*ugly but who cares...*/
-}
-#container{
+#container {
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
     position: absolute;
-    left:0;
-    top:0;
+    left: 0;
+    top: 0;
     justify-content: center;
-    align-items: center;
+    /* align-items: center; */
 }
 
-.font_cascadia{
-    font-family: CascadiaMonoPL;
-}
-
-.subcontainer{
+.subcontainer {
     display: flex;
-    align-self: center;
     flex-direction: column;
-    justify-content: center;
-    text-align: center;
+    justify-content: left;
+    text-align: left;
+    width: 50%;
+    align-items: flex-start;
+    padding: 0px 0px 0px 128px;
 }
 
-.footer{
-    position: absolute;
-    padding-bottom: 20px;
-    bottom: 0px;
-}
 
-.buttons > button{
+.buttons>button {
     margin: 10px;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #7D573A;
     background: linear-gradient(#FFFCF9, #FFF3E9);
-    color:#7D573A;
+    color: #7D573A;
     font-size: 1.2em;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 }
 
-.buttons > button > a:link, .buttons > button > a:visited{
-    color:#7D573A;
+.buttons>button>a:link,
+.buttons>button>a:visited {
+    color: #7D573A;
     text-decoration: none;
+}
+
+/*New style*/
+
+.actionbar_item>img {
+    width: 48px;
+}
+
+
+span[role="title"] {
+    font-size: 42px;
+    font-weight: bold;
+}
+
+span[role="title"]> sup {
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    left:-24px;
+    top:-14px;
+}
+
+.button {
+    border: 1px solid #2B4E7B;
+    box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
+    border-radius: 8px;
+    background: #000000;
+    background: rgba(19, 34, 46, 0.91);
+    font-family: CascadiaMonoPLRoman-Bold;
+    font-size: 32px;
+    color: #FFFFFF;
+    padding:4px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    padding: 16px;
+    font-size: 27px;
+    gap:16px;
+}
+.button > img{
+    padding-left:8px;
+}
+.button > span{
+    margin-right:8px;
+}
+
+
+.button:link{
+    text-decoration: none;
+}
+
+#codeExample{
+    position: absolute;
+    height: 400px;
+    right: 250px;
+}
+
+@media screen and (max-width: 1299px) {
+    #codeExample {
+        display: none;
+    }
+    
+}
+@media screen and (max-width: 1919px) {
+    #codeExample {
+        height: 400px;
+        right: 50px;
+    }
+    
 }

@@ -3,6 +3,7 @@
 
 <head>
     <title>Http Server Boxed</title>
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style.css">
     <!--favicon -->
     <link rel="shortcut icon" href="icon.png" type="image/x-icon">
@@ -11,42 +12,62 @@
 </head>
 
 <body>
+    <img src="./assets/background.png" alt="background" id="background">
+    <div id="actionbar" class="font_cascadia">
+        <a class="actionbar_item" href="https://github.com/lorenzoconcas/HSB">          
+                <img src="./assets/GithubIcon.png" alt="github">
+                <span>Explore on GitHub</span>            
+        </a>
+        <div class="separator"></div>
+        <a class="actionbar_item" href="./html/index.html">
+            <img src="./assets/doc_icon.png" alt="documentation">
+            <span>Documentation</span>
+        </a>
+    </div>
+
     <div id="container">
-        <img class="icon" src="icon.png" alt="banner" width="320px" height="320px">
         <div class="subcontainer">
-            <h1 class="font_cascadia">Http Server Boxed <sup>&reg;</sup></h1>
-            <div class="buttons">
-                <button>
-                    <a href="./downloads.html">
-                        ⬇️ Downloads
-                    </a>
-                </button>
-                <button>
-                    <a href="https://github.com/lorenzoconcas/hsb-sharp">
-                        💻 Explore the sources
-                    </a>
-                </button>
-                <button>
-                    <a href="./html/index.html">
-                        📖 Documentation
-                    </a>
-                </button>
-            </div>
+            <img class="icon" src="icon.png" alt="banner">
+            <span class="font_cascadia" role="title">Http Server Boxed <sup>&reg;</sup></span>
+            <br />
+            <a href="./downloads.html" class="button">
+                <img src="./assets/downloadIcon.png" alt="download">
+                <span>
+                    Download Library
+                </span>
+            </a>
+            <br />
+            <a>
+
+                <span>
+                    Other downloads available on the here
+                </span>
+            </a>
         </div>
-        <div class="footer">
-            <span>HSB-#</span>
-            <span>&bull;</span>
-            <span>&copy; 2021-2023 Lorenzo L. Concas</span>
-            <span>&bull;</span>
-            <span>License: TBD</span>
-            <span>&bull;</span>
-            <span>Version 0.0.5 Stable | 0.0.8 Alpha</span>
-        </div>
+        <img id="codeExample" src="./assets/code_example.png">
+    </div>
+    <div class="footer">
+        <span>HSB-#</span>
+        <span>&bull;</span>
+        <span>&copy; 2021-2023 Lorenzo L. Concas</span>
+        <span>&bull;</span>
+        <span>License: TBD</span>
+        <span>&bull;</span>
+        <span>Version 0.0.5 Stable | 0.0.8 Alpha</span>
     </div>
     <!--centered icon-->
 
 
-
+    <script>
+        let actionbarLinkableItems = document.querySelectorAll(".actionbar_item");
+        //we make those divs clickable links without converting them into <a>
+        for(let e in actionbarLinkableItems){
+            let itm = actionbarLinkableItems[e];
+            itm.onclick = function(e){
+                window.location.href = itm.getAttribute("attr-href");
+            }
+        }
+    </script>
 </body>
 
 </html>

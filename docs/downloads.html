@@ -3,6 +3,7 @@
 
 <head>
     <title>Http Server Boxed</title>
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style_downloads.css">
     <!--favicon -->
     <link rel="shortcut icon" href="icon.png" type="image/x-icon">
@@ -44,7 +45,18 @@
             return a;
         }
     </script>
-
+    <img src="./assets/background.png" alt="background" id="background">
+    <div id="actionbar" class="font_cascadia">
+        <a class="actionbar_item">
+            <img src="./assets/GithubIcon.png" alt="github">
+            <span>Explore on GitHub</span>
+        </a>
+        <div class="separator"></div>
+        <a class="actionbar_item" href="./html/index.html">
+            <img src="./assets/doc_icon.png" alt="documentation">
+            <span>Documentation</span>
+        </a>
+    </div>
     <div id="container">
         <div class="header">
             <img class="icon" src="icon.png" alt="banner" width="128px" height="128px">
@@ -60,115 +72,129 @@
                 <h2>Library</h2>
                 <h3>Stable</h3>
                 <section id="libStable" class="twoItemsCol">
-
+                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_RELEASE.zip" class="button">
+                        <img src="./assets/downloadIcon.png" alt="download">
+                        <span>
+                            v0.0.5a Release
+                        </span>
+                    </a>
+                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_DEBUG.zip" class="button">
+                        <img src="./assets/downloadIcon.png" alt="download">
+                        <span>
+                            v0.0.5a Debug
+                        </span>
+                    </a>
                 </section>
                 <br />
                 <h3>Alpha</h3>
                 <section id="libAlpha" class="twoItemsCol">
+                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.8-alpha/HSB_v0.0.8_Alpha_RELEASE.zip" class="button">
+                        <img src="./assets/downloadIcon.png" alt="download">
+                        <span>
+                            v0.0.8a Release
+                        </span>
+                    </a>
+                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.8-alpha/HSB_v0.0.8_Alpha_DEBUG.zip" class="button">
+                        <img src="./assets/downloadIcon.png" alt="download">
+                        <span>
+                            v0.0.8a Release
+                        </span>
+                    </a>
+                </section>
+                <br />
+                <h3>Other versions</h3>
+                <section id="libAlpha" class="twoItemsCol">
+                    <a href="https://github.com/lorenzoconcas/HSB/releases/" class="button">
+                        <img src="./assets/GithubIcon.png" alt="download" class="normalSize">
+                        <span>
+                            GitHub releases page
+                        </span>
+                    </a>
+                 
                 </section>
             </section>
             <section id="utilitiesSection">
                 <h2>Utilities</h2>
                 <h3>Multiplatform Launcher</h3>
                 <h4>Precompiled binaries for the launcher, more info : <a href="">Launcher project page</a></h4>
-                <div class="twoItemsCol" id="windows"></div>
+                <div class="twoItemsCol" id="windows">
+                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_x64.exe.zip" class="button">
+                        <img src="./assets/windows11.svg" alt="download" class="invert normalizeSize">
+                        <span>
+                            Windows 10+ (x64)
+                        </span>
+                    </a>
+                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_arm64.exe.zip" class="button">
+                        <img src="./assets/windows11.svg" alt="download" class="invert normalizeSize">
+                        <span>
+                            Windows 10+ (x64)
+                        </span>
+                    </a>
+                </div>
                 <br />
-                <div class="twoItemsCol" id="mac"></div>
+                <div class="twoItemsCol" id="mac">
+                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_macOS_intel.zip" class="button">
+                        <img src="./assets/apple.logo.svg" alt="download" class="invert normalizeSize">
+                        <span>
+                            MacOS 10.15+ (x64)
+                        </span>
+                    </a>
+                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_appleSilicon.zip" class="button">
+                        <img src="./assets/apple.logo.svg" alt="download" class="invert normalizeSize">
+                        <span>
+                            MacOS 11+ (arm64)
+                        </span>
+                    </a>
+                </div>
                 <br />
-                <div class="twoItemsCol" id="linux"></div>
+                <div class="twoItemsCol" id="linux">
+                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_x64.zip" class="button">
+                        <img src="./assets/linux.png" alt="download" class="invert normalizeSize">
+                        <span>
+                            Linux (x64)
+                        </span>
+                    </a>
+                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_arm64.zip" class="button">
+                        <img src="./assets/linux.png" alt="download" class="invert normalizeSize">
+                        <span>
+                            Linux (x64)
+                        </span>
+                    </a>
+                </div>
                 <br>
 
                 <h3>.NET Framework</h3>
                 <h4>HSB is written in C# (hence the name HSB-#) and targets .NET 7</h4>
-                <div class="oneItemCol" id="dotnet"></div>
+                <div class="twoItemsCol" id="dotnet">
+                    <a href="https://dotnet.microsoft.com/en-us/download" class="button">
+                        <img src="./assets/downloadIcon.png" alt="download">
+                        <span>
+                            Download .NET 7
+                        </span>
+                    </a>
+                </div>
+                <br/>
             </section>
         </div>
         <br />
-        <div class="footer">
-            <span>HSB-#</span>
-            <span>&bull;</span>
-            <span>&copy; 2021-2023 Lorenzo L. Concas</span>
-            <span>&bull;</span>
-            <span>License: TBD</span>
-            <span>&bull;</span>
-            <span>Version 0.0.5 Stable | 0.0.6 Alpha</span>
-        </div>
+    </div>
+    <div class="footer">
+        <span>HSB-#</span>
+        <span>&bull;</span>
+        <span>&copy; 2021-2023 Lorenzo L. Concas</span>
+        <span>&bull;</span>
+        <span>License: TBD</span>
+        <span>&bull;</span>
+        <span>Version 0.0.5 Stable | 0.0.8 Alpha</span>
     </div>
 
     <script>
-        document.getElementById("libStable").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_RELEASE.zip", "background2", "v0.0.5", "Release", "downloadIcon", "icon.png")
-        );
-        document.getElementById("libStable").appendChild(document.createElement("br"));
-
-        document.getElementById("libStable").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.5/HSB_v0.0.5_DEBUG.zip", "background1", "v0.0.5", "Debug", "downloadIcon", "icon.png"
-            ));
-        document.getElementById("libAlpha").appendChild(document.createElement("br"));
-
-
-
-        document.getElementById("libAlpha").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.8-alpha/HSB_v0.0.8_Alpha_RELEASE.zip", "background2", "v0.0.8a", "Release", "downloadIcon", "icon.png")
-        );
-        document.getElementById("libAlpha").appendChild(document.createElement("br"));
-
-        document.getElementById("libAlpha").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB/releases/download/v0.0.8-alpha/HSB_v0.0.8_Alpha_DEBUG.zip", "background1", "v0.0.8a", "Debug", "downloadIcon", "icon.png")
-        );
-        document.getElementById("libAlpha").appendChild(document.createElement("br"));
-
-
-        //utils section
-
-        let version = "v1.0.0";
-        //windows
-        document.getElementById("windows").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_x64.exe.zip", "background2", version, "Windows 10+ (x64)", "downloadIcon", "icon.png")
-        );
-        document.getElementById("windows").appendChild(document.createElement("br"));
-
-        document.getElementById("windows").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_arm64.exe.zip", "background2", version, "Windows 10+ (arm64)", "downloadIcon", "icon.png")
-        );
-        document.getElementById("windows").appendChild(document.createElement("br"));
-
-        //mac
-        document.getElementById("mac").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_macOS_intel.zip", "background1", version, "MacOS 10.15+ (x64)", "downloadIcon", "icon.png")
-        );
-        document.getElementById("mac").appendChild(document.createElement("br"));
-
-        document.getElementById("mac").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_appleSilicon.zip", "background1", version, "MacOS 11+ (arm64)", "downloadIcon", "icon.png")
-        );
-        document.getElementById("mac").appendChild(document.createElement("br"));
-
-        //linux
-        document.getElementById("linux").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_x64.zip", "background2", version, "Linux (x64)", "downloadIcon", "icon.png")
-        );
-        document.getElementById("linux").appendChild(document.createElement("br"));
-
-        document.getElementById("linux").appendChild(
-            getButton("https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_arm64.zip", "background2", version, "Linux (arm64)", "downloadIcon", "icon.png")
-        );
-        document.getElementById("linux").appendChild(document.createElement("br"));
-
-        let dotnetPage = "https://dotnet.microsoft.com/en-us/download";
-
-        document.getElementById("dotnet").appendChild(
-            getButton(dotnetPage, "background1", "v7.0.0", "Download .NET 7", "downloadIcon", "icon.png")
-        );
-        document.getElementById("dotnet").appendChild(document.createElement("br"));
-
         var items = document.getElementsByClassName("twoItemsCol");
         for (let i in items)
             items[i].addEventListener("wheel", function (e) {
                 if (e.deltaY > 0) items[i].scrollLeft += 75;
                 else items[i].scrollLeft -= 75;
             });
-
     </script>
 
 </body>

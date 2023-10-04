@@ -4,7 +4,6 @@ internal class ManagerMain
 {
     private static void Main(string[] args)
     {
-        //the manager runs at port 65001 generally
         Configuration c = new()
         {
             port = 65001,
@@ -14,8 +13,6 @@ internal class ManagerMain
 
         c.AddCustomGlobalHeader("Set-Cookie", $"managerVersion={Assembly.GetExecutingAssembly().GetName().Version}");
 
-
-        //c.AddCustomGlobalHeader("Set-Cookie", $"hasbVersion={Assembly.GetExecutingAssembly().GetName().Version}");
 
         new Server(c).Start();
     }

@@ -80,7 +80,10 @@ public class Debugger
         if (verbose)
             Terminal.ERROR(o, printExtraInfo);
         if (o != null)
-            AppendToFile(GetMessage("E", o.ToString()));
+        {
+            var msg = o.ToString() ?? "";
+            AppendToFile(GetMessage("E", msg));
+        }
     }
 
     public void WARNING<T>(T o, bool printExtraInfo = true)
@@ -89,7 +92,10 @@ public class Debugger
             Terminal.WARNING(o, printExtraInfo);
 
         if (logLevel == LogLevel.INFO && logLevel == LogLevel.WARNING && logLevel == LogLevel.ALL && o != null)
-            AppendToFile(GetMessage("W", o.ToString()));
+        {
+            var msg = o.ToString() ?? "";
+            AppendToFile(GetMessage("W", msg));
+        }
     }
 
     public void INFO<T>(T o, bool printExtraInfo = true)
@@ -98,7 +104,10 @@ public class Debugger
             Terminal.INFO(o, printExtraInfo);
 
         if (logLevel == LogLevel.INFO && logLevel == LogLevel.ALL && o != null)
-            AppendToFile(GetMessage("I", o.ToString()));
+        {
+            var msg = o.ToString() ?? "";
+            AppendToFile(GetMessage("I", msg));
+        }
     }
 
     public void DEBUG<T>(T o, bool printExtraInfo = true)
@@ -106,7 +115,10 @@ public class Debugger
         if (verbose)
             Terminal.DEBUG(o, printExtraInfo);
         if (logLevel == LogLevel.ALL && o != null)
-            AppendToFile(GetMessage("D", o.ToString()));
+        {
+            var msg = o.ToString() ?? "";
+            AppendToFile(GetMessage("D", msg));
+        }
     }
 
     private void AppendToFile(string content)

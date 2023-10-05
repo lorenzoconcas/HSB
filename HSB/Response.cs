@@ -152,6 +152,14 @@ namespace HSB
         {
             SendCode(statusCode);
         }
+        /// <summary>
+        /// Shorthand for SendCode, but with mnemonic names
+        /// </summary>
+        /// <param name="code"></param>
+        public void Send(HttpCodes code){
+            SendCode((int)code);
+        }
+
         //common status codes
 
         /// <summary>

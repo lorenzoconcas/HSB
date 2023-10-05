@@ -7,11 +7,9 @@ namespace HSB
     {
         public static readonly string TEXT_PLAIN = "text/plain";
         public static readonly string TEXT_HTML = "text/html";
+        public static readonly string APPLICATION_OCTET = "application/octet";
 
-        public static string GetMimeType(string data)
-        {
-            return MimeTypeMap.GetMimeType(data);
-        }
+        public static string GetMimeType(string data) => MimeTypeMap.GetMimeType(data) ?? APPLICATION_OCTET;
     }
 }
 

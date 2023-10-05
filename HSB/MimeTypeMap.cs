@@ -758,7 +758,7 @@ namespace MimeTypes
         /// <param name="mimeType">The variable to store the MIME type.</param>
         /// <returns>The MIME type.</returns>
         /// <exception cref="ArgumentNullException" />
-        public static bool TryGetMimeType(string str, out string mimeType)
+        public static bool TryGetMimeType(string str, out string? mimeType)
         {
             if (str == null)
             {
@@ -777,7 +777,7 @@ namespace MimeTypes
                 var index = str.LastIndexOf(Dot);
                 if (index != -1 && str.Length > index + 1)
                 {
-                    str = str.Substring(index + 1);
+                    str = str[(index + 1)..];
                 }
 
                 str = Dot + str;
@@ -792,9 +792,9 @@ namespace MimeTypes
         /// <param name="str">The filename or extension.</param>
         /// <returns>The MIME type.</returns>
         /// <exception cref="ArgumentNullException" />
-        public static string GetMimeType(string str)
+        public static string? GetMimeType(string str)
         {
-            return MimeTypeMap.TryGetMimeType(str, out var result) ? result : DefaultMimeType;
+            return TryGetMimeType(str, out var result) ? result : DefaultMimeType;
         }
 
         /// <summary>
@@ -807,6 +807,7 @@ namespace MimeTypes
         /// <exception cref="ArgumentException" />
         public static string GetExtension(string mimeType, bool throwErrorIfNotFound = true)
         {
+
             if (mimeType == null)
             {
                 throw new ArgumentNullException(nameof(mimeType));
@@ -817,9 +818,9 @@ namespace MimeTypes
                 throw new ArgumentException("Requested mime type is not valid: " + mimeType);
             }
 
-            if (_mappings.Value.TryGetValue(mimeType, out string extension))
+            if (_mappings.Value.TryGetValue(mimeType, out string? extension))
             {
-                return extension;
+                return extension ?? "";
             }
 
             if (throwErrorIfNotFound)

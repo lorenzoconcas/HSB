@@ -300,6 +300,8 @@ namespace HSB
         public Dictionary<string, string> GetParameters => parameters;
         public Session GetSession() => session;
         public Tuple<string, string>? GetBasicAuthInformation() => basicAuth;
+        public bool IsAjaxRequest => headers.ContainsKey("X-Requested-With") && headers["X-Requested-With"] == "XMLHttpRequest";
+
         internal string GetRawRequest => reqText;
         internal string RawMethod => requestContent.First().Split(" ")[0];
 

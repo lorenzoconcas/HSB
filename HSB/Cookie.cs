@@ -85,14 +85,16 @@ namespace HSB
         {
             CookiePriority.LOW => "Low",
             CookiePriority.MEDIUM => "Medium",
-            CookiePriority.HIGH => "High"
+            CookiePriority.HIGH => "High",
+            _ => throw new NotImplementedException()
         };
 
         private static string SameSiteToString(SameSite sameSite) => sameSite switch
         {
             SameSite.Lax => "Lax",
             SameSite.Strict => "Strict",
-            SameSite.None => "None"
+            SameSite.None => "None",
+            _ => throw new NotImplementedException(),
         };
     }
 }

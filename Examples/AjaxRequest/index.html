@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HSB Ajax Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="result"></div>
+    <script>$.ajax({
+            url: "/ajax",
+            method: "GET",
+            data: { example: "data" }
+        }).done(function (msg) {
+            $("#result").append(msg);
+        });</script>
+
+    <script>fetch("/ajax")
+            .then(e => console.log(e))
+            .catch(err => console.err(e));</script>
+</body>
+</html>

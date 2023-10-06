@@ -149,9 +149,7 @@ a:link, a:visited {
     display: none;
 }
 
-.invert{
-    filter: invert(1);
-}
+
 .normalizeSize{
     width: 32px;
    

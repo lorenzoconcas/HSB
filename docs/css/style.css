@@ -100,15 +100,43 @@ span[role="title"]> sup {
     text-decoration: none;
 }
 
+#moreArrow{
+    padding-top: 2px;
+    width: 19px;
+}
+
 #codeExample{
     position: absolute;
-    height: 400px;
-    right: 250px;
+    width: 50%;
+    left: 50%;
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-items: center;
+    vertical-align: middle;
 }
+#codeExample img{
+    position: absolute;
+    height: 400px;
+    /* right: 250px; */
+}
+#codeExample a{
+    position: relative;
+    padding-top: 400px;
+}
+
 
 @media screen and (max-width: 1299px) {
     #codeExample {
         display: none;
+    }
+    .subcontainer{
+        width: 100%;
+        padding: 0px;
+        text-align: center;
+        align-items: center;
     }
     
 }

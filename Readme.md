@@ -7,6 +7,8 @@ This is a toy project written to study how a web server works
 
 It is written in C-Sharp, compiles and runs on any platform where the dotnet tool is available
 
+[Project Webpage](https://lorenzoconcas.github.io/HSB)
+
 -----
 
 Please note that this is a work-in-progress project so API can change between single commits! Until a v1.0.0 is reached this is an expected behaviour, so it's better use the libraries provided in the "release" section

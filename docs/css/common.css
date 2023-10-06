@@ -87,11 +87,31 @@ body {
     gap: 16px;
     text-decoration: none;
 }
+.invert{
+    filter: invert(1);
+}
+.hflex{
+    display: flex;
+    text-align: center;
+    align-items: center;
+}
 a:visited{
     color: white;
 }
 a:link{
     text-decoration: none;
+}
+
+.whiteLink{
+    color: white;
+    cursor: pointer;
+    
+}
+.whiteLink:link{
+    text-decoration: underline;
+}
+.whiteLink:visited{
+    color:white;
 }
 
 

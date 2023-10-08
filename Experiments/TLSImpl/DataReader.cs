@@ -1,5 +1,7 @@
 namespace HSB;
-
+/// <summary>
+/// A class to simplify reading data from a byte array
+/// </summary>
 public class DataReader
 {
     private readonly byte[] data = Array.Empty<byte>();

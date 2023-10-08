@@ -2,14 +2,14 @@ namespace HSB.TLS.Constants;
 
 public enum MessageType
 {
-    hello_request = 0,
-    client_hello = 1,
-    server_hello = 2,
-    certificate = 11,
-    server_key_exchange = 12,
-    certificate_request = 13,
-    server_hello_done = 14,
-    certificate_verify = 15,
-    client_key_exchange = 16,
+    HELLLO_REQUEST = 0x0,
+    CLIENT_REQUEST = 0x01,
+    server_hello = 0x02,
+    certificate = 0x0B,
+    server_key_exchange = 0x0C,
+    certificate_request = 0x0D,
+    server_hello_done = 0x0E,
+    certificate_verify = 0x0F,
+    client_key_exchange = 0x10,
     finished = 20
 }

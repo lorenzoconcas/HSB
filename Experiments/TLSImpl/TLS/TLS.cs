@@ -5,6 +5,7 @@ using HSB.TLS.Extensions;
 using HSB;
 using static HSB.TLS.Constants.CipherSuite;
 using System.Text;
+using HSB.TLS.Messages;
 
 namespace HSB.TLS;
 public class TLS
@@ -29,6 +30,13 @@ public class TLS
         fakeSessionID = Array.Empty<byte>();
 
     }
+
+
+    //TODO
+    public void IsTLSPacket(byte data)
+    {
+    }
+
 
     //function that converts uint24 to uint32
 
@@ -182,6 +190,11 @@ public class TLS
         //print extensions
         foreach (IExtension e in extensions)
             Console.WriteLine("\t" + e.ToString());
+
+
+
+        ClientHello clientHello = new(clientRandom, fakeSessionID, ciphers, extensions, new(TLS_Version));
+        ServerHello serverHello = new(clientHello);
 
         //Generate a private key with the X25519 curve
         /* using ECDiffieHellmanCng ecdh = new(ECCurve.NamedCurves.);

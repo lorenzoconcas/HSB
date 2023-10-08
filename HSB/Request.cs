@@ -301,6 +301,15 @@ namespace HSB
         public Session GetSession() => session;
         public Tuple<string, string>? GetBasicAuthInformation() => basicAuth;
         public bool IsAjaxRequest => headers.ContainsKey("X-Requested-With") && headers["X-Requested-With"] == "XMLHttpRequest";
+        public bool IsWebSocket()
+        {
+            return
+            headers.ContainsKey("Connection") && headers["Connection"] == "Upgrade" &&
+            headers.ContainsKey("Upgrade") && headers["Upgrade"] == "websocket";
+        }
+
+        public string GetRawRequestText => reqText;
+
 
         internal string GetRawRequest => reqText;
         internal string RawMethod => requestContent.First().Split(" ")[0];

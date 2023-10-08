@@ -32,12 +32,12 @@ namespace HSB
         /// Send an un modified byte array to to the socket
         /// </summary>
         /// <param name="data"></param>
-        public void Send(byte[] data)
+        public void Send(byte[] data, bool disconnect = true)
         {
             try
             {
                 int totalBytes = socket.Send(data);
-                socket.Disconnect(true);
+                socket.Disconnect(disconnect);
             }
             catch (Exception e)
             {

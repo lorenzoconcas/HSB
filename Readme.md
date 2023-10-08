@@ -28,7 +28,7 @@ Repository organization
 | LaunchableExample                | Example/Test | Provides an example for the Multiplatform launcher, just build it as library then copy the two DLLs to the executable path of the launcher to see it in action |
 | Template                         | Template     | Provides a template for Visual Studio                                                                                                                          |
 | Examples                         | Folder| Contains example projects that illustrates the API                                                                                                                    |
-
+| Experiments | Folder | This folder contains temporary projects used to create complex new features that will be merged into the main library |
 
 
 More info can be found in the Documentation folder

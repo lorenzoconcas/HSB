@@ -1,7 +1,6 @@
 //this class is used to spawn curl requests to the server
 
 using System.Diagnostics;
-using static HSB.TLS.ProtocolVersion;
 using HSB.TLS.Constants;
 using System.Runtime.InteropServices;
 
@@ -13,7 +12,7 @@ public class Curl
 
     string fullUrl;
 
-    ProtocolVersion protocolVersion = new(TLSVersionEnum.TLS_1_3);
+    ProtocolVersion protocolVersion = new(TLSVersion.TLS_1_3);
 
     string cipherSuitesString = "";
 
@@ -24,7 +23,7 @@ public class Curl
         fullUrl = $"https://{url}:{port}/";
     }
 
-    public void setTLSVersion(ProtocolVersion.TLSVersionEnum tlsVersion)
+    public void setTLSVersion(TLSVersion tlsVersion)
     {
         this.protocolVersion = new(tlsVersion);
     }
@@ -37,7 +36,7 @@ public class Curl
     private string getCurlCommand()
     {
 
-        string command = $"curl --tlsv{protocolVersion.GetVersionName()} --tls-max {protocolVersion.GetVersionName()} ";
+        string command = $"curl --tlsv{protocolVersion} --tls-max {protocolVersion} ";
         if (cipherSuitesString != "")
         {
             command += $"--ciphers {cipherSuitesString} ";

@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using HSB.TLS;
+using HSB.TLS.Constants;
 
 
 Console.WriteLine("Hello from HSB");
@@ -15,7 +16,7 @@ Console.WriteLine("Hello from HSB");
 //Curl class is a little wrapper around the curl library, that makes and HTTPS request to this code
 //remove if curl is not installed
 Curl c = new();
-c.setTLSVersion(ProtocolVersion.TLSVersionEnum.TLS_1_2);
+c.setTLSVersion(TLSVersion.TLS_1_2);
 c.RunAsync(false, 700);
 //c.setCipherSuites("TLS_AES_256_GCM_SHA384 TLS_CHACHA20_POLY1305_SHA256 TLS_AES_128_GCM_SHA256 TLS_AES_128_CCM_8_SHA256 TLS_AES_128_CCM_SHA256");
 

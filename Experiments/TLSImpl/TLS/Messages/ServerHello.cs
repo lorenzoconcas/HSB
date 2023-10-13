@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using HSB.TLS.Constants;
 namespace HSB.TLS.Messages;
 
@@ -15,6 +16,15 @@ public class ServerHello{
     }
 
     public void BuildResponse(){
+        //build the private/public key-pair
+        //generate 32bytes random data
+        _random = new byte[32];
+        RandomNumberGenerator.Fill(_random);
+        int random = BitConverter.ToInt32(_random);
+        int clientRandom = BitConverter.ToInt32(clientHello.clientRandom);
+
+      
+               
 
     }
 }

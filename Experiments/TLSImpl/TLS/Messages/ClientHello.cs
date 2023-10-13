@@ -4,7 +4,7 @@ namespace HSB.TLS.Messages;
 
 public class ClientHello
 {
-    public readonly ProtocolVersion protocolVersion = new(ProtocolVersion.TLSVersionEnum.TLS_1_3);
+    public readonly ProtocolVersion protocolVersion = new(TLSVersion.TLS_1_3);
     public readonly byte[] clientRandom = new byte[32];
     public readonly byte[] sessionID = new byte[32];
     public readonly List<CipherSuite.Ciphers> cipherSuites = new();

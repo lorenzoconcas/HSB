@@ -27,7 +27,8 @@ namespace HSB
         }
         public Server(Configuration config)
         {
-            Utils.PrintLogo();
+            if(!config.HideBranding)
+                Utils.PrintLogo();
 
             if (config.port > 65535)
                 throw new InvalidConfigurationParameterException("Port", "Port number is over the maximum allowed (65535)");

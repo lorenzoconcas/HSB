@@ -43,6 +43,11 @@ namespace HSB
         /// Defines the size of a megabyte in bytes, useful to set the requestMaxSize
         /// </summary>
         public const int MEGABYTE = 1024;
+        
+        /// <summary>
+        /// Hide the HSB logo on startup
+        /// </summary>
+        public bool HideBranding { get; set; } = false;
 
         /// <summary>
         /// Useful to share objects between servlets without using the singleton technique

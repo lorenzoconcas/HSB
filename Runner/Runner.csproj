@@ -23,7 +23,7 @@
 	  <None Update="static\JavascriptFile.js">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="static\index.html">
+	  <None Update="static\main.html">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

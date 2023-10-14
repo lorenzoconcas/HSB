@@ -4,13 +4,14 @@ namespace Runner
 {
     public class HSBRunner
     {
+
         private static void Main()
         {
             Configuration c = new()
             {
                 address = "", //listen any address
                 port = 8080,
-                requestMaxSize = Configuration.MEGABYTE * 4
+                requestMaxSize = Configuration.MEGABYTE * 2
             };
 
             //test expressjs-like routing
@@ -18,12 +19,44 @@ namespace Runner
             //with same routing will be ignored if they respond to that http method
             //ex a Servlet that responds to the GET call of route "/test" will be ignored
             //but a POST call to the same route will be handled by the servlet
+
             c.GET("/expressget", TestExpressRoutingGET);
             c.POST("/expresspost", TestExpressRoutingPOST);
             c.GET("/printheaders", PrintHeaders);
             c.GET("/echo", Echo);
             c.POST("/echo", Echo);
             c.AddSharedObject("test", 1996);
+
+            c.GET("/", (Request req, Response res) =>
+                {
+                    //return an html page with all the routes and a link
+
+                    string html = "<html><head></head><body><h1>Runner HomePage</h1><h3>Available routes:</h3>";
+                    var routes = c.GetAllRoutes();
+                    routes.Remove(new Tuple<string, string>("/", "GET"));
+
+                    html += "<table><thead><tr><th>Route</th><th>Method</th></tr></thead><tbody>";
+                    //print a table with route link and method
+                    foreach (var route in routes)
+                    {
+                        html += $"<tr><td><a href=\"{route.Item1}\">{route.Item1}</a></td><td>{route.Item2}</td></tr>";
+                    }                   
+                    html += "</tbody></table>";
+
+                    //print all available static files
+                    html += "<h3>Available static files:</h3>";
+                    html += "<table><thead><tr><th>Static files</th></tr></thead><tbody>";
+                    var staticFilePath = c.staticFolderPath;
+                    foreach (var file in Directory.GetFiles(staticFilePath))
+                    {
+                        var filePath = file.Replace(staticFilePath, "");
+                        html += $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>";
+                    }
+                    html += "</tbody></table>";
+                    html +="</body></html>";
+                    res.SendHTMLContent(html);
+                });
+
             //Utils.PrintLoadedAssemblies();
             new Server(c).Start();
         }
@@ -43,6 +76,7 @@ namespace Runner
         {
             res.JSON(req.GetHeaders);
         }
+
 
         private static void Echo(Request req, Response res)
         {

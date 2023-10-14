@@ -47,8 +47,8 @@ namespace HSB
         /// <summary>
         /// Defines the size of a megabyte in bytes, useful to set the requestMaxSize
         /// </summary>
-        public const int MEGABYTE = KILOBYTE*KILOBYTE;//1024 * KILOBYTE;
-        
+        public const int MEGABYTE = KILOBYTE * KILOBYTE;//1024 * KILOBYTE;
+
         /// <summary>
         /// Hide the HSB logo on startup
         /// </summary>
@@ -306,9 +306,18 @@ namespace HSB
                 str += "\nStatic routes:";
                 staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");
             }
-
-
             return str;
         }
+
+
+        public List<Tuple<string, string>> GetAllRoutes()
+        {
+            List<Tuple<string, string>> routes = new();
+            expressMapping.ForEach(m => routes.Add(new(m.Item1, m.Item2.Item1.ToString())));
+            var staticRoutes = Server.CollectStaticRoutes();
+            staticRoutes.ToList().ForEach(m => routes.Add(new(m.Key.Item1, "")));
+            return routes;
+        }
+
     }
 }

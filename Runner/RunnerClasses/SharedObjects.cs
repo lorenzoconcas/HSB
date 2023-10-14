@@ -1,10 +1,8 @@
-﻿using System;
-using HSB;
-using MimeTypes;
+﻿using HSB;
 
 namespace Runner
 {
-    [Binding("/sharedbjects")]
+    [Binding("/sharedobjects")]
     public class SharedObjects : Servlet
     {
         public SharedObjects(Request req, Response res, Configuration c) : base(req, res, c)
@@ -14,15 +12,9 @@ namespace Runner
 
         public override void ProcessGet()
         {
-            res.Send($"<h1>Prova SharedObjects -> {(int)configuration.GetSharedObject("test")}", "text/html");
+            int item = (int)configuration.GetSharedObject("test");
+            res.SendHTMLContent($"<h1>Prova SharedObjects -> {item}</h1>");
         }
-
-
-
-
 
     }
 }
-
-
-

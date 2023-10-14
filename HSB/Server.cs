@@ -90,6 +90,7 @@ namespace HSB
                         //socket.DualMode = true;
                         byte[] bytes = new byte[config.requestMaxSize];
                         int bytesRec = socket.Receive(bytes);
+                        bytes = bytes.Take(bytesRec).ToArray(); //trim the array to the actual size of the request
 
                         Request req = new(bytes, socket, config);
                         if (req.proceedWithElaboration)
@@ -188,7 +189,7 @@ namespace HSB
                 var x = c.GetConstructors()[0];
                 return x.GetParameters().Length switch
                 {
-                    3 => Activator.CreateInstance(c, req, res, this),
+                    3 => Activator.CreateInstance(c, req, res, config),
                     2 => Activator.CreateInstance(c, req, res),
                     _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
                 };

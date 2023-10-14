@@ -27,7 +27,7 @@ namespace HSB
         }
         public Server(Configuration config)
         {
-            if(!config.HideBranding)
+            if (!config.HideBranding)
                 Utils.PrintLogo();
 
             if (config.port > 65535)
@@ -90,6 +90,7 @@ namespace HSB
                         //socket.DualMode = true;
                         byte[] bytes = new byte[config.requestMaxSize];
                         int bytesRec = socket.Receive(bytes);
+
                         Request req = new(bytes, socket, config);
                         if (req.proceedWithElaboration)
                         {
@@ -288,7 +289,7 @@ namespace HSB
                           catch (Exception e)
                           {
                               //config.debug.ERROR("Error handling request ->\n " + e);
-                               config.debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
+                              config.debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
                               //we show an error page with the message and code 500
                               new Error(req, res, e.ToString(), 500).Process();
                           }

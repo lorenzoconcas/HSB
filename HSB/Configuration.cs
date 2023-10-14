@@ -40,14 +40,19 @@ namespace HSB
         public int requestMaxSize;
 
         /// <summary>
+        /// Defines the size of a kilobyte in bytes, useful to set the requestMaxSize
+        /// </summary>
+        public const int KILOBYTE = 1024;
+
+        /// <summary>
         /// Defines the size of a megabyte in bytes, useful to set the requestMaxSize
         /// </summary>
-        public const int MEGABYTE = 1024;
+        public const int MEGABYTE = KILOBYTE*KILOBYTE;//1024 * KILOBYTE;
         
         /// <summary>
         /// Hide the HSB logo on startup
         /// </summary>
-        public bool HideBranding { get; set; } = false;
+        public bool HideBranding = false;
 
         /// <summary>
         /// Useful to share objects between servlets without using the singleton technique
@@ -80,7 +85,7 @@ namespace HSB
             port = 8080;
             staticFolderPath = "./static";
             debug = new Debugger();
-            requestMaxSize = MEGABYTE; //max 1MB Requests default
+            requestMaxSize = KILOBYTE; //max 1KB Requests default
             UseIPv4Only = false;
             //default one day
             defaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
@@ -273,6 +278,8 @@ namespace HSB
         /// </summary>
         public Dictionary<string, Cookie> CustomGlobalCookies => customGlobalCookies;
 
+
+        public void HideBrandingOnStartup() => HideBranding = true;
 
         /// <summary>
         /// String representing the configuration

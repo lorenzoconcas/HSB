@@ -10,7 +10,7 @@ namespace Runner
             {
                 address = "", //listen any address
                 port = 8080,
-                requestMaxSize = Configuration.MEGABYTE * 16
+                requestMaxSize = Configuration.MEGABYTE * 4
             };
 
             //test expressjs-like routing

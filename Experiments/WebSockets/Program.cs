@@ -13,7 +13,7 @@ Configuration c = new()
 {
     port = 8080,
     address = "127.0.0.1",
-    requestMaxSize = Configuration.MEGABYTE * 1,
+    requestMaxSize = Configuration.KILOBYTE * 1,
 };
 
 c.GET("/", (Request req, Response res) =>

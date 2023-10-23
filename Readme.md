@@ -39,13 +39,14 @@ More info can be found in the Documentation folder
 Small roadmap planned
 
 
-| Version | Feature Planned             | Status               |
-|---------|-----------------------------|----------------------|
-| 0.0.5R2 | Better debugging            | ✅ Ready             |
-| 0.0.6   | Http Session implementation | ✅ Ready             |
-| 0.0.7   | Refactor/Clean-up           | ✅ Ready 1*, 2**     |
-| 0.0.8   | Http Authentication         | ✅ Ready for Testing*|
-| 0.0.*   | SSL/TLS  (internal WIP)     | ⏸️ Pending           |
+| Version | Feature Planned             | Status                     |
+|---------|-----------------------------|----------------------------|
+| 0.0.5R2 | Better debugging            | ✅ Ready                   |
+| 0.0.6   | Http Session implementation | ✅ Ready                   |
+| 0.0.7   | Refactor/Clean-up           | ✅ Ready 1*                |
+| 0.0.8   | Http Authentication         | ✅ Ready (current stable)  |
+| 0.0.9   | FormData/File upload        | ✅ Ready for test          |
+| 0.0.*   | WebSocket support           | ⏸️ Parallel development    | 
+| 0.0.*   | SSL/TLS  (internal WIP)     | ⏸️ Pending                 |
 
-1* Version present in the master branch but not released
-2** Version 0.0.7 will be skipped
+1* Version 0.0.7 will be skipped

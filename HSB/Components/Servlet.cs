@@ -1,4 +1,5 @@
-﻿namespace HSB
+﻿using HSB.Constants;
+namespace HSB
 {
     public class Servlet
     {

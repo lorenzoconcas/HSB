@@ -7,17 +7,12 @@ using System.Text.RegularExpressions;
 
 namespace HSB
 {
-    public partial class Server
+    public class Server
     {
-
-
         private readonly IPAddress ipAddress;
         private readonly IPEndPoint localEndPoint;
         private readonly Configuration config;
         private readonly Socket listener;
-
-        [GeneratedRegex("/(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)/")]
-        private static partial Regex SafePathRegex();
 
         public static void Main()
         {
@@ -264,8 +259,8 @@ namespace HSB
                                       //to check if the path is safe we use the same regex used in send.js
                                       //see: https://github.com/pillarjs/send/blob/master/index.js#L63
 
-                                      Regex rgx = SafePathRegex();
-                                      if (rgx.Match(req.URL).Success)
+                                      if (Utils.IsUnsafePath(req.URL))
+                                      //if (rgx.Match(req.URL).Success)
                                       {
                                           config.debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
                                           new Error(req, res, "", 404).Process();
@@ -297,8 +292,4 @@ namespace HSB
                       }).Start();
         }
     }
-
-
-
-
 }

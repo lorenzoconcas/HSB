@@ -1,6 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Text;
-
+using HSB.Components;
+using HSB.Constants;
 
 namespace HSB
 {
@@ -45,6 +46,8 @@ namespace HSB
         readonly string reqText = "";
         readonly List<string> requestContent;
         internal Socket connectionSocket;
+        internal byte[] rawData;
+        internal byte[] rawBody;
         private Configuration config;
 
 
@@ -63,6 +66,8 @@ namespace HSB
         private OAuth1_0Information? oAuth1_0Information;
         private string oAuth2_0Token = "";
         private Session session = new();
+        private FormData? formData;
+
 
         //WIP for TLS support
         private bool IsTLS;
@@ -73,12 +78,16 @@ namespace HSB
         public Request(byte[] data, Socket socket, Configuration config)
         {
             connectionSocket = socket;
+            rawData = data;
+            rawBody = Array.Empty<byte>();
             this.config = config;
             requestContent = new();
+
             if (data == null)
             {
                 return;
             }
+
 
             IsTLS = data[0] == 22;//(int)TLS.ContentType.Handshake;
 
@@ -124,21 +133,6 @@ namespace HSB
 
         }
 
-        private void ParseTLSRequest(byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void SendKey()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void SendCertificate()
-        {
-            throw new NotImplementedException();
-        }
-
         private void ParseRequest()
         {
             if (reqText == "")
@@ -148,6 +142,7 @@ namespace HSB
                 _protocol = HTTP_PROTOCOL.HTTP1_0;
                 _method = HTTP_METHOD.GET;
                 body = "";
+                rawBody = Array.Empty<byte>();
                 session = new Session(); //default, invalid session
                 Terminal.INFO("Got an empty request, setting default values");
                 return;
@@ -264,8 +259,18 @@ namespace HSB
                     config.AddCustomGlobalCookie(c);
                 }
 
-                //extract body
-                body = requestContent.Last();
+                //extract body, which is the remaining part of the request text
+
+                int offset = Utils.IndexOf(rawData, "\r\n\r\n"u8.ToArray()) + 4;
+                rawBody = rawData[offset..];
+                body = Encoding.UTF8.GetString(rawBody);
+
+                if (IsFormUpload())
+                {
+                    formData = new FormData(rawBody, headers["Content-Type"].Split("boundary=")[1]);
+                }
+
+                validRequest = true;
 
             }
             catch (Exception e)
@@ -274,7 +279,6 @@ namespace HSB
                 validRequest = false;
                 return;
             }
-            validRequest = true;
 
         }
 
@@ -308,9 +312,54 @@ namespace HSB
             headers.ContainsKey("Upgrade") && headers["Upgrade"] == "websocket";
         }
 
+        public bool IsFileUpload() => headers.ContainsKey("Content-Type") && headers["Content-Type"].StartsWith("multipart/form-data");
+
+        public bool IsFormUpload() => IsFileUpload();
+
+        public FormData? GetFormData() => formData;
+
+  /*      public List<byte[]> GetFiles()
+        {
+            //this requires a bit of logic
+            //there is a separator in browsers based on webkit
+            //the separator is contained in the header Content-Type
+            if (!headers.ContainsKey("Content-Type") || !headers["Content-Type"].StartsWith("multipart/form-data"))
+                return new();
+            var separator = "--" + headers["Content-Type"].Split("boundary=")[1];
+            var separatorBytes = Encoding.UTF8.GetBytes(separator);
+
+            List<FilePart> files = new();
+
+            int bytesLeft = rawBody.Length - 1;
+            var cache = rawBody;
+            while (bytesLeft > 0)
+            {
+                int nextBoundary = Utils.SearchByteSequence(cache[1..], separatorBytes);
+                if (nextBoundary == -1) break;
+                if (nextBoundary == 0) nextBoundary = bytesLeft;
+
+                var raw = cache[..nextBoundary];
+                files.Add(new(raw));
+                bytesLeft -= nextBoundary;
+                cache = cache[nextBoundary..];
+            }
+
+            return new();
+
+        }
+*/
         public string GetRawRequestText => reqText;
 
 
+        public void DumpRequest(string path = "./request.txt")
+        {
+            File.WriteAllBytes(path, rawData);
+        }
+
+        public void DumpBody(string path = "./body.txt")
+        {
+            File.WriteAllText(path, body);
+        }
         internal string GetRawRequest => reqText;
         internal string RawMethod => requestContent.First().Split(" ")[0];
 

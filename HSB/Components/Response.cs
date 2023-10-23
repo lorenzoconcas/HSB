@@ -4,7 +4,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
-using MimeTypes;
+using HSB.Constants;
+
 
 namespace HSB
 {
@@ -72,7 +73,7 @@ namespace HSB
                     content = ProcessContent(content);
                 Encoding encoding = Utils.GetEncoding(path);
 
-                Send(content, MimeType.TEXT_HTML + $"; charset={encoding.BodyName}", customHeaders: customHeaders);
+                Send(content, MimeTypeUtils.TEXT_HTML + $"; charset={encoding.BodyName}", customHeaders: customHeaders);
             }
             catch (Exception)
             {
@@ -90,7 +91,7 @@ namespace HSB
         {
             if (process)
                 content = ProcessContent(content);
-            Send(content, MimeType.TEXT_HTML + $"; charset={encoding}", statusCode);
+            Send(content, MimeTypeUtils.TEXT_HTML + $"; charset={encoding}", statusCode);
         }
 
 
@@ -104,7 +105,7 @@ namespace HSB
         {
             var data = File.ReadAllBytes(absPath);
 
-            string _mime = mimeType ?? MimeType.GetMimeType(Path.GetExtension(absPath));
+            string _mime = mimeType ?? MimeTypeUtils.GetMimeType(Path.GetExtension(absPath)) ?? MimeTypeUtils.APPLICATION_OCTET;
             string headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);
             byte[] headersBytes = Encoding.UTF8.GetBytes(headers);
             byte[] responseBytes = new byte[data.Length + headersBytes.Length];
@@ -122,7 +123,6 @@ namespace HSB
         /// <param name="statusCode"></param>
         public void SendFile(byte[] data, string mimeType, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
         {
-
             string _mime = mimeType;
             string headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);
             byte[] headersBytes = Encoding.UTF8.GetBytes(headers);
@@ -132,6 +132,15 @@ namespace HSB
             data.CopyTo(responseBytes, headersBytes.Length);
 
             Send(responseBytes);
+        }
+        /// <summary>
+        /// Send a FilePart to the client
+        /// </summary>
+        /// <param name="filePart"></param>
+        /// <param name="statusCode"></param>
+        /// <param name="customHeaders"></param>
+        public void SendFile(FilePart filePart, int statusCode = 200, Dictionary<string, string>? customHeaders = null){
+            SendFile(filePart.GetBytes(), filePart.GetMimeType(), statusCode, customHeaders);
         }
 
         /// <summary>
@@ -145,6 +154,13 @@ namespace HSB
             Send(Encoding.UTF8.GetBytes(resp));
         }
         /// <summary>
+        /// Sends a code with mnemonic name
+        /// </summary>
+        /// <param name="code"></param>
+        public void SendCode(HttpCodes code){
+            Send(code);
+        }
+        /// <summary>
         /// Shorthand for SendCode
         /// </summary>
         /// <param name="statusCode"></param>
@@ -156,9 +172,11 @@ namespace HSB
         /// Shorthand for SendCode, but with mnemonic names
         /// </summary>
         /// <param name="code"></param>
-        public void Send(HttpCodes code){
+        public void Send(HttpCodes code)
+        {
             SendCode((int)code);
         }
+        
 
         //common status codes
 

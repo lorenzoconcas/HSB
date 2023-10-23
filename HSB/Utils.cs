@@ -1,17 +1,15 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
+﻿using System.Reflection;
 using System.Text;
-using MimeTypes;
+using System.Text.RegularExpressions;
 
 namespace HSB
 {
-    public static class Utils
+    public static partial class Utils
     {
-        /* public static string GetClassName(this object caller)
-         {
-             return System.Reflection.MethodBase.GetCurrentMethod().DeclaringType;
-         }*/
+
+        [GeneratedRegex("/(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)/")]
+        private static partial Regex SafePathRegex();
+
         public static void PrintLogo()
         {
             Terminal.Write("Welcome to ");
@@ -23,7 +21,6 @@ namespace HSB
             Terminal.Write(" (Http Server Boxed)");
             Terminal.WriteLine($" v{Assembly.GetExecutingAssembly().GetName().Version}");
         }
-
         public static void PrintLoadedAssemblies(bool filter = true)
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -43,15 +40,12 @@ namespace HSB
                     Terminal.WriteLine(c.FullName, BG_COLOR.WHITE, FG_COLOR.BLUE);
             }
         }
-
         public static T Safe<T>(T? o, T safe) => o ?? safe!;
-
         public static T TryGetValueFromDict<T>(this Dictionary<string, T> dict, string key, T safe)
         {
             if (dict.ContainsKey(key)) return dict[key];
             else return safe;
         }
-
         public static string DictToString(this Dictionary<string, string> obj)
         {
             string s = "";
@@ -61,7 +55,6 @@ namespace HSB
             }
             return s;
         }
-
         public static string LoadResourceString(string resName)
         {
             var assembly = Assembly.GetCallingAssembly();
@@ -92,10 +85,7 @@ namespace HSB
             }
             return result;
         }
-
-
         //source:https://stackoverflow.com/questions/3825390/effective-way-to-find-any-files-encoding
-
         /// <summary>
         /// Determines a text file's encoding by analyzing its byte order mark (BOM).
         /// Defaults to ASCII when detection of the text file's endianness fails.
@@ -114,7 +104,6 @@ namespace HSB
             return GetEncoding(bom);
 
         }
-
         public static Encoding GetEncoding(byte[] file)
         {
             var bom = new byte[4];
@@ -138,8 +127,6 @@ namespace HSB
             // you may wish to return null instead of defaulting to ASCII
             return Encoding.ASCII;
         }
-
-
         public static string GenerateRandomString(int size, bool onlyUpperCase = false, bool useNumbers = true, bool useSpecialCharacters = true)
         {
 
@@ -164,14 +151,107 @@ namespace HSB
 
             return rndStr;
         }
-
         public static T[] SubArray<T>(this T[] array, int offset, int length)
         {
             T[] result = new T[length];
             Array.Copy(array, offset, result, 0, length);
             return result;
         }
+        public static int IndexOf(this byte[] data, byte[] sequence)
+        {
+            //KMP algorithm
+            int[] failure = ComputeFailure(sequence);
+            int j = 0;
+            if (data.Length == 0) return -1;
+            for (int i = 0; i < data.Length; i++)
+            {
+                while (j > 0 && sequence[j] != data[i])
+                {
+                    j = failure[j - 1];
+                }
+                if (sequence[j] == data[i])
+                {
+                    j++;
+                }
+                if (j == sequence.Length)
+                {
+                    return i - sequence.Length + 1;
+                }
+            }
+            return -1;
+        }
+        private static int[] ComputeFailure(byte[] sequence)
+        {
+            int[] failure = new int[sequence.Length];
+            int j = 0;
+            for (int i = 1; i < sequence.Length; i++)
+            {
+                while (j > 0 && sequence[j] != sequence[i])
+                {
+                    j = failure[j - 1];
+                }
+                if (sequence[j] == sequence[i])
+                {
+                    j++;
+                }
+                failure[i] = j;
+            }
+            return failure;
+        }
+        /// <summary>
+        /// This function works like Split for the string, but for byte arrays
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        public static List<byte[]> Split(this byte[] array, byte[] separator)
+        {
+            List<byte[]> result = new();
+            int offset = 0;
+            while (offset < array.Length)
+            {
+                int index = IndexOf(array[offset..], separator);
+                if (index == -1)
+                {
+                    result.Add(array[offset..]);
+                    break;
+                }
+                result.Add(array[offset..(offset + index)]);
+                offset += index + separator.Length;
+            }
+            return result;
+        }
 
+        public static string AsSizeHumanReadable(this int size)
+        {
+            const int BASE = 1024;
+            const int KB = 1_048_576;
+            const int MB = 1_073_741_824;
+
+
+            if (size < BASE)
+            {
+                return size + "B";
+            }
+            else if (size < KB)
+            {
+                return (size / BASE) + "KB";
+            }
+            else if (size < MB)
+            {
+                return (size / KB) + "MB";
+            }
+            else
+            {
+                return (size / MB) + "GB";
+            }
+        }
+
+        public static bool IsUnsafePath(string path)
+        {
+            Regex rgx = SafePathRegex();
+            return rgx.Match(path).Success;
+        }
     }
 }
 

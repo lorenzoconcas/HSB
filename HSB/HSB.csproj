@@ -27,9 +27,11 @@
 		<None Remove="TLS\.DS_Store" />
 		<None Remove="TLS\Certificates\key.pem" />
 		<None Remove="TLS\Certificates\cert.pem" />
+		<None Remove="Components\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="DefaultPages\" />
+		<Folder Include="Components\" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="DefaultPages\index.html" />

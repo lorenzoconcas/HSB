@@ -53,6 +53,7 @@ namespace Runner
                         html += $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>";
                     }
                     html += "</tbody></table>";
+                    html += "<br/><hr><footer>HSB-# Runner &copy; 2021-2023</footer>";
                     html +="</body></html>";
                     res.SendHTMLContent(html);
                 });

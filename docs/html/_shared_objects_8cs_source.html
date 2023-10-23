@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.8 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -99,45 +99,37 @@ $(document).ready(function(){initNavTree('_shared_objects_8cs_source.html',''); 
   <div class="headertitle"><div class="title">SharedObjects.cs</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">using </span>System;</div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_h_s_b.html">HSB</a>;</div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_mime_types.html">MimeTypes</a>;</div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_runner.html">Runner</a></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>{</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    [<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>(<span class="stringliteral">&quot;/sharedbjects&quot;</span>)]</div>
-<div class="foldopen" id="foldopen00008" data-start="{" data-end="};">
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="class_runner_1_1_shared_objects.html">    8</a></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_runner_1_1_shared_objects.html">SharedObjects</a> : <a class="code hl_class" href="class_h_s_b_1_1_servlet.html">Servlet</a></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    {</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>        <span class="keyword">public</span> <a class="code hl_class" href="class_runner_1_1_shared_objects.html">SharedObjects</a>(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res, <a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a> c) : base(req, res, c)</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        {</div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_h_s_b.html">HSB</a>;</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_runner.html">Runner</a></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span>{</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>    [<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>(<span class="stringliteral">&quot;/sharedobjects&quot;</span>)]</div>
+<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="class_runner_1_1_shared_objects.html">    6</a></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_runner_1_1_shared_objects.html">SharedObjects</a> : <a class="code hl_class" href="class_h_s_b_1_1_servlet.html">Servlet</a></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    {</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>        <span class="keyword">public</span> <a class="code hl_class" href="class_runner_1_1_shared_objects.html">SharedObjects</a>(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res, <a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a> c) : base(req, res, c)</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>        {</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        }</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        }</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        <span class="keyword">public</span> <span class="keyword">override</span> <span class="keywordtype">void</span> ProcessGet()</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova SharedObjects -&gt; {(int)configuration.GetSharedObject(&quot;</span>test<span class="stringliteral">&quot;)}&quot;</span>, <span class="stringliteral">&quot;text/html&quot;</span>);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        }</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    }</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        <span class="keyword">public</span> <span class="keyword">override</span> <span class="keywordtype">void</span> ProcessGet()</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>            <span class="keywordtype">int</span> item = (int)configuration.<a class="code hl_function" href="class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac">GetSharedObject</a>(<span class="stringliteral">&quot;test&quot;</span>);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">SendHTMLContent</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova SharedObjects -&gt; {item}&lt;/h1&gt;&quot;</span>);</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        }</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    }</div>
 </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>}</div>
 <div class="ttc" id="aclass_h_s_b_1_1_binding_html"><div class="ttname"><a href="class_h_s_b_1_1_binding.html">HSB.Binding</a></div><div class="ttdoc">Defines the path of the servlet, optionally it can catch ALL the requests that search for path starti...</div><div class="ttdef"><b>Definition</b> <a href="_binding_attribute_8cs_source.html#l00009">BindingAttribute.cs:10</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00010">Configuration.cs:11</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00042">Request.cs:43</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00012">Response.cs:13</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a83c2f0f9c5ca3d92f75ac7b0588540b2"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">HSB.Response.Send</a></div><div class="ttdeci">void Send(byte[] data)</div><div class="ttdoc">Send an un modified byte array to to the socket.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00035">Response.cs:35</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_servlet_8cs_source.html#l00003">Servlet.cs:4</a></div></div>
-<div class="ttc" id="aclass_runner_1_1_shared_objects_html"><div class="ttname"><a href="class_runner_1_1_shared_objects.html">Runner.SharedObjects</a></div><div class="ttdef"><b>Definition</b> <a href="_shared_objects_8cs_source.html#l00008">SharedObjects.cs:9</a></div></div>
-<div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2bin_2_release_2net7_80_2_t_l_s_2_certificates_2_fake_cert_8cs_source.html#l00001">FakeCert.cs:1</a></div></div>
-<div class="ttc" id="anamespace_mime_types_html"><div class="ttname"><a href="namespace_mime_types.html">MimeTypes</a></div><div class="ttdef"><b>Definition</b> <a href="_mime_type_map_8cs_source.html#l00002">MimeTypeMap.cs:3</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00009">Configuration.cs:10</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a8a9d8152a389f94cdd5dea5fbd62b2ac"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac">HSB.Configuration.GetSharedObject</a></div><div class="ttdeci">object GetSharedObject(string name)</div><div class="ttdoc">Get an object shared between all servlet.</div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00043">Request.cs:44</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00013">Response.cs:14</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_aa81e15ce9ff09b6d1a4fbaeb015198b4"><div class="ttname"><a href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null, int statusCode=200)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00090">Response.cs:90</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00004">Servlet.cs:5</a></div></div>
+<div class="ttc" id="aclass_runner_1_1_shared_objects_html"><div class="ttname"><a href="class_runner_1_1_shared_objects.html">Runner.SharedObjects</a></div><div class="ttdef"><b>Definition</b> <a href="_shared_objects_8cs_source.html#l00006">SharedObjects.cs:7</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
 <div class="ttc" id="anamespace_runner_html"><div class="ttname"><a href="namespace_runner.html">Runner</a></div><div class="ttdef"><b>Definition</b> <a href="_runner_8cs_source.html#l00003">Runner.cs:4</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

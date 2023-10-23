@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.8 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -155,7 +155,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_shared_objects_8cs_source.html#l00008">8</a> of file <a class="el" href="_shared_objects_8cs_source.html">SharedObjects.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_shared_objects_8cs_source.html#l00006">6</a> of file <a class="el" href="_shared_objects_8cs_source.html">SharedObjects.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a499d18cebae06fc0d8b3486d73af3348" name="a499d18cebae06fc0d8b3486d73af3348"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a499d18cebae06fc0d8b3486d73af3348">&#9670;&#160;</a></span>SharedObjects()</h2>
@@ -189,11 +189,11 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_shared_objects_8cs_source.html#l00010">10</a> of file <a class="el" href="_shared_objects_8cs_source.html">SharedObjects.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   10</span>                                                                         : base(req, res, c)</div>
-<div class="line"><span class="lineno">   11</span>        {</div>
-<div class="line"><span class="lineno">   12</span> </div>
-<div class="line"><span class="lineno">   13</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_shared_objects_8cs_source.html#l00008">8</a> of file <a class="el" href="_shared_objects_8cs_source.html">SharedObjects.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">    8</span>                                                                         : base(req, res, c)</div>
+<div class="line"><span class="lineno">    9</span>        {</div>
+<div class="line"><span class="lineno">   10</span> </div>
+<div class="line"><span class="lineno">   11</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -223,11 +223,13 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_shared_objects_8cs_source.html#l00015">15</a> of file <a class="el" href="_shared_objects_8cs_source.html">SharedObjects.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   16</span>        {</div>
-<div class="line"><span class="lineno">   17</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova SharedObjects -&gt; {(int)configuration.GetSharedObject(&quot;</span>test<span class="stringliteral">&quot;)}&quot;</span>, <span class="stringliteral">&quot;text/html&quot;</span>);</div>
-<div class="line"><span class="lineno">   18</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a83c2f0f9c5ca3d92f75ac7b0588540b2"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">HSB.Response.Send</a></div><div class="ttdeci">void Send(byte[] data)</div><div class="ttdoc">Send an un modified byte array to to the socket.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00035">Response.cs:35</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_shared_objects_8cs_source.html#l00013">13</a> of file <a class="el" href="_shared_objects_8cs_source.html">SharedObjects.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   14</span>        {</div>
+<div class="line"><span class="lineno">   15</span>            <span class="keywordtype">int</span> item = (int)configuration.<a class="code hl_function" href="class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac">GetSharedObject</a>(<span class="stringliteral">&quot;test&quot;</span>);</div>
+<div class="line"><span class="lineno">   16</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">SendHTMLContent</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova SharedObjects -&gt; {item}&lt;/h1&gt;&quot;</span>);</div>
+<div class="line"><span class="lineno">   17</span>        }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a8a9d8152a389f94cdd5dea5fbd62b2ac"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac">HSB.Configuration.GetSharedObject</a></div><div class="ttdeci">object GetSharedObject(string name)</div><div class="ttdoc">Get an object shared between all servlet.</div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_aa81e15ce9ff09b6d1a4fbaeb015198b4"><div class="ttname"><a href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null, int statusCode=200)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00090">Response.cs:90</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

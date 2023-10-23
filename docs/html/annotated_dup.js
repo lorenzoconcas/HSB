@@ -1,15 +1,45 @@
 var annotated_dup =
 [
     [ "HSB", "namespace_h_s_b.html", [
+      [ "Components", "namespace_h_s_b_1_1_components.html", [
+        [ "FormData", "class_h_s_b_1_1_components_1_1_form_data.html", null ]
+      ] ],
       [ "Exceptions", "namespace_h_s_b_1_1_exceptions.html", [
         [ "CookieValuesNotSetException", "class_h_s_b_1_1_exceptions_1_1_cookie_values_not_set_exception.html", null ],
         [ "InvalidConfigurationParameterException", "class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html", null ]
       ] ],
+      [ "TLS", "namespace_h_s_b_1_1_t_l_s.html", [
+        [ "Constants", "namespace_h_s_b_1_1_t_l_s_1_1_constants.html", [
+          [ "SupportedGroupsTypes", "class_h_s_b_1_1_t_l_s_1_1_constants_1_1_supported_groups_types.html", null ]
+        ] ],
+        [ "Extensions", "namespace_h_s_b_1_1_t_l_s_1_1_extensions.html", [
+          [ "ApplicationLayerProtocolNegotiation", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_application_layer_protocol_negotiation.html", null ],
+          [ "ECPointFormats", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_e_c_point_formats.html", null ],
+          [ "ExtendedMasterSecret", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_extended_master_secret.html", null ],
+          [ "GenericExtension", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_generic_extension.html", null ],
+          [ "IExtension", "interface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension.html", null ],
+          [ "KeyShare", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_key_share.html", null ],
+          [ "ServerName", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_server_name.html", null ],
+          [ "SignatureAlgorithms", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_signature_algorithms.html", null ],
+          [ "SupportedGroups", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_supported_groups.html", null ]
+        ] ],
+        [ "Messages", "namespace_h_s_b_1_1_t_l_s_1_1_messages.html", [
+          [ "ClientHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html", null ],
+          [ "ServerHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_server_hello.html", null ]
+        ] ],
+        [ "Curl", "class_h_s_b_1_1_t_l_s_1_1_curl.html", "class_h_s_b_1_1_t_l_s_1_1_curl" ],
+        [ "ProtocolVersion", "class_h_s_b_1_1_t_l_s_1_1_protocol_version.html", "class_h_s_b_1_1_t_l_s_1_1_protocol_version" ],
+        [ "TLS", "class_h_s_b_1_1_t_l_s_1_1_t_l_s.html", null ]
+      ] ],
       [ "Binding", "class_h_s_b_1_1_binding.html", "class_h_s_b_1_1_binding" ],
       [ "Configuration", "class_h_s_b_1_1_configuration.html", "class_h_s_b_1_1_configuration" ],
       [ "Cookie", "class_h_s_b_1_1_cookie.html", null ],
+      [ "DataReader", "class_h_s_b_1_1_data_reader.html", "class_h_s_b_1_1_data_reader" ],
+      [ "DataWriter", "class_h_s_b_1_1_data_writer.html", "class_h_s_b_1_1_data_writer" ],
       [ "Debugger", "class_h_s_b_1_1_debugger.html", null ],
       [ "Error", "class_h_s_b_1_1_error.html", null ],
+      [ "FilePart", "class_h_s_b_1_1_file_part.html", null ],
+      [ "FormPart", "class_h_s_b_1_1_form_part.html", null ],
       [ "Index", "class_h_s_b_1_1_index.html", null ],
       [ "OAuth1_0Information", "struct_h_s_b_1_1_o_auth1__0_information.html", null ],
       [ "Request", "class_h_s_b_1_1_request.html", "class_h_s_b_1_1_request" ],
@@ -30,6 +60,7 @@ var annotated_dup =
         [ "PostWithAuth", "class_runner_1_1_test_runner_classes_1_1_post_with_auth.html", null ],
         [ "RegexBinding", "class_runner_1_1_test_runner_classes_1_1_regex_binding.html", null ]
       ] ],
+      [ "FileUpload", "class_runner_1_1_file_upload.html", null ],
       [ "HSBRunner", "class_runner_1_1_h_s_b_runner.html", null ],
       [ "JsonResponse", "class_runner_1_1_json_response.html", null ],
       [ "MultiBinding", "class_runner_1_1_multi_binding.html", null ],

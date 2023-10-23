@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.8 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -290,13 +290,16 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_debugger_8cs_source.html#l00104">104</a> of file <a class="el" href="_debugger_8cs_source.html">Debugger.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  105</span>    {</div>
-<div class="line"><span class="lineno">  106</span>        <span class="keywordflow">if</span> (verbose)</div>
-<div class="line"><span class="lineno">  107</span>            Terminal.DEBUG(o, printExtraInfo);</div>
-<div class="line"><span class="lineno">  108</span>        <span class="keywordflow">if</span> (logLevel == LogLevel.ALL &amp;&amp; o != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">  109</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;D&quot;</span>, o.ToString()));</div>
-<div class="line"><span class="lineno">  110</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_debugger_8cs_source.html#l00113">113</a> of file <a class="el" href="_debugger_8cs_source.html">Debugger.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  114</span>    {</div>
+<div class="line"><span class="lineno">  115</span>        <span class="keywordflow">if</span> (verbose)</div>
+<div class="line"><span class="lineno">  116</span>            Terminal.DEBUG(o, printExtraInfo);</div>
+<div class="line"><span class="lineno">  117</span>        <span class="keywordflow">if</span> (logLevel == LogLevel.ALL &amp;&amp; o != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  118</span>        {</div>
+<div class="line"><span class="lineno">  119</span>            var msg = o.ToString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  120</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;D&quot;</span>, msg));</div>
+<div class="line"><span class="lineno">  121</span>        }</div>
+<div class="line"><span class="lineno">  122</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -331,8 +334,11 @@ Public Attributes</h2></td></tr>
 <div class="line"><span class="lineno">   80</span>        <span class="keywordflow">if</span> (verbose)</div>
 <div class="line"><span class="lineno">   81</span>            Terminal.ERROR(o, printExtraInfo);</div>
 <div class="line"><span class="lineno">   82</span>        <span class="keywordflow">if</span> (o != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   83</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;E&quot;</span>, o.ToString()));</div>
-<div class="line"><span class="lineno">   84</span>    }</div>
+<div class="line"><span class="lineno">   83</span>        {</div>
+<div class="line"><span class="lineno">   84</span>            var msg = o.ToString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   85</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;E&quot;</span>, msg));</div>
+<div class="line"><span class="lineno">   86</span>        }</div>
+<div class="line"><span class="lineno">   87</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -400,14 +406,17 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_debugger_8cs_source.html#l00095">95</a> of file <a class="el" href="_debugger_8cs_source.html">Debugger.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   96</span>    {</div>
-<div class="line"><span class="lineno">   97</span>        <span class="keywordflow">if</span> (verbose)</div>
-<div class="line"><span class="lineno">   98</span>            Terminal.INFO(o, printExtraInfo);</div>
-<div class="line"><span class="lineno">   99</span> </div>
-<div class="line"><span class="lineno">  100</span>        <span class="keywordflow">if</span> (logLevel == LogLevel.INFO &amp;&amp; logLevel == LogLevel.ALL &amp;&amp; o != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">  101</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;I&quot;</span>, o.ToString()));</div>
-<div class="line"><span class="lineno">  102</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_debugger_8cs_source.html#l00101">101</a> of file <a class="el" href="_debugger_8cs_source.html">Debugger.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  102</span>    {</div>
+<div class="line"><span class="lineno">  103</span>        <span class="keywordflow">if</span> (verbose)</div>
+<div class="line"><span class="lineno">  104</span>            Terminal.INFO(o, printExtraInfo);</div>
+<div class="line"><span class="lineno">  105</span> </div>
+<div class="line"><span class="lineno">  106</span>        <span class="keywordflow">if</span> (logLevel == LogLevel.INFO &amp;&amp; logLevel == LogLevel.ALL &amp;&amp; o != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  107</span>        {</div>
+<div class="line"><span class="lineno">  108</span>            var msg = o.ToString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  109</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;I&quot;</span>, msg));</div>
+<div class="line"><span class="lineno">  110</span>        }</div>
+<div class="line"><span class="lineno">  111</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -437,14 +446,17 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_debugger_8cs_source.html#l00086">86</a> of file <a class="el" href="_debugger_8cs_source.html">Debugger.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   87</span>    {</div>
-<div class="line"><span class="lineno">   88</span>        <span class="keywordflow">if</span> (verbose)</div>
-<div class="line"><span class="lineno">   89</span>            Terminal.WARNING(o, printExtraInfo);</div>
-<div class="line"><span class="lineno">   90</span> </div>
-<div class="line"><span class="lineno">   91</span>        <span class="keywordflow">if</span> (logLevel == LogLevel.INFO &amp;&amp; logLevel == LogLevel.WARNING &amp;&amp; logLevel == LogLevel.ALL &amp;&amp; o != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   92</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;W&quot;</span>, o.ToString()));</div>
-<div class="line"><span class="lineno">   93</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_debugger_8cs_source.html#l00089">89</a> of file <a class="el" href="_debugger_8cs_source.html">Debugger.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   90</span>    {</div>
+<div class="line"><span class="lineno">   91</span>        <span class="keywordflow">if</span> (verbose)</div>
+<div class="line"><span class="lineno">   92</span>            Terminal.WARNING(o, printExtraInfo);</div>
+<div class="line"><span class="lineno">   93</span> </div>
+<div class="line"><span class="lineno">   94</span>        <span class="keywordflow">if</span> (logLevel == LogLevel.INFO &amp;&amp; logLevel == LogLevel.WARNING &amp;&amp; logLevel == LogLevel.ALL &amp;&amp; o != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   95</span>        {</div>
+<div class="line"><span class="lineno">   96</span>            var msg = o.ToString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   97</span>            AppendToFile(GetMessage(<span class="stringliteral">&quot;W&quot;</span>, msg));</div>
+<div class="line"><span class="lineno">   98</span>        }</div>
+<div class="line"><span class="lineno">   99</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>

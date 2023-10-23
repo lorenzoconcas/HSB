@@ -26,6 +26,7 @@ var class_h_s_b_1_1_configuration =
     [ "customGlobalHeaders", "class_h_s_b_1_1_configuration.html#ac8a0ba17d4b5cce336ff17a20bce759c", null ],
     [ "debug", "class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f", null ],
     [ "defaultSessionExpirationTime", "class_h_s_b_1_1_configuration.html#ad253db7ca802690ae4278904d67492d2", null ],
+    [ "HideBranding", "class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240", null ],
     [ "port", "class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439", null ],
     [ "requestMaxSize", "class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98", null ],
     [ "sharedObjects", "class_h_s_b_1_1_configuration.html#a6c0ecab7b311c62c25ab46472305e5d0", null ],

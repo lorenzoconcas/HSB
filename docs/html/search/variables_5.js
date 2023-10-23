@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['requestmaxsize_0',['requestMaxSize',['../class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98',1,'HSB::Configuration']]]
+  ['megabyte_0',['MEGABYTE',['../class_h_s_b_1_1_configuration.html#a486ff6ec8c15b5ab138be5688da2630b',1,'HSB::Configuration']]]
 ];

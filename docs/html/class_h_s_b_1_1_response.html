@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.8 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -102,9 +102,9 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_response.html',''); in
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a989cc7c9dea4b322941764e45f067f22" id="r_a989cc7c9dea4b322941764e45f067f22"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a989cc7c9dea4b322941764e45f067f22">Response</a> (Socket socket, <a class="el" href="class_h_s_b_1_1_request.html">Request</a> request, <a class="el" href="class_h_s_b_1_1_configuration.html">Configuration</a> c)</td></tr>
 <tr class="separator:a989cc7c9dea4b322941764e45f067f22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83c2f0f9c5ca3d92f75ac7b0588540b2" id="r_a83c2f0f9c5ca3d92f75ac7b0588540b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a> (byte[] data)</td></tr>
-<tr class="memdesc:a83c2f0f9c5ca3d92f75ac7b0588540b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send an un modified byte array to to the socket.  <br /></td></tr>
-<tr class="separator:a83c2f0f9c5ca3d92f75ac7b0588540b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf92b7ff521d2e401d66cf8eda948dd0" id="r_aaf92b7ff521d2e401d66cf8eda948dd0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a> (byte[] data, bool disconnect=true)</td></tr>
+<tr class="memdesc:aaf92b7ff521d2e401d66cf8eda948dd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send an un modified byte array to to the socket.  <br /></td></tr>
+<tr class="separator:aaf92b7ff521d2e401d66cf8eda948dd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ea9045842d2d49a7c7ebda02bd0a621" id="r_a8ea9045842d2d49a7c7ebda02bd0a621"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a8ea9045842d2d49a7c7ebda02bd0a621">Send</a> (string data, string mimeType=&quot;text/plain&quot;, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)</td></tr>
 <tr class="memdesc:a8ea9045842d2d49a7c7ebda02bd0a621"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends an HTTP Response with the body passed as parameter.  <br /></td></tr>
 <tr class="separator:a8ea9045842d2d49a7c7ebda02bd0a621"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,12 +120,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1a24f6e081261224e8281b6cf4915ebe" id="r_a1a24f6e081261224e8281b6cf4915ebe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a1a24f6e081261224e8281b6cf4915ebe">SendFile</a> (byte[] data, string mimeType, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)</td></tr>
 <tr class="memdesc:a1a24f6e081261224e8281b6cf4915ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends data to the client.  <br /></td></tr>
 <tr class="separator:a1a24f6e081261224e8281b6cf4915ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea92949e59e04a3a668537caf9393ff3" id="r_aea92949e59e04a3a668537caf9393ff3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#aea92949e59e04a3a668537caf9393ff3">SendFile</a> (<a class="el" href="class_h_s_b_1_1_file_part.html">FilePart</a> filePart, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)</td></tr>
+<tr class="memdesc:aea92949e59e04a3a668537caf9393ff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a FilePart to the client.  <br /></td></tr>
+<tr class="separator:aea92949e59e04a3a668537caf9393ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7069234663584810b1b429ec4ebd9cdd" id="r_a7069234663584810b1b429ec4ebd9cdd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a> (int statusCode)</td></tr>
 <tr class="memdesc:a7069234663584810b1b429ec4ebd9cdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send an HTTP Response with no body but with given status code.  <br /></td></tr>
 <tr class="separator:a7069234663584810b1b429ec4ebd9cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a064a5a8ebfe4430d13adc5cc3fdae793" id="r_a064a5a8ebfe4430d13adc5cc3fdae793"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a064a5a8ebfe4430d13adc5cc3fdae793">SendCode</a> (HttpCodes code)</td></tr>
+<tr class="memdesc:a064a5a8ebfe4430d13adc5cc3fdae793"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a code with mnemonic name.  <br /></td></tr>
+<tr class="separator:a064a5a8ebfe4430d13adc5cc3fdae793"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af67a7e98aad1bd8c480838c3fd0a5b7c" id="r_af67a7e98aad1bd8c480838c3fd0a5b7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#af67a7e98aad1bd8c480838c3fd0a5b7c">Send</a> (int statusCode)</td></tr>
 <tr class="memdesc:af67a7e98aad1bd8c480838c3fd0a5b7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shorthand for SendCode.  <br /></td></tr>
 <tr class="separator:af67a7e98aad1bd8c480838c3fd0a5b7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62ff5b737df4e28175abfdabac197956" id="r_a62ff5b737df4e28175abfdabac197956"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a62ff5b737df4e28175abfdabac197956">Send</a> (HttpCodes code)</td></tr>
+<tr class="memdesc:a62ff5b737df4e28175abfdabac197956"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shorthand for SendCode, but with mnemonic names.  <br /></td></tr>
+<tr class="separator:a62ff5b737df4e28175abfdabac197956"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4246350f15314694e5ab3b286ad7433a" id="r_a4246350f15314694e5ab3b286ad7433a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_response.html#a4246350f15314694e5ab3b286ad7433a">E400</a> ()</td></tr>
 <tr class="memdesc:a4246350f15314694e5ab3b286ad7433a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bad Request.  <br /></td></tr>
 <tr class="separator:a4246350f15314694e5ab3b286ad7433a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,7 +177,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00012">12</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00013">13</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a989cc7c9dea4b322941764e45f067f22" name="a989cc7c9dea4b322941764e45f067f22"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a989cc7c9dea4b322941764e45f067f22">&#9670;&#160;</a></span>Response()</h2>
@@ -202,12 +211,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00020">20</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   21</span>        {</div>
-<div class="line"><span class="lineno">   22</span>            this.socket = socket;</div>
-<div class="line"><span class="lineno">   23</span>            this.request = request;</div>
-<div class="line"><span class="lineno">   24</span>            config = c;</div>
-<div class="line"><span class="lineno">   25</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00021">21</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   22</span>        {</div>
+<div class="line"><span class="lineno">   23</span>            this.socket = socket;</div>
+<div class="line"><span class="lineno">   24</span>            this.request = request;</div>
+<div class="line"><span class="lineno">   25</span>            config = c;</div>
+<div class="line"><span class="lineno">   26</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -247,10 +256,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00318">318</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  319</span>        {</div>
-<div class="line"><span class="lineno">  320</span>            attributes.Add(name, value);</div>
-<div class="line"><span class="lineno">  321</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00344">344</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  345</span>        {</div>
+<div class="line"><span class="lineno">  346</span>            attributes.Add(name, value);</div>
+<div class="line"><span class="lineno">  347</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -271,11 +280,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
 
 <p>Bad Request. </p>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00160">160</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  161</span>        {</div>
-<div class="line"><span class="lineno">  162</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(400);</div>
-<div class="line"><span class="lineno">  163</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7069234663584810b1b429ec4ebd9cdd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">HSB.Response.SendCode</a></div><div class="ttdeci">void SendCode(int statusCode)</div><div class="ttdoc">Send an HTTP Response with no body but with given status code.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00141">Response.cs:141</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00186">186</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  187</span>        {</div>
+<div class="line"><span class="lineno">  188</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(400);</div>
+<div class="line"><span class="lineno">  189</span>        }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7069234663584810b1b429ec4ebd9cdd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">HSB.Response.SendCode</a></div><div class="ttdeci">void SendCode(int statusCode)</div><div class="ttdoc">Send an HTTP Response with no body but with given status code.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00150">Response.cs:150</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -296,10 +305,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
 
 <p>Unauthorized. </p>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00167">167</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  168</span>        {</div>
-<div class="line"><span class="lineno">  169</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(401);</div>
-<div class="line"><span class="lineno">  170</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00193">193</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  194</span>        {</div>
+<div class="line"><span class="lineno">  195</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(401);</div>
+<div class="line"><span class="lineno">  196</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -320,10 +329,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
 
 <p>Not Found. </p>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00174">174</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  175</span>        {</div>
-<div class="line"><span class="lineno">  176</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(404);</div>
-<div class="line"><span class="lineno">  177</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00200">200</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  201</span>        {</div>
+<div class="line"><span class="lineno">  202</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(404);</div>
+<div class="line"><span class="lineno">  203</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -344,10 +353,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
 
 <p>Internal Server Error. </p>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00181">181</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  182</span>        {</div>
-<div class="line"><span class="lineno">  183</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(500);</div>
-<div class="line"><span class="lineno">  184</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00207">207</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  208</span>        {</div>
+<div class="line"><span class="lineno">  209</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(500);</div>
+<div class="line"><span class="lineno">  210</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -375,10 +384,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00334">334</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  335</span>        {</div>
-<div class="line"><span class="lineno">  336</span>            <span class="keywordflow">return</span> attributes[name];</div>
-<div class="line"><span class="lineno">  337</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00360">360</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  361</span>        {</div>
+<div class="line"><span class="lineno">  362</span>            <span class="keywordflow">return</span> attributes[name];</div>
+<div class="line"><span class="lineno">  363</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -406,11 +415,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00190">190</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  191</span>        {</div>
-<div class="line"><span class="lineno">  192</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>(content, <span class="stringliteral">&quot;application/json&quot;</span>);</div>
-<div class="line"><span class="lineno">  193</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a83c2f0f9c5ca3d92f75ac7b0588540b2"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">HSB.Response.Send</a></div><div class="ttdeci">void Send(byte[] data)</div><div class="ttdoc">Send an un modified byte array to to the socket.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00035">Response.cs:35</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00216">216</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  217</span>        {</div>
+<div class="line"><span class="lineno">  218</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(content, <span class="stringliteral">&quot;application/json&quot;</span>);</div>
+<div class="line"><span class="lineno">  219</span>        }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_aaf92b7ff521d2e401d66cf8eda948dd0"><div class="ttname"><a href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">HSB.Response.Send</a></div><div class="ttdeci">void Send(byte[] data, bool disconnect=true)</div><div class="ttdoc">Send an un modified byte array to to the socket.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00036">Response.cs:36</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -455,17 +464,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00209">209</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  210</span>        {</div>
-<div class="line"><span class="lineno">  211</span>            JsonSerializerOptions jo = <span class="keyword">new</span>()</div>
-<div class="line"><span class="lineno">  212</span>            {</div>
-<div class="line"><span class="lineno">  213</span>                IncludeFields = includeFields,</div>
-<div class="line"><span class="lineno">  214</span>                MaxDepth = 0</div>
-<div class="line"><span class="lineno">  215</span>            };</div>
-<div class="line"><span class="lineno">  216</span> </div>
-<div class="line"><span class="lineno">  217</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">JSON</a>(JsonSerializer.Serialize(o, jo));</div>
-<div class="line"><span class="lineno">  218</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a4194117350da77ed769b6ee7be3fd440"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">HSB.Response.JSON</a></div><div class="ttdeci">void JSON(string content)</div><div class="ttdoc">Sends a HTTP Response with a JSON body passed as parameter.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00190">Response.cs:190</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00235">235</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  236</span>        {</div>
+<div class="line"><span class="lineno">  237</span>            JsonSerializerOptions jo = <span class="keyword">new</span>()</div>
+<div class="line"><span class="lineno">  238</span>            {</div>
+<div class="line"><span class="lineno">  239</span>                IncludeFields = includeFields,</div>
+<div class="line"><span class="lineno">  240</span>                MaxDepth = 0</div>
+<div class="line"><span class="lineno">  241</span>            };</div>
+<div class="line"><span class="lineno">  242</span> </div>
+<div class="line"><span class="lineno">  243</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">JSON</a>(JsonSerializer.Serialize(o, jo));</div>
+<div class="line"><span class="lineno">  244</span>        }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a4194117350da77ed769b6ee7be3fd440"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">HSB.Response.JSON</a></div><div class="ttdeci">void JSON(string content)</div><div class="ttdoc">Sends a HTTP Response with a JSON body passed as parameter.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00216">Response.cs:216</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -504,10 +513,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00199">199</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  200</span>        {</div>
-<div class="line"><span class="lineno">  201</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">JSON</a>(JsonSerializer.Serialize(o, options));</div>
-<div class="line"><span class="lineno">  202</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00225">225</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  226</span>        {</div>
+<div class="line"><span class="lineno">  227</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">JSON</a>(JsonSerializer.Serialize(o, options));</div>
+<div class="line"><span class="lineno">  228</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -535,15 +544,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00326">326</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  327</span>        {</div>
-<div class="line"><span class="lineno">  328</span>            attributes.Remove(name);</div>
-<div class="line"><span class="lineno">  329</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00352">352</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  353</span>        {</div>
+<div class="line"><span class="lineno">  354</span>            attributes.Remove(name);</div>
+<div class="line"><span class="lineno">  355</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a83c2f0f9c5ca3d92f75ac7b0588540b2" name="a83c2f0f9c5ca3d92f75ac7b0588540b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83c2f0f9c5ca3d92f75ac7b0588540b2">&#9670;&#160;</a></span>Send() <span class="overload">[1/3]</span></h2>
+<a id="aaf92b7ff521d2e401d66cf8eda948dd0" name="aaf92b7ff521d2e401d66cf8eda948dd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf92b7ff521d2e401d66cf8eda948dd0">&#9670;&#160;</a></span>Send() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -552,8 +561,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
           <td class="memname">void HSB.Response.Send </td>
           <td>(</td>
           <td class="paramtype">byte[]&#160;</td>
-          <td class="paramname"><em>data</em></td><td>)</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>disconnect</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -566,23 +585,54 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00035">35</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   36</span>        {</div>
-<div class="line"><span class="lineno">   37</span>            <span class="keywordflow">try</span></div>
-<div class="line"><span class="lineno">   38</span>            {</div>
-<div class="line"><span class="lineno">   39</span>                <span class="keywordtype">int</span> totalBytes = socket.Send(data);</div>
-<div class="line"><span class="lineno">   40</span>                socket.Disconnect(<span class="keyword">true</span>);</div>
-<div class="line"><span class="lineno">   41</span>            }</div>
-<div class="line"><span class="lineno">   42</span>            <span class="keywordflow">catch</span> (Exception e)</div>
-<div class="line"><span class="lineno">   43</span>            {</div>
-<div class="line"><span class="lineno">   44</span>                Terminal.ERROR($<span class="stringliteral">&quot;Error sending data -&gt;\n {e}&quot;</span>);</div>
-<div class="line"><span class="lineno">   45</span>            }</div>
-<div class="line"><span class="lineno">   46</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00036">36</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   37</span>        {</div>
+<div class="line"><span class="lineno">   38</span>            <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">   39</span>            {</div>
+<div class="line"><span class="lineno">   40</span>                <span class="keywordtype">int</span> totalBytes = socket.Send(data);</div>
+<div class="line"><span class="lineno">   41</span>                socket.Disconnect(disconnect);</div>
+<div class="line"><span class="lineno">   42</span>            }</div>
+<div class="line"><span class="lineno">   43</span>            <span class="keywordflow">catch</span> (Exception e)</div>
+<div class="line"><span class="lineno">   44</span>            {</div>
+<div class="line"><span class="lineno">   45</span>                Terminal.ERROR($<span class="stringliteral">&quot;Error sending data -&gt;\n {e}&quot;</span>);</div>
+<div class="line"><span class="lineno">   46</span>            }</div>
+<div class="line"><span class="lineno">   47</span>        }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a62ff5b737df4e28175abfdabac197956" name="a62ff5b737df4e28175abfdabac197956"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62ff5b737df4e28175abfdabac197956">&#9670;&#160;</a></span>Send() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void HSB.Response.Send </td>
+          <td>(</td>
+          <td class="paramtype">HttpCodes&#160;</td>
+          <td class="paramname"><em>code</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shorthand for SendCode, but with mnemonic names. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">code</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00175">175</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  176</span>        {</div>
+<div class="line"><span class="lineno">  177</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>((<span class="keywordtype">int</span>)code);</div>
+<div class="line"><span class="lineno">  178</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
 <a id="af67a7e98aad1bd8c480838c3fd0a5b7c" name="af67a7e98aad1bd8c480838c3fd0a5b7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af67a7e98aad1bd8c480838c3fd0a5b7c">&#9670;&#160;</a></span>Send() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af67a7e98aad1bd8c480838c3fd0a5b7c">&#9670;&#160;</a></span>Send() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -605,15 +655,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00151">151</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  152</span>        {</div>
-<div class="line"><span class="lineno">  153</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(statusCode);</div>
-<div class="line"><span class="lineno">  154</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00167">167</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  168</span>        {</div>
+<div class="line"><span class="lineno">  169</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(statusCode);</div>
+<div class="line"><span class="lineno">  170</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
 <a id="a8ea9045842d2d49a7c7ebda02bd0a621" name="a8ea9045842d2d49a7c7ebda02bd0a621"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ea9045842d2d49a7c7ebda02bd0a621">&#9670;&#160;</a></span>Send() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ea9045842d2d49a7c7ebda02bd0a621">&#9670;&#160;</a></span>Send() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -660,18 +710,49 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00053">53</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   54</span>        {</div>
-<div class="line"><span class="lineno">   55</span>            <span class="keywordtype">string</span> _mime = mimeType;</div>
-<div class="line"><span class="lineno">   56</span>            <span class="keywordtype">string</span> resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;</div>
-<div class="line"><span class="lineno">   57</span> </div>
-<div class="line"><span class="lineno">   58</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>(Encoding.UTF8.GetBytes(resp));</div>
-<div class="line"><span class="lineno">   59</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00054">54</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   55</span>        {</div>
+<div class="line"><span class="lineno">   56</span>            <span class="keywordtype">string</span> _mime = mimeType;</div>
+<div class="line"><span class="lineno">   57</span>            <span class="keywordtype">string</span> resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;</div>
+<div class="line"><span class="lineno">   58</span> </div>
+<div class="line"><span class="lineno">   59</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(Encoding.UTF8.GetBytes(resp));</div>
+<div class="line"><span class="lineno">   60</span>        }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a064a5a8ebfe4430d13adc5cc3fdae793" name="a064a5a8ebfe4430d13adc5cc3fdae793"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a064a5a8ebfe4430d13adc5cc3fdae793">&#9670;&#160;</a></span>SendCode() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void HSB.Response.SendCode </td>
+          <td>(</td>
+          <td class="paramtype">HttpCodes&#160;</td>
+          <td class="paramname"><em>code</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sends a code with mnemonic name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">code</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00160">160</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  160</span>                                            {</div>
+<div class="line"><span class="lineno">  161</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(code);</div>
+<div class="line"><span class="lineno">  162</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
 <a id="a7069234663584810b1b429ec4ebd9cdd" name="a7069234663584810b1b429ec4ebd9cdd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7069234663584810b1b429ec4ebd9cdd">&#9670;&#160;</a></span>SendCode()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7069234663584810b1b429ec4ebd9cdd">&#9670;&#160;</a></span>SendCode() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -694,17 +775,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00141">141</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  142</span>        {</div>
-<div class="line"><span class="lineno">  143</span>            <span class="keywordtype">string</span> resp = GetHeaders(statusCode, 0, <span class="stringliteral">&quot;text/plain&quot;</span>) + <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
-<div class="line"><span class="lineno">  144</span> </div>
-<div class="line"><span class="lineno">  145</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>(Encoding.UTF8.GetBytes(resp));</div>
-<div class="line"><span class="lineno">  146</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00150">150</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  151</span>        {</div>
+<div class="line"><span class="lineno">  152</span>            <span class="keywordtype">string</span> resp = GetHeaders(statusCode, 0, <span class="stringliteral">&quot;text/plain&quot;</span>) + <span class="stringliteral">&quot;\r\n&quot;</span>;</div>
+<div class="line"><span class="lineno">  153</span> </div>
+<div class="line"><span class="lineno">  154</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(Encoding.UTF8.GetBytes(resp));</div>
+<div class="line"><span class="lineno">  155</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
 <a id="a1a24f6e081261224e8281b6cf4915ebe" name="a1a24f6e081261224e8281b6cf4915ebe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a24f6e081261224e8281b6cf4915ebe">&#9670;&#160;</a></span>SendFile() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a24f6e081261224e8281b6cf4915ebe">&#9670;&#160;</a></span>SendFile() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -751,9 +832,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00123">123</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  124</span>        {</div>
-<div class="line"><span class="lineno">  125</span> </div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00124">124</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  125</span>        {</div>
 <div class="line"><span class="lineno">  126</span>            <span class="keywordtype">string</span> _mime = mimeType;</div>
 <div class="line"><span class="lineno">  127</span>            <span class="keywordtype">string</span> headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);</div>
 <div class="line"><span class="lineno">  128</span>            <span class="keywordtype">byte</span>[] headersBytes = Encoding.UTF8.GetBytes(headers);</div>
@@ -762,13 +842,63 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
 <div class="line"><span class="lineno">  131</span>            headersBytes.CopyTo(responseBytes, 0);</div>
 <div class="line"><span class="lineno">  132</span>            data.CopyTo(responseBytes, headersBytes.Length);</div>
 <div class="line"><span class="lineno">  133</span> </div>
-<div class="line"><span class="lineno">  134</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>(responseBytes);</div>
+<div class="line"><span class="lineno">  134</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(responseBytes);</div>
 <div class="line"><span class="lineno">  135</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
+<a id="aea92949e59e04a3a668537caf9393ff3" name="aea92949e59e04a3a668537caf9393ff3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea92949e59e04a3a668537caf9393ff3">&#9670;&#160;</a></span>SendFile() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void HSB.Response.SendFile </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_h_s_b_1_1_file_part.html">FilePart</a>&#160;</td>
+          <td class="paramname"><em>filePart</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>statusCode</em> = <code>200</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Dictionary&lt; string, string &gt;?&#160;</td>
+          <td class="paramname"><em>customHeaders</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send a FilePart to the client. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filePart</td><td></td></tr>
+    <tr><td class="paramname">statusCode</td><td></td></tr>
+    <tr><td class="paramname">customHeaders</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00142">142</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  142</span>                                                                                                                       {</div>
+<div class="line"><span class="lineno">  143</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#ab3a338243d93f5be733a1baacfcd3edd">SendFile</a>(filePart.GetBytes(), filePart.GetMimeType(), statusCode, customHeaders);</div>
+<div class="line"><span class="lineno">  144</span>        }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_ab3a338243d93f5be733a1baacfcd3edd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#ab3a338243d93f5be733a1baacfcd3edd">HSB.Response.SendFile</a></div><div class="ttdeci">void SendFile(string absPath, string? mimeType=null, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Loads a file from a given path and sends an HTTP Response.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00104">Response.cs:104</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="ab3a338243d93f5be733a1baacfcd3edd" name="ab3a338243d93f5be733a1baacfcd3edd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3a338243d93f5be733a1baacfcd3edd">&#9670;&#160;</a></span>SendFile() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3a338243d93f5be733a1baacfcd3edd">&#9670;&#160;</a></span>SendFile() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -815,20 +945,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00103">103</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  104</span>        {</div>
-<div class="line"><span class="lineno">  105</span>            var data = File.ReadAllBytes(absPath);</div>
-<div class="line"><span class="lineno">  106</span> </div>
-<div class="line"><span class="lineno">  107</span>            <span class="keywordtype">string</span> _mime = mimeType ?? MimeType.GetMimeType(Path.GetExtension(absPath));</div>
-<div class="line"><span class="lineno">  108</span>            <span class="keywordtype">string</span> headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);</div>
-<div class="line"><span class="lineno">  109</span>            <span class="keywordtype">byte</span>[] headersBytes = Encoding.UTF8.GetBytes(headers);</div>
-<div class="line"><span class="lineno">  110</span>            <span class="keywordtype">byte</span>[] responseBytes = <span class="keyword">new</span> <span class="keywordtype">byte</span>[data.Length + headersBytes.Length];</div>
-<div class="line"><span class="lineno">  111</span> </div>
-<div class="line"><span class="lineno">  112</span>            headersBytes.CopyTo(responseBytes, 0);</div>
-<div class="line"><span class="lineno">  113</span>            data.CopyTo(responseBytes, headersBytes.Length);</div>
-<div class="line"><span class="lineno">  114</span> </div>
-<div class="line"><span class="lineno">  115</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>(responseBytes);</div>
-<div class="line"><span class="lineno">  116</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00104">104</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  105</span>        {</div>
+<div class="line"><span class="lineno">  106</span>            var data = File.ReadAllBytes(absPath);</div>
+<div class="line"><span class="lineno">  107</span> </div>
+<div class="line"><span class="lineno">  108</span>            <span class="keywordtype">string</span> _mime = mimeType ?? MimeTypeUtils.GetMimeType(Path.GetExtension(absPath)) ?? MimeTypeUtils.APPLICATION_OCTET;</div>
+<div class="line"><span class="lineno">  109</span>            <span class="keywordtype">string</span> headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);</div>
+<div class="line"><span class="lineno">  110</span>            <span class="keywordtype">byte</span>[] headersBytes = Encoding.UTF8.GetBytes(headers);</div>
+<div class="line"><span class="lineno">  111</span>            <span class="keywordtype">byte</span>[] responseBytes = <span class="keyword">new</span> <span class="keywordtype">byte</span>[data.Length + headersBytes.Length];</div>
+<div class="line"><span class="lineno">  112</span> </div>
+<div class="line"><span class="lineno">  113</span>            headersBytes.CopyTo(responseBytes, 0);</div>
+<div class="line"><span class="lineno">  114</span>            data.CopyTo(responseBytes, headersBytes.Length);</div>
+<div class="line"><span class="lineno">  115</span> </div>
+<div class="line"><span class="lineno">  116</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(responseBytes);</div>
+<div class="line"><span class="lineno">  117</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -885,12 +1015,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00089">89</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   90</span>        {</div>
-<div class="line"><span class="lineno">   91</span>            <span class="keywordflow">if</span> (process)</div>
-<div class="line"><span class="lineno">   92</span>                content = ProcessContent(content);</div>
-<div class="line"><span class="lineno">   93</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>(content, MimeType.TEXT_HTML + $<span class="stringliteral">&quot;; charset={encoding}&quot;</span>, statusCode);</div>
-<div class="line"><span class="lineno">   94</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00090">90</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   91</span>        {</div>
+<div class="line"><span class="lineno">   92</span>            <span class="keywordflow">if</span> (process)</div>
+<div class="line"><span class="lineno">   93</span>                content = ProcessContent(content);</div>
+<div class="line"><span class="lineno">   94</span>            <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(content, MimeTypeUtils.TEXT_HTML + $<span class="stringliteral">&quot;; charset={encoding}&quot;</span>, statusCode);</div>
+<div class="line"><span class="lineno">   95</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -935,24 +1065,24 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00066">66</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   67</span>        {</div>
-<div class="line"><span class="lineno">   68</span>            <span class="keywordflow">try</span></div>
-<div class="line"><span class="lineno">   69</span>            {</div>
-<div class="line"><span class="lineno">   70</span>                <span class="keywordtype">string</span> content = File.ReadAllText(path);</div>
-<div class="line"><span class="lineno">   71</span>                <span class="keywordflow">if</span> (process)</div>
-<div class="line"><span class="lineno">   72</span>                    content = ProcessContent(content);</div>
-<div class="line"><span class="lineno">   73</span>                Encoding encoding = Utils.GetEncoding(path);</div>
-<div class="line"><span class="lineno">   74</span> </div>
-<div class="line"><span class="lineno">   75</span>                <a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>(content, MimeType.TEXT_HTML + $<span class="stringliteral">&quot;; charset={encoding.BodyName}&quot;</span>, customHeaders: customHeaders);</div>
-<div class="line"><span class="lineno">   76</span>            }</div>
-<div class="line"><span class="lineno">   77</span>            <span class="keywordflow">catch</span> (Exception)</div>
-<div class="line"><span class="lineno">   78</span>            {</div>
-<div class="line"><span class="lineno">   79</span>                <span class="comment">//dato che l&#39;invio dei dati è parte nostra, se non riusciamo diamo un errore 500</span></div>
-<div class="line"><span class="lineno">   80</span>                <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(500);</div>
-<div class="line"><span class="lineno">   81</span>                Terminal.ERROR(<span class="stringliteral">&quot;Error sending file : &quot;</span> + path);</div>
-<div class="line"><span class="lineno">   82</span>            }</div>
-<div class="line"><span class="lineno">   83</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_response_8cs_source.html#l00067">67</a> of file <a class="el" href="_response_8cs_source.html">Response.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   68</span>        {</div>
+<div class="line"><span class="lineno">   69</span>            <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">   70</span>            {</div>
+<div class="line"><span class="lineno">   71</span>                <span class="keywordtype">string</span> content = File.ReadAllText(path);</div>
+<div class="line"><span class="lineno">   72</span>                <span class="keywordflow">if</span> (process)</div>
+<div class="line"><span class="lineno">   73</span>                    content = ProcessContent(content);</div>
+<div class="line"><span class="lineno">   74</span>                Encoding encoding = Utils.GetEncoding(path);</div>
+<div class="line"><span class="lineno">   75</span> </div>
+<div class="line"><span class="lineno">   76</span>                <a class="code hl_function" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(content, MimeTypeUtils.TEXT_HTML + $<span class="stringliteral">&quot;; charset={encoding.BodyName}&quot;</span>, customHeaders: customHeaders);</div>
+<div class="line"><span class="lineno">   77</span>            }</div>
+<div class="line"><span class="lineno">   78</span>            <span class="keywordflow">catch</span> (Exception)</div>
+<div class="line"><span class="lineno">   79</span>            {</div>
+<div class="line"><span class="lineno">   80</span>                <span class="comment">//dato che l&#39;invio dei dati è parte nostra, se non riusciamo diamo un errore 500</span></div>
+<div class="line"><span class="lineno">   81</span>                <a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(500);</div>
+<div class="line"><span class="lineno">   82</span>                Terminal.ERROR(<span class="stringliteral">&quot;Error sending file : &quot;</span> + path);</div>
+<div class="line"><span class="lineno">   83</span>            }</div>
+<div class="line"><span class="lineno">   84</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1052,7 +1182,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SendJSON</b> (string 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>HSB/<a class="el" href="_response_8cs_source.html">Response.cs</a></li>
+<li>HSB/Components/<a class="el" href="_response_8cs_source.html">Response.cs</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

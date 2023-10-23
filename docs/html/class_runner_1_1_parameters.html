@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.8 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -155,7 +155,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_parameters_8cs_source.html#l00005">5</a> of file <a class="el" href="_parameters_8cs_source.html">Parameters.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_parameters_8cs_source.html#l00006">6</a> of file <a class="el" href="_parameters_8cs_source.html">Parameters.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a18a8df73cca7745573df25f63dca09da" name="a18a8df73cca7745573df25f63dca09da"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a18a8df73cca7745573df25f63dca09da">&#9670;&#160;</a></span>Parameters()</h2>
@@ -183,11 +183,11 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_parameters_8cs_source.html#l00007">7</a> of file <a class="el" href="_parameters_8cs_source.html">Parameters.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">    7</span>                                                     : base(req, res)</div>
-<div class="line"><span class="lineno">    8</span>        {</div>
-<div class="line"><span class="lineno">    9</span> </div>
-<div class="line"><span class="lineno">   10</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_parameters_8cs_source.html#l00008">8</a> of file <a class="el" href="_parameters_8cs_source.html">Parameters.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">    8</span>                                                     : base(req, res)</div>
+<div class="line"><span class="lineno">    9</span>        {</div>
+<div class="line"><span class="lineno">   10</span> </div>
+<div class="line"><span class="lineno">   11</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -217,12 +217,11 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_parameters_8cs_source.html#l00012">12</a> of file <a class="el" href="_parameters_8cs_source.html">Parameters.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   13</span>        {</div>
-<div class="line"><span class="lineno">   14</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">Send</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova GET -&gt; {req.URL}&lt;/h1&gt;\nParams : {req.GetParameters.DictToString()}&quot;</span>,</div>
-<div class="line"><span class="lineno">   15</span>                mimeType: MimeType.TEXT_HTML);</div>
+<p class="definition">Definition at line <a class="el" href="_parameters_8cs_source.html#l00013">13</a> of file <a class="el" href="_parameters_8cs_source.html">Parameters.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   14</span>        {</div>
+<div class="line"><span class="lineno">   15</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">SendHTMLContent</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova GET -&gt; {req.URL}&lt;/h1&gt;\nParams : {req.GetParameters.DictToString()}&quot;</span>);</div>
 <div class="line"><span class="lineno">   16</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a83c2f0f9c5ca3d92f75ac7b0588540b2"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a83c2f0f9c5ca3d92f75ac7b0588540b2">HSB.Response.Send</a></div><div class="ttdeci">void Send(byte[] data)</div><div class="ttdoc">Send an un modified byte array to to the socket.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00035">Response.cs:35</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_aa81e15ce9ff09b6d1a4fbaeb015198b4"><div class="ttname"><a href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null, int statusCode=200)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00090">Response.cs:90</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -257,7 +256,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><span class="lineno">   21</span> </div>
 <div class="line"><span class="lineno">   22</span>            <span class="comment">// res.Send($&quot;&lt;h1&gt;Prova POST -&gt; {req.URL}&lt;/h1&gt;&quot;, mimeType: MimeType.TEXT_HTML);</span></div>
 <div class="line"><span class="lineno">   23</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a4194117350da77ed769b6ee7be3fd440"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">HSB.Response.JSON</a></div><div class="ttdeci">void JSON(string content)</div><div class="ttdoc">Sends a HTTP Response with a JSON body passed as parameter.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00190">Response.cs:190</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a4194117350da77ed769b6ee7be3fd440"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">HSB.Response.JSON</a></div><div class="ttdeci">void JSON(string content)</div><div class="ttdoc">Sends a HTTP Response with a JSON body passed as parameter.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00216">Response.cs:216</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -1,4 +1,5 @@
 ﻿using HSB;
+using HSB.Constants;
 
 Configuration c = new()
 {

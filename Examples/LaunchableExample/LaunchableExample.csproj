@@ -16,4 +16,7 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\HSB\HSB.csproj" />
+  </ItemGroup>
 </Project>

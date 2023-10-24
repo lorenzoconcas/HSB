@@ -183,11 +183,13 @@ public class Response
     /// Sends a redirect to the client
     /// </summary>
     /// <param name="route"></param>
-    public void Redirect(string route)
+    public void Redirect(string route, int statusCode = 302)
     {
+        if (statusCode < 300 && statusCode > 399)
+            throw new InvalidHttpCodeException(statusCode);
 
         string response = GetHeaders(
-            (int)HttpCodes.FOUND,
+           statusCode,
             0,
             MimeTypeUtils.TEXT_PLAIN,
             new Dictionary<string, string>() { { "Location", route } }
@@ -195,10 +197,32 @@ public class Response
 
         Send(Encoding.UTF8.GetBytes(response));
     }
-
-    public void Redirect(Servlet s)
+    /// <summary>
+    /// Same as Redirect(string, int) but with HttpCodes
+    /// </summary>
+    /// <param name="route"></param>
+    /// <param name="code"></param>
+    public void Redirect(string route, HttpCodes code)
     {
-        Redirect(s.GetRoute());
+        Redirect(route, (int)code);
+    }
+    /// <summary>
+    /// Redirects to a given servlet
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="statusCode"></param>
+    public void Redirect(Servlet s, int statusCode = 302)
+    {
+        Redirect(s.GetRoute(), statusCode);
+    }
+    /// <summary>
+    /// Same as Redirect(Servlet, int)
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="code"></param>
+    public void Redirect(Servlet s, HttpCodes code = HttpCodes.FOUND)
+    {
+        Redirect(s.GetRoute(), code);
     }
 
     //common status codes
@@ -304,8 +328,11 @@ public class Response
 
         string headers = $"{HttpUtils.ProtocolAsString(request.PROTOCOL)} {responseCode} {request.URL} {NEW_LINE}";
         headers += "Date: " + currentTime + NEW_LINE;
+        if (config.CustomServerName != "")
+            headers += $"Server: {config.CustomServerName}{NEW_LINE}";
+        else
+            headers += $"Server: HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({GetOSInfo()})" + NEW_LINE;
 
-        headers += $"Server : HSB-#/{Assembly.GetExecutingAssembly().GetName().Version} ({GetOSInfo()})" + NEW_LINE;
         headers += $"Last-Modified: {currentTime}{NEW_LINE}";
 
 

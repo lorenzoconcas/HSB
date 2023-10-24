@@ -12,69 +12,62 @@ namespace HSB
         /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) //check this
         /// </summary>
         public string address;
-
         /// <summary>
         /// The server listening port
         /// </summary>
         public int port;
-
         /// <summary>
         /// Sets if the server must listen only to IPv4
         /// </summary>
         public bool UseIPv4Only { get; set; }
-
         /// <summary>
         /// Indicates the location where all static files will be searched and served from
         /// </summary>
         public string staticFolderPath;
-
         /// <summary>
         /// Holds all debug information and routines
         /// </summary>
         public Debugger debug;
-
         /// <summary>
         /// Specifies the size in bytes of the buffer that will contain the HTTP request
         /// </summary>
         public int requestMaxSize;
-
         /// <summary>
         /// Defines the size of a kilobyte in bytes, useful to set the requestMaxSize
         /// </summary>
         public const int KILOBYTE = 1024;
-
         /// <summary>
         /// Defines the size of a megabyte in bytes, useful to set the requestMaxSize
         /// </summary>
         public const int MEGABYTE = KILOBYTE * KILOBYTE;//1024 * KILOBYTE;
-
         /// <summary>
         /// Hide the HSB logo on startup
         /// </summary>
         public bool HideBranding = false;
-
         /// <summary>
         /// Useful to share objects between servlets without using the singleton technique
         /// </summary>
         protected Dictionary<string, object> sharedObjects = new();
-
         /// <summary>
         /// headers added to ANY response
         /// </summary>
         protected Dictionary<string, string> customGlobalHeaders = new();
-
+        /// <summary>
+        /// Cookies added to ANY response
+        /// </summary>
         protected Dictionary<string, Cookie> customGlobalCookies = new();
-
         /// <summary>
         /// Sets the expiration time of the session
         /// </summary>
         public ulong defaultSessionExpirationTime;
-
         /// <summary>
         /// Expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
         /// </summary>
         private readonly List<Tuple<string, Tuple<HTTP_METHOD, Delegate>>> expressMapping = new();
-
+        /// <summary>
+        /// When set, the server will use this name instead of the default one (default is: HSB-#/assembly_version (os_version))
+        /// </summary>
+        public string CustomServerName = "";
         /// <summary>
         /// Creates a default fail-safe configuration (still, the port could be in use)
         /// </summary>

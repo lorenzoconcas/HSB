@@ -2,7 +2,7 @@
 <html>
 <head>
     <style>
-          body {
+        body {
             font-family: "system-ui", "eSans", "Roboto", "serif";
             background: rgb(241, 248, 233);
             background: linear-gradient(0deg, rgba(241, 248, 233, 1) 0%, rgba(225, 245, 254, 1) 100%);
@@ -51,7 +51,8 @@
         }
 
 
-        @media (prefers-color-scheme: light) {}
+        @media (prefers-color-scheme: light) {
+        }
 
         .row:nth-child(odd) {
             background-color: #fafafa;
@@ -59,11 +60,9 @@
 
         @media (prefers-color-scheme:dark) {
             body {
-
                 background: #13222E;
                 background-image: linear-gradient(101deg, #004680 0%, #13222E 33%);
                 background-attachment: fixed;
-
             }
 
             .row:nth-child(odd) {
@@ -102,8 +101,8 @@
         <div>
             #{errorMsg}
         </div>
-        <div class="footer">HSB<sup>#</sup> #{hsbVersion}</div>
-        <div class="footer">Copyright (c) 2021-2023 Lorenzo L. Concas</div>
+        <div class="footer">#{serverName} #{hsbVersion}</div>
+        <div class="footer">Copyright &copy; 2021-2023 Lorenzo L. Concas</div>
     </div>
 </body>
 

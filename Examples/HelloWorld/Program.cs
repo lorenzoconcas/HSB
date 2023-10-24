@@ -1,4 +1,6 @@
-﻿using HSB;
+﻿//this is the example shown on www.lorenzoconcas.github.io/HSB
+
+using HSB;
 
 Configuration c = new()
 {

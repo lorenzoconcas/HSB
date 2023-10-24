@@ -9,7 +9,7 @@ namespace HSB
         private readonly string errorMsg;
         //http error code
         private readonly int errorCode;
-        public Error(Request req, Response res, string errorMessage, int errorCode) : base(req, res)
+        public Error(Request req, Response res, Configuration config, string errorMessage, int errorCode) : base(req, res, config)
         {
             this.errorCode = errorCode;
             errorMsg = errorMessage;
@@ -57,12 +57,20 @@ namespace HSB
                 result = reader.ReadToEnd();
             }
 
-            string version = "";
+            string version = "v";
             if (Assembly.GetExecutingAssembly().GetName().Version != null)
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+                version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
             }
 
+            if (configuration.CustomServerName != "")
+            {
+                res.AddAttribute("serverName", configuration.CustomServerName);
+            }
+            else
+            {
+                res.AddAttribute("serverName", "HSB<sup>#</sup>");
+            }
             res.AddAttribute("hsbVersion", version);
             res.AddAttribute("title", title);
             res.AddAttribute("errorMsg", msg);

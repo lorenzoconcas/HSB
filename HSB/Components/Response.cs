@@ -65,7 +65,7 @@ public class Response
     /// </summary>
     /// <param name="path">Path of the HTML file</param>
     /// <param name="process">Whether or not or not process the document before sending</param>
-    public void SendHTMLPage(string path, bool process = false, Dictionary<string, string>? customHeaders = null)
+    public void SendHTMLFile(string path, bool process = false, Dictionary<string, string>? customHeaders = null)
     {
         try
         {
@@ -401,13 +401,16 @@ public class Response
     //function related to a basic preprocessing feature
 
     /// <summary>
-    /// Adds an attribute to the HTML file that will be processed
+    /// Adds an attribute to the HTML file that will be processed, if it already exists it will be overwritten
     /// </summary>
     /// <param name="name">Name of the attribute</param>
     /// <param name="value">Value of the attribute</param>
     public void AddAttribute(string name, string value)
     {
-        attributes.Add(name, value);
+        if (attributes.ContainsKey(name))
+            attributes[name] = value;
+        else
+            attributes.Add(name, value);
     }
     /// <summary>
     /// Removes an attribute to the HTML file that will be processed
@@ -418,12 +421,12 @@ public class Response
         attributes.Remove(name);
     }
     /// <summary>
-    /// Retrieves the value of an attribute to the HTML file that will be processed
+    /// Retrieves the value of an attribute to the HTML file that will be processed, if doesn't exists it will return an empty string
     /// </summary>
     /// <param name="name">Name of the attribute</param>
     public string GetAttribute(string name)
     {
-        return attributes[name];
+        return attributes[name] ?? "";
     }
     /// <summary>
     /// Does a basic content-processing of a given HTML file

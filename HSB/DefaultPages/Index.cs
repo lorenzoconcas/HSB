@@ -5,7 +5,7 @@ namespace HSB
 {
     public class Index : Servlet
     {
-        public Index(Request req, Response res) : base(req, res)
+        public Index(Request req, Response res, Configuration config) : base(req, res, config)
         {
 
         }
@@ -20,10 +20,19 @@ namespace HSB
                 result = reader.ReadToEnd();
             }
 
-            string version = "";
-            if(Assembly.GetExecutingAssembly().GetName().Version != null)
+            string version = "v";
+            if (Assembly.GetExecutingAssembly().GetName().Version != null)
             {
                 version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+            }
+    
+            if (configuration.CustomServerName != "")
+            {
+                res.AddAttribute("serverName", configuration.CustomServerName);
+            }
+            else
+            {
+                res.AddAttribute("serverName", "HSB<sup>#</sup>");
             }
             res.AddAttribute("hsbVersion", version);
             res.SendHTMLContent(result, true);

@@ -3,7 +3,7 @@
 ![alt text](banner.png)
 ### 🇬🇧🇺🇸 Description
 
-This is a toy project written to study how a web server works
+This is a project written to study how a web server works
 
 It is written in C-Sharp, compiles and runs on any platform where the dotnet tool is available
 

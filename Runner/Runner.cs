@@ -11,7 +11,8 @@ namespace Runner
             {
                 address = "", //listen any address
                 port = 8080,
-                requestMaxSize = Configuration.MEGABYTE * 2
+                requestMaxSize = Configuration.MEGABYTE * 2,
+                CustomServerName = "Runner powered by HSB"
             };
 
             //test expressjs-like routing

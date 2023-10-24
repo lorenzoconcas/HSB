@@ -28,8 +28,6 @@ namespace HSB
             res.AddAttribute("hsbVersion", version);
             res.SendHTMLContent(result, true);
 
-
-            //res.Send($"<h1>Welcome to HSB-# ({Assembly.GetExecutingAssembly().GetName().Version})</h1>", MimeType.TEXT_HTML);
         }
     }
 }

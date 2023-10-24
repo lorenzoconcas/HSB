@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AjaxRequest", "Examples\Aja
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSockets", "Experiments\WebSockets\WebSockets.csproj", "{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormHandling", "Examples\FormHandling\FormHandling.csproj", "{49B5955B-8C12-4CFF-A525-DDA5666E8BAB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49B5955B-8C12-4CFF-A525-DDA5666E8BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49B5955B-8C12-4CFF-A525-DDA5666E8BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49B5955B-8C12-4CFF-A525-DDA5666E8BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49B5955B-8C12-4CFF-A525-DDA5666E8BAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{10F5B4B7-D342-4DC9-ACB1-635FBAF7016A} = {8B5CD76D-9C1D-43F4-B674-3FD5986E4F97}
 		{7022025F-BE3E-49C7-A0E6-DCE13296D0C3} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
 		{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9} = {8B5CD76D-9C1D-43F4-B674-3FD5986E4F97}
+		{49B5955B-8C12-4CFF-A525-DDA5666E8BAB} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB06B193-55A8-4511-BBE7-B6E49532B2B3}

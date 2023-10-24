@@ -20,6 +20,7 @@ public class FileUpload : Servlet
         if (req.URL == "/fileupload.html")
         {
             res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
+            "<input type=\"text\" name=\"value1\" id=\"value1\"></input>" +
             "<input type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\">" +
             "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
             "</form>");
@@ -46,24 +47,32 @@ public class FileUpload : Servlet
     {
         if (req.URL == "/fileupload" && req.IsFileUpload())
         {
-            FormData? data = req.GetFormData();
-            if(data != null){
+            MultiPartFormData? data = req.GetMultiPartFormData();
+            if (data != null)
+            {
                 var files = data.GetFiles();
-                if(files.Count < 0) {
+                if (files.Count < 0)
+                {
                     res.SendCode(HttpCodes.NOT_ACCEPTABLE);
                     return;
                 }
-                if(!Path.Exists(savePath)){
+                if (!Path.Exists(savePath))
+                {
                     Directory.CreateDirectory(savePath);
+                    foreach (var f in files)
+                    {
+                        f.SaveToDisk(savePath);
+                        Terminal.INFO(f);
+                    }
                 }
-                foreach(var f in files){
-                    f.SaveToDisk(savePath);
-                    Terminal.INFO(f);
-                }              
                 res.SendFile(files.First()); //send first file to che client
                 return;
             }
             res.SendCode(HttpCodes.NOT_ACCEPTABLE);
+        }
+        else
+        {
+            res.SendCode(HttpCodes.FORBIDDEN);
         }
 
     }

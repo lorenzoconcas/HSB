@@ -25,7 +25,14 @@ namespace Runner
             c.GET("/printheaders", PrintHeaders);
             c.GET("/echo", Echo);
             c.POST("/echo", Echo);
-            c.AddSharedObject("test", 1996);
+
+            c.AddSharedObject("test", 1996); //this object is available to all servlets, and accessed by "Servlets/SharedObjects.cs" 
+            
+            //redirect example
+            c.GET("/redirect", (Request req, Response res) =>
+            {
+                res.Redirect("/");
+            });
 
             c.GET("/", (Request req, Response res) =>
                 {
@@ -40,7 +47,7 @@ namespace Runner
                     foreach (var route in routes)
                     {
                         html += $"<tr><td><a href=\"{route.Item1}\">{route.Item1}</a></td><td>{route.Item2}</td></tr>";
-                    }                   
+                    }
                     html += "</tbody></table>";
 
                     //print all available static files
@@ -54,7 +61,7 @@ namespace Runner
                     }
                     html += "</tbody></table>";
                     html += "<br/><hr><footer>HSB-# Runner &copy; 2021-2023</footer>";
-                    html +="</body></html>";
+                    html += "</body></html>";
                     res.SendHTMLContent(html);
                 });
 

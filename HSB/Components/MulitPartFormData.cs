@@ -2,13 +2,13 @@
 
 namespace HSB.Components;
 
-public class FormData
+public class MultiPartFormData
 {
     private readonly List<FormPart> parts = new();
     private byte[] body;
     private readonly string Boundary;
 
-    public FormData(byte[] body, string boundary)
+    public MultiPartFormData(byte[] body, string boundary)
     {
         Boundary = boundary;
         this.body = body;
@@ -31,6 +31,18 @@ public class FormData
 
         body = Array.Empty<byte>();
 
+    }
+    /// <summary>
+    /// Returns all parts of the forms which are not files
+    /// </summary>
+    /// <returns></returns>
+    public List<FormPart> GetParts()
+    {
+        if (body.Length > 0)
+            ExtractParts();
+        return parts
+        .Where(p => p is not FilePart)
+        .ToList();
     }
 
     public List<FilePart> GetFiles()

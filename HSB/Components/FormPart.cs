@@ -1,7 +1,11 @@
 using System.Text;
 
-namespace HSB;
+namespace HSB.Components;
 
+
+/// <summary>
+/// Represents a generic part of a multipart form
+/// </summary>
 public class FormPart
 {
     public string ContentDisposition;

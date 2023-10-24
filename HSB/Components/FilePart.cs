@@ -1,10 +1,10 @@
-using System.IO.Compression;
 using System.Text;
-using System.Xml.Linq;
 using HSB.Constants;
+namespace HSB.Components;
 
-namespace HSB;
-
+/// <summary>
+/// Represents a file of a multipart form
+/// </summary>
 public class FilePart : FormPart
 {
 
@@ -35,7 +35,8 @@ public class FilePart : FormPart
         base.Data = data[(contentTypeLineEnd + 4)..^2]; //skip the two CRLF at the begin and the one at the end
     }
 
-    public string GetMimeType(){
+    public string GetMimeType()
+    {
         return ContentType;
     }
 
@@ -60,7 +61,7 @@ public class FilePart : FormPart
                 "file_" + Utils.GenerateRandomString(4) + "." + detectedExt);
             }
         }
-        
+
         File.WriteAllBytes(_path, Data);
     }
 

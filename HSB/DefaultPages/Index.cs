@@ -23,17 +23,21 @@ namespace HSB
             string version = "v";
             if (Assembly.GetExecutingAssembly().GetName().Version != null)
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+                version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
             }
-    
+            string footer_div = "";
+            string server_name = "";
             if (configuration.CustomServerName != "")
             {
-                res.AddAttribute("serverName", configuration.CustomServerName);
+                server_name = configuration.CustomServerName;
             }
             else
             {
-                res.AddAttribute("serverName", "HSB<sup>#</sup>");
+                server_name = "HSB<sup>#</sup>";
+                footer_div = "<div class=\"footer\">Copyright &copy; 2021-2023 Lorenzo L. Concas</div>";
             }
+            res.AddAttribute("serverName", server_name);
+            res.AddAttribute("footer_div", footer_div);
             res.AddAttribute("hsbVersion", version);
             res.SendHTMLContent(result, true);
 

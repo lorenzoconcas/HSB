@@ -9,17 +9,10 @@ namespace HSB
         {
 
         }
+
         public override void ProcessGet()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("index.html"));
-            string result;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName)!)
-            using (StreamReader reader = new(stream))
-            {
-                result = reader.ReadToEnd();
-            }
-
+            string page = ReadFromResources("index.html");
             string version = "v";
             if (Assembly.GetExecutingAssembly().GetName().Version != null)
             {
@@ -27,6 +20,8 @@ namespace HSB
             }
             string footer_div = "";
             string server_name = "";
+            string logo = "";
+            string title = "";
             if (configuration.CustomServerName != "")
             {
                 server_name = configuration.CustomServerName;
@@ -35,11 +30,19 @@ namespace HSB
             {
                 server_name = "HSB<sup>#</sup>";
                 footer_div = "<div class=\"footer\">Copyright &copy; 2021-2023 Lorenzo L. Concas</div>";
+                string logo_b64 = ReadFromResources("logo_b64");
+                logo = $"<img width=\"32px\" src=\"{logo_b64}\" />";
+                title = "Http Server Boxed <sup>#</sup>";
             }
+
+            //set attributes
+            res.AddAttribute("logo", logo);
+            res.AddAttribute("title", title);
             res.AddAttribute("serverName", server_name);
             res.AddAttribute("footer_div", footer_div);
             res.AddAttribute("hsbVersion", version);
-            res.SendHTMLContent(result, true);
+
+            res.SendHTMLContent(page, true);
 
         }
     }

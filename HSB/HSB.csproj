@@ -28,6 +28,7 @@
 		<None Remove="TLS\Certificates\key.pem" />
 		<None Remove="TLS\Certificates\cert.pem" />
 		<None Remove="Components\" />
+		<None Remove="DefaultPages\logo_b64" />
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="DefaultPages\" />
@@ -35,8 +36,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="DefaultPages\index.html" />
-		<EmbeddedResource Include="DefaultPages\error.html">
-		</EmbeddedResource>
+		<EmbeddedResource Include="DefaultPages\error.html" />
+		<EmbeddedResource Include="DefaultPages\logo_b64" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="DefaultPages\error.html">

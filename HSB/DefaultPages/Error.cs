@@ -48,14 +48,7 @@ namespace HSB
 
         private void Send(string title, string msg, int statusCode)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith("error.html"));
-            string result;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName)!)
-            using (StreamReader reader = new(stream))
-            {
-                result = reader.ReadToEnd();
-            }
+            var page = ReadFromResources("error.html");
 
             string version = "v";
             if (Assembly.GetExecutingAssembly().GetName().Version != null)
@@ -79,7 +72,7 @@ namespace HSB
             res.AddAttribute("hsbVersion", version);
             res.AddAttribute("title", title);
             res.AddAttribute("errorMsg", msg);
-            res.SendHTMLContent(result, true, statusCode: statusCode);
+            res.SendHTMLContent(page, true, statusCode: statusCode);
 
         }
 

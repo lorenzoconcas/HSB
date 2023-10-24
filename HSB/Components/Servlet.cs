@@ -47,7 +47,31 @@ public class Servlet
         var binding = this.GetType().GetCustomAttribute<Binding>();
         return binding == null ? "" : binding.Path;
     }
+    /// <summary>
+    /// Extract a string from an embedded resource
+    /// </summary>
+    /// <param name="resourceName"></param>
+    /// <returns>The resource as string or an empty string if not found</returns>
+    protected static string ReadFromResources(string resourceName)
+    {
+        try
+        {
 
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string _resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(resourceName));
+            string result;
+            using (Stream stream = assembly.GetManifestResourceStream(_resourceName)!)
+            using (StreamReader reader = new(stream))
+            {
+                result = reader.ReadToEnd();
+            }
+            return result;
+        }
+        catch (Exception)
+        {
+            return "";
+        }
+    }
 
     public void Process()
     {

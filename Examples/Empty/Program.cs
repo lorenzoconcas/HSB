@@ -1,8 +1,8 @@
 ﻿using HSB;
 
-var c = new Configuration
+var c = new Configuration()
 {
-    CustomServerName = "HSB-PRO"
+    CustomServerName = "Definitely not HSB"
 };
 
 new Server(c).Start();

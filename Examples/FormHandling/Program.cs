@@ -19,7 +19,7 @@ c.POST("/form", (Request req, Response res) =>
 {
     if (!req.IsFormUpload())
     {
-        res.Send(HttpCodes.BAD_REQUEST);
+        res.Send(HTTP_CODES.BAD_REQUEST);
         return;
     }
     var form = req.GetFormData();

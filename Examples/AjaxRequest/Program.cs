@@ -16,7 +16,7 @@ var ajaxHandler = (Request req, Response res) =>
     }
     else
     {
-        res.Send(HttpCodes.METHOD_NOT_ALLOWED);
+        res.Send(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
 };

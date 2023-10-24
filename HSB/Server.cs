@@ -84,7 +84,7 @@ public class Server
                 {
                     byte[] bytes = new byte[config.requestMaxSize];
                     int bytesRec = socket.Receive(bytes);
-                    bytes = bytes.Take(bytesRec).ToArray(); //trim the array to the actual size of the request
+                    bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
 
                     Request req = new(bytes, socket, config);
                     if (req.proceedWithElaboration)
@@ -106,6 +106,7 @@ public class Server
         var e = config.ExpressRoutes.Find(e => e.Item1 == req.URL && e.Item2.Item1 == req.METHOD);
 
         if (e == null) return false;
+        
         e.Item2.Item2.DynamicInvoke(req, res);
         return true;
     }
@@ -211,7 +212,7 @@ public class Server
             if (!req.validRequest)
             {
                 config.debug.WARNING($"{req.METHOD} '{req.URL}' 400 (Invalid Request)", true);
-                new Error(req, res, config, "Invalid Request", (int)HttpCodes.NOT_FOUND).Process();
+                new Error(req, res, config, "Invalid Request", HTTP_CODES.NOT_FOUND).Process();
                 return;
             }
             if (RunIfExpressMapping(req, res))
@@ -254,7 +255,7 @@ public class Server
                     if (Utils.IsUnsafePath(req.URL))
                     {
                         config.debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
-                        new Error(req, res, config, "", (int)HttpCodes.NOT_FOUND).Process();
+                        new Error(req, res, config, "", HTTP_CODES.NOT_FOUND).Process();
                     }
                     //if the path is safe and the file exists, we send it
                     if (File.Exists(config.staticFolderPath + "/" + req.URL))
@@ -267,7 +268,7 @@ public class Server
                     {
                         //if no servlet or static file found, send 404
                         config.debug.INFO($"{req.METHOD} '{req.URL}' 404 (Resource not found)");
-                        new Error(req, res, config, "Page not found", (int)HttpCodes.NOT_FOUND).Process();
+                        new Error(req, res, config, "Page not found", HTTP_CODES.NOT_FOUND).Process();
                     }
                 }
             }
@@ -277,7 +278,7 @@ public class Server
             //config.debug.ERROR("Error handling request ->\n " + e);
             config.debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
             //we show an error page with the message and code 500
-            new Error(req, res, config, e.ToString(), (int)HttpCodes.INTERNAL_SERVER_ERROR).Process();
+            new Error(req, res, config, e.ToString(), HTTP_CODES.INTERNAL_SERVER_ERROR).Process();
         }
     }
 }

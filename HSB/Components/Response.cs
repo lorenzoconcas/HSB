@@ -10,22 +10,22 @@ using HSB.Exceptions;
 
 namespace HSB;
 
-
 public class Response
 {
-    private Socket socket;
-    private Request request;
-    private Configuration config;
-    Dictionary<string, string> attributes = new();
-
     private const string NEW_LINE = "\r\n";
+
+    private readonly Socket socket;
+    private readonly Request request;
+    private readonly Configuration config;
+    readonly Dictionary<string, string> attributes = new();
+
+
     public Response(Socket socket, Request request, Configuration c)
     {
         this.socket = socket;
         this.request = request;
         config = c;
     }
-
 
     //Send methods
 
@@ -52,7 +52,7 @@ public class Response
     /// <param name="data">Body of the response</param>
     /// <param name="mimeType">MimeType of the body</param>
     /// <param name="statusCode">Response status code</param>
-    public void Send(string data, string mimeType = "text/plain", int statusCode = 200, Dictionary<string, string>? customHeaders = null)
+    public void Send(string data, string mimeType = "text/plain", int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
     {
         string _mime = mimeType;
         string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
@@ -79,7 +79,7 @@ public class Response
         catch (Exception)
         {
             //dato che l'invio dei dati è parte nostra, se non riusciamo diamo un errore 500
-            SendCode(500);
+            SendCode(HTTP_CODES.INTERNAL_SERVER_ERROR);
             Terminal.ERROR("Error sending file : " + path);
         }
     }
@@ -88,21 +88,22 @@ public class Response
     /// </summary>
     /// <param name="path">HTML content</param>
     /// <param name="process">Whether or not or not process the document before sending</param>
-    public void SendHTMLContent(string content, bool process = false, string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null, int statusCode = 200)
+    /// <param name="statusCode">Response status code</param>
+    /// <param name="encoding">Encoding of the document</param>
+    /// <param name="customHeaders">Optional headers</param>
+    public void SendHTMLContent(string content, bool process = false, int statusCode = HTTP_CODES.OK, string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null)
     {
         if (process)
             content = ProcessContent(content);
         Send(content, MimeTypeUtils.TEXT_HTML + $"; charset={encoding}", statusCode, customHeaders);
     }
-
-
     /// <summary>
     /// Loads a file from a given path and sends an HTTP Response
     /// </summary>
     /// <param name="absPath">Path (absolute) of the file</param>
     /// <param name="mimeType">MimeType of the file</param>
     /// <param name="statusCode">Response status code</param>
-    public void SendFile(string absPath, string? mimeType = null, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
+    public void SendFile(string absPath, string? mimeType = null, int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
     {
         var data = File.ReadAllBytes(absPath);
 
@@ -122,7 +123,7 @@ public class Response
     /// <param name="data"></param>
     /// <param name="mimeType"></param>
     /// <param name="statusCode"></param>
-    public void SendFile(byte[] data, string mimeType, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
+    public void SendFile(byte[] data, string mimeType, int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
     {
         string _mime = mimeType;
         string headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);
@@ -140,11 +141,10 @@ public class Response
     /// <param name="filePart"></param>
     /// <param name="statusCode"></param>
     /// <param name="customHeaders"></param>
-    public void SendFile(FilePart filePart, int statusCode = 200, Dictionary<string, string>? customHeaders = null)
+    public void SendFile(FilePart filePart, int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
     {
         SendFile(filePart.GetBytes(), filePart.GetMimeType(), statusCode, customHeaders);
     }
-
     /// <summary>
     /// Send an HTTP Response with no body but with given status code
     /// </summary>
@@ -156,14 +156,6 @@ public class Response
         Send(Encoding.UTF8.GetBytes(resp));
     }
     /// <summary>
-    /// Sends a code with mnemonic name
-    /// </summary>
-    /// <param name="code"></param>
-    public void SendCode(HttpCodes code)
-    {
-        Send(code);
-    }
-    /// <summary>
     /// Shorthand for SendCode
     /// </summary>
     /// <param name="statusCode"></param>
@@ -172,18 +164,10 @@ public class Response
         SendCode(statusCode);
     }
     /// <summary>
-    /// Shorthand for SendCode, but with mnemonic names
-    /// </summary>
-    /// <param name="code"></param>
-    public void Send(HttpCodes code)
-    {
-        SendCode((int)code);
-    }
-    /// <summary>
     /// Sends a redirect to the client
     /// </summary>
     /// <param name="route"></param>
-    public void Redirect(string route, int statusCode = 302)
+    public void Redirect(string route, int statusCode = HTTP_CODES.FOUND)
     {
         if (statusCode < 300 && statusCode > 399)
             throw new InvalidHttpCodeException(statusCode);
@@ -198,64 +182,43 @@ public class Response
         Send(Encoding.UTF8.GetBytes(response));
     }
     /// <summary>
-    /// Same as Redirect(string, int) but with HttpCodes
-    /// </summary>
-    /// <param name="route"></param>
-    /// <param name="code"></param>
-    public void Redirect(string route, HttpCodes code)
-    {
-        Redirect(route, (int)code);
-    }
-    /// <summary>
     /// Redirects to a given servlet
     /// </summary>
     /// <param name="s"></param>
     /// <param name="statusCode"></param>
-    public void Redirect(Servlet s, int statusCode = 302)
+    public void Redirect(Servlet s, int statusCode = HTTP_CODES.FOUND)
     {
         Redirect(s.GetRoute(), statusCode);
     }
-    /// <summary>
-    /// Same as Redirect(Servlet, int)
-    /// </summary>
-    /// <param name="s"></param>
-    /// <param name="code"></param>
-    public void Redirect(Servlet s, HttpCodes code = HttpCodes.FOUND)
-    {
-        Redirect(s.GetRoute(), code);
-    }
-
     //common status codes
-
     /// <summary>
     /// Bad Request
     /// </summary>
     public void E400()
     {
-        SendCode(400);
+        SendCode(HTTP_CODES.BAD_REQUEST);
     }
     /// <summary>
     /// Unauthorized
     /// </summary>
     public void E401()
     {
-        SendCode(401);
+        SendCode(HTTP_CODES.UNAUTHORIZED);
     }
     /// <summary>
     /// Not Found
     /// </summary>
     public void E404()
     {
-        SendCode(404);
+        SendCode(HTTP_CODES.NOT_FOUND);
     }
     /// <summary>
     /// Internal Server Error
     /// </summary>
     public void E500()
     {
-        SendCode(500);
+        SendCode(HTTP_CODES.INTERNAL_SERVER_ERROR);
     }
-
     /// <summary>
     /// Sends a HTTP Response with a JSON body passed as parameter
     /// </summary>
@@ -289,7 +252,6 @@ public class Response
 
         JSON(JsonSerializer.Serialize(o, jo));
     }
-
     /// <summary>
     /// Alternate name for function JSON
     /// </summary>
@@ -304,14 +266,11 @@ public class Response
     /// <param name="o"></param>
     /// <param name="options"></param>
     public void SendJSON<T>(T o, bool includeFields = true) => JSON(o, includeFields);
-
     ///<summary>
     /// Alternate name for function JSON
     /// </summary>
     /// <param name="content"></param>                
     public void SendJSON(string content) => JSON(content);
-
-
     /// <summary>
     /// Calculate the header of an HTTP Response
     /// </summary>
@@ -396,7 +355,6 @@ public class Response
 
         return Environment.OSVersion;
     }
-
 
     //function related to a basic preprocessing feature
 

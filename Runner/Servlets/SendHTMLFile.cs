@@ -11,7 +11,7 @@ namespace Runner
 
         public override void ProcessGet()
         {
-            res.SendHTMLFile("./static/index.html");
+            res.SendHTMLFile("./static/main.html");
         }
     }
 }

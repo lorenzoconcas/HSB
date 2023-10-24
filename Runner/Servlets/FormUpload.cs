@@ -45,7 +45,7 @@ public class Form : Servlet
             var f = req.GetFormData();
             if (f == null)
             {
-                res.Send(HttpCodes.INTERNAL_SERVER_ERROR);
+                res.Send(HTTP_CODES.INTERNAL_SERVER_ERROR);
                 return;
             }
             res.SendHTMLContent($"<h1>Hello {f.Get("name")}</h1>");
@@ -53,7 +53,7 @@ public class Form : Servlet
         }
         else
         {
-            res.SendCode(HttpCodes.FORBIDDEN);
+            res.SendCode(HTTP_CODES.FORBIDDEN);
         }
 
     }

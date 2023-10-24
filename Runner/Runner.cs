@@ -66,7 +66,6 @@ namespace Runner
                     res.SendHTMLContent(html);
                 });
 
-            //Utils.PrintLoadedAssemblies();
             new Server(c).Start();
         }
 

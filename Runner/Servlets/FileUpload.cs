@@ -53,7 +53,7 @@ public class FileUpload : Servlet
                 var files = data.GetFiles();
                 if (files.Count < 0)
                 {
-                    res.SendCode(HttpCodes.NOT_ACCEPTABLE);
+                    res.SendCode(HTTP_CODES.NOT_ACCEPTABLE);
                     return;
                 }
                 if (!Path.Exists(savePath))
@@ -68,11 +68,11 @@ public class FileUpload : Servlet
                 res.SendFile(files.First()); //send first file to che client
                 return;
             }
-            res.SendCode(HttpCodes.NOT_ACCEPTABLE);
+            res.SendCode(HTTP_CODES.NOT_ACCEPTABLE);
         }
         else
         {
-            res.SendCode(HttpCodes.FORBIDDEN);
+            res.SendCode(HTTP_CODES.FORBIDDEN);
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using HSB.Constants;
 
 namespace HSB
 {
@@ -7,7 +8,6 @@ namespace HSB
     {
         public Index(Request req, Response res, Configuration config) : base(req, res, config)
         {
-
         }
 
         public override void ProcessGet()
@@ -18,8 +18,11 @@ namespace HSB
             {
                 version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
             }
+
+
+
             string footer_div = "";
-            string server_name = "";
+            string server_name;
             string logo = "";
             string title = "";
             if (configuration.CustomServerName != "")

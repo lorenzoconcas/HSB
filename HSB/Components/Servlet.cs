@@ -75,6 +75,26 @@ public class Servlet
 
     public void Process()
     {
+        //if the servlet has a method with a file associated and it exists it will be send
+        var associatedFiles = GetType().GetCustomAttributes<AssociatedFile>();
+        if (associatedFiles.Any())
+        {
+            var file = associatedFiles.Where(a => a.MethodMatches(req.METHOD) || a.CustomMethodMatches(req.RawMethod.ToUpper()));
+            if (file.Any())
+            {
+                var path =  file.First().FilePath;
+                if(!Path.IsPathRooted(path)){
+                    //if the path is not rooted, we assume it is relative to the current directory
+                    path = Path.Combine(Directory.GetCurrentDirectory(), path);
+                }
+                if(File.Exists(path)){
+                    res.SendFile(file.First().FilePath);
+                   // configuration.debug.INFO($"Serving associated file {}", true);
+                }
+                return;
+            }
+        }
+
         switch (req.METHOD)
         {
             case HTTP_METHOD.GET:
@@ -104,11 +124,7 @@ public class Servlet
             case HTTP_METHOD.CONNECT:
                 ProcessConnect();
                 break;
-
-
             default:
-
-
                 if (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))
                 {
                     Terminal.INFO($"Custom method requested for route '{req.URL}'", true);
@@ -121,7 +137,7 @@ public class Servlet
                     return;
                 }
                 Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}", true);
-                res.SendCode(405);
+                res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
                 break;
 
         }
@@ -129,47 +145,46 @@ public class Servlet
 
     public virtual void ProcessPost()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessGet()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessDelete()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessPut()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessHead()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessPatch()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessOptions()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessTrace()
     {
-        res.SendCode(405);
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
     public virtual void ProcessConnect()
     {
-        res.SendCode(405);
-
+        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 }

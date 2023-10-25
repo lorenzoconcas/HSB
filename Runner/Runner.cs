@@ -82,7 +82,7 @@ namespace Runner
 
         private static void PrintHeaders(Request req, Response res)
         {
-            res.JSON(req.GetHeaders);
+            res.JSON(req.Headers);
         }
 
 
@@ -90,7 +90,7 @@ namespace Runner
         {
             Console.Clear();
             req.FullPrint();
-            res.Send(req.RawBody);
+            res.Send(req.Body);
         }
     }
 

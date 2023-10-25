@@ -251,10 +251,14 @@ public class Request
     public HTTP_METHOD METHOD => _method;
     public HTTP_PROTOCOL PROTOCOL => _protocol;
     public string URL => _url;
-    public string RawBody => body;
-    public Dictionary<string, string> GetHeaders => headers;
-    public List<string> GetRawHeaders => rawHeaders;
-    public Dictionary<string, string> GetParameters => parameters;
+    public byte[] RawBody => rawBody;
+    public string Body => body;
+
+    public Dictionary<string, string> Headers => headers;
+ 
+    public List<string> RawHeaders => rawHeaders;
+    public Dictionary<string, string> Parameters => parameters;
+   
     public Session GetSession() => session;
     public Tuple<string, string>? GetBasicAuthInformation() => basicAuth;
 
@@ -299,6 +303,9 @@ public class Request
     public Form? GetFormData() => form;
 
     //Debug functions
+
+    public Socket GetSocket() => connectionSocket;
+
     public string GetRawRequestText => reqText;
     public void DumpRequest(string path = "./request.txt")
     {
@@ -334,7 +341,6 @@ public class Request
             oAuth1_0Information = data;
 
     }
-
 
     public override string ToString()
     {

@@ -12,7 +12,7 @@ namespace Runner
 
         public override void ProcessGet()
         {
-            res.SendHTMLContent($"<h1>Prova GET -> {req.URL}</h1>\nParams:{req.GetParameters.DictToString()}");
+            res.SendHTMLContent($"<h1>Prova GET -> {req.URL}</h1>\nParams:{req.Parameters.DictToString()}");
         }
 
         public override void ProcessPost()

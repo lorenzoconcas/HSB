@@ -12,9 +12,9 @@ namespace Manager.@static
 
         public override void ProcessGet()
         {
-            if (req.GetParameters.ContainsKey("file"))
+            if (req.Parameters.ContainsKey("file"))
             {
-                string file = req.GetParameters["file"];
+                string file = req.Parameters["file"];
                 string content = HSB.Utils.LoadResourceString(file);
                 Terminal.INFO($"Serving '{file}' from resources (if found)");
                 res.Send(content);

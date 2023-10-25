@@ -14,10 +14,10 @@ namespace Runner.TestRunnerClasses
 
         public override void ProcessPost()
         {
-            if (req.GetHeaders["Content-Type"] == "image/jpeg")
+            if (req.Headers["Content-Type"] == "image/jpeg")
             {
 
-                string body = req.RawBody;
+                string body = req.Body;
 
 
                 File.WriteAllBytes("./static/test.jpeg", Convert.FromBase64String(body));

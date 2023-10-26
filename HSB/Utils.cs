@@ -317,6 +317,9 @@ public static partial class Utils
 
     public static byte GetByte(params bool[] bits)
     {
+        if(bits.Length > 8) throw new ArgumentException("The array must have 8 elements");
+        //todo Check platform endianess
+        bits = bits.Reverse().ToArray();
         byte value = 0;
         for (int i = 0; i < 8; i++)
         {
@@ -325,6 +328,35 @@ public static partial class Utils
         }
         return value;
 
+    }
+
+
+    /// <summary>
+    /// Converts an int16 to a 16 bit array
+    /// </summary>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public static bool[] IntTo16Bits(int length)
+    {
+        bool[] bits = new bool[16];
+        for (int i = 0; i < 16; i++)
+        {
+            bits[i] = (length & (1 << i)) != 0;
+        }
+        return bits;
+    }
+    /// <summary>
+    /// Converts an int32 to a 64 bit array (8 bytes)
+    /// </summary>
+    /// <param name="lenght"></param>
+    /// <returns></returns>
+    public static bool[] Int64To64Bits(int lenght){
+        bool[] bits = new bool[64];
+        for (int i = 0; i < 64; i++)
+        {
+            bits[i] = (lenght & (1 << i)) != 0;
+        }
+        return bits;
     }
 }
 

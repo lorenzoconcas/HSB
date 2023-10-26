@@ -82,47 +82,14 @@ c.GET("/", (Request req, Response res) =>
         response.Add("\r\n");
 
         var responseString = string.Join("", response);
-
         socket.Send(Encoding.UTF8.GetBytes(responseString));
 
-        var msg = Encoding.UTF8.GetBytes("Hello from the HSB-#!");
-        var size = BitConverter.GetBytes(msg.Length);
+        var msg = Encoding.UTF8.GetBytes("Hello from the HSB-PRO!");
 
 
-        /*   Frame firstFrame = new Frame();
-           firstFrame.SetOpcode(Opcode.TEXT);
-           firstFrame.SetPayload(msg);*/
-
-
-        //  var bits = new BitArray(
-        var bits = new List<bool>(){
-            true, //FIN, true if is the last frame, false if there are more frames to come
-            false, //RSV1, false
-            false, //RSV2, false
-            false,  //RSV2, false
-            false, false, false, true, //Opcode, 1 = text
-            false, //Mask, false if the payload is not masked
-        };
-        bits.AddRange(Utils.IntTo7Bits(msg.Length));
-
-        var _data = new BitArray(bits.ToArray());
-
-        var data = new List<byte>();
-        for (int i = 0; i < _data.Length; i += 8)
-        {
-            bool[] _byte = new bool[8];
-            for (int j = 0; j < 8; j++)
-            {
-                _byte[j] = _data[i + j];
-            }
-            data.Add((byte)Convert.ToInt32(string.Join("", _byte.Select(x => x ? 1 : 0)), 2));
-        }
-        data.AddRange(msg);
-
-
-
-
-        socket.Send(data.ToArray());
+        Frame helloMessage = new();     
+        helloMessage.SetPayload(msg);
+        socket.Send(helloMessage.Build());
 
         while (true)
         {
@@ -135,7 +102,7 @@ c.GET("/", (Request req, Response res) =>
                 Terminal.INFO(f);
                 var b = f.GetPayload();
                 Terminal.INFO(Encoding.UTF8.GetString(b));
-              
+
             }), socket);
         }
 

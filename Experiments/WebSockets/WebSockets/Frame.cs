@@ -1,6 +1,3 @@
-using System.IO.Compression;
-using Microsoft.VisualBasic;
-
 namespace HSB.Components.WebSockets;
 
 public class Frame
@@ -12,9 +9,9 @@ public class Frame
     private bool RSV3 { get; set; }
     private bool[]? opcode { get; set; }
     private bool Mask { get; set; }
-    private bool[]? PayloadLength;
-    private bool[]? ExtendedPayloadLength { get; set; }
-    private bool[]? ExtendedPayloadLengthContinued { get; set; }
+    private bool[] PayloadLength;
+    private byte[]? ExtendedPayloadLength { get; set; } //two bytes (16bit)
+    private byte[]? ExtendedPayloadLengthContinued { get; set; } //8 bytes (64bit)
     private byte[]? MaskingKey { get; set; }
     private byte[]? MaskingKeyContinued { get; set; }
     private byte[]? PayloadData { get; set; }
@@ -28,14 +25,16 @@ public class Frame
     /// <param name="rsv3"></param>
     /// <param name="opcode"></param>
     /// <param name="mask"></param>
-    public Frame(bool fin = true, bool rsv1 = false, bool rsv2 = false, bool rsv3 = false, bool[]? opcode = null, bool mask = false)
+    public Frame(bool fin = true, bool rsv1 = false, bool rsv2 = false, bool rsv3 = false, Opcode opcode = Opcode.TEXT, bool mask = false)
     {
         FIN = fin;
         RSV1 = rsv1;
         RSV2 = rsv2;
         RSV3 = rsv3;
-        this.opcode = opcode;
+        SetOpcode(opcode);
         Mask = mask;
+        PayloadLength = new bool[] { false, false, false, false, false, false, false };
+
         /*  PayloadLength = payloadLength;
          ExtendedPayloadLength = extendedPayloadLength;
          ExtendedPayloadLengthContinued = extendedPayloadLengthContinued;
@@ -46,7 +45,7 @@ public class Frame
 
     /// <summary>
     /// Use this costructor to decode a frame
-    /// </summary>
+    /// </summary
     /// <param name="data"></param>
     public Frame(byte[] data)
     {
@@ -72,40 +71,14 @@ public class Frame
             //ExtendedPayloadLength is present
             if (data.Length < 4)
                 throw new Exception("Frame: data.Length < 4 and Payload length is 126");
-            ExtendedPayloadLength = new bool[] {
-                data[2].ToBitArray()[0],
-                data[2].ToBitArray()[1],
-                data[2].ToBitArray()[2],
-                data[2].ToBitArray()[3],
-                data[2].ToBitArray()[4],
-                data[2].ToBitArray()[5],
-                data[2].ToBitArray()[6],
-                data[2].ToBitArray()[7]
-                 };
+            ExtendedPayloadLength = new byte[] { data[2], data[3] };
         }
         else if (PayloadLength.ToInt() == 127)
         {
             //ExtendedPayloadLengthContinued is present
             if (data.Length < 10)
                 throw new Exception("Frame: data.Length < 10 and Payload length is 127");
-            ExtendedPayloadLengthContinued = new bool[] {
-                data[2].ToBitArray()[0],
-                data[2].ToBitArray()[1],
-                data[2].ToBitArray()[2],
-                data[2].ToBitArray()[3],
-                data[2].ToBitArray()[4],
-                data[2].ToBitArray()[5],
-                data[2].ToBitArray()[6],
-                data[2].ToBitArray()[7],
-                data[3].ToBitArray()[0],
-                data[3].ToBitArray()[1],
-                data[3].ToBitArray()[2],
-                data[3].ToBitArray()[3],
-                data[3].ToBitArray()[4],
-                data[3].ToBitArray()[5],
-                data[3].ToBitArray()[6],
-                data[3].ToBitArray()[7]
-            };
+            ExtendedPayloadLengthContinued = new byte[] { data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9] };
         }
 
         //masking key
@@ -170,16 +143,26 @@ public class Frame
             Utils.GetByte(
                 //mask and payload length
                 Mask,
-                PayloadLength?[0] ?? false,
-                PayloadLength?[1] ?? false,
-                PayloadLength?[2] ?? false,
-                PayloadLength?[3] ?? false,
-                PayloadLength?[4] ?? false,
-                PayloadLength?[5] ?? false,
-                PayloadLength?[6] ?? false
+                PayloadLength[0],
+                PayloadLength[1],
+                PayloadLength[2],
+                PayloadLength[3],
+                PayloadLength[4],
+                PayloadLength[5],
+                PayloadLength[6]
             )
         };
-        //todo add missing
+        if (ExtendedPayloadLength != null) //two bytes
+        {
+            Terminal.INFO("This message has an extended payload length of 2 bytes");
+            bytes.AddRange(ExtendedPayloadLength);
+        }
+        if (Mask)
+        {
+            Terminal.INFO("This message has a mask, is this normal?");
+            bytes.AddRange(MaskingKey ?? Array.Empty<byte>());
+        }
+        bytes.AddRange(PayloadData ?? Array.Empty<byte>());
         return bytes.ToArray();
     }
     /// <summary>
@@ -237,11 +220,19 @@ public class Frame
     {
         PayloadData = payload;
         if (payload.Length < 126)
+        {
             PayloadLength = Utils.IntTo7Bits(payload.Length);
-        else if (payload.Length < 65536)
-            ExtendedPayloadLength = Utils.IntTo7Bits(payload.Length);
-        else
-            ExtendedPayloadLengthContinued = Utils.IntTo7Bits(payload.Length);
+            return;
+        }
+
+        if (payload.Length < 65536)
+        {
+            PayloadLength = Utils.IntTo7Bits(126);
+            ExtendedPayloadLength = BitConverter.GetBytes(payload.Length - 125);
+            return;
+        }
+
+        //a the moment the extended pauload length continued is not supported
 
     }
 
@@ -255,18 +246,19 @@ public class Frame
         sb += "\tOpcode: " + (opcode == null ? "not set??" : GetOpcode().ToString()) + "\n";
         sb += "\tMask: " + (Mask ? "YES" : "NO") + "\n";
         sb += "\tPayloadLength: " + (PayloadLength == null ? "not set" : PayloadLength.ToInt()) + " bytes\n";
-        sb += "\tExtendedPayloadLength: " + (ExtendedPayloadLength == null ? "not set" : ExtendedPayloadLength.ToInt()) + "\n";
-        sb += "\tExtendedPayloadLengthContinued: " + (ExtendedPayloadLengthContinued == null ? "not set" : ExtendedPayloadLengthContinued.ToInt()) + "\n";
-        sb += $"\tMaskingKey: {(MaskingKey == null ? "not set" : "0x"+BitConverter.ToString(MaskingKey).Replace("-", " 0x"))}\n";
-        sb += "\tPayloadData: " + (PayloadData == null ? "not set??" : "0x"+BitConverter.ToString(PayloadData).Replace("-", " 0x")) + "\n";
+        sb += "\tExtendedPayloadLength: " + (ExtendedPayloadLength == null ? "not set" : BitConverter.ToInt16(ExtendedPayloadLength)) + "\n";
+        sb += "\tExtendedPayloadLengthContinued: " + (ExtendedPayloadLengthContinued == null ? "not set" : BitConverter.ToInt64(ExtendedPayloadLengthContinued)) + "\n";
+        sb += $"\tMaskingKey: {(MaskingKey == null ? "not set" : "0x" + BitConverter.ToString(MaskingKey).Replace("-", " 0x"))}\n";
+        sb += "\tPayloadData: " + (PayloadData == null ? "not set??" : "0x" + BitConverter.ToString(PayloadData).Replace("-", " 0x")) + "\n";
         sb += "}";
         return sb;
     }
     public byte[] GetPayload()
     {
-        if(PayloadData == null) return Array.Empty<byte>();
-        if(PayloadData.Length < PayloadLength.ToInt())
-         {
+        if (PayloadData == null) return Array.Empty<byte>();
+        //this is shit
+        if (PayloadData.Length < PayloadLength.ToInt())
+        {
             //fill difference with 0
             var diff = PayloadLength.ToInt() - PayloadData.Length;
             var tmp = new byte[PayloadLength.ToInt()];
@@ -275,7 +267,61 @@ public class Frame
                 tmp[i] = PayloadData[i];
             }
             PayloadData = tmp;
-         }
+        }
         return PayloadData;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null) return false;
+
+        if (obj is bool[])
+        {
+
+            //this is wrong
+            //compare bool[]
+            bool[] o = (bool[])obj;
+            bool equal = o[0] == FIN;
+            equal = equal && o[1] == RSV1;
+            equal = equal && o[2] == RSV2;
+            equal = equal && o[3] == RSV3;
+            equal = equal && o[4] == opcode?[0] && o[5] == opcode?[1] && o[6] == opcode?[2] && o[7] == opcode?[3];
+            equal = equal && o[8] == Mask;
+
+
+
+            return equal;
+        }
+        //compare frame
+        if (obj is Frame f)
+        {
+            bool equal = f.GetFIN() == FIN;
+            equal = equal && f.GetRSV1() == RSV1;
+            equal = equal && f.GetRSV2() == RSV2;
+            equal = equal && f.GetRSV3() == RSV3;
+            equal = equal && f.GetOpcode() == this.GetOpcode();
+            equal = equal && f.GetMask() == Mask;
+            equal = equal && f.GetPayloadLength() == PayloadLength;
+            equal = equal && f.GetExtendedPayloadLength() == ExtendedPayloadLength;
+            equal = equal && f.GetExtendedPayloadLengthContinued() == ExtendedPayloadLengthContinued;
+            return equal;
+
+        }
+        return false;
+    }
+
+    //getters
+    public bool GetFIN() => FIN;
+    public bool GetRSV1() => RSV1;
+    public bool GetRSV2() => RSV2;
+    public bool GetRSV3() => RSV3;
+    public bool GetMask() => Mask;
+    public bool[] GetPayloadLength() => PayloadLength;
+    public byte[]? GetExtendedPayloadLength() => ExtendedPayloadLength;
+    public byte[]? GetExtendedPayloadLengthContinued() => ExtendedPayloadLengthContinued;
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 }

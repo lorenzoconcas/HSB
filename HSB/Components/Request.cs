@@ -278,8 +278,8 @@ public class Request
     public bool IsWebSocket()
     {
         return
-        headers.ContainsKey("Connection") && headers["Connection"] == "Upgrade" &&
-        headers.ContainsKey("Upgrade") && headers["Upgrade"] == "websocket";
+        headers.ContainsKey("Connection") && headers["Connection"].ToLower() == "upgrade" &&
+        headers.ContainsKey("Upgrade") && headers["Upgrade"].ToLower() == "websocket";
     }
     /// <summary>
     /// Returns true if the request is a file upload

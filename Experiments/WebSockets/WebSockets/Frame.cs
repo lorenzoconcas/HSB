@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Text;
+
 namespace HSB.Components.WebSockets;
 
 public class Frame
@@ -62,9 +65,6 @@ public class Frame
         var maskAndPayloadLength = data[1].ToBitArray();
         Mask = maskAndPayloadLength[0];
         PayloadLength = maskAndPayloadLength[1..];
-        //print Payload lenght in binary
-        Terminal.INFO("Payload length (bin): " + string.Join("", PayloadLength.Select(x => x ? 1 : 0)));
-
 
         if (PayloadLength.ToInt() == 126)
         {
@@ -82,46 +82,32 @@ public class Frame
         }
 
         //masking key
-        int position = 2;
+        int offset = 0; //from the start of the frame byte data
         if (Mask)
         {
-            //MaskingKey is 0 or 4 bytes
-            //position dependes on the length of the payload
-            //if payload.length < 126 -> position = 2
-            //if payload.length == 126 -> payload extend size is 2 bytes (16 bits) -> position = 4
-            //if payload.length == 127 -> payload extend size is 8 bytes (64 bits) -> position = 10
-            if (ExtendedPayloadLength != null)
-                position = 4;
-            if (ExtendedPayloadLengthContinued != null)
-                position = 10;
-            if (data.Length < position + 4)
-                throw new Exception($"Frame: data.Length < {position} + 4 and a mask is present");
+            //Mask position dependd on the size of the payload
 
-            MaskingKey = data[position..(position + 4)];
+            if (PayloadLength.ToInt() < 126) //ExtendedPayloadLength and ExtendedPayloadLengthContinued are not present
+                offset = 2;
+            if (PayloadLength.ToInt() == 126)
+                offset = 4;
+            if (PayloadLength.ToInt() == 127)
+                offset = 10; //{flags, opcode, mask, payload length} = 2, extended payload length = 8
 
-            /*
-            * src: https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3
-            
-            * Octet i of the transformed data ("transformed-octet-i") is the XOR of
-            * octet i of the original data ("original-octet-i") with octet at index
-            * i modulo 4 of the masking key ("masking-key-octet-j"):
 
-            * j                   = i MOD 4
-            * transformed-octet-i = original-octet-i XOR masking-key-octet-j
+            if (data.Length < offset + 4)
+                throw new Exception($"Frame: data.Length < {offset} + 4 and a mask is present");
 
-             */
-
-            PayloadData = new byte[data[position..].Length];
-
-            for (int i = 0; i < data[position..].Length; i++)
-            {
-                PayloadData[i] = (byte)(PayloadData[i] ^ MaskingKey[i % 4]);
-            }
+            MaskingKey = data[offset..(offset + 4)];
+            offset += 4;
+            //PayloadData = new byte[data[position..].Length];
         }
-        else
-        {
-            PayloadData = data[2..];
-        }
+
+        PayloadData = data[offset..];
+        /*.Reverse().ToArray();
+        var x = PayloadData.ToBitArray();
+        Terminal.INFO($"{x.Length} bits ({x.Length/8} bytes)");*/
+
     }
     /// <summary>
     /// Build the frame
@@ -162,7 +148,9 @@ public class Frame
             Terminal.INFO("This message has a mask, is this normal?");
             bytes.AddRange(MaskingKey ?? Array.Empty<byte>());
         }
-        bytes.AddRange(PayloadData ?? Array.Empty<byte>());
+        if (PayloadData != null) //some frames don't have a payload, like close frame and ping/pong frames
+            bytes.AddRange(PayloadData);
+
         return bytes.ToArray();
     }
     /// <summary>
@@ -231,43 +219,71 @@ public class Frame
             ExtendedPayloadLength = BitConverter.GetBytes(payload.Length - 125);
             return;
         }
-
         //a the moment the extended pauload length continued is not supported
-
+    }
+    public void SetPayload(string payload)
+    {
+        SetOpcode(Opcode.TEXT);
+        SetPayload(Encoding.UTF8.GetBytes(payload));
     }
 
     public override string ToString()
     {
         var sb = "WebSocket Frame:{\n";
         sb += "\tFIN(AL): " + (FIN ? "YES" : "NO") + "\n";
-        sb += "\tRSV1: " + (RSV1 ? "✅" : "❌") + "\n";
-        sb += "\tRSV2: " + (RSV2 ? "✅" : "❌") + "\n";
-        sb += "\tRSV3: " + (RSV3 ? "✅" : "❌") + "\n";
-        sb += "\tOpcode: " + (opcode == null ? "not set??" : GetOpcode().ToString()) + "\n";
+        sb += "\tRSV1: " + (RSV1 ? "✅" : "❌ (Good)") + "\n";
+        sb += "\tRSV2: " + (RSV2 ? "✅" : "❌ (Good)") + "\n";
+        sb += "\tRSV3: " + (RSV3 ? "✅" : "❌ (Good)") + "\n";
+        sb += "\tOpcode: " + (opcode == null ? "Not set??" : GetOpcode().ToString()) + "\n";
         sb += "\tMask: " + (Mask ? "YES" : "NO") + "\n";
         sb += "\tPayloadLength: " + (PayloadLength == null ? "not set" : PayloadLength.ToInt()) + " bytes\n";
         sb += "\tExtendedPayloadLength: " + (ExtendedPayloadLength == null ? "not set" : BitConverter.ToInt16(ExtendedPayloadLength)) + "\n";
         sb += "\tExtendedPayloadLengthContinued: " + (ExtendedPayloadLengthContinued == null ? "not set" : BitConverter.ToInt64(ExtendedPayloadLengthContinued)) + "\n";
-        sb += $"\tMaskingKey: {(MaskingKey == null ? "not set" : "0x" + BitConverter.ToString(MaskingKey).Replace("-", " 0x"))}\n";
-        sb += "\tPayloadData: " + (PayloadData == null ? "not set??" : "0x" + BitConverter.ToString(PayloadData).Replace("-", " 0x")) + "\n";
+        sb += $"\tMaskingKey: {(MaskingKey == null ? "Not set" : "0x" + BitConverter.ToString(MaskingKey).Replace("-", " 0x"))}\n";
+        sb += "\tPayloadData: " + (PayloadData == null ? "Not set??" : "0x" + BitConverter.ToString(PayloadData).Replace("-", " 0x")) + "\n";
+        if (Mask)
+        {
+            sb += "\tUnmaskedPayloadData: " + (PayloadData == null ? "Not set??" : "0x" + BitConverter.ToString(GetPayload()).Replace("-", " 0x")) + "\n";
+        }
         sb += "}";
         return sb;
     }
     public byte[] GetPayload()
     {
         if (PayloadData == null) return Array.Empty<byte>();
-        //this is shit
-        if (PayloadData.Length < PayloadLength.ToInt())
+
+        //if the frame is masked, unmask the payload
+        if (Mask && MaskingKey != null)
         {
-            //fill difference with 0
-            var diff = PayloadLength.ToInt() - PayloadData.Length;
-            var tmp = new byte[PayloadLength.ToInt()];
-            for (int i = 0; i < PayloadData.Length; i++)
-            {
-                tmp[i] = PayloadData[i];
-            }
-            PayloadData = tmp;
+            /*
+           * src: https://www.rfc-editor.org/rfc/rfc6455.html#section-5.3
+
+           * Octet i of the transformed data ("transformed-octet-i") is the XOR of
+           * octet i of the original data ("original-octet-i") with octet at index
+           * i modulo 4 of the masking key ("masking-key-octet-j"):
+
+           * j                   = i MOD 4
+           * transformed-octet-i = original-octet-i XOR masking-key-octet-j
+           */
+            //this operation must be done bit level and not byte level
+
+            /*   bool[] payloadBits = PayloadData.ToBitArray();
+              bool[] maskBits = MaskingKey.ToBitArray();*/
+
+            var payloadBits = new BitArray(PayloadData);
+            BitArray maskBits = MaskingKey.Length != PayloadData.Length ? 
+                new BitArray(MaskingKey.ExtendRepeating(PayloadData.Length)):
+                new BitArray(MaskingKey) ;
+
+
+            payloadBits = payloadBits.Xor(maskBits);
+
+
+            byte[] resultBytes = new byte[(payloadBits.Length - 1) / 8 + 1];
+            payloadBits.CopyTo(resultBytes, 0);
+            return resultBytes;
         }
+
         return PayloadData;
     }
 

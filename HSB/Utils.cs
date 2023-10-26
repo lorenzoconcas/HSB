@@ -302,12 +302,13 @@ public static partial class Utils
         {
             bits[i] = (value & (1 << i)) != 0;
         }
-        return bits;
+        return bits.Reverse().ToArray();
     }
 
     public static bool[] ToBitArray(this byte[] array)
     {
         List<bool> bits = new();
+
         foreach (var b in array)
         {
             bits.AddRange(b.ToBitArray());
@@ -357,6 +358,34 @@ public static partial class Utils
             bits[i] = (lenght & (1 << i)) != 0;
         }
         return bits;
+    }
+
+    public static byte[] ToByteArray(this bool[] bits){
+        if(bits.Length % 8 != 0) throw new ArgumentException("The array must have a length multiple of 8");
+    
+        List<byte> bytes = new();
+        for (int i = 0; i < bits.Length; i+=8)
+        {
+            bytes.Add(GetByte(bits[i..(i+8)]));
+        }
+        return bytes.ToArray();
+    }
+
+    /// <summary>
+    /// Extends (or reduces) an array repeating it until it reaches the specified size
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="array"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    public static T[] ExtendRepeating<T>(this T[] array, int size){
+        List<T> result = new();
+        for (int i = 0; i < size; i++)
+        {
+            result.Add(array[i % array.Length]);
+        }
+        return result.ToArray();
+
     }
 }
 

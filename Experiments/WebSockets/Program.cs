@@ -9,25 +9,8 @@ using HSB;
 using System.Security.Cryptography;
 using HSB.Constants;
 using System.Net.Sockets;
-using System.Collections;
 using HSB.Components.WebSockets;
-
-//some tests
-/*
-var val = new bool[]{
-    false, //0 
-    false, //1
-    false, //2
-    false, //3
-    false, //4
-    true, //5
-    FtpStyleUriParser, //6
-};
-
-
-Terminal.INFO(val.ToInt());
-Terminal.INFO(2 == val.ToInt());
-return;*/
+using System.Reflection.Emit;
 
 Configuration c = new()
 {
@@ -40,7 +23,7 @@ c.GET("/", (Request req, Response res) =>
 {
     if (req.IsWebSocket())
     {
-        Console.WriteLine("Websocket request");
+        Console.WriteLine("Received a websocket request");
 
         var headers = req.Headers;
 
@@ -69,39 +52,63 @@ c.GET("/", (Request req, Response res) =>
             "Upgrade: websocket\r\n",
             "Connection: Upgrade\r\n",
             "Sec-WebSocket-Accept: " + acceptSHA1Value + "\r\n",
-            //  "Sec-WebSocket-Extensions: " + SecWebSocketExtensions[0] + "\r\n" +
-            //   "Sec-WebSocket-Protocol: " + SecWebSocketProtocol + "\r\n" +
             "Sec-WebSocket-Version: " + SecWebSocketVersion + "\r\n",
         };
-        // "\r\n";
-
 
         if (SecWebSocketProtocol != "") //if the protocol is not empty, add it to the response
             response.Add("Sec-WebSocket-Protocol: " + SecWebSocketProtocol + "\r\n");
+
+      /*   if (SecWebSocketExtensions.Length > 0)
+            response.Add("Sec-WebSocket-Extensions: " + "\r\n");*/
 
         response.Add("\r\n");
 
         var responseString = string.Join("", response);
         socket.Send(Encoding.UTF8.GetBytes(responseString));
 
-        var msg = Encoding.UTF8.GetBytes("Hello from the HSB-PRO!");
-
-
-        Frame helloMessage = new();     
-        helloMessage.SetPayload(msg);
+        Frame helloMessage = new();
+        helloMessage.SetPayload("Hello from the HSB-#");
+        //48 65 6C 6C 6F 20 66 72 6F 6D 20 74 68 65 20 48 53 42 2D 23
+        //H  e  l  l  o  [] f  r  o  m  []  t  h  e [] H  S  B  -  # 
+        //bytes count : 20
+        Terminal.INFO("HelloMessage: " + helloMessage);
         socket.Send(helloMessage.Build());
+
+
 
         while (true)
         {
             socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((IAsyncResult ar) =>
             {
-                var socket = (Socket)ar.AsyncState;
+                var socket = (Socket?)ar.AsyncState;
+                if(socket == null) return;
                 int received = socket.EndReceive(ar);
-
+                if(received < 2) return; //not a valid frame
                 Frame f = new(buffer[..received]);
-                Terminal.INFO(f);
-                var b = f.GetPayload();
-                Terminal.INFO(Encoding.UTF8.GetString(b));
+                Opcode opcode = f.GetOpcode();
+
+                switch(f.GetOpcode()){
+                    case Opcode.CLOSE:{
+                        Terminal.INFO("Closing connection websocket");
+                        socket.Close();
+                        return;
+                    }
+                    case Opcode.BINARY:{
+                        Terminal.INFO("Received a binary frame: " + f);
+                        var payload = f.GetPayload();
+                        Terminal.INFO("Payload: 0x" + BitConverter.ToString(payload).Replace("-", " 0x"));
+                        return;
+                    }
+                    case Opcode.TEXT:{
+                        //if a frame is TEXT the encoding is UTF-8
+                        
+                        var payload = f.GetPayload();
+                        Terminal.INFO("Received a text frame: " + f);
+                        Terminal.INFO("Content: " + Encoding.UTF8.GetString(payload));
+                        return;
+                    }
+                }
+
 
             }), socket);
         }

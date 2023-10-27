@@ -1,9 +1,10 @@
 var searchData=
 [
   ['f_20a_20q_0',['API &amp; F.A.Q.',['../md__documentation_2_library.html#api--faq',1,'']]],
-  ['filepart_1',['FilePart',['../class_h_s_b_1_1_file_part.html',1,'HSB']]],
+  ['filepart_1',['FilePart',['../class_h_s_b_1_1_components_1_1_file_part.html',1,'HSB::Components']]],
   ['fileupload_2',['FileUpload',['../class_runner_1_1_file_upload.html',1,'Runner']]],
   ['for_20common_20http_20status_20response_20codes_3',['Shorts and for common HTTP Status response codes',['../md__documentation_2_library.html#shorts-and-for-common-http-status-response-codes',1,'']]],
-  ['formdata_4',['FormData',['../class_h_s_b_1_1_components_1_1_form_data.html',1,'HSB::Components']]],
-  ['formpart_5',['FormPart',['../class_h_s_b_1_1_form_part.html',1,'HSB']]]
+  ['form_4',['form',['../class_h_s_b_1_1_components_1_1_form.html',1,'HSB.Components.Form'],['../class_runner_1_1_form.html',1,'Runner.Form']]],
+  ['formpart_5',['FormPart',['../class_h_s_b_1_1_components_1_1_form_part.html',1,'HSB::Components']]],
+  ['frame_6',['frame',['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html#af932436befe27f7270952a996a6dfd0f',1,'HSB.Components.WebSockets.Frame.Frame(byte[] data)'],['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html#a8c2e69925b0051f76f266dc17725eecd',1,'HSB.Components.WebSockets.Frame.Frame(bool fin=true, bool rsv1=false, bool rsv2=false, bool rsv3=false, Opcode opcode=Opcode.TEXT, bool mask=false)'],['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html#af932436befe27f7270952a996a6dfd0f',1,'HSB.Components.WebSockets.Frame.Frame(byte[] data)'],['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html',1,'HSB.Components.WebSockets.Frame'],['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html#a8c2e69925b0051f76f266dc17725eecd',1,'HSB.Components.WebSockets.Frame.Frame()']]]
 ];

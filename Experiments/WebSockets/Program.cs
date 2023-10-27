@@ -1,7 +1,8 @@
 ﻿/*
 * This code is used to implement the WebSocket functionality.
 * This project will be deleted once is ready and moved to the main library project.
-* Requires HSB commit 93aca37 or later.
+* Requires HSB commit 93aca37 (v0.0.8 stable) or later
+* note: This project will be deleted from repository after the next alpha is released (v0.0.11?)
 */
 
 using System.Text;
@@ -14,7 +15,7 @@ using System.Reflection.Emit;
 
 Configuration c = new()
 {
-    port = 8080,
+    port = 8081,
     address = "127.0.0.1",
     requestMaxSize = Configuration.KILOBYTE * 1,
 };
@@ -67,7 +68,7 @@ c.GET("/", (Request req, Response res) =>
         socket.Send(Encoding.UTF8.GetBytes(responseString));
 
         Frame helloMessage = new();
-        helloMessage.SetPayload("Hello from the HSB-#");
+        helloMessage.SetPayload("server says: Hello from the HSB-# (sent using WebSockets)");
         //48 65 6C 6C 6F 20 66 72 6F 6D 20 74 68 65 20 48 53 42 2D 23
         //H  e  l  l  o  [] f  r  o  m  []  t  h  e [] H  S  B  -  # 
         //bytes count : 20
@@ -103,8 +104,13 @@ c.GET("/", (Request req, Response res) =>
                         //if a frame is TEXT the encoding is UTF-8
                         
                         var payload = f.GetPayload();
+                        var str = Encoding.UTF8.GetString(payload);
                         Terminal.INFO("Received a text frame: " + f);
-                        Terminal.INFO("Content: " + Encoding.UTF8.GetString(payload));
+                        Terminal.INFO("Content: " + payload);
+                        //Send server echo!
+                        Frame echo = new();
+                        echo.SetPayload("server echo: " + str);
+                        socket.Send(echo.Build());
                         return;
                     }
                 }
@@ -119,7 +125,7 @@ c.GET("/", (Request req, Response res) =>
     {
         var html = $"<html></head></head><body>\n";
         html += "<label id=\"status\">Status: Disconnected</label>\n";
-        html += "<button onclick=\"ws = new WebSocket('ws://localhost:8080'); ws.onopen = function(){document.getElementById('status').innerHTML = 'Status: Connected'}; ws.onmessage = function(e){document.getElementById('messages').value += 'server: '+ e.data + '\\n'}; ws.onclose = function(){document.getElementById('status').innerHTML = 'Status: Disconnected'};\">Connect</button>\n";
+        html += "<button onclick=\"ws = new WebSocket('ws://localhost:8081'); ws.onopen = function(){document.getElementById('status').innerHTML = 'Status: Connected'}; ws.onmessage = function(e){document.getElementById('messages').value += e.data + '\\n'}; ws.onclose = function(){document.getElementById('status').innerHTML = 'Status: Disconnected'};\">Connect</button>\n";
         html += "<textarea id=\"messages\" style=\"width: 100%; height: 200px;\"></textarea>\n";
         html += "<input type=\"text\" id=\"message\" style=\"width: 100%;\" />\n";
         html += "<button onclick=\"ws.send(document.getElementById('message').value); document.getElementById('messages').value += 'client: '+ document.getElementById('message').value + '\\n';\">Send</button>\n";

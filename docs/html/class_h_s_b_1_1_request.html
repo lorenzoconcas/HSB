@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -104,34 +104,44 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_request.html',''); ini
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af2e21a32bf7d6ff6aefb00847682b170" id="r_af2e21a32bf7d6ff6aefb00847682b170"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#af2e21a32bf7d6ff6aefb00847682b170">Request</a> (byte[] data, Socket socket, <a class="el" href="class_h_s_b_1_1_configuration.html">Configuration</a> config)</td></tr>
 <tr class="separator:af2e21a32bf7d6ff6aefb00847682b170"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4e7d2e7736c5cdaf49e3c02e2c08b99" id="r_aa4e7d2e7736c5cdaf49e3c02e2c08b99"><td class="memItemLeft" align="right" valign="top">override string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#aa4e7d2e7736c5cdaf49e3c02e2c08b99">ToString</a> ()</td></tr>
-<tr class="separator:aa4e7d2e7736c5cdaf49e3c02e2c08b99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3dd68f396658bc4d707a73758575073" id="r_af3dd68f396658bc4d707a73758575073"><td class="memItemLeft" align="right" valign="top"><a id="af3dd68f396658bc4d707a73758575073" name="af3dd68f396658bc4d707a73758575073"></a>
 <a class="el" href="class_h_s_b_1_1_session.html">Session</a>&#160;</td><td class="memItemRight" valign="bottom"><b>GetSession</b> ()</td></tr>
 <tr class="separator:af3dd68f396658bc4d707a73758575073"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a291b7e74ad5554052e9440add8437b9f" id="r_a291b7e74ad5554052e9440add8437b9f"><td class="memItemLeft" align="right" valign="top"><a id="a291b7e74ad5554052e9440add8437b9f" name="a291b7e74ad5554052e9440add8437b9f"></a>
 Tuple&lt; string, string &gt;?&#160;</td><td class="memItemRight" valign="bottom"><b>GetBasicAuthInformation</b> ()</td></tr>
 <tr class="separator:a291b7e74ad5554052e9440add8437b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8d7631981cd26448d189bdab12ec73e" id="r_ae8d7631981cd26448d189bdab12ec73e"><td class="memItemLeft" align="right" valign="top"><a id="ae8d7631981cd26448d189bdab12ec73e" name="ae8d7631981cd26448d189bdab12ec73e"></a>
+<a class="el" href="struct_h_s_b_1_1_o_auth1__0_information.html">OAuth1_0Information</a>?&#160;</td><td class="memItemRight" valign="bottom"><b>GetOAuth1_0Information</b> ()</td></tr>
+<tr class="separator:ae8d7631981cd26448d189bdab12ec73e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb4c80ab48a33d4ba170b6b22c28eebf" id="r_abb4c80ab48a33d4ba170b6b22c28eebf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#abb4c80ab48a33d4ba170b6b22c28eebf">IsJSON</a> ()</td></tr>
+<tr class="memdesc:abb4c80ab48a33d4ba170b6b22c28eebf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if a request contains a JSON document in the body.  <br /></td></tr>
+<tr class="separator:abb4c80ab48a33d4ba170b6b22c28eebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ae1b1c0549c9056041a976f40f1e2f3" id="r_a5ae1b1c0549c9056041a976f40f1e2f3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a5ae1b1c0549c9056041a976f40f1e2f3">IsWebSocket</a> ()</td></tr>
+<tr class="memdesc:a5ae1b1c0549c9056041a976f40f1e2f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the request is a websocket request.  <br /></td></tr>
 <tr class="separator:a5ae1b1c0549c9056041a976f40f1e2f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cd5e1e155a13c649311e7eefec79db9" id="r_a1cd5e1e155a13c649311e7eefec79db9"><td class="memItemLeft" align="right" valign="top"><a id="a1cd5e1e155a13c649311e7eefec79db9" name="a1cd5e1e155a13c649311e7eefec79db9"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsFileUpload</b> ()</td></tr>
+<tr class="memitem:a1cd5e1e155a13c649311e7eefec79db9" id="r_a1cd5e1e155a13c649311e7eefec79db9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a1cd5e1e155a13c649311e7eefec79db9">IsFileUpload</a> ()</td></tr>
+<tr class="memdesc:a1cd5e1e155a13c649311e7eefec79db9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the request is a file upload.  <br /></td></tr>
 <tr class="separator:a1cd5e1e155a13c649311e7eefec79db9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4fc8c4aa3500e577cdf7a0f7b7907b0" id="r_af4fc8c4aa3500e577cdf7a0f7b7907b0"><td class="memItemLeft" align="right" valign="top"><a id="af4fc8c4aa3500e577cdf7a0f7b7907b0" name="af4fc8c4aa3500e577cdf7a0f7b7907b0"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsFormUpload</b> ()</td></tr>
+<tr class="memitem:af4fc8c4aa3500e577cdf7a0f7b7907b0" id="r_af4fc8c4aa3500e577cdf7a0f7b7907b0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#af4fc8c4aa3500e577cdf7a0f7b7907b0">IsFormUpload</a> ()</td></tr>
+<tr class="memdesc:af4fc8c4aa3500e577cdf7a0f7b7907b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the request is a form upload.  <br /></td></tr>
 <tr class="separator:af4fc8c4aa3500e577cdf7a0f7b7907b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b07025163cee48de1516be91e9449ac" id="r_a4b07025163cee48de1516be91e9449ac"><td class="memItemLeft" align="right" valign="top"><a id="a4b07025163cee48de1516be91e9449ac" name="a4b07025163cee48de1516be91e9449ac"></a>
-<a class="el" href="class_h_s_b_1_1_components_1_1_form_data.html">FormData</a>?&#160;</td><td class="memItemRight" valign="bottom"><b>GetFormData</b> ()</td></tr>
-<tr class="separator:a4b07025163cee48de1516be91e9449ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3693aebdabce63772ecb906ae96d8f80" id="r_a3693aebdabce63772ecb906ae96d8f80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_h_s_b_1_1_components_1_1_multi_part_form_data.html">MultiPartFormData</a>?&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a3693aebdabce63772ecb906ae96d8f80">GetMultiPartFormData</a> ()</td></tr>
+<tr class="memdesc:a3693aebdabce63772ecb906ae96d8f80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the form data if the request is a multipart formdata upload, else null.  <br /></td></tr>
+<tr class="separator:a3693aebdabce63772ecb906ae96d8f80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a668b8683860dc36b30a1747661eda211" id="r_a668b8683860dc36b30a1747661eda211"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_h_s_b_1_1_components_1_1_form.html">Form</a>?&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a668b8683860dc36b30a1747661eda211">GetFormData</a> ()</td></tr>
+<tr class="memdesc:a668b8683860dc36b30a1747661eda211"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the form data if the request is a form upload, else null.  <br /></td></tr>
+<tr class="separator:a668b8683860dc36b30a1747661eda211"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81f9d3a7c300c089addd80eeba52e319" id="r_a81f9d3a7c300c089addd80eeba52e319"><td class="memItemLeft" align="right" valign="top"><a id="a81f9d3a7c300c089addd80eeba52e319" name="a81f9d3a7c300c089addd80eeba52e319"></a>
+Socket&#160;</td><td class="memItemRight" valign="bottom"><b>GetSocket</b> ()</td></tr>
+<tr class="separator:a81f9d3a7c300c089addd80eeba52e319"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76e03cd6fe5582780bcf8a9de66b92b0" id="r_a76e03cd6fe5582780bcf8a9de66b92b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a76e03cd6fe5582780bcf8a9de66b92b0">DumpRequest</a> (string path=&quot;./request.txt&quot;)</td></tr>
 <tr class="separator:a76e03cd6fe5582780bcf8a9de66b92b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45a73434b15c564c4d6ab48ac87c7e8d" id="r_a45a73434b15c564c4d6ab48ac87c7e8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a45a73434b15c564c4d6ab48ac87c7e8d">DumpBody</a> (string path=&quot;./body.txt&quot;)</td></tr>
 <tr class="separator:a45a73434b15c564c4d6ab48ac87c7e8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7034e8cc293b6329dd3bdacc0e92249" id="r_af7034e8cc293b6329dd3bdacc0e92249"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#af7034e8cc293b6329dd3bdacc0e92249">FullPrint</a> ()</td></tr>
 <tr class="separator:af7034e8cc293b6329dd3bdacc0e92249"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb4c80ab48a33d4ba170b6b22c28eebf" id="r_abb4c80ab48a33d4ba170b6b22c28eebf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#abb4c80ab48a33d4ba170b6b22c28eebf">IsJSON</a> ()</td></tr>
-<tr class="memdesc:abb4c80ab48a33d4ba170b6b22c28eebf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test if a request contains a JSON document in the body.  <br /></td></tr>
-<tr class="separator:abb4c80ab48a33d4ba170b6b22c28eebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4e7d2e7736c5cdaf49e3c02e2c08b99" id="r_aa4e7d2e7736c5cdaf49e3c02e2c08b99"><td class="memItemLeft" align="right" valign="top">override string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#aa4e7d2e7736c5cdaf49e3c02e2c08b99">ToString</a> ()</td></tr>
+<tr class="separator:aa4e7d2e7736c5cdaf49e3c02e2c08b99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -148,22 +158,25 @@ Properties</h2></td></tr>
 <tr class="separator:aacf0eeeb39eb622f5bf45bb152e571da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70e3800490b41f2a1cbbe79f903d4328" id="r_a70e3800490b41f2a1cbbe79f903d4328"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a70e3800490b41f2a1cbbe79f903d4328">URL</a><code> [get]</code></td></tr>
 <tr class="separator:a70e3800490b41f2a1cbbe79f903d4328"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19421249503aa570c92f61a3856814a9" id="r_a19421249503aa570c92f61a3856814a9"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a19421249503aa570c92f61a3856814a9">RawBody</a><code> [get]</code></td></tr>
-<tr class="separator:a19421249503aa570c92f61a3856814a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21aa70e891d731b0936e172d0a317be0" id="r_a21aa70e891d731b0936e172d0a317be0"><td class="memItemLeft" align="right" valign="top">Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a21aa70e891d731b0936e172d0a317be0">GetHeaders</a><code> [get]</code></td></tr>
-<tr class="separator:a21aa70e891d731b0936e172d0a317be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acaf1d970d8a60dcf0a2d6728985f3b10" id="r_acaf1d970d8a60dcf0a2d6728985f3b10"><td class="memItemLeft" align="right" valign="top">List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#acaf1d970d8a60dcf0a2d6728985f3b10">GetRawHeaders</a><code> [get]</code></td></tr>
-<tr class="separator:acaf1d970d8a60dcf0a2d6728985f3b10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e1c5feadd15273333552f0612b7ed6e" id="r_a4e1c5feadd15273333552f0612b7ed6e"><td class="memItemLeft" align="right" valign="top">Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a4e1c5feadd15273333552f0612b7ed6e">GetParameters</a><code> [get]</code></td></tr>
-<tr class="separator:a4e1c5feadd15273333552f0612b7ed6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8cf21a047a8ec83027b16960ee2cf6" id="r_a1c8cf21a047a8ec83027b16960ee2cf6"><td class="memItemLeft" align="right" valign="top">byte[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a1c8cf21a047a8ec83027b16960ee2cf6">RawBody</a><code> [get]</code></td></tr>
+<tr class="separator:a1c8cf21a047a8ec83027b16960ee2cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7669db12cae292be56a15bc2e63fdbd" id="r_ac7669db12cae292be56a15bc2e63fdbd"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#ac7669db12cae292be56a15bc2e63fdbd">Body</a><code> [get]</code></td></tr>
+<tr class="separator:ac7669db12cae292be56a15bc2e63fdbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a387bb9dbb95798340e659b257d653251" id="r_a387bb9dbb95798340e659b257d653251"><td class="memItemLeft" align="right" valign="top">Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a387bb9dbb95798340e659b257d653251">Headers</a><code> [get]</code></td></tr>
+<tr class="separator:a387bb9dbb95798340e659b257d653251"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af47b97df28506f37ed17f720f8120ed3" id="r_af47b97df28506f37ed17f720f8120ed3"><td class="memItemLeft" align="right" valign="top">List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#af47b97df28506f37ed17f720f8120ed3">RawHeaders</a><code> [get]</code></td></tr>
+<tr class="separator:af47b97df28506f37ed17f720f8120ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac30fb995e33a2d09dccbbc0b7255fe1b" id="r_ac30fb995e33a2d09dccbbc0b7255fe1b"><td class="memItemLeft" align="right" valign="top">Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#ac30fb995e33a2d09dccbbc0b7255fe1b">Parameters</a><code> [get]</code></td></tr>
+<tr class="separator:ac30fb995e33a2d09dccbbc0b7255fe1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c0c41599d7e07e5f699c202b3c2ccc7" id="r_a0c0c41599d7e07e5f699c202b3c2ccc7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#a0c0c41599d7e07e5f699c202b3c2ccc7">IsAjaxRequest</a><code> [get]</code></td></tr>
+<tr class="memdesc:a0c0c41599d7e07e5f699c202b3c2ccc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns if the request is an ajax request.  <br /></td></tr>
 <tr class="separator:a0c0c41599d7e07e5f699c202b3c2ccc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab3a783c10e207ba9310de2c64465852" id="r_aab3a783c10e207ba9310de2c64465852"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_request.html#aab3a783c10e207ba9310de2c64465852">GetRawRequestText</a><code> [get]</code></td></tr>
 <tr class="separator:aab3a783c10e207ba9310de2c64465852"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00043">43</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00008">8</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af2e21a32bf7d6ff6aefb00847682b170" name="af2e21a32bf7d6ff6aefb00847682b170"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af2e21a32bf7d6ff6aefb00847682b170">&#9670;&#160;</a></span>Request()</h2>
@@ -197,64 +210,61 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00078">78</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   79</span>        {</div>
-<div class="line"><span class="lineno">   80</span>            connectionSocket = socket;</div>
-<div class="line"><span class="lineno">   81</span>            rawData = data;</div>
-<div class="line"><span class="lineno">   82</span>            rawBody = Array.Empty&lt;<span class="keywordtype">byte</span>&gt;();</div>
-<div class="line"><span class="lineno">   83</span>            this.config = config;</div>
-<div class="line"><span class="lineno">   84</span>            requestContent = <span class="keyword">new</span>();</div>
-<div class="line"><span class="lineno">   85</span> </div>
-<div class="line"><span class="lineno">   86</span>            <span class="keywordflow">if</span> (data == <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   87</span>            {</div>
-<div class="line"><span class="lineno">   88</span>                <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">   89</span>            }</div>
-<div class="line"><span class="lineno">   90</span> </div>
-<div class="line"><span class="lineno">   91</span> </div>
-<div class="line"><span class="lineno">   92</span>            IsTLS = data[0] == 22;<span class="comment">//(int)TLS.ContentType.Handshake;</span></div>
-<div class="line"><span class="lineno">   93</span> </div>
-<div class="line"><span class="lineno">   94</span>            <span class="keywordflow">if</span> (IsTLS)</div>
-<div class="line"><span class="lineno">   95</span>            {</div>
-<div class="line"><span class="lineno">   96</span>                proceedWithElaboration = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">   97</span>                <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">   98</span>                <span class="comment">// ParseTLSRequest(data);</span></div>
-<div class="line"><span class="lineno">   99</span>            }</div>
-<div class="line"><span class="lineno">  100</span>            <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">  101</span>            {</div>
-<div class="line"><span class="lineno">  102</span>                <span class="keywordflow">switch</span> (Utils.GetEncoding(data))</div>
-<div class="line"><span class="lineno">  103</span>                {</div>
-<div class="line"><span class="lineno">  104</span>                    <span class="keywordflow">case</span> UTF8Encoding:</div>
-<div class="line"><span class="lineno">  105</span>                        reqText = Encoding.UTF8.GetString(data);</div>
-<div class="line"><span class="lineno">  106</span>                        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  107</span>                    <span class="keywordflow">case</span> UTF32Encoding:</div>
-<div class="line"><span class="lineno">  108</span>                        reqText = Encoding.UTF32.GetString(data);</div>
-<div class="line"><span class="lineno">  109</span>                        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  110</span>                    <span class="keywordflow">case</span> ASCIIEncoding:</div>
-<div class="line"><span class="lineno">  111</span>                        reqText = Encoding.ASCII.GetString(data);</div>
-<div class="line"><span class="lineno">  112</span>                        <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">  113</span>                }</div>
-<div class="line"><span class="lineno">  114</span> </div>
-<div class="line"><span class="lineno">  115</span>                <span class="keywordflow">if</span> (reqText.Replace(<span class="stringliteral">&quot;\0&quot;</span>, <span class="stringliteral">&quot;&quot;</span>) == <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><span class="lineno">  116</span>                {</div>
-<div class="line"><span class="lineno">  117</span>                    <span class="comment">//note:</span></div>
-<div class="line"><span class="lineno">  118</span>                    <span class="comment">//it can happen in programs like postman that a request to localhost produces two requests</span></div>
-<div class="line"><span class="lineno">  119</span>                    <span class="comment">//one for IPv6 and one for IPv4</span></div>
-<div class="line"><span class="lineno">  120</span>                    <span class="comment">//i don&#39;t know why but the second request is invalid</span></div>
-<div class="line"><span class="lineno">  121</span>                    validRequest = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">  122</span>                    config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO(<span class="stringliteral">&quot;Got an invalid request, ignoring...&quot;</span>);</div>
-<div class="line"><span class="lineno">  123</span>                    requestContent.Add(<span class="stringliteral">&quot; &quot;</span>);</div>
-<div class="line"><span class="lineno">  124</span>                    <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">  125</span>                }</div>
-<div class="line"><span class="lineno">  126</span> </div>
-<div class="line"><span class="lineno">  127</span> </div>
-<div class="line"><span class="lineno">  128</span> </div>
-<div class="line"><span class="lineno">  129</span>                <span class="comment">// reqText = Encoding.UTF8.GetString(data);</span></div>
-<div class="line"><span class="lineno">  130</span>                requestContent = reqText.Split(<span class="stringliteral">&quot;\r\n&quot;</span>).ToList();</div>
-<div class="line"><span class="lineno">  131</span>                ParseRequest();</div>
-<div class="line"><span class="lineno">  132</span>            }</div>
-<div class="line"><span class="lineno">  133</span> </div>
-<div class="line"><span class="lineno">  134</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a521c9e5e0ac575cef7602bdc16c3899f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">HSB.Configuration.debug</a></div><div class="ttdeci">Debugger debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00034">Configuration.cs:34</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00043">43</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   44</span>    {</div>
+<div class="line"><span class="lineno">   45</span>        connectionSocket = socket;</div>
+<div class="line"><span class="lineno">   46</span>        rawData = data;</div>
+<div class="line"><span class="lineno">   47</span>        rawBody = Array.Empty&lt;<span class="keywordtype">byte</span>&gt;();</div>
+<div class="line"><span class="lineno">   48</span>        this.config = config;</div>
+<div class="line"><span class="lineno">   49</span>        requestContent = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   50</span> </div>
+<div class="line"><span class="lineno">   51</span>        <span class="keywordflow">if</span> (data == <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   52</span>        {</div>
+<div class="line"><span class="lineno">   53</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">   54</span>        }</div>
+<div class="line"><span class="lineno">   55</span> </div>
+<div class="line"><span class="lineno">   56</span> </div>
+<div class="line"><span class="lineno">   57</span>        IsTLS = data[0] == 22;<span class="comment">//(int)TLS.ContentType.Handshake;</span></div>
+<div class="line"><span class="lineno">   58</span> </div>
+<div class="line"><span class="lineno">   59</span>        <span class="keywordflow">if</span> (IsTLS)</div>
+<div class="line"><span class="lineno">   60</span>        {</div>
+<div class="line"><span class="lineno">   61</span>            proceedWithElaboration = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   62</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">   63</span>            <span class="comment">// ParseTLSRequest(data);</span></div>
+<div class="line"><span class="lineno">   64</span>        }</div>
+<div class="line"><span class="lineno">   65</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   66</span>        {</div>
+<div class="line"><span class="lineno">   67</span>            <span class="keywordflow">switch</span> (Utils.GetEncoding(data))</div>
+<div class="line"><span class="lineno">   68</span>            {</div>
+<div class="line"><span class="lineno">   69</span>                <span class="keywordflow">case</span> UTF8Encoding:</div>
+<div class="line"><span class="lineno">   70</span>                    reqText = Encoding.UTF8.GetString(data);</div>
+<div class="line"><span class="lineno">   71</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">   72</span>                <span class="keywordflow">case</span> UTF32Encoding:</div>
+<div class="line"><span class="lineno">   73</span>                    reqText = Encoding.UTF32.GetString(data);</div>
+<div class="line"><span class="lineno">   74</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">   75</span>                <span class="keywordflow">case</span> ASCIIEncoding:</div>
+<div class="line"><span class="lineno">   76</span>                    reqText = Encoding.ASCII.GetString(data);</div>
+<div class="line"><span class="lineno">   77</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">   78</span>            }</div>
+<div class="line"><span class="lineno">   79</span> </div>
+<div class="line"><span class="lineno">   80</span>            <span class="keywordflow">if</span> (reqText.Replace(<span class="stringliteral">&quot;\0&quot;</span>, <span class="stringliteral">&quot;&quot;</span>) == <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">   81</span>            {</div>
+<div class="line"><span class="lineno">   82</span>                <span class="comment">//note:</span></div>
+<div class="line"><span class="lineno">   83</span>                <span class="comment">//it can happen in programs like postman that a request to localhost produces two requests</span></div>
+<div class="line"><span class="lineno">   84</span>                <span class="comment">//one for IPv6 and one for IPv4</span></div>
+<div class="line"><span class="lineno">   85</span>                <span class="comment">//i don&#39;t know why but the second request is invalid</span></div>
+<div class="line"><span class="lineno">   86</span>                validRequest = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   87</span>                config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO(<span class="stringliteral">&quot;Got an invalid request, ignoring...&quot;</span>);</div>
+<div class="line"><span class="lineno">   88</span>                requestContent.Add(<span class="stringliteral">&quot; &quot;</span>);</div>
+<div class="line"><span class="lineno">   89</span>                <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">   90</span>            }</div>
+<div class="line"><span class="lineno">   91</span>            <span class="comment">// reqText = Encoding.UTF8.GetString(data);</span></div>
+<div class="line"><span class="lineno">   92</span>            requestContent = reqText.Split(<span class="stringliteral">&quot;\r\n&quot;</span>).ToList();</div>
+<div class="line"><span class="lineno">   93</span>            ParseRequest();</div>
+<div class="line"><span class="lineno">   94</span>        }</div>
+<div class="line"><span class="lineno">   95</span> </div>
+<div class="line"><span class="lineno">   96</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a521c9e5e0ac575cef7602bdc16c3899f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">HSB.Configuration.debug</a></div><div class="ttdeci">Debugger debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00030">Configuration.cs:30</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -275,10 +285,10 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00359">359</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  360</span>        {</div>
-<div class="line"><span class="lineno">  361</span>            File.WriteAllText(path, body);</div>
-<div class="line"><span class="lineno">  362</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00315">315</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  316</span>    {</div>
+<div class="line"><span class="lineno">  317</span>        File.WriteAllText(path, body);</div>
+<div class="line"><span class="lineno">  318</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -298,10 +308,10 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00354">354</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  355</span>        {</div>
-<div class="line"><span class="lineno">  356</span>            File.WriteAllBytes(path, rawData);</div>
-<div class="line"><span class="lineno">  357</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00311">311</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  312</span>    {</div>
+<div class="line"><span class="lineno">  313</span>        File.WriteAllBytes(path, rawData);</div>
+<div class="line"><span class="lineno">  314</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -320,22 +330,102 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00366">366</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  367</span>        {</div>
-<div class="line"><span class="lineno">  368</span>            Terminal.DEBUG(<span class="stringliteral">&quot;PRINTING RAW REQUEST\n====================&quot;</span>);</div>
-<div class="line"><span class="lineno">  369</span>            Terminal.INFO(reqText);</div>
-<div class="line"><span class="lineno">  370</span>            Terminal.DEBUG(<span class="stringliteral">&quot;\n====================&quot;</span>);</div>
-<div class="line"><span class="lineno">  371</span>            Terminal.INFO($<span class="stringliteral">&quot;Has basic auth? {basicAuth != null}&quot;</span>);</div>
-<div class="line"><span class="lineno">  372</span>            <span class="keywordflow">if</span> (basicAuth != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">  373</span>                Terminal.INFO(basicAuth);</div>
-<div class="line"><span class="lineno">  374</span>            Terminal.INFO($<span class="stringliteral">&quot;Has oauth1.0? {oAuth1_0Information != null}&quot;</span>);</div>
-<div class="line"><span class="lineno">  375</span>            <span class="keywordflow">if</span> (oAuth1_0Information != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">  376</span>                Terminal.INFO(oAuth1_0Information);</div>
-<div class="line"><span class="lineno">  377</span> </div>
-<div class="line"><span class="lineno">  378</span>            Terminal.INFO($<span class="stringliteral">&quot;Has oAuth2.0? {oAuth2_0Token != &quot;</span><span class="stringliteral">&quot;} {oAuth2_0Token}&quot;</span>);</div>
-<div class="line"><span class="lineno">  379</span> </div>
-<div class="line"><span class="lineno">  380</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00323">323</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  324</span>    {</div>
+<div class="line"><span class="lineno">  325</span>        Terminal.DEBUG(<span class="stringliteral">&quot;PRINTING RAW REQUEST\n====================&quot;</span>);</div>
+<div class="line"><span class="lineno">  326</span>        Terminal.INFO(reqText);</div>
+<div class="line"><span class="lineno">  327</span>        Terminal.DEBUG(<span class="stringliteral">&quot;\n====================&quot;</span>);</div>
+<div class="line"><span class="lineno">  328</span>        Terminal.INFO($<span class="stringliteral">&quot;Has basic auth? {basicAuth != null}&quot;</span>);</div>
+<div class="line"><span class="lineno">  329</span>        <span class="keywordflow">if</span> (basicAuth != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  330</span>            Terminal.INFO(basicAuth);</div>
+<div class="line"><span class="lineno">  331</span>        Terminal.INFO($<span class="stringliteral">&quot;Has oauth1.0? {oAuth1_0Information != null}&quot;</span>);</div>
+<div class="line"><span class="lineno">  332</span>        <span class="keywordflow">if</span> (oAuth1_0Information != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  333</span>            Terminal.INFO(oAuth1_0Information);</div>
+<div class="line"><span class="lineno">  334</span> </div>
+<div class="line"><span class="lineno">  335</span>        Terminal.INFO($<span class="stringliteral">&quot;Has oAuth2.0? {oAuth2_0Token != &quot;</span><span class="stringliteral">&quot;} {oAuth2_0Token}&quot;</span>);</div>
+<div class="line"><span class="lineno">  336</span> </div>
+<div class="line"><span class="lineno">  337</span>    }</div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="a668b8683860dc36b30a1747661eda211" name="a668b8683860dc36b30a1747661eda211"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a668b8683860dc36b30a1747661eda211">&#9670;&#160;</a></span>GetFormData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_h_s_b_1_1_components_1_1_form.html">Form</a>? HSB.Request.GetFormData </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the form data if the request is a form upload, else null. </p>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="a3693aebdabce63772ecb906ae96d8f80" name="a3693aebdabce63772ecb906ae96d8f80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3693aebdabce63772ecb906ae96d8f80">&#9670;&#160;</a></span>GetMultiPartFormData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_h_s_b_1_1_components_1_1_multi_part_form_data.html">MultiPartFormData</a>? HSB.Request.GetMultiPartFormData </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the form data if the request is a multipart formdata upload, else null. </p>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="a1cd5e1e155a13c649311e7eefec79db9" name="a1cd5e1e155a13c649311e7eefec79db9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cd5e1e155a13c649311e7eefec79db9">&#9670;&#160;</a></span>IsFileUpload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HSB.Request.IsFileUpload </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns true if the request is a file upload. </p>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a id="af4fc8c4aa3500e577cdf7a0f7b7907b0" name="af4fc8c4aa3500e577cdf7a0f7b7907b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4fc8c4aa3500e577cdf7a0f7b7907b0">&#9670;&#160;</a></span>IsFormUpload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HSB.Request.IsFormUpload </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns true if the request is a form upload. </p>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
 </div>
 </div>
 <a id="abb4c80ab48a33d4ba170b6b22c28eebf" name="abb4c80ab48a33d4ba170b6b22c28eebf"></a>
@@ -373,12 +463,15 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00308">308</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  309</span>        {</div>
-<div class="line"><span class="lineno">  310</span>            <span class="keywordflow">return</span></div>
-<div class="line"><span class="lineno">  311</span>            headers.ContainsKey(<span class="stringliteral">&quot;Connection&quot;</span>) &amp;&amp; headers[<span class="stringliteral">&quot;Connection&quot;</span>] == <span class="stringliteral">&quot;Upgrade&quot;</span> &amp;&amp;</div>
-<div class="line"><span class="lineno">  312</span>            headers.ContainsKey(<span class="stringliteral">&quot;Upgrade&quot;</span>) &amp;&amp; headers[<span class="stringliteral">&quot;Upgrade&quot;</span>] == <span class="stringliteral">&quot;websocket&quot;</span>;</div>
-<div class="line"><span class="lineno">  313</span>        }</div>
+<p>Returns true if the request is a websocket request. </p>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00279">279</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  280</span>    {</div>
+<div class="line"><span class="lineno">  281</span>        <span class="keywordflow">return</span></div>
+<div class="line"><span class="lineno">  282</span>        headers.ContainsKey(<span class="stringliteral">&quot;Connection&quot;</span>) &amp;&amp; headers[<span class="stringliteral">&quot;Connection&quot;</span>].ToLower() == <span class="stringliteral">&quot;upgrade&quot;</span> &amp;&amp;</div>
+<div class="line"><span class="lineno">  283</span>        headers.ContainsKey(<span class="stringliteral">&quot;Upgrade&quot;</span>) &amp;&amp; headers[<span class="stringliteral">&quot;Upgrade&quot;</span>].ToLower() == <span class="stringliteral">&quot;websocket&quot;</span>;</div>
+<div class="line"><span class="lineno">  284</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -397,11 +490,11 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00293">293</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  294</span>        {</div>
-<div class="line"><span class="lineno">  295</span>            <span class="keywordtype">string</span> str = _method.ToString() + <span class="stringliteral">&quot; - &quot;</span> + _url + <span class="stringliteral">&quot; - &quot;</span> + _protocol.ToString();</div>
-<div class="line"><span class="lineno">  296</span>            <span class="keywordflow">return</span> str;</div>
-<div class="line"><span class="lineno">  297</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00346">346</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  347</span>    {</div>
+<div class="line"><span class="lineno">  348</span>        <span class="keywordtype">string</span> str = _method.ToString() + <span class="stringliteral">&quot; - &quot;</span> + _url + <span class="stringliteral">&quot; - &quot;</span> + _protocol.ToString();</div>
+<div class="line"><span class="lineno">  349</span>        <span class="keywordflow">return</span> str;</div>
+<div class="line"><span class="lineno">  350</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -418,7 +511,7 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00077">77</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00042">42</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
@@ -434,13 +527,13 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00055">55</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00020">20</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Property Documentation</h2>
-<a id="a21aa70e891d731b0936e172d0a317be0" name="a21aa70e891d731b0936e172d0a317be0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21aa70e891d731b0936e172d0a317be0">&#9670;&#160;</a></span>GetHeaders</h2>
+<a id="ac7669db12cae292be56a15bc2e63fdbd" name="ac7669db12cae292be56a15bc2e63fdbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7669db12cae292be56a15bc2e63fdbd">&#9670;&#160;</a></span>Body</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -449,7 +542,7 @@ Properties</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Dictionary&lt;string, string&gt; HSB.Request.GetHeaders</td>
+          <td class="memname">string HSB.Request.Body</td>
         </tr>
       </table>
   </td>
@@ -459,55 +552,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00302">302</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-
-</div>
-</div>
-<a id="a4e1c5feadd15273333552f0612b7ed6e" name="a4e1c5feadd15273333552f0612b7ed6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e1c5feadd15273333552f0612b7ed6e">&#9670;&#160;</a></span>GetParameters</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Dictionary&lt;string, string&gt; HSB.Request.GetParameters</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00304">304</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-
-</div>
-</div>
-<a id="acaf1d970d8a60dcf0a2d6728985f3b10" name="acaf1d970d8a60dcf0a2d6728985f3b10"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acaf1d970d8a60dcf0a2d6728985f3b10">&#9670;&#160;</a></span>GetRawHeaders</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">List&lt;string&gt; HSB.Request.GetRawHeaders</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00303">303</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00255">255</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
@@ -531,7 +576,31 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00351">351</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00310">310</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+
+</div>
+</div>
+<a id="a387bb9dbb95798340e659b257d653251" name="a387bb9dbb95798340e659b257d653251"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a387bb9dbb95798340e659b257d653251">&#9670;&#160;</a></span>Headers</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Dictionary&lt;string, string&gt; HSB.Request.Headers</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00257">257</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
@@ -555,7 +624,9 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00307">307</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p>Returns if the request is an ajax request. </p>
+
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00274">274</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
@@ -579,7 +650,31 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00298">298</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00251">251</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+
+</div>
+</div>
+<a id="ac30fb995e33a2d09dccbbc0b7255fe1b" name="ac30fb995e33a2d09dccbbc0b7255fe1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac30fb995e33a2d09dccbbc0b7255fe1b">&#9670;&#160;</a></span>Parameters</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Dictionary&lt;string, string&gt; HSB.Request.Parameters</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00260">260</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
@@ -603,12 +698,12 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00299">299</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00252">252</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
-<a id="a19421249503aa570c92f61a3856814a9" name="a19421249503aa570c92f61a3856814a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19421249503aa570c92f61a3856814a9">&#9670;&#160;</a></span>RawBody</h2>
+<a id="a1c8cf21a047a8ec83027b16960ee2cf6" name="a1c8cf21a047a8ec83027b16960ee2cf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c8cf21a047a8ec83027b16960ee2cf6">&#9670;&#160;</a></span>RawBody</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -617,7 +712,7 @@ Properties</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">string HSB.Request.RawBody</td>
+          <td class="memname">byte [] HSB.Request.RawBody</td>
         </tr>
       </table>
   </td>
@@ -627,7 +722,31 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00301">301</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00254">254</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+
+</div>
+</div>
+<a id="af47b97df28506f37ed17f720f8120ed3" name="af47b97df28506f37ed17f720f8120ed3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af47b97df28506f37ed17f720f8120ed3">&#9670;&#160;</a></span>RawHeaders</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">List&lt;string&gt; HSB.Request.RawHeaders</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00259">259</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>
@@ -651,7 +770,7 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00300">300</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00253">253</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
 
 </div>
 </div>

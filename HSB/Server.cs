@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using HSB.Components.WebSockets;
 using HSB.Constants;
 using HSB.Exceptions;
 
@@ -106,11 +107,15 @@ public class Server
         var e = config.ExpressRoutes.Find(e => e.Item1 == req.URL && e.Item2.Item1 == req.METHOD);
 
         if (e == null) return false;
-        
+
         e.Item2.Item2.DynamicInvoke(req, res);
         return true;
     }
 
+    /// <summary>
+    /// Collect all the static routes from the assemblies
+    /// </summary>
+    /// <returns></returns>
     protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
     {
         AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -177,14 +182,14 @@ public class Server
 
 
         if (routes.ContainsKey(new(req.URL, false)))
-        {
+        {           
             Type c = routes[new(req.URL, false)];
             var x = c.GetConstructors()[0];
             return x.GetParameters().Length switch
             {
                 3 => Activator.CreateInstance(c, req, res, config),
                 2 => Activator.CreateInstance(c, req, res),
-                _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                _ => throw new Exception($"Invalid constructor found {x.Name}"),
             };
         }
 
@@ -198,9 +203,9 @@ public class Server
                 let x = c.GetConstructors()[0]
                 select x.GetParameters().Length switch
                 {
-                    3 => Activator.CreateInstance(c, req, res, this),
+                    3 => Activator.CreateInstance(c, req, res, config),
                     2 => Activator.CreateInstance(c, req, res),
-                    _ => throw new Exception($"Invalid servlet constructor found {x.Name}"),
+                    _ => throw new Exception($"Invalid constructor found {x.Name}"),
                 }).FirstOrDefault();
     }
 
@@ -211,7 +216,7 @@ public class Server
             //check if request is valid                    
             if (!req.validRequest)
             {
-                config.debug.WARNING($"{req.METHOD} '{req.URL}' 400 (Invalid Request)", true);
+                config.debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.NOT_FOUND} (Invalid Request)", true);
                 new Error(req, res, config, "Invalid Request", HTTP_CODES.NOT_FOUND).Process();
                 return;
             }
@@ -223,9 +228,26 @@ public class Server
 
             if (o != null)
             {
-                //in case the servlet is found, we call the Process method
-                Servlet servlet = (Servlet)o;
-                servlet.Process();
+                //we check if the object is a servlet or a websocket
+                if (o is Servlet s)
+                {
+                    s.Process();
+                }
+                else if (o is WebSocket ws)
+                {
+                    if(!req.IsWebSocket())
+                    {
+                        config.debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
+                        new Error(req, res, config, "Invalid Request", HTTP_CODES.METHOD_NOT_ALLOWED).Process();
+                        return;
+                    }
+                    else{
+                        
+                        ws.Process();
+                        return;
+                    }
+                }
+                else throw new Exception($"Developer tried to map an invalid object to a route -> {o.GetType()}");
             }
             else
             {

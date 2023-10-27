@@ -13,12 +13,14 @@ public class AssociatedFile : Attribute
     {
         this.filePath = filePath;
         this.methods = new() { method };
+        customMethods = new();
     }
 
     public AssociatedFile(string filePath, HTTP_METHOD[] methods)
     {
         this.filePath = filePath;
         this.methods = new(methods);
+        customMethods = new();
     }
     public AssociatedFile(string filePath, string customMethod)
     {

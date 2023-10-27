@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -93,6 +93,7 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_servlet.html',''); ini
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_h_s_b_1_1_servlet-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">HSB.Servlet Class Reference</div></div>
@@ -104,18 +105,23 @@ Inheritance diagram for HSB.Servlet:</div>
  <div class="center">
   <img src="class_h_s_b_1_1_servlet.png" usemap="#HSB.Servlet_map" alt=""/>
   <map id="HSB.Servlet_map" name="HSB.Servlet_map">
-<area href="class_h_s_b_1_1_error.html" alt="HSB.Error" shape="rect" coords="256,56,502,80"/>
-<area href="class_h_s_b_1_1_index.html" alt="HSB.Index" shape="rect" coords="256,112,502,136"/>
-<area href="class_runner_1_1_file_upload.html" alt="Runner.FileUpload" shape="rect" coords="256,168,502,192"/>
-<area href="class_runner_1_1_json_response.html" alt="Runner.JsonResponse" shape="rect" coords="256,224,502,248"/>
-<area href="class_runner_1_1_multi_binding.html" alt="Runner.MultiBinding" shape="rect" coords="256,280,502,304"/>
-<area href="class_runner_1_1_parameters.html" alt="Runner.Parameters" shape="rect" coords="256,336,502,360"/>
-<area href="class_runner_1_1_send_h_t_m_l_file.html" alt="Runner.SendHTMLFile" shape="rect" coords="256,392,502,416"/>
-<area href="class_runner_1_1_shared_objects.html" alt="Runner.SharedObjects" shape="rect" coords="256,448,502,472"/>
-<area href="class_runner_1_1_single_binding.html" alt="Runner.SingleBinding" shape="rect" coords="256,504,502,528"/>
-<area href="class_runner_1_1_test_runner_classes_1_1_post_with_auth.html" alt="Runner.TestRunnerClasses.PostWithAuth" shape="rect" coords="256,560,502,584"/>
-<area href="class_runner_1_1_test_runner_classes_1_1_regex_binding.html" alt="Runner.TestRunnerClasses.RegexBinding" shape="rect" coords="256,616,502,640"/>
-<area href="class_template_1_1_servlet.html" alt="Template.Servlet" shape="rect" coords="256,672,502,696"/>
+<area href="class_h_s_b_1_1_error.html" alt="HSB.Error" shape="rect" coords="323,56,636,80"/>
+<area href="class_h_s_b_1_1_index.html" alt="HSB.Index" shape="rect" coords="323,112,636,136"/>
+<area href="class_runner_1_1_associated_file_servlet_custom_methods.html" alt="Runner.AssociatedFileServletCustomMethods" shape="rect" coords="323,168,636,192"/>
+<area href="class_runner_1_1_associated_file_servlet_multiple_custom_methods.html" alt="Runner.AssociatedFileServletMultipleCustomMethods" shape="rect" coords="323,224,636,248"/>
+<area href="class_runner_1_1_associated_file_servlet_multiple_methods.html" alt="Runner.AssociatedFileServletMultipleMethods" shape="rect" coords="323,280,636,304"/>
+<area href="class_runner_1_1_associated_file_servlet_one_method.html" alt="Runner.AssociatedFileServletOneMethod" shape="rect" coords="323,336,636,360"/>
+<area href="class_runner_1_1_file_upload.html" alt="Runner.FileUpload" shape="rect" coords="323,392,636,416"/>
+<area href="class_runner_1_1_form.html" alt="Runner.Form" shape="rect" coords="323,448,636,472"/>
+<area href="class_runner_1_1_json_response.html" alt="Runner.JsonResponse" shape="rect" coords="323,504,636,528"/>
+<area href="class_runner_1_1_multi_binding.html" alt="Runner.MultiBinding" shape="rect" coords="323,560,636,584"/>
+<area href="class_runner_1_1_parameters.html" alt="Runner.Parameters" shape="rect" coords="323,616,636,640"/>
+<area href="class_runner_1_1_send_h_t_m_l_file.html" alt="Runner.SendHTMLFile" shape="rect" coords="323,672,636,696"/>
+<area href="class_runner_1_1_shared_objects.html" alt="Runner.SharedObjects" shape="rect" coords="323,728,636,752"/>
+<area href="class_runner_1_1_single_binding.html" alt="Runner.SingleBinding" shape="rect" coords="323,784,636,808"/>
+<area href="class_runner_1_1_test_runner_classes_1_1_post_with_auth.html" alt="Runner.TestRunnerClasses.PostWithAuth" shape="rect" coords="323,840,636,864"/>
+<area href="class_runner_1_1_test_runner_classes_1_1_regex_binding.html" alt="Runner.TestRunnerClasses.RegexBinding" shape="rect" coords="323,896,636,920"/>
+<area href="class_template_1_1_servlet.html" alt="Template.Servlet" shape="rect" coords="323,952,636,976"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -129,6 +135,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a12670212c06da0b9a8ee43f4e27e5ebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77a3e8fb11ee904f9e3b6478a114b0e6" id="r_a77a3e8fb11ee904f9e3b6478a114b0e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_servlet.html#a77a3e8fb11ee904f9e3b6478a114b0e6">RemoveCustomMethodHandler</a> (string name)</td></tr>
 <tr class="separator:a77a3e8fb11ee904f9e3b6478a114b0e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3687f0e379c7d7cfd4ca52680c507c8" id="r_ad3687f0e379c7d7cfd4ca52680c507c8"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_servlet.html#ad3687f0e379c7d7cfd4ca52680c507c8">GetRoute</a> ()</td></tr>
+<tr class="separator:ad3687f0e379c7d7cfd4ca52680c507c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7e31a4e7babc5ae33a32da98514b468" id="r_aa7e31a4e7babc5ae33a32da98514b468"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_servlet.html#aa7e31a4e7babc5ae33a32da98514b468">Process</a> ()</td></tr>
 <tr class="separator:aa7e31a4e7babc5ae33a32da98514b468"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5c04eafd2e9f83ac1485b4bf2019469" id="r_ac5c04eafd2e9f83ac1485b4bf2019469"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_servlet.html#ac5c04eafd2e9f83ac1485b4bf2019469">ProcessPost</a> ()</td></tr>
@@ -150,6 +158,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac5e69388c15a993665c6cc8729b38aae" id="r_ac5e69388c15a993665c6cc8729b38aae"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_servlet.html#ac5e69388c15a993665c6cc8729b38aae">ProcessConnect</a> ()</td></tr>
 <tr class="separator:ac5e69388c15a993665c6cc8729b38aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-static-methods" name="pro-static-methods"></a>
+Static Protected Member Functions</h2></td></tr>
+<tr class="memitem:a826fdde9fbfe96ffbb897c0a2b3a23e6" id="r_a826fdde9fbfe96ffbb897c0a2b3a23e6"><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_servlet.html#a826fdde9fbfe96ffbb897c0a2b3a23e6">ReadFromResources</a> (string resourceName)</td></tr>
+<tr class="memdesc:a826fdde9fbfe96ffbb897c0a2b3a23e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract a string from an embedded resource.  <br /></td></tr>
+<tr class="separator:a826fdde9fbfe96ffbb897c0a2b3a23e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a69ae4c8f4feca57feff1962a45d59bc7" id="r_a69ae4c8f4feca57feff1962a45d59bc7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_h_s_b_1_1_request.html">Request</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_servlet.html#a69ae4c8f4feca57feff1962a45d59bc7">req</a></td></tr>
@@ -163,7 +177,7 @@ Protected Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00004">4</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00005">5</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa52d5023184015418376ff56d428dcfe" name="aa52d5023184015418376ff56d428dcfe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa52d5023184015418376ff56d428dcfe">&#9670;&#160;</a></span>Servlet() <span class="overload">[1/2]</span></h2>
@@ -191,15 +205,15 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00013">13</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   14</span>        {</div>
-<div class="line"><span class="lineno">   15</span>            <span class="keywordflow">if</span> (req == <span class="keyword">null</span> || res == <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   16</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Request or Response cannot be null!&quot;</span>);</div>
-<div class="line"><span class="lineno">   17</span>            this.req = req;</div>
-<div class="line"><span class="lineno">   18</span>            this.res = res;</div>
-<div class="line"><span class="lineno">   19</span>            configuration = <span class="keyword">new</span>();</div>
-<div class="line"><span class="lineno">   20</span>            CustomMethodsMap = <span class="keyword">new</span>();</div>
-<div class="line"><span class="lineno">   21</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00014">14</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   15</span>    {</div>
+<div class="line"><span class="lineno">   16</span>        <span class="keywordflow">if</span> (req == <span class="keyword">null</span> || res == <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   17</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Request or Response cannot be null!&quot;</span>);</div>
+<div class="line"><span class="lineno">   18</span>        this.req = req;</div>
+<div class="line"><span class="lineno">   19</span>        this.res = res;</div>
+<div class="line"><span class="lineno">   20</span>        configuration = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   21</span>        CustomMethodsMap = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   22</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -235,15 +249,15 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00023">23</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   24</span>        {</div>
-<div class="line"><span class="lineno">   25</span>            <span class="keywordflow">if</span> (req == <span class="keyword">null</span> || res == <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   26</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Request or Response cannot be null!&quot;</span>);</div>
-<div class="line"><span class="lineno">   27</span>            this.req = req;</div>
-<div class="line"><span class="lineno">   28</span>            this.res = res;</div>
-<div class="line"><span class="lineno">   29</span>            configuration = conf;</div>
-<div class="line"><span class="lineno">   30</span>            CustomMethodsMap = <span class="keyword">new</span>();</div>
-<div class="line"><span class="lineno">   31</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00024">24</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   25</span>    {</div>
+<div class="line"><span class="lineno">   26</span>        <span class="keywordflow">if</span> (req == <span class="keyword">null</span> || res == <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   27</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Request or Response cannot be null!&quot;</span>);</div>
+<div class="line"><span class="lineno">   28</span>        this.req = req;</div>
+<div class="line"><span class="lineno">   29</span>        this.res = res;</div>
+<div class="line"><span class="lineno">   30</span>        configuration = conf;</div>
+<div class="line"><span class="lineno">   31</span>        CustomMethodsMap = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   32</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -274,10 +288,34 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00033">33</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   34</span>        {</div>
-<div class="line"><span class="lineno">   35</span>            CustomMethodsMap.Add(name.ToUpper(), handler);</div>
-<div class="line"><span class="lineno">   36</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00034">34</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   35</span>    {</div>
+<div class="line"><span class="lineno">   36</span>        CustomMethodsMap.Add(name.ToUpper(), handler);</div>
+<div class="line"><span class="lineno">   37</span>    }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="ad3687f0e379c7d7cfd4ca52680c507c8" name="ad3687f0e379c7d7cfd4ca52680c507c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3687f0e379c7d7cfd4ca52680c507c8">&#9670;&#160;</a></span>GetRoute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string HSB.Servlet.GetRoute </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00044">44</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   45</span>    {</div>
+<div class="line"><span class="lineno">   46</span>        <span class="comment">//if class has Binding (Attribute), we return is value, else &quot;&quot;</span></div>
+<div class="line"><span class="lineno">   47</span>        var binding = this.GetType().GetCustomAttribute&lt;Binding&gt;();</div>
+<div class="line"><span class="lineno">   48</span>        <span class="keywordflow">return</span> binding == <span class="keyword">null</span> ? <span class="stringliteral">&quot;&quot;</span> : binding.Path;</div>
+<div class="line"><span class="lineno">   49</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -296,60 +334,77 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00044">44</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   45</span>        {</div>
-<div class="line"><span class="lineno">   46</span>            <span class="keywordflow">switch</span> (req.METHOD)</div>
-<div class="line"><span class="lineno">   47</span>            {</div>
-<div class="line"><span class="lineno">   48</span>                <span class="keywordflow">case</span> HTTP_METHOD.GET:</div>
-<div class="line"><span class="lineno">   49</span>                    ProcessGet();</div>
-<div class="line"><span class="lineno">   50</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   51</span>                <span class="keywordflow">case</span> HTTP_METHOD.POST:</div>
-<div class="line"><span class="lineno">   52</span>                    ProcessPost();</div>
-<div class="line"><span class="lineno">   53</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   54</span>                <span class="keywordflow">case</span> HTTP_METHOD.PUT:</div>
-<div class="line"><span class="lineno">   55</span>                    ProcessPut();</div>
-<div class="line"><span class="lineno">   56</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   57</span>                <span class="keywordflow">case</span> HTTP_METHOD.DELETE:</div>
-<div class="line"><span class="lineno">   58</span>                    ProcessDelete();</div>
-<div class="line"><span class="lineno">   59</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   60</span>                <span class="keywordflow">case</span> HTTP_METHOD.HEAD:</div>
-<div class="line"><span class="lineno">   61</span>                    ProcessHead();</div>
-<div class="line"><span class="lineno">   62</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   63</span>                <span class="keywordflow">case</span> HTTP_METHOD.PATCH:</div>
-<div class="line"><span class="lineno">   64</span>                    ProcessPatch();</div>
-<div class="line"><span class="lineno">   65</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   66</span>                <span class="keywordflow">case</span> HTTP_METHOD.OPTIONS:</div>
-<div class="line"><span class="lineno">   67</span>                    ProcessOptions();</div>
-<div class="line"><span class="lineno">   68</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   69</span>                <span class="keywordflow">case</span> HTTP_METHOD.TRACE:</div>
-<div class="line"><span class="lineno">   70</span>                    ProcessTrace();</div>
-<div class="line"><span class="lineno">   71</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   72</span>                <span class="keywordflow">case</span> HTTP_METHOD.CONNECT:</div>
-<div class="line"><span class="lineno">   73</span>                    ProcessConnect();</div>
-<div class="line"><span class="lineno">   74</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   75</span> </div>
-<div class="line"><span class="lineno">   76</span> </div>
-<div class="line"><span class="lineno">   77</span>                <span class="keywordflow">default</span>:</div>
-<div class="line"><span class="lineno">   78</span> </div>
-<div class="line"><span class="lineno">   79</span> </div>
-<div class="line"><span class="lineno">   80</span>                    <span class="keywordflow">if</span> (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))</div>
-<div class="line"><span class="lineno">   81</span>                    {</div>
-<div class="line"><span class="lineno">   82</span>                        Terminal.INFO($<span class="stringliteral">&quot;Custom method requested for route &#39;{req.URL}&#39;&quot;</span>, <span class="keyword">true</span>);</div>
-<div class="line"><span class="lineno">   83</span>                        CustomMethodsMap[req.RawMethod].DynamicInvoke(req, res);</div>
-<div class="line"><span class="lineno">   84</span>                        <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">   85</span>                    }</div>
-<div class="line"><span class="lineno">   86</span>                    <span class="keywordflow">if</span> (handlerFallback != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   87</span>                    {</div>
-<div class="line"><span class="lineno">   88</span>                        handlerFallback.DynamicInvoke();</div>
-<div class="line"><span class="lineno">   89</span>                        <span class="keywordflow">return</span>;</div>
-<div class="line"><span class="lineno">   90</span>                    }</div>
-<div class="line"><span class="lineno">   91</span>                    Terminal.ERROR($<span class="stringliteral">&quot;Can&#39;t process request, unknown HTTP method or malformed request : {req.GetRawRequest}&quot;</span>, <span class="keyword">true</span>);</div>
-<div class="line"><span class="lineno">   92</span>                    res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">   93</span>                    <span class="keywordflow">break</span>;</div>
-<div class="line"><span class="lineno">   94</span> </div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00076">76</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   77</span>    {</div>
+<div class="line"><span class="lineno">   78</span>        <span class="comment">//if the servlet has a method with a file associated and it exists it will be send</span></div>
+<div class="line"><span class="lineno">   79</span>        var associatedFiles = GetType().GetCustomAttributes&lt;AssociatedFile&gt;();</div>
+<div class="line"><span class="lineno">   80</span>        <span class="keywordflow">if</span> (associatedFiles.Any())</div>
+<div class="line"><span class="lineno">   81</span>        {</div>
+<div class="line"><span class="lineno">   82</span>            var file = associatedFiles.Where(a =&gt; a.MethodMatches(req.METHOD) || a.CustomMethodMatches(req.RawMethod.ToUpper()));</div>
+<div class="line"><span class="lineno">   83</span>            <span class="keywordflow">if</span> (file.Any())</div>
+<div class="line"><span class="lineno">   84</span>            {</div>
+<div class="line"><span class="lineno">   85</span>                var path =  file.First().FilePath;</div>
+<div class="line"><span class="lineno">   86</span>                <span class="keywordflow">if</span>(!Path.IsPathRooted(path)){</div>
+<div class="line"><span class="lineno">   87</span>                    <span class="comment">//if the path is not rooted, we assume it is relative to the current directory</span></div>
+<div class="line"><span class="lineno">   88</span>                    path = Path.Combine(Directory.GetCurrentDirectory(), path);</div>
+<div class="line"><span class="lineno">   89</span>                }</div>
+<div class="line"><span class="lineno">   90</span>                <span class="keywordflow">if</span>(File.Exists(path)){</div>
+<div class="line"><span class="lineno">   91</span>                    res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#aded06bca97178785110cf713e7fa507a">SendFile</a>(file.First().FilePath);</div>
+<div class="line"><span class="lineno">   92</span>                   <span class="comment">// configuration.debug.INFO($&quot;Serving associated file {}&quot;, true);</span></div>
+<div class="line"><span class="lineno">   93</span>                }</div>
+<div class="line"><span class="lineno">   94</span>                <span class="keywordflow">return</span>;</div>
 <div class="line"><span class="lineno">   95</span>            }</div>
 <div class="line"><span class="lineno">   96</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7069234663584810b1b429ec4ebd9cdd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">HSB.Response.SendCode</a></div><div class="ttdeci">void SendCode(int statusCode)</div><div class="ttdoc">Send an HTTP Response with no body but with given status code.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00150">Response.cs:150</a></div></div>
+<div class="line"><span class="lineno">   97</span> </div>
+<div class="line"><span class="lineno">   98</span>        <span class="keywordflow">switch</span> (req.METHOD)</div>
+<div class="line"><span class="lineno">   99</span>        {</div>
+<div class="line"><span class="lineno">  100</span>            <span class="keywordflow">case</span> HTTP_METHOD.GET:</div>
+<div class="line"><span class="lineno">  101</span>                ProcessGet();</div>
+<div class="line"><span class="lineno">  102</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  103</span>            <span class="keywordflow">case</span> HTTP_METHOD.POST:</div>
+<div class="line"><span class="lineno">  104</span>                ProcessPost();</div>
+<div class="line"><span class="lineno">  105</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  106</span>            <span class="keywordflow">case</span> HTTP_METHOD.PUT:</div>
+<div class="line"><span class="lineno">  107</span>                ProcessPut();</div>
+<div class="line"><span class="lineno">  108</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  109</span>            <span class="keywordflow">case</span> HTTP_METHOD.DELETE:</div>
+<div class="line"><span class="lineno">  110</span>                ProcessDelete();</div>
+<div class="line"><span class="lineno">  111</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  112</span>            <span class="keywordflow">case</span> HTTP_METHOD.HEAD:</div>
+<div class="line"><span class="lineno">  113</span>                ProcessHead();</div>
+<div class="line"><span class="lineno">  114</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  115</span>            <span class="keywordflow">case</span> HTTP_METHOD.PATCH:</div>
+<div class="line"><span class="lineno">  116</span>                ProcessPatch();</div>
+<div class="line"><span class="lineno">  117</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  118</span>            <span class="keywordflow">case</span> HTTP_METHOD.OPTIONS:</div>
+<div class="line"><span class="lineno">  119</span>                ProcessOptions();</div>
+<div class="line"><span class="lineno">  120</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  121</span>            <span class="keywordflow">case</span> HTTP_METHOD.TRACE:</div>
+<div class="line"><span class="lineno">  122</span>                ProcessTrace();</div>
+<div class="line"><span class="lineno">  123</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  124</span>            <span class="keywordflow">case</span> HTTP_METHOD.CONNECT:</div>
+<div class="line"><span class="lineno">  125</span>                ProcessConnect();</div>
+<div class="line"><span class="lineno">  126</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  127</span>            <span class="keywordflow">default</span>:</div>
+<div class="line"><span class="lineno">  128</span>                <span class="keywordflow">if</span> (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))</div>
+<div class="line"><span class="lineno">  129</span>                {</div>
+<div class="line"><span class="lineno">  130</span>                    Terminal.INFO($<span class="stringliteral">&quot;Custom method requested for route &#39;{req.URL}&#39;&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><span class="lineno">  131</span>                    CustomMethodsMap[req.RawMethod].DynamicInvoke(req, res);</div>
+<div class="line"><span class="lineno">  132</span>                    <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  133</span>                }</div>
+<div class="line"><span class="lineno">  134</span>                <span class="keywordflow">if</span> (handlerFallback != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  135</span>                {</div>
+<div class="line"><span class="lineno">  136</span>                    handlerFallback.DynamicInvoke();</div>
+<div class="line"><span class="lineno">  137</span>                    <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  138</span>                }</div>
+<div class="line"><span class="lineno">  139</span>                Terminal.ERROR($<span class="stringliteral">&quot;Can&#39;t process request, unknown HTTP method or malformed request : {req.GetRawRequest}&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><span class="lineno">  140</span>                res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  141</span>                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  142</span> </div>
+<div class="line"><span class="lineno">  143</span>        }</div>
+<div class="line"><span class="lineno">  144</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7069234663584810b1b429ec4ebd9cdd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">HSB.Response.SendCode</a></div><div class="ttdeci">void SendCode(int statusCode)</div><div class="ttdoc">Send an HTTP Response with no body but with given status code.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00152">Response.cs:152</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_aded06bca97178785110cf713e7fa507a"><div class="ttname"><a href="class_h_s_b_1_1_response.html#aded06bca97178785110cf713e7fa507a">HSB.Response.SendFile</a></div><div class="ttdeci">void SendFile(string absPath, string? mimeType=null, int statusCode=HTTP_CODES.OK, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Loads a file from a given path and sends an HTTP Response.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00106">Response.cs:106</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -376,11 +431,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00138">138</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  139</span>        {</div>
-<div class="line"><span class="lineno">  140</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  141</span> </div>
-<div class="line"><span class="lineno">  142</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00186">186</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  187</span>    {</div>
+<div class="line"><span class="lineno">  188</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  189</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -407,10 +461,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00108">108</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  109</span>        {</div>
-<div class="line"><span class="lineno">  110</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  111</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00156">156</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  157</span>    {</div>
+<div class="line"><span class="lineno">  158</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  159</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -437,10 +491,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00103">103</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  104</span>        {</div>
-<div class="line"><span class="lineno">  105</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  106</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00151">151</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  152</span>    {</div>
+<div class="line"><span class="lineno">  153</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  154</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -467,10 +521,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00118">118</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  119</span>        {</div>
-<div class="line"><span class="lineno">  120</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  121</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00166">166</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  167</span>    {</div>
+<div class="line"><span class="lineno">  168</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  169</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -497,10 +551,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00128">128</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  129</span>        {</div>
-<div class="line"><span class="lineno">  130</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  131</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00176">176</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  177</span>    {</div>
+<div class="line"><span class="lineno">  178</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  179</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -527,10 +581,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00123">123</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  124</span>        {</div>
-<div class="line"><span class="lineno">  125</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  126</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00171">171</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  172</span>    {</div>
+<div class="line"><span class="lineno">  173</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  174</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -557,10 +611,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00098">98</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   99</span>        {</div>
-<div class="line"><span class="lineno">  100</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  101</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00146">146</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  147</span>    {</div>
+<div class="line"><span class="lineno">  148</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  149</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -587,10 +641,10 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00113">113</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  114</span>        {</div>
-<div class="line"><span class="lineno">  115</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  116</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00161">161</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  162</span>    {</div>
+<div class="line"><span class="lineno">  163</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  164</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -617,10 +671,66 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00133">133</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  134</span>        {</div>
-<div class="line"><span class="lineno">  135</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(405);</div>
-<div class="line"><span class="lineno">  136</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00181">181</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  182</span>    {</div>
+<div class="line"><span class="lineno">  183</span>        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.METHOD_NOT_ALLOWED);</div>
+<div class="line"><span class="lineno">  184</span>    }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a826fdde9fbfe96ffbb897c0a2b3a23e6" name="a826fdde9fbfe96ffbb897c0a2b3a23e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a826fdde9fbfe96ffbb897c0a2b3a23e6">&#9670;&#160;</a></span>ReadFromResources()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static string HSB.Servlet.ReadFromResources </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>resourceName</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Extract a string from an embedded resource. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">resourceName</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The resource as string or an empty string if not found</dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00055">55</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   56</span>    {</div>
+<div class="line"><span class="lineno">   57</span>        <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">   58</span>        {</div>
+<div class="line"><span class="lineno">   59</span> </div>
+<div class="line"><span class="lineno">   60</span>            Assembly assembly = Assembly.GetExecutingAssembly();</div>
+<div class="line"><span class="lineno">   61</span>            <span class="keywordtype">string</span> _resourceName = assembly.GetManifestResourceNames().Single(str =&gt; str.EndsWith(resourceName));</div>
+<div class="line"><span class="lineno">   62</span>            <span class="keywordtype">string</span> result;</div>
+<div class="line"><span class="lineno">   63</span>            <span class="keyword">using</span> (Stream stream = assembly.GetManifestResourceStream(_resourceName)!)</div>
+<div class="line"><span class="lineno">   64</span>            <span class="keyword">using</span> (StreamReader reader = <span class="keyword">new</span>(stream))</div>
+<div class="line"><span class="lineno">   65</span>            {</div>
+<div class="line"><span class="lineno">   66</span>                result = reader.ReadToEnd();</div>
+<div class="line"><span class="lineno">   67</span>            }</div>
+<div class="line"><span class="lineno">   68</span>            <span class="keywordflow">return</span> result;</div>
+<div class="line"><span class="lineno">   69</span>        }</div>
+<div class="line"><span class="lineno">   70</span>        <span class="keywordflow">catch</span> (Exception)</div>
+<div class="line"><span class="lineno">   71</span>        {</div>
+<div class="line"><span class="lineno">   72</span>            <span class="keywordflow">return</span> <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   73</span>        }</div>
+<div class="line"><span class="lineno">   74</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -640,10 +750,10 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00038">38</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   39</span>        {</div>
-<div class="line"><span class="lineno">   40</span>            CustomMethodsMap.Remove(name);</div>
-<div class="line"><span class="lineno">   41</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00039">39</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   40</span>    {</div>
+<div class="line"><span class="lineno">   41</span>        CustomMethodsMap.Remove(name);</div>
+<div class="line"><span class="lineno">   42</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -668,7 +778,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00008">8</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00009">9</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
 
 </div>
 </div>
@@ -692,7 +802,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00010">10</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00011">11</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
 
 </div>
 </div>
@@ -716,7 +826,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00006">6</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00007">7</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
 
 </div>
 </div>
@@ -740,7 +850,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00007">7</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html#l00008">8</a> of file <a class="el" href="_h_s_b_2_components_2_servlet_8cs_source.html">Servlet.cs</a>.</p>
 
 </div>
 </div>

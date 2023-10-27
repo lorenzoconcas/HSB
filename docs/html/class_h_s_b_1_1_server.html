@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -113,7 +113,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00010">10</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00011">11</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aed62cede6d1929ba44b78da50b8a9e2b" name="aed62cede6d1929ba44b78da50b8a9e2b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aed62cede6d1929ba44b78da50b8a9e2b">&#9670;&#160;</a></span>Server()</h2>
@@ -131,49 +131,49 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00023">23</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   24</span>        {</div>
-<div class="line"><span class="lineno">   25</span>            <span class="keywordflow">if</span> (!config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a>)</div>
-<div class="line"><span class="lineno">   26</span>                Utils.PrintLogo();</div>
-<div class="line"><span class="lineno">   27</span> </div>
-<div class="line"><span class="lineno">   28</span>            <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a> &gt; 65535)</div>
-<div class="line"><span class="lineno">   29</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">InvalidConfigurationParameterException</a>(<span class="stringliteral">&quot;Port&quot;</span>, <span class="stringliteral">&quot;Port number is over the maximum allowed (65535)&quot;</span>);</div>
-<div class="line"><span class="lineno">   30</span> </div>
-<div class="line"><span class="lineno">   31</span>            this.config = config;</div>
-<div class="line"><span class="lineno">   32</span> </div>
-<div class="line"><span class="lineno">   33</span>            <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><span class="lineno">   34</span>            {</div>
-<div class="line"><span class="lineno">   35</span>                <span class="comment">//address must be ANY</span></div>
-<div class="line"><span class="lineno">   36</span>                ipAddress = config.UseIPv4Only ? IPAddress.Any : IPAddress.IPv6Any;</div>
-<div class="line"><span class="lineno">   37</span>            }</div>
-<div class="line"><span class="lineno">   38</span>            <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">   39</span>            {</div>
-<div class="line"><span class="lineno">   40</span>                List&lt;IPAddress&gt; addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetwork).ToList();</div>
-<div class="line"><span class="lineno">   41</span> </div>
-<div class="line"><span class="lineno">   42</span>                <span class="keywordflow">if</span> (!config.<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a>)</div>
-<div class="line"><span class="lineno">   43</span>                {</div>
-<div class="line"><span class="lineno">   44</span>                    addresses.AddRange(Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetworkV6).ToList());</div>
-<div class="line"><span class="lineno">   45</span>                }</div>
-<div class="line"><span class="lineno">   46</span> </div>
-<div class="line"><span class="lineno">   47</span>                <span class="keywordflow">if</span> (addresses.Any())</div>
-<div class="line"><span class="lineno">   48</span>                    ipAddress = addresses.First();</div>
-<div class="line"><span class="lineno">   49</span>                <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">   50</span>                    <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot found address to listen to&quot;</span>);</div>
-<div class="line"><span class="lineno">   51</span>            }</div>
-<div class="line"><span class="lineno">   52</span> </div>
-<div class="line"><span class="lineno">   53</span>            localEndPoint = <span class="keyword">new</span>(ipAddress, config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a>);</div>
-<div class="line"><span class="lineno">   54</span> </div>
-<div class="line"><span class="lineno">   55</span>            listener = <span class="keyword">new</span>(ipAddress.AddressFamily,</div>
-<div class="line"><span class="lineno">   56</span>                SocketType.Stream, ProtocolType.Tcp);</div>
-<div class="line"><span class="lineno">   57</span> </div>
-<div class="line"><span class="lineno">   58</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO(<span class="stringliteral">&quot;Starting logging...&quot;</span>);</div>
-<div class="line"><span class="lineno">   59</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO($<span class="stringliteral">&quot;Listening at http://{localEndPoint}/&quot;</span>);</div>
-<div class="line"><span class="lineno">   60</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a22eb67f9bcac434dafec9533398db240"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HSB.Configuration.HideBranding</a></div><div class="ttdeci">bool HideBranding</div><div class="ttdoc">Hide the HSB logo on startup.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00054">Configuration.cs:54</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a3025ea1c01dc586c6de9a73b9f07fead"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">HSB.Configuration.UseIPv4Only</a></div><div class="ttdeci">bool UseIPv4Only</div><div class="ttdoc">Sets if the server must listen only to IPv4.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00024">Configuration.cs:24</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00024">24</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   25</span>    {</div>
+<div class="line"><span class="lineno">   26</span>        <span class="keywordflow">if</span> (!config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a>)</div>
+<div class="line"><span class="lineno">   27</span>            Utils.PrintLogo();</div>
+<div class="line"><span class="lineno">   28</span> </div>
+<div class="line"><span class="lineno">   29</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a> &gt; 65535)</div>
+<div class="line"><span class="lineno">   30</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">InvalidConfigurationParameterException</a>(<span class="stringliteral">&quot;Port&quot;</span>, <span class="stringliteral">&quot;Port number is over the maximum allowed (65535)&quot;</span>);</div>
+<div class="line"><span class="lineno">   31</span> </div>
+<div class="line"><span class="lineno">   32</span>        this.config = config;</div>
+<div class="line"><span class="lineno">   33</span> </div>
+<div class="line"><span class="lineno">   34</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">   35</span>        {</div>
+<div class="line"><span class="lineno">   36</span>            <span class="comment">//address must be ANY</span></div>
+<div class="line"><span class="lineno">   37</span>            ipAddress = config.UseIPv4Only ? IPAddress.Any : IPAddress.IPv6Any;</div>
+<div class="line"><span class="lineno">   38</span>        }</div>
+<div class="line"><span class="lineno">   39</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   40</span>        {</div>
+<div class="line"><span class="lineno">   41</span>            List&lt;IPAddress&gt; addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetwork).ToList();</div>
+<div class="line"><span class="lineno">   42</span> </div>
+<div class="line"><span class="lineno">   43</span>            <span class="keywordflow">if</span> (!config.<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a>)</div>
+<div class="line"><span class="lineno">   44</span>            {</div>
+<div class="line"><span class="lineno">   45</span>                addresses.AddRange(Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetworkV6).ToList());</div>
+<div class="line"><span class="lineno">   46</span>            }</div>
+<div class="line"><span class="lineno">   47</span> </div>
+<div class="line"><span class="lineno">   48</span>            <span class="keywordflow">if</span> (addresses.Any())</div>
+<div class="line"><span class="lineno">   49</span>                ipAddress = addresses.First();</div>
+<div class="line"><span class="lineno">   50</span>            <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   51</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot found address to listen to&quot;</span>);</div>
+<div class="line"><span class="lineno">   52</span>        }</div>
+<div class="line"><span class="lineno">   53</span> </div>
+<div class="line"><span class="lineno">   54</span>        localEndPoint = <span class="keyword">new</span>(ipAddress, config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a>);</div>
+<div class="line"><span class="lineno">   55</span> </div>
+<div class="line"><span class="lineno">   56</span>        listener = <span class="keyword">new</span>(ipAddress.AddressFamily,</div>
+<div class="line"><span class="lineno">   57</span>            SocketType.Stream, ProtocolType.Tcp);</div>
+<div class="line"><span class="lineno">   58</span> </div>
+<div class="line"><span class="lineno">   59</span>        config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO(<span class="stringliteral">&quot;Starting logging...&quot;</span>);</div>
+<div class="line"><span class="lineno">   60</span>        config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO($<span class="stringliteral">&quot;Listening at http://{localEndPoint}/&quot;</span>);</div>
+<div class="line"><span class="lineno">   61</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a22eb67f9bcac434dafec9533398db240"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HSB.Configuration.HideBranding</a></div><div class="ttdeci">bool HideBranding</div><div class="ttdoc">Hide the HSB logo on startup.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00046">Configuration.cs:46</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a3025ea1c01dc586c6de9a73b9f07fead"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">HSB.Configuration.UseIPv4Only</a></div><div class="ttdeci">bool UseIPv4Only</div><div class="ttdoc">Sets if the server must listen only to IPv4.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00022">Configuration.cs:22</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a437e586fdb583aa9bef15afe7824ca33"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">HSB.Configuration.address</a></div><div class="ttdeci">string address</div><div class="ttdoc">The server listening address, ex : &quot;127.0.0.1&quot; or &quot;192.168.1.2&quot; or &quot;&quot; (for any address) //check this.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00014">Configuration.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a521c9e5e0ac575cef7602bdc16c3899f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">HSB.Configuration.debug</a></div><div class="ttdeci">Debugger debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00034">Configuration.cs:34</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_adfb831e3fb1d043258847109a2065439"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">HSB.Configuration.port</a></div><div class="ttdeci">int port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00019">Configuration.cs:19</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a521c9e5e0ac575cef7602bdc16c3899f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">HSB.Configuration.debug</a></div><div class="ttdeci">Debugger debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00030">Configuration.cs:30</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_adfb831e3fb1d043258847109a2065439"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">HSB.Configuration.port</a></div><div class="ttdeci">int port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00018">Configuration.cs:18</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception_html"><div class="ttname"><a href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">HSB.Exceptions.InvalidConfigurationParameterException</a></div><div class="ttdef"><b>Definition</b> <a href="_invalid_configuration_parameter_exception_8cs_source.html#l00009">InvalidConfigurationParameterException.cs:10</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -202,12 +202,12 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00017">17</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   18</span>        {</div>
-<div class="line"><span class="lineno">   19</span>            Terminal.INFO(<span class="stringliteral">&quot;HSB-# has wrongfully been compiled has executable and will not run!&quot;</span>);</div>
-<div class="line"><span class="lineno">   20</span>            Terminal.INFO(<span class="stringliteral">&quot;To run as standalone you must compile/execute the \&quot;Standalone\&quot; or the \&quot;Launcher\&quot; project&quot;</span>);</div>
-<div class="line"><span class="lineno">   21</span>            Terminal.INFO(<span class="stringliteral">&quot;Check the documentation for more info (\&quot;https://github.com/lorenzoconcas/HSB-Sharp\&quot;)&quot;</span>);</div>
-<div class="line"><span class="lineno">   22</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00018">18</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   19</span>    {</div>
+<div class="line"><span class="lineno">   20</span>        Terminal.INFO(<span class="stringliteral">&quot;HSB-# has wrongfully been compiled has executable and will not run!&quot;</span>);</div>
+<div class="line"><span class="lineno">   21</span>        Terminal.INFO(<span class="stringliteral">&quot;To run as standalone you must compile/execute the \&quot;Standalone\&quot; or the \&quot;Launcher\&quot; project&quot;</span>);</div>
+<div class="line"><span class="lineno">   22</span>        Terminal.INFO(<span class="stringliteral">&quot;Check the documentation for more info (\&quot;https://github.com/lorenzoconcas/HSB-Sharp\&quot;)&quot;</span>);</div>
+<div class="line"><span class="lineno">   23</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -227,52 +227,49 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00062">62</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   63</span>        {</div>
-<div class="line"><span class="lineno">   64</span> </div>
-<div class="line"><span class="lineno">   65</span>            <span class="keywordflow">try</span></div>
-<div class="line"><span class="lineno">   66</span>            {</div>
-<div class="line"><span class="lineno">   67</span>                listener.Bind(localEndPoint);</div>
-<div class="line"><span class="lineno">   68</span>                listener.Listen(100);</div>
-<div class="line"><span class="lineno">   69</span> </div>
-<div class="line"><span class="lineno">   70</span>                <span class="keywordflow">if</span> (openInBrowser)</div>
-<div class="line"><span class="lineno">   71</span>                {</div>
-<div class="line"><span class="lineno">   72</span>                    var psi = <span class="keyword">new</span> ProcessStartInfo</div>
-<div class="line"><span class="lineno">   73</span>                    {</div>
-<div class="line"><span class="lineno">   74</span>                        FileName = $<span class="stringliteral">&quot;http:{localEndPoint}&quot;</span>,</div>
-<div class="line"><span class="lineno">   75</span>                        UseShellExecute = <span class="keyword">true</span></div>
-<div class="line"><span class="lineno">   76</span>                    };</div>
-<div class="line"><span class="lineno">   77</span>                    Process.Start(psi);</div>
-<div class="line"><span class="lineno">   78</span>                }</div>
-<div class="line"><span class="lineno">   79</span>                <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
-<div class="line"><span class="lineno">   80</span>                {</div>
-<div class="line"><span class="lineno">   81</span>                    Socket socket = listener.Accept();</div>
-<div class="line"><span class="lineno">   82</span> </div>
-<div class="line"><span class="lineno">   83</span>                    <span class="keyword">new</span> Task(() =&gt;</div>
-<div class="line"><span class="lineno">   84</span>                    {</div>
-<div class="line"><span class="lineno">   85</span>                        <span class="comment">//socket.DualMode = true;</span></div>
-<div class="line"><span class="lineno">   86</span>                        <span class="keywordtype">byte</span>[] bytes = <span class="keyword">new</span> <span class="keywordtype">byte</span>[config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">requestMaxSize</a>];</div>
-<div class="line"><span class="lineno">   87</span>                        <span class="keywordtype">int</span> bytesRec = socket.Receive(bytes);</div>
-<div class="line"><span class="lineno">   88</span>                        bytes = bytes.Take(bytesRec).ToArray(); <span class="comment">//trim the array to the actual size of the request</span></div>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00063">63</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   64</span>    {</div>
+<div class="line"><span class="lineno">   65</span> </div>
+<div class="line"><span class="lineno">   66</span>        <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">   67</span>        {</div>
+<div class="line"><span class="lineno">   68</span>            listener.Bind(localEndPoint);</div>
+<div class="line"><span class="lineno">   69</span>            listener.Listen(100);</div>
+<div class="line"><span class="lineno">   70</span> </div>
+<div class="line"><span class="lineno">   71</span>            <span class="keywordflow">if</span> (openInBrowser)</div>
+<div class="line"><span class="lineno">   72</span>            {</div>
+<div class="line"><span class="lineno">   73</span>                var psi = <span class="keyword">new</span> ProcessStartInfo</div>
+<div class="line"><span class="lineno">   74</span>                {</div>
+<div class="line"><span class="lineno">   75</span>                    FileName = $<span class="stringliteral">&quot;http:{localEndPoint}&quot;</span>,</div>
+<div class="line"><span class="lineno">   76</span>                    UseShellExecute = <span class="keyword">true</span></div>
+<div class="line"><span class="lineno">   77</span>                };</div>
+<div class="line"><span class="lineno">   78</span>                Process.Start(psi);</div>
+<div class="line"><span class="lineno">   79</span>            }</div>
+<div class="line"><span class="lineno">   80</span>            <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
+<div class="line"><span class="lineno">   81</span>            {</div>
+<div class="line"><span class="lineno">   82</span>                Socket socket = listener.Accept();</div>
+<div class="line"><span class="lineno">   83</span> </div>
+<div class="line"><span class="lineno">   84</span>                <span class="keyword">new</span> Task(() =&gt;</div>
+<div class="line"><span class="lineno">   85</span>                {</div>
+<div class="line"><span class="lineno">   86</span>                    <span class="keywordtype">byte</span>[] bytes = <span class="keyword">new</span> <span class="keywordtype">byte</span>[config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">requestMaxSize</a>];</div>
+<div class="line"><span class="lineno">   87</span>                    <span class="keywordtype">int</span> bytesRec = socket.Receive(bytes);</div>
+<div class="line"><span class="lineno">   88</span>                    bytes = bytes[..bytesRec]; <span class="comment">//trim the array to the actual size of the request</span></div>
 <div class="line"><span class="lineno">   89</span> </div>
-<div class="line"><span class="lineno">   90</span>                        Request req = <span class="keyword">new</span>(bytes, socket, config);</div>
-<div class="line"><span class="lineno">   91</span>                        <span class="keywordflow">if</span> (req.proceedWithElaboration)</div>
-<div class="line"><span class="lineno">   92</span>                        {</div>
-<div class="line"><span class="lineno">   93</span>                            Response res = <span class="keyword">new</span>(socket, req, config);</div>
-<div class="line"><span class="lineno">   94</span>                            ProcessRequest(req, res);</div>
-<div class="line"><span class="lineno">   95</span>                        }</div>
+<div class="line"><span class="lineno">   90</span>                    Request req = <span class="keyword">new</span>(bytes, socket, config);</div>
+<div class="line"><span class="lineno">   91</span>                    <span class="keywordflow">if</span> (req.proceedWithElaboration)</div>
+<div class="line"><span class="lineno">   92</span>                    {</div>
+<div class="line"><span class="lineno">   93</span>                        Response res = <span class="keyword">new</span>(socket, req, config);</div>
+<div class="line"><span class="lineno">   94</span>                        <span class="keyword">new</span> Task(() =&gt; ProcessRequest(req, res)).Start();</div>
+<div class="line"><span class="lineno">   95</span>                    }</div>
 <div class="line"><span class="lineno">   96</span> </div>
-<div class="line"><span class="lineno">   97</span>                    }).Start();</div>
-<div class="line"><span class="lineno">   98</span> </div>
-<div class="line"><span class="lineno">   99</span>                }</div>
-<div class="line"><span class="lineno">  100</span> </div>
-<div class="line"><span class="lineno">  101</span>            }</div>
-<div class="line"><span class="lineno">  102</span>            <span class="keywordflow">catch</span> (Exception e)</div>
-<div class="line"><span class="lineno">  103</span>            {</div>
-<div class="line"><span class="lineno">  104</span>                Terminal.ERROR(e);</div>
-<div class="line"><span class="lineno">  105</span>            }</div>
-<div class="line"><span class="lineno">  106</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a5ce77e3d9596a6150857088415f30d98"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">HSB.Configuration.requestMaxSize</a></div><div class="ttdeci">int requestMaxSize</div><div class="ttdoc">Specifies the size in bytes of the buffer that will contain the HTTP request.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00039">Configuration.cs:39</a></div></div>
+<div class="line"><span class="lineno">   97</span>                }).Start();</div>
+<div class="line"><span class="lineno">   98</span>            }</div>
+<div class="line"><span class="lineno">   99</span>        }</div>
+<div class="line"><span class="lineno">  100</span>        <span class="keywordflow">catch</span> (Exception e)</div>
+<div class="line"><span class="lineno">  101</span>        {</div>
+<div class="line"><span class="lineno">  102</span>            Terminal.ERROR(e);</div>
+<div class="line"><span class="lineno">  103</span>        }</div>
+<div class="line"><span class="lineno">  104</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a5ce77e3d9596a6150857088415f30d98"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">HSB.Configuration.requestMaxSize</a></div><div class="ttdeci">int requestMaxSize</div><div class="ttdoc">Specifies the size in bytes of the buffer that will contain the HTTP request.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00034">Configuration.cs:34</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -261,6 +261,7 @@ public class Request
    
     public Session GetSession() => session;
     public Tuple<string, string>? GetBasicAuthInformation() => basicAuth;
+    public OAuth1_0Information? GetOAuth1_0Information() => oAuth1_0Information;
 
     /// <summary>
     /// Test if a request contains a JSON document in the body

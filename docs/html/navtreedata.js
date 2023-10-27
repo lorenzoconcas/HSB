@@ -46,7 +46,11 @@ var NAVTREE =
     [ "Standalone", "md__documentation_2_standalone.html", null ],
     [ "LICENSE", "license.html", null ],
     [ "Packages", "namespaces.html", [
-      [ "Package List", "namespaces.html", "namespaces_dup" ]
+      [ "Package List", "namespaces.html", "namespaces_dup" ],
+      [ "Package Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
+      ] ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
@@ -68,8 +72,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_8_n_e_t_core_app_00_version_0av6_80_8_assembly_attributes_8cs_source.html",
-"class_h_s_b_1_1_data_writer.html#a2fa147266198b5812394546929869009",
-"namespace_h_s_b.html"
+"class_h_s_b_1_1_configuration.html#a4e20f8d1409eb070323ede3a940ab722",
+"dir_06571c0e5795ce9ca6d33626449b2c25.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

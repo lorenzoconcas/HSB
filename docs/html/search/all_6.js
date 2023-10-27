@@ -7,8 +7,12 @@ var searchData=
   ['getbytes_4',['GetBytes',['../class_h_s_b_1_1_data_writer.html#a878b9a7f27150df526b11b2e903caf37',1,'HSB::DataWriter']]],
   ['getcustomglobalcookie_5',['GetCustomGlobalCookie',['../class_h_s_b_1_1_configuration.html#a33482453f5bc98b504cb13bd64c4a911',1,'HSB::Configuration']]],
   ['getcustomglobalheader_6',['GetCustomGlobalHeader',['../class_h_s_b_1_1_configuration.html#a412d64bec42777e22fb8cbaf37448b54',1,'HSB::Configuration']]],
-  ['getsharedobject_7',['GetSharedObject',['../class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac',1,'HSB::Configuration']]],
-  ['getversion_8',['GetVersion',['../class_h_s_b_1_1_t_l_s_1_1_protocol_version.html#a2133e86e71210406fd5e49f2c04d5d05',1,'HSB::TLS::ProtocolVersion']]],
-  ['global_20cookies_9',['Global Cookies',['../md__documentation_2_library.html#global-cookies',1,'']]],
-  ['global_20headers_10',['Global Headers',['../md__documentation_2_library.html#global-headers',1,'']]]
+  ['getformdata_7',['GetFormData',['../class_h_s_b_1_1_request.html#a668b8683860dc36b30a1747661eda211',1,'HSB::Request']]],
+  ['getmultipartformdata_8',['GetMultiPartFormData',['../class_h_s_b_1_1_request.html#a3693aebdabce63772ecb906ae96d8f80',1,'HSB::Request']]],
+  ['getopcode_9',['getopcode',['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html#a6c8139560b003598eac154de377bdec0',1,'HSB.Components.WebSockets.Frame.GetOpcode()'],['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html#a6c8139560b003598eac154de377bdec0',1,'HSB.Components.WebSockets.Frame.GetOpcode()']]],
+  ['getparts_10',['GetParts',['../class_h_s_b_1_1_components_1_1_multi_part_form_data.html#a1415fdb2448dfb668cff07d1c61a82d3',1,'HSB::Components::MultiPartFormData']]],
+  ['getsharedobject_11',['GetSharedObject',['../class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac',1,'HSB::Configuration']]],
+  ['getversion_12',['GetVersion',['../class_h_s_b_1_1_t_l_s_1_1_protocol_version.html#a2133e86e71210406fd5e49f2c04d5d05',1,'HSB::TLS::ProtocolVersion']]],
+  ['global_20cookies_13',['Global Cookies',['../md__documentation_2_library.html#global-cookies',1,'']]],
+  ['global_20headers_14',['Global Headers',['../md__documentation_2_library.html#global-headers',1,'']]]
 ];

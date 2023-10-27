@@ -6,6 +6,22 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	  <DebugType>full</DebugType>
+	  <WarningLevel>4</WarningLevel>
+	  <NoStdLib>false</NoStdLib>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	  <NoStdLib>false</NoStdLib>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="RunnerClasses\**" />
+	  <Compile Remove="RunnerModels\**" />
+	  <EmbeddedResource Remove="RunnerClasses\**" />
+	  <EmbeddedResource Remove="RunnerModels\**" />
+	  <None Remove="RunnerClasses\**" />
+	  <None Remove="RunnerModels\**" />
+	</ItemGroup>
 	<ItemGroup>
 		<None Remove="static\" />
 		<None Remove="RunnerClasses\" />
@@ -13,17 +29,21 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="static\" />
-		<Folder Include="RunnerClasses\" />
-		<Folder Include="RunnerModels\" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\HSB\HSB.csproj" />
+	  <ProjectReference Include="..\HSB\HSB.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="static\JavascriptFile.js">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="static\main.html">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="static\websocket.html">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="static\wstest.html">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

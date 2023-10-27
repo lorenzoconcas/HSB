@@ -1,9 +1,15 @@
 var searchData=
 [
-  ['send_0',['send',['../class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0',1,'HSB.Response.Send(byte[] data, bool disconnect=true)'],['../class_h_s_b_1_1_response.html#a8ea9045842d2d49a7c7ebda02bd0a621',1,'HSB.Response.Send(string data, string mimeType=&quot;text/plain&quot;, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)'],['../class_h_s_b_1_1_response.html#af67a7e98aad1bd8c480838c3fd0a5b7c',1,'HSB.Response.Send(int statusCode)'],['../class_h_s_b_1_1_response.html#a62ff5b737df4e28175abfdabac197956',1,'HSB.Response.Send(HttpCodes code)']]],
-  ['sendcode_1',['sendcode',['../class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd',1,'HSB.Response.SendCode(int statusCode)'],['../class_h_s_b_1_1_response.html#a064a5a8ebfe4430d13adc5cc3fdae793',1,'HSB.Response.SendCode(HttpCodes code)']]],
-  ['sendfile_2',['sendfile',['../class_h_s_b_1_1_response.html#ab3a338243d93f5be733a1baacfcd3edd',1,'HSB.Response.SendFile(string absPath, string? mimeType=null, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)'],['../class_h_s_b_1_1_response.html#a1a24f6e081261224e8281b6cf4915ebe',1,'HSB.Response.SendFile(byte[] data, string mimeType, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)'],['../class_h_s_b_1_1_response.html#aea92949e59e04a3a668537caf9393ff3',1,'HSB.Response.SendFile(FilePart filePart, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)']]],
-  ['sendhtmlcontent_3',['SendHTMLContent',['../class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4',1,'HSB::Response']]],
-  ['sendhtmlpage_4',['SendHTMLPage',['../class_h_s_b_1_1_response.html#a7089fa54aa956f2cd206a62882632f41',1,'HSB::Response']]],
-  ['sendjson_3c_20t_20_3e_5',['sendjson&lt; t &gt;',['../class_h_s_b_1_1_response.html#a18a5b743e82c23058ac36d900fe28d06',1,'HSB.Response.SendJSON&lt; T &gt;(T o, JsonSerializerOptions options)'],['../class_h_s_b_1_1_response.html#a3e4d8a7a8ead270effbceb0212d457fc',1,'HSB.Response.SendJSON&lt; T &gt;(T o, bool includeFields=true)']]]
+  ['readfromresources_0',['ReadFromResources',['../class_h_s_b_1_1_servlet.html#a826fdde9fbfe96ffbb897c0a2b3a23e6',1,'HSB::Servlet']]],
+  ['readint_1',['ReadInt',['../class_h_s_b_1_1_data_reader.html#ab03aff6635451353afa7503d77ff889d',1,'HSB::DataReader']]],
+  ['readsmalluint_2',['ReadSmallUint',['../class_h_s_b_1_1_data_reader.html#a94064bdbfdb4766a88b0ea36b309c538',1,'HSB::DataReader']]],
+  ['readuint_3',['ReadUInt',['../class_h_s_b_1_1_data_reader.html#a2b64cfd38b6f4cedd7183aa0b4f3e72b',1,'HSB::DataReader']]],
+  ['readuint24_4',['ReadUInt24',['../class_h_s_b_1_1_data_reader.html#a1a6822306445473448721f5d17eebe7f',1,'HSB::DataReader']]],
+  ['readushort_5',['ReadUShort',['../class_h_s_b_1_1_data_reader.html#a793a12a5eab8bf1cea7c0e376e4eb3dd',1,'HSB::DataReader']]],
+  ['redirect_6',['redirect',['../class_h_s_b_1_1_response.html#a703e88e9f60bd7831c814b3d81773e9b',1,'HSB.Response.Redirect(string route, int statusCode=HTTP_CODES.FOUND)'],['../class_h_s_b_1_1_response.html#a854fd399e2cfd933685b780fc0dc5682',1,'HSB.Response.Redirect(Servlet s, int statusCode=HTTP_CODES.FOUND)']]],
+  ['removeattribute_7',['RemoveAttribute',['../class_h_s_b_1_1_response.html#a2d09f660805f772bb439ceba59c992ff',1,'HSB::Response']]],
+  ['removecustomglobalcookie_8',['RemoveCustomGlobalCookie',['../class_h_s_b_1_1_configuration.html#a447465b23ecbce4945874e6c5d6a0132',1,'HSB::Configuration']]],
+  ['removecustomglobalheader_9',['RemoveCustomGlobalHeader',['../class_h_s_b_1_1_configuration.html#a808b1e3225146ef52831542d8746b5be',1,'HSB::Configuration']]],
+  ['removesharedobject_10',['RemoveSharedObject',['../class_h_s_b_1_1_configuration.html#af96214adf6b110946c06e3fa153b82d7',1,'HSB::Configuration']]],
+  ['runasync_11',['RunAsync',['../class_h_s_b_1_1_t_l_s_1_1_curl.html#a50bc8a83ece8d3464fccd74aa012a2f6',1,'HSB::TLS::Curl']]]
 ];

@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -100,93 +100,14 @@ $(document).ready(function(){initNavTree('namespace_h_s_b_1_1_constants.html',''
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><b>HTTP_CODES</b></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><b>MimeTypeUtils</b></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class MimeTypeMap. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:ad95bb766f6eb810af9fd67aa3f07d27d" id="r_ad95bb766f6eb810af9fd67aa3f07d27d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>HttpCodes</b> { <br />
-&#160;&#160;<b>CONTINUE</b> = 100
-, <b>SWITCHING_PROTOCOLS</b> = 101
-, <b>PROCESSING</b> = 102
-, <b>EARLY_HINTS</b> = 103
-, <br />
-&#160;&#160;<b>OK</b> = 200
-, <b>CREATED</b> = 201
-, <b>ACCEPTED</b> = 202
-, <b>NON_AUTHORITATIVE_INFORMATION</b> = 203
-, <br />
-&#160;&#160;<b>NO_CONTENT</b> = 204
-, <b>RESET_CONTENT</b> = 205
-, <b>PARTIAL_CONTENT</b> = 206
-, <b>MULTI_STATUS</b> = 207
-, <br />
-&#160;&#160;<b>ALREADY_REPORTED</b> = 208
-, <b>IM_USED</b> = 226
-, <b>MULTIPLE_CHOICES</b> = 300
-, <b>MOVED_PERMANENTLY</b> = 301
-, <br />
-&#160;&#160;<b>FOUND</b> = 302
-, <b>SEE_OTHER</b> = 303
-, <b>NOT_MODIFIED</b> = 304
-, <b>USE_PROXY</b> = 305
-, <br />
-&#160;&#160;<b>UNUSED</b> = 306
-, <b>TEMPORARY_REDIRECT</b> = 307
-, <b>PERMANENT_REDIRECT</b> = 308
-, <b>BAD_REQUEST</b> = 400
-, <br />
-&#160;&#160;<b>UNAUTHORIZED</b> = 401
-, <b>PAYMENT_REQUIRED</b> = 402
-, <b>FORBIDDEN</b> = 403
-, <b>NOT_FOUND</b> = 404
-, <br />
-&#160;&#160;<b>METHOD_NOT_ALLOWED</b> = 405
-, <b>NOT_ACCEPTABLE</b> = 406
-, <b>PROXY_AUTHENTICATION_REQUIRED</b> = 407
-, <b>REQUEST_TIMEOUT</b> = 408
-, <br />
-&#160;&#160;<b>CONFLICT</b> = 409
-, <b>GONE</b> = 410
-, <b>LENGTH_REQUIRED</b> = 411
-, <b>PRECONDITION_FAILED</b> = 412
-, <br />
-&#160;&#160;<b>PAYLOAD_TOO_LARGE</b> = 413
-, <b>URI_TOO_LONG</b> = 414
-, <b>UNSUPPORTED_MEDIA_TYPE</b> = 415
-, <b>RANGE_NOT_SATISFIABLE</b> = 416
-, <br />
-&#160;&#160;<b>EXPECTATION_FAILED</b> = 417
-, <b>I_M_A_TEAPOT</b> = 418
-, <b>MISDIRECTED_REQUEST</b> = 421
-, <b>UNPROCESSABLE_ENTITY</b> = 422
-, <br />
-&#160;&#160;<b>LOCKED</b> = 423
-, <b>TOO_EARLY</b> = 425
-, <b>UPGRADE_REQUIRED</b> = 426
-, <b>PRECONDITION_REQUIRED</b> = 428
-, <br />
-&#160;&#160;<b>TOO_MANY_REQUESTS</b> = 429
-, <b>REQUEST_HEADER_FIELDS_TOO_LARGE</b> = 431
-, <b>UNAVAILABLE_FOR_LEGAL_REASONS</b> = 451
-, <b>INTERNAL_SERVER_ERROR</b> = 500
-, <br />
-&#160;&#160;<b>NOT_IMPLEMENTED</b> = 501
-, <b>BAD_GATEWAY</b> = 502
-, <b>SERVICE_UNAVAILABLE</b> = 503
-, <b>GATEWAY_TIMEOUT</b> = 504
-, <br />
-&#160;&#160;<b>HTTP_VERSION_NOT_SUPPORTED</b> = 505
-, <b>VARIANT_ALSO_NEGOTIATES</b> = 506
-, <b>INSUFFICIENT_STORAGE</b> = 507
-, <b>LOOP_DETECTED</b> = 508
-, <br />
-&#160;&#160;<b>NOT_EXTENDED</b> = 510
-, <b>NETWORK_AUTHENTICATION_REQUIRED</b> = 511
-<br />
- }</td></tr>
-<tr class="separator:ad95bb766f6eb810af9fd67aa3f07d27d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46ef770ea93c0b64b3049ba46344c1ff" id="r_a46ef770ea93c0b64b3049ba46344c1ff"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>HTTP_METHOD</b> { <br />
 &#160;&#160;<b>GET</b>
 , <b>POST</b>
@@ -213,6 +134,12 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:a2a7e7179ae680df6422a1ef8472607ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bd584e3285d091f00439d2eea9e4b81" id="r_a2bd584e3285d091f00439d2eea9e4b81"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>WebSocketState</b> { <b>CONNECTING</b> = 0
+, <b>OPEN</b> = 1
+, <b>CLOSING</b> = 2
+, <b>CLOSED</b> = 3
+ }</td></tr>
+<tr class="separator:a2bd584e3285d091f00439d2eea9e4b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a46ef770ea93c0b64b3049ba46344c1ff" name="a46ef770ea93c0b64b3049ba46344c1ff"></a>
@@ -249,93 +176,25 @@ Enumerations</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="ad95bb766f6eb810af9fd67aa3f07d27d" name="ad95bb766f6eb810af9fd67aa3f07d27d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad95bb766f6eb810af9fd67aa3f07d27d">&#9670;&#160;</a></span>HttpCodes</h2>
+<a id="a2bd584e3285d091f00439d2eea9e4b81" name="a2bd584e3285d091f00439d2eea9e4b81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bd584e3285d091f00439d2eea9e4b81">&#9670;&#160;</a></span>WebSocketState</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">enum HSB.Constants.HttpCodes</td>
+          <td class="memname">enum HSB.Constants.WebSocketState</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_http_codes_8cs_source.html#l00003">3</a> of file <a class="el" href="_http_codes_8cs_source.html">HttpCodes.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_web_socket_state_8cs_source.html#l00003">3</a> of file <a class="el" href="_web_socket_state_8cs_source.html">WebSocketState.cs</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">    4</span>{</div>
-<div class="line"><span class="lineno">    5</span>    <span class="comment">//10x</span></div>
-<div class="line"><span class="lineno">    6</span>    CONTINUE = 100,</div>
-<div class="line"><span class="lineno">    7</span>    SWITCHING_PROTOCOLS = 101,</div>
-<div class="line"><span class="lineno">    8</span>    PROCESSING = 102,</div>
-<div class="line"><span class="lineno">    9</span>    EARLY_HINTS = 103,</div>
-<div class="line"><span class="lineno">   10</span> </div>
-<div class="line"><span class="lineno">   11</span>    <span class="comment">//20x</span></div>
-<div class="line"><span class="lineno">   12</span>    OK = 200,</div>
-<div class="line"><span class="lineno">   13</span>    CREATED = 201,</div>
-<div class="line"><span class="lineno">   14</span>    ACCEPTED = 202,</div>
-<div class="line"><span class="lineno">   15</span>    NON_AUTHORITATIVE_INFORMATION = 203,</div>
-<div class="line"><span class="lineno">   16</span>    NO_CONTENT = 204,</div>
-<div class="line"><span class="lineno">   17</span>    RESET_CONTENT = 205,</div>
-<div class="line"><span class="lineno">   18</span>    PARTIAL_CONTENT = 206,</div>
-<div class="line"><span class="lineno">   19</span>    MULTI_STATUS = 207,</div>
-<div class="line"><span class="lineno">   20</span>    ALREADY_REPORTED = 208,</div>
-<div class="line"><span class="lineno">   21</span>    IM_USED = 226,</div>
-<div class="line"><span class="lineno">   22</span> </div>
-<div class="line"><span class="lineno">   23</span>    <span class="comment">//30x</span></div>
-<div class="line"><span class="lineno">   24</span>    MULTIPLE_CHOICES = 300,</div>
-<div class="line"><span class="lineno">   25</span>    MOVED_PERMANENTLY = 301,</div>
-<div class="line"><span class="lineno">   26</span>    FOUND = 302,</div>
-<div class="line"><span class="lineno">   27</span>    SEE_OTHER = 303,</div>
-<div class="line"><span class="lineno">   28</span>    NOT_MODIFIED = 304,</div>
-<div class="line"><span class="lineno">   29</span>    USE_PROXY = 305, <span class="comment">//UNUSED</span></div>
-<div class="line"><span class="lineno">   30</span>    UNUSED = 306, <span class="comment">//UNUSED</span></div>
-<div class="line"><span class="lineno">   31</span>    TEMPORARY_REDIRECT = 307,</div>
-<div class="line"><span class="lineno">   32</span>    PERMANENT_REDIRECT = 308,</div>
-<div class="line"><span class="lineno">   33</span> </div>
-<div class="line"><span class="lineno">   34</span>    <span class="comment">//40x</span></div>
-<div class="line"><span class="lineno">   35</span>    BAD_REQUEST = 400,</div>
-<div class="line"><span class="lineno">   36</span>    UNAUTHORIZED = 401,</div>
-<div class="line"><span class="lineno">   37</span>    PAYMENT_REQUIRED = 402,</div>
-<div class="line"><span class="lineno">   38</span>    FORBIDDEN = 403,</div>
-<div class="line"><span class="lineno">   39</span>    NOT_FOUND = 404,</div>
-<div class="line"><span class="lineno">   40</span>    METHOD_NOT_ALLOWED = 405,</div>
-<div class="line"><span class="lineno">   41</span>    NOT_ACCEPTABLE = 406,</div>
-<div class="line"><span class="lineno">   42</span>    PROXY_AUTHENTICATION_REQUIRED = 407,</div>
-<div class="line"><span class="lineno">   43</span>    REQUEST_TIMEOUT = 408,</div>
-<div class="line"><span class="lineno">   44</span>    CONFLICT = 409,</div>
-<div class="line"><span class="lineno">   45</span>    GONE = 410,</div>
-<div class="line"><span class="lineno">   46</span>    LENGTH_REQUIRED = 411,</div>
-<div class="line"><span class="lineno">   47</span>    PRECONDITION_FAILED = 412,</div>
-<div class="line"><span class="lineno">   48</span>    PAYLOAD_TOO_LARGE = 413,</div>
-<div class="line"><span class="lineno">   49</span>    URI_TOO_LONG = 414,</div>
-<div class="line"><span class="lineno">   50</span>    UNSUPPORTED_MEDIA_TYPE = 415,</div>
-<div class="line"><span class="lineno">   51</span>    RANGE_NOT_SATISFIABLE = 416,</div>
-<div class="line"><span class="lineno">   52</span>    EXPECTATION_FAILED = 417,</div>
-<div class="line"><span class="lineno">   53</span>    I_M_A_TEAPOT = 418,</div>
-<div class="line"><span class="lineno">   54</span>    MISDIRECTED_REQUEST = 421,</div>
-<div class="line"><span class="lineno">   55</span>    UNPROCESSABLE_ENTITY = 422,</div>
-<div class="line"><span class="lineno">   56</span>    LOCKED = 423,</div>
-<div class="line"><span class="lineno">   57</span>    TOO_EARLY = 425,</div>
-<div class="line"><span class="lineno">   58</span>    UPGRADE_REQUIRED = 426,</div>
-<div class="line"><span class="lineno">   59</span>    PRECONDITION_REQUIRED = 428,</div>
-<div class="line"><span class="lineno">   60</span>    TOO_MANY_REQUESTS = 429,</div>
-<div class="line"><span class="lineno">   61</span>    REQUEST_HEADER_FIELDS_TOO_LARGE = 431,</div>
-<div class="line"><span class="lineno">   62</span>    UNAVAILABLE_FOR_LEGAL_REASONS = 451,</div>
-<div class="line"><span class="lineno">   63</span> </div>
-<div class="line"><span class="lineno">   64</span>    <span class="comment">//50x</span></div>
-<div class="line"><span class="lineno">   65</span>    INTERNAL_SERVER_ERROR = 500,</div>
-<div class="line"><span class="lineno">   66</span>    NOT_IMPLEMENTED = 501,</div>
-<div class="line"><span class="lineno">   67</span>    BAD_GATEWAY = 502,</div>
-<div class="line"><span class="lineno">   68</span>    SERVICE_UNAVAILABLE = 503,</div>
-<div class="line"><span class="lineno">   69</span>    GATEWAY_TIMEOUT = 504,</div>
-<div class="line"><span class="lineno">   70</span>    HTTP_VERSION_NOT_SUPPORTED = 505,</div>
-<div class="line"><span class="lineno">   71</span>    VARIANT_ALSO_NEGOTIATES = 506,</div>
-<div class="line"><span class="lineno">   72</span>    INSUFFICIENT_STORAGE = 507,</div>
-<div class="line"><span class="lineno">   73</span>    LOOP_DETECTED = 508,</div>
-<div class="line"><span class="lineno">   74</span>    NOT_EXTENDED = 510, <span class="comment">//UNUSED</span></div>
-<div class="line"><span class="lineno">   75</span>    NETWORK_AUTHENTICATION_REQUIRED = 511</div>
-<div class="line"><span class="lineno">   76</span> </div>
-<div class="line"><span class="lineno">   77</span>}</div>
+<div class="line"><span class="lineno">    5</span>    CONNECTING = 0,</div>
+<div class="line"><span class="lineno">    6</span>    OPEN = 1,</div>
+<div class="line"><span class="lineno">    7</span>    CLOSING = 2,</div>
+<div class="line"><span class="lineno">    8</span>    CLOSED = 3</div>
+<div class="line"><span class="lineno">    9</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>

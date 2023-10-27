@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HttpServerBoxed: Runner/RunnerClasses/SharedObjects.cs Source File</title>
+<title>HttpServerBoxed: Runner/Servlets/SharedObjects.cs Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -115,7 +115,7 @@ $(document).ready(function(){initNavTree('_shared_objects_8cs_source.html',''); 
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        <span class="keyword">public</span> <span class="keyword">override</span> <span class="keywordtype">void</span> ProcessGet()</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        {</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>            <span class="keywordtype">int</span> item = (int)configuration.<a class="code hl_function" href="class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac">GetSharedObject</a>(<span class="stringliteral">&quot;test&quot;</span>);</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">SendHTMLContent</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova SharedObjects -&gt; {item}&lt;/h1&gt;&quot;</span>);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676">SendHTMLContent</a>($<span class="stringliteral">&quot;&lt;h1&gt;Prova SharedObjects -&gt; {item}&lt;/h1&gt;&quot;</span>);</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        }</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    }</div>
@@ -124,19 +124,19 @@ $(document).ready(function(){initNavTree('_shared_objects_8cs_source.html',''); 
 <div class="ttc" id="aclass_h_s_b_1_1_binding_html"><div class="ttname"><a href="class_h_s_b_1_1_binding.html">HSB.Binding</a></div><div class="ttdoc">Defines the path of the servlet, optionally it can catch ALL the requests that search for path starti...</div><div class="ttdef"><b>Definition</b> <a href="_binding_attribute_8cs_source.html#l00009">BindingAttribute.cs:10</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00009">Configuration.cs:10</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a8a9d8152a389f94cdd5dea5fbd62b2ac"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a8a9d8152a389f94cdd5dea5fbd62b2ac">HSB.Configuration.GetSharedObject</a></div><div class="ttdeci">object GetSharedObject(string name)</div><div class="ttdoc">Get an object shared between all servlet.</div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00043">Request.cs:44</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00008">Request.cs:9</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00013">Response.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_aa81e15ce9ff09b6d1a4fbaeb015198b4"><div class="ttname"><a href="class_h_s_b_1_1_response.html#aa81e15ce9ff09b6d1a4fbaeb015198b4">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null, int statusCode=200)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00090">Response.cs:90</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00004">Servlet.cs:5</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a95d557def4c8f20e9bcf69731ea94676"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, int statusCode=HTTP_CODES.OK, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00094">Response.cs:94</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00005">Servlet.cs:6</a></div></div>
 <div class="ttc" id="aclass_runner_1_1_shared_objects_html"><div class="ttname"><a href="class_runner_1_1_shared_objects.html">Runner.SharedObjects</a></div><div class="ttdef"><b>Definition</b> <a href="_shared_objects_8cs_source.html#l00006">SharedObjects.cs:7</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
-<div class="ttc" id="anamespace_runner_html"><div class="ttname"><a href="namespace_runner.html">Runner</a></div><div class="ttdef"><b>Definition</b> <a href="_runner_8cs_source.html#l00003">Runner.cs:4</a></div></div>
+<div class="ttc" id="anamespace_runner_html"><div class="ttname"><a href="namespace_runner.html">Runner</a></div><div class="ttdef"><b>Definition</b> <a href="_simple_object_8cs_source.html#l00002">SimpleObject.cs:3</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_533774c50bfc18088c25ee2e25528c81.html">Runner</a></li><li class="navelem"><a class="el" href="dir_84b70079d5c8aa3556cdaca4dc267cb8.html">RunnerClasses</a></li><li class="navelem"><b>SharedObjects.cs</b></li>
+    <li class="navelem"><a class="el" href="dir_533774c50bfc18088c25ee2e25528c81.html">Runner</a></li><li class="navelem"><a class="el" href="dir_8ea9cd03c97484776979efd90935759e.html">Servlets</a></li><li class="navelem"><b>SharedObjects.cs</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

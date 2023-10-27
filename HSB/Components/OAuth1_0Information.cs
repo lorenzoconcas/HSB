@@ -1,4 +1,6 @@
-﻿namespace HSB;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace HSB;
 
 public struct OAuth1_0Information
 {
@@ -31,6 +33,19 @@ public struct OAuth1_0Information
     public override readonly string ToString()
     {
         return IsValid() ? $"Valid oAuth1.0 with timestamp {timestamp}, version {version}" : "No valid oAuth1.0 found";
+    }
+
+    public override readonly bool Equals([NotNullWhen(true)] object? obj)
+    {
+        if(obj is OAuth1_0Information auth){
+            return access_token == auth.access_token && nonce == auth.nonce && token == auth.token && version == auth.version && signature_method == auth.signature_method && timestamp == auth.timestamp && consumer_key == auth.consumer_key && signature == auth.signature;
+        }
+        return false;
+    }
+
+    public override readonly int GetHashCode()
+    {
+        return HashCode.Combine(access_token, nonce, token, version, signature_method, timestamp, consumer_key, signature);
     }
 
 }

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>HttpServerBoxed: Runner/RunnerClasses/PostWithAuth.cs Source File</title>
+<title>HttpServerBoxed: Runner/Servlets/PostWithAuth.cs Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -117,10 +117,10 @@ $(document).ready(function(){initNavTree('_post_with_auth_8cs_source.html',''); 
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        <span class="keyword">public</span> <span class="keyword">override</span> <span class="keywordtype">void</span> ProcessPost()</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>            <span class="keywordflow">if</span> (req.GetHeaders[<span class="stringliteral">&quot;Content-Type&quot;</span>] == <span class="stringliteral">&quot;image/jpeg&quot;</span>)</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>            <span class="keywordflow">if</span> (req.Headers[<span class="stringliteral">&quot;Content-Type&quot;</span>] == <span class="stringliteral">&quot;image/jpeg&quot;</span>)</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>            {</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>                <span class="keywordtype">string</span> body = req.RawBody;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>                <span class="keywordtype">string</span> body = req.Body;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>                File.WriteAllBytes(<span class="stringliteral">&quot;./static/test.jpeg&quot;</span>, Convert.FromBase64String(body));</div>
@@ -134,10 +134,10 @@ $(document).ready(function(){initNavTree('_post_with_auth_8cs_source.html',''); 
 </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="ttc" id="aclass_h_s_b_1_1_binding_html"><div class="ttname"><a href="class_h_s_b_1_1_binding.html">HSB.Binding</a></div><div class="ttdoc">Defines the path of the servlet, optionally it can catch ALL the requests that search for path starti...</div><div class="ttdef"><b>Definition</b> <a href="_binding_attribute_8cs_source.html#l00009">BindingAttribute.cs:10</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00043">Request.cs:44</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00008">Request.cs:9</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00013">Response.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7069234663584810b1b429ec4ebd9cdd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">HSB.Response.SendCode</a></div><div class="ttdeci">void SendCode(int statusCode)</div><div class="ttdoc">Send an HTTP Response with no body but with given status code.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00150">Response.cs:150</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00004">Servlet.cs:5</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7069234663584810b1b429ec4ebd9cdd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">HSB.Response.SendCode</a></div><div class="ttdeci">void SendCode(int statusCode)</div><div class="ttdoc">Send an HTTP Response with no body but with given status code.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00152">Response.cs:152</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00005">Servlet.cs:6</a></div></div>
 <div class="ttc" id="aclass_runner_1_1_test_runner_classes_1_1_post_with_auth_html"><div class="ttname"><a href="class_runner_1_1_test_runner_classes_1_1_post_with_auth.html">Runner.TestRunnerClasses.PostWithAuth</a></div><div class="ttdef"><b>Definition</b> <a href="_post_with_auth_8cs_source.html#l00009">PostWithAuth.cs:10</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
 <div class="ttc" id="anamespace_runner_1_1_test_runner_classes_html"><div class="ttname"><a href="namespace_runner_1_1_test_runner_classes.html">Runner.TestRunnerClasses</a></div><div class="ttdef"><b>Definition</b> <a href="_post_with_auth_8cs_source.html#l00006">PostWithAuth.cs:7</a></div></div>
@@ -146,7 +146,7 @@ $(document).ready(function(){initNavTree('_post_with_auth_8cs_source.html',''); 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_533774c50bfc18088c25ee2e25528c81.html">Runner</a></li><li class="navelem"><a class="el" href="dir_84b70079d5c8aa3556cdaca4dc267cb8.html">RunnerClasses</a></li><li class="navelem"><b>PostWithAuth.cs</b></li>
+    <li class="navelem"><a class="el" href="dir_533774c50bfc18088c25ee2e25528c81.html">Runner</a></li><li class="navelem"><a class="el" href="dir_8ea9cd03c97484776979efd90935759e.html">Servlets</a></li><li class="navelem"><b>PostWithAuth.cs</b></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>

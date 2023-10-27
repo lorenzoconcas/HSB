@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -107,6 +107,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa6afdc6219e82bde06a3f1e4860b2a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac87d876ba49bfac40546dfe51eaa0c64" id="r_ac87d876ba49bfac40546dfe51eaa0c64"><td class="memItemLeft" align="right" valign="top">override readonly string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_h_s_b_1_1_o_auth1__0_information.html#ac87d876ba49bfac40546dfe51eaa0c64">ToString</a> ()</td></tr>
 <tr class="separator:ac87d876ba49bfac40546dfe51eaa0c64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88f5b870dc0e11550e64cba0a7d49f3c" id="r_a88f5b870dc0e11550e64cba0a7d49f3c"><td class="memItemLeft" align="right" valign="top">override readonly bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_h_s_b_1_1_o_auth1__0_information.html#a88f5b870dc0e11550e64cba0a7d49f3c">Equals</a> ([NotNullWhen(true)] object? obj)</td></tr>
+<tr class="separator:a88f5b870dc0e11550e64cba0a7d49f3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15751048eb71df0b98cdda41de27d761" id="r_a15751048eb71df0b98cdda41de27d761"><td class="memItemLeft" align="right" valign="top">override readonly int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_h_s_b_1_1_o_auth1__0_information.html#a15751048eb71df0b98cdda41de27d761">GetHashCode</a> ()</td></tr>
+<tr class="separator:a15751048eb71df0b98cdda41de27d761"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -129,7 +133,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00008">8</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00005">5</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="abb5ef870bb82d36df0bb57c3c83951d8" name="abb5ef870bb82d36df0bb57c3c83951d8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abb5ef870bb82d36df0bb57c3c83951d8">&#9670;&#160;</a></span>OAuth1_0Information()</h2>
@@ -147,21 +151,69 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00019">19</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   20</span>        {</div>
-<div class="line"><span class="lineno">   21</span>            access_token = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;access_token&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   22</span>            nonce = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_nonce&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   23</span>            token = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_token&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   24</span>            version = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_version&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   25</span>            signature_method = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_signature_method&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   26</span>            timestamp = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_timestamp&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   27</span>            consumer_key = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_consumer_key&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   28</span>            signature = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_signature&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><span class="lineno">   29</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00016">16</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   17</span>    {</div>
+<div class="line"><span class="lineno">   18</span>        access_token = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;access_token&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   19</span>        nonce = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_nonce&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   20</span>        token = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_token&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   21</span>        version = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_version&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   22</span>        signature_method = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_signature_method&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   23</span>        timestamp = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_timestamp&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   24</span>        consumer_key = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_consumer_key&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   25</span>        signature = parameters.TryGetValueFromDict(<span class="stringliteral">&quot;oauth_signature&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   26</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a88f5b870dc0e11550e64cba0a7d49f3c" name="a88f5b870dc0e11550e64cba0a7d49f3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88f5b870dc0e11550e64cba0a7d49f3c">&#9670;&#160;</a></span>Equals()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">override readonly bool HSB.OAuth1_0Information.Equals </td>
+          <td>(</td>
+          <td class="paramtype">[NotNullWhen(true)] object?&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00038">38</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   39</span>    {</div>
+<div class="line"><span class="lineno">   40</span>        <span class="keywordflow">if</span>(obj is OAuth1_0Information auth){</div>
+<div class="line"><span class="lineno">   41</span>            <span class="keywordflow">return</span> access_token == auth.access_token &amp;&amp; nonce == auth.nonce &amp;&amp; token == auth.token &amp;&amp; version == auth.version &amp;&amp; signature_method == auth.signature_method &amp;&amp; timestamp == auth.timestamp &amp;&amp; consumer_key == auth.consumer_key &amp;&amp; signature == auth.signature;</div>
+<div class="line"><span class="lineno">   42</span>        }</div>
+<div class="line"><span class="lineno">   43</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   44</span>    }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a15751048eb71df0b98cdda41de27d761" name="a15751048eb71df0b98cdda41de27d761"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15751048eb71df0b98cdda41de27d761">&#9670;&#160;</a></span>GetHashCode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">override readonly int HSB.OAuth1_0Information.GetHashCode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00046">46</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   47</span>    {</div>
+<div class="line"><span class="lineno">   48</span>        <span class="keywordflow">return</span> HashCode.Combine(access_token, nonce, token, version, signature_method, timestamp, consumer_key, signature);</div>
+<div class="line"><span class="lineno">   49</span>    }</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="aa6afdc6219e82bde06a3f1e4860b2a08" name="aa6afdc6219e82bde06a3f1e4860b2a08"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa6afdc6219e82bde06a3f1e4860b2a08">&#9670;&#160;</a></span>IsValid()</h2>
 
@@ -177,10 +229,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00031">31</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   32</span>        {</div>
-<div class="line"><span class="lineno">   33</span>            <span class="keywordflow">return</span> access_token != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; nonce != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; token != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; version != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; signature_method != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; timestamp != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; consumer_key != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; signature != <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><span class="lineno">   34</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00028">28</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   29</span>    {</div>
+<div class="line"><span class="lineno">   30</span>        <span class="keywordflow">return</span> access_token != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; nonce != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; token != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; version != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; signature_method != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; timestamp != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; consumer_key != <span class="stringliteral">&quot;&quot;</span> &amp;&amp; signature != <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   31</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -199,10 +251,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00036">36</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   37</span>        {</div>
-<div class="line"><span class="lineno">   38</span>            <span class="keywordflow">return</span> IsValid() ? $<span class="stringliteral">&quot;Valid oAuth1.0 with timestamp {timestamp}, version {version}&quot;</span> : <span class="stringliteral">&quot;No valid oAuth1.0 found&quot;</span>;</div>
-<div class="line"><span class="lineno">   39</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00033">33</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   34</span>    {</div>
+<div class="line"><span class="lineno">   35</span>        <span class="keywordflow">return</span> IsValid() ? $<span class="stringliteral">&quot;Valid oAuth1.0 with timestamp {timestamp}, version {version}&quot;</span> : <span class="stringliteral">&quot;No valid oAuth1.0 found&quot;</span>;</div>
+<div class="line"><span class="lineno">   36</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -219,7 +271,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00010">10</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00007">7</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
@@ -235,7 +287,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00016">16</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00013">13</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
@@ -251,7 +303,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00011">11</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00008">8</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
@@ -267,7 +319,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00017">17</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00014">14</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
@@ -283,7 +335,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00014">14</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00011">11</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
@@ -299,7 +351,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00015">15</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00012">12</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
@@ -315,7 +367,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00012">12</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00009">9</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
@@ -331,12 +383,12 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_request_8cs_source.html#l00013">13</a> of file <a class="el" href="_request_8cs_source.html">Request.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_o_auth1__0_information_8cs_source.html#l00010">10</a> of file <a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>HSB/Components/<a class="el" href="_request_8cs_source.html">Request.cs</a></li>
+<li>HSB/Components/<a class="el" href="_o_auth1__0_information_8cs_source.html">OAuth1_0Information.cs</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

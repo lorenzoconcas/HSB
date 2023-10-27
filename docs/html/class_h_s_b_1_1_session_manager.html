@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -134,17 +134,17 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_session_8cs_source.html#l00022">22</a> of file <a class="el" href="_session_8cs_source.html">Session.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   23</span>        {</div>
-<div class="line"><span class="lineno">   24</span>            <span class="comment">//generate a string with a random uuid</span></div>
-<div class="line"><span class="lineno">   25</span>            <span class="keywordtype">string</span> uuid;</div>
-<div class="line"><span class="lineno">   26</span>            <span class="keywordflow">do</span></div>
-<div class="line"><span class="lineno">   27</span>            {</div>
-<div class="line"><span class="lineno">   28</span>                uuid = Guid.NewGuid().ToString().Replace(<span class="stringliteral">&quot;-&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="fragment"><div class="line"><span class="lineno">   23</span>    {</div>
+<div class="line"><span class="lineno">   24</span>        <span class="comment">//generate a string with a random uuid</span></div>
+<div class="line"><span class="lineno">   25</span>        <span class="keywordtype">string</span> uuid;</div>
+<div class="line"><span class="lineno">   26</span>        <span class="keywordflow">do</span></div>
+<div class="line"><span class="lineno">   27</span>        {</div>
+<div class="line"><span class="lineno">   28</span>            uuid = Guid.NewGuid().ToString().Replace(<span class="stringliteral">&quot;-&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
 <div class="line"><span class="lineno">   29</span> </div>
-<div class="line"><span class="lineno">   30</span>            } <span class="keywordflow">while</span> (data.ContainsKey(uuid));</div>
-<div class="line"><span class="lineno">   31</span>            CreateSession(uuid, sessionData);</div>
-<div class="line"><span class="lineno">   32</span>            <span class="keywordflow">return</span> uuid;</div>
-<div class="line"><span class="lineno">   33</span>        }</div>
+<div class="line"><span class="lineno">   30</span>        } <span class="keywordflow">while</span> (data.ContainsKey(uuid));</div>
+<div class="line"><span class="lineno">   31</span>        CreateSession(uuid, sessionData);</div>
+<div class="line"><span class="lineno">   32</span>        <span class="keywordflow">return</span> uuid;</div>
+<div class="line"><span class="lineno">   33</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -175,9 +175,9 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_session_8cs_source.html#l00017">17</a> of file <a class="el" href="_session_8cs_source.html">Session.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   18</span>        {</div>
-<div class="line"><span class="lineno">   19</span>            data.Add(UUID, sessionData);</div>
-<div class="line"><span class="lineno">   20</span>        }</div>
+<div class="fragment"><div class="line"><span class="lineno">   18</span>    {</div>
+<div class="line"><span class="lineno">   19</span>        data.Add(UUID, sessionData);</div>
+<div class="line"><span class="lineno">   20</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -205,10 +205,10 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_session_8cs_source.html#l00011">11</a> of file <a class="el" href="_session_8cs_source.html">Session.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   12</span>        {</div>
-<div class="line"><span class="lineno">   13</span>            instance ??= <span class="keyword">new</span>();</div>
-<div class="line"><span class="lineno">   14</span>            <span class="keywordflow">return</span> instance;</div>
-<div class="line"><span class="lineno">   15</span>        }</div>
+<div class="fragment"><div class="line"><span class="lineno">   12</span>    {</div>
+<div class="line"><span class="lineno">   13</span>        instance ??= <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   14</span>        <span class="keywordflow">return</span> instance;</div>
+<div class="line"><span class="lineno">   15</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -229,9 +229,9 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_session_8cs_source.html#l00035">35</a> of file <a class="el" href="_session_8cs_source.html">Session.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   36</span>        {</div>
-<div class="line"><span class="lineno">   37</span>            <span class="keywordflow">return</span> data[token];</div>
-<div class="line"><span class="lineno">   38</span>        }</div>
+<div class="fragment"><div class="line"><span class="lineno">   36</span>    {</div>
+<div class="line"><span class="lineno">   37</span>        <span class="keywordflow">return</span> data[token];</div>
+<div class="line"><span class="lineno">   38</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>

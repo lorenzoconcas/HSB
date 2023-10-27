@@ -26,7 +26,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.9 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -99,320 +99,331 @@ $(document).ready(function(){initNavTree('_server_8cs_source.html',''); initResi
   <div class="headertitle"><div class="title">Server.cs</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_h_s_b_1_1_exceptions.html">HSB.Exceptions</a>;</div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="keyword">using </span>System.Diagnostics;</div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">using </span>System.Net;</div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">using </span>System.Net.Sockets;</div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">using </span>System.Reflection;</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">using </span>System.Text.RegularExpressions;</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_h_s_b.html">HSB</a></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
-<div class="foldopen" id="foldopen00010" data-start="{" data-end="};">
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="class_h_s_b_1_1_server.html">   10</a></span>    <span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_h_s_b_1_1_server.html">Server</a></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    {</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        <span class="keyword">private</span> readonly IPAddress ipAddress;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        <span class="keyword">private</span> readonly IPEndPoint localEndPoint;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        <span class="keyword">private</span> readonly <a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a> config;</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        <span class="keyword">private</span> readonly Socket listener;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">void</span> Main()</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>            Terminal.INFO(<span class="stringliteral">&quot;HSB-# has wrongfully been compiled has executable and will not run!&quot;</span>);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>            Terminal.INFO(<span class="stringliteral">&quot;To run as standalone you must compile/execute the \&quot;Standalone\&quot; or the \&quot;Launcher\&quot; project&quot;</span>);</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            Terminal.INFO(<span class="stringliteral">&quot;Check the documentation for more info (\&quot;https://github.com/lorenzoconcas/HSB-Sharp\&quot;)&quot;</span>);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        }</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        <span class="keyword">public</span> <a class="code hl_class" href="class_h_s_b_1_1_server.html">Server</a>(<a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a> config)</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>            <span class="keywordflow">if</span> (!config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a>)</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>                Utils.PrintLogo();</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>            <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a> &gt; 65535)</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">InvalidConfigurationParameterException</a>(<span class="stringliteral">&quot;Port&quot;</span>, <span class="stringliteral">&quot;Port number is over the maximum allowed (65535)&quot;</span>);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            this.config = config;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                <span class="comment">//address must be ANY</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                ipAddress = config.UseIPv4Only ? IPAddress.Any : IPAddress.IPv6Any;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            }</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>                List&lt;IPAddress&gt; addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetwork).ToList();</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                <span class="keywordflow">if</span> (!config.<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a>)</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                {</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                    addresses.AddRange(Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetworkV6).ToList());</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                }</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                <span class="keywordflow">if</span> (addresses.Any())</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                    ipAddress = addresses.First();</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                    <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot found address to listen to&quot;</span>);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            }</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            localEndPoint = <span class="keyword">new</span>(ipAddress, config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a>);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            listener = <span class="keyword">new</span>(ipAddress.AddressFamily,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                SocketType.Stream, ProtocolType.Tcp);</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO(<span class="stringliteral">&quot;Starting logging...&quot;</span>);</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO($<span class="stringliteral">&quot;Listening at http://{localEndPoint}/&quot;</span>);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        }</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keyword">public</span> <span class="keywordtype">void</span> Start(<span class="keywordtype">bool</span> openInBrowser = <span class="keyword">false</span>)</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            <span class="keywordflow">try</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            {</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>                listener.Bind(localEndPoint);</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                listener.Listen(100);</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                <span class="keywordflow">if</span> (openInBrowser)</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                    var psi = <span class="keyword">new</span> ProcessStartInfo</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                    {</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                        FileName = $<span class="stringliteral">&quot;http:{localEndPoint}&quot;</span>,</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                        UseShellExecute = <span class="keyword">true</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                    };</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                    Process.Start(psi);</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>                {</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                    Socket socket = listener.Accept();</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                    <span class="keyword">new</span> Task(() =&gt;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                    {</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                        <span class="comment">//socket.DualMode = true;</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                        <span class="keywordtype">byte</span>[] bytes = <span class="keyword">new</span> <span class="keywordtype">byte</span>[config.requestMaxSize];</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                        <span class="keywordtype">int</span> bytesRec = socket.Receive(bytes);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                        bytes = bytes.Take(bytesRec).ToArray(); <span class="comment">//trim the array to the actual size of the request</span></div>
+<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">using </span>System.Diagnostics;</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="keyword">using </span>System.Net;</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">using </span>System.Net.Sockets;</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="keyword">using </span>System.Reflection;</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_h_s_b_1_1_components_1_1_web_sockets.html">HSB.Components.WebSockets</a>;</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_h_s_b_1_1_constants.html">HSB.Constants</a>;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">using </span><a class="code hl_namespace" href="namespace_h_s_b_1_1_exceptions.html">HSB.Exceptions</a>;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_h_s_b.html">HSB</a>;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="foldopen" id="foldopen00011" data-start="{" data-end="};">
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="class_h_s_b_1_1_server.html">   11</a></span><span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_h_s_b_1_1_server.html">Server</a></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">private</span> readonly IPAddress ipAddress;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">private</span> readonly IPEndPoint localEndPoint;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">private</span> readonly <a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a> config;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keyword">private</span> readonly Socket listener;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">void</span> Main()</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    {</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        Terminal.INFO(<span class="stringliteral">&quot;HSB-# has wrongfully been compiled has executable and will not run!&quot;</span>);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        Terminal.INFO(<span class="stringliteral">&quot;To run as standalone you must compile/execute the \&quot;Standalone\&quot; or the \&quot;Launcher\&quot; project&quot;</span>);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        Terminal.INFO(<span class="stringliteral">&quot;Check the documentation for more info (\&quot;https://github.com/lorenzoconcas/HSB-Sharp\&quot;)&quot;</span>);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    }</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keyword">public</span> <a class="code hl_class" href="class_h_s_b_1_1_server.html">Server</a>(<a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a> config)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keywordflow">if</span> (!config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a>)</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>            Utils.PrintLogo();</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a> &gt; 65535)</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">InvalidConfigurationParameterException</a>(<span class="stringliteral">&quot;Port&quot;</span>, <span class="stringliteral">&quot;Port number is over the maximum allowed (65535)&quot;</span>);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        this.config = config;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            <span class="comment">//address must be ANY</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>            ipAddress = config.UseIPv4Only ? IPAddress.Any : IPAddress.IPv6Any;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        }</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            List&lt;IPAddress&gt; addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetwork).ToList();</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <span class="keywordflow">if</span> (!config.<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a>)</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>            {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                addresses.AddRange(Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, AddressFamily.InterNetworkV6).ToList());</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            }</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            <span class="keywordflow">if</span> (addresses.Any())</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                ipAddress = addresses.First();</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot found address to listen to&quot;</span>);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        }</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        localEndPoint = <span class="keyword">new</span>(ipAddress, config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a>);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        listener = <span class="keyword">new</span>(ipAddress.AddressFamily,</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            SocketType.Stream, ProtocolType.Tcp);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO(<span class="stringliteral">&quot;Starting logging...&quot;</span>);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a>.INFO($<span class="stringliteral">&quot;Listening at http://{localEndPoint}/&quot;</span>);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    }</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> Start(<span class="keywordtype">bool</span> openInBrowser = <span class="keyword">false</span>)</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordflow">try</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>            listener.Bind(localEndPoint);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            listener.Listen(100);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>            <span class="keywordflow">if</span> (openInBrowser)</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            {</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                var psi = <span class="keyword">new</span> ProcessStartInfo</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                    FileName = $<span class="stringliteral">&quot;http:{localEndPoint}&quot;</span>,</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                    UseShellExecute = <span class="keyword">true</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                };</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                Process.Start(psi);</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            {</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                Socket socket = listener.Accept();</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                <span class="keyword">new</span> Task(() =&gt;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>                {</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                    <span class="keywordtype">byte</span>[] bytes = <span class="keyword">new</span> <span class="keywordtype">byte</span>[config.requestMaxSize];</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                    <span class="keywordtype">int</span> bytesRec = socket.Receive(bytes);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>                    bytes = bytes[..bytesRec]; <span class="comment">//trim the array to the actual size of the request</span></div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                        <a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req = <span class="keyword">new</span>(bytes, socket, config);</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                        <span class="keywordflow">if</span> (req.proceedWithElaboration)</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                        {</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                            <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res = <span class="keyword">new</span>(socket, req, config);</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                            ProcessRequest(req, res);</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                        }</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                    <a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req = <span class="keyword">new</span>(bytes, socket, config);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                    <span class="keywordflow">if</span> (req.proceedWithElaboration)</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                    {</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                        <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res = <span class="keyword">new</span>(socket, req, config);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>                        <span class="keyword">new</span> Task(() =&gt; ProcessRequest(req, res)).Start();</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                    }</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                    }).Start();</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                }</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            }</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>            <span class="keywordflow">catch</span> (Exception e)</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>            {</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                Terminal.ERROR(e);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            }</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        }</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        <span class="keyword">private</span> <span class="keywordtype">bool</span> RunIfExpressMapping(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res)</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        {</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>            var e = config.ExpressRoutes.Find(e =&gt; e.Item1 == req.URL &amp;&amp; e.Item2.Item1 == req.METHOD);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                }).Start();</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            }</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        }</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="keywordflow">catch</span> (Exception e)</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        {</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>            Terminal.ERROR(e);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        }</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    }</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keyword">private</span> <span class="keywordtype">bool</span> RunIfExpressMapping(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res)</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        var e = config.ExpressRoutes.Find(e =&gt; e.Item1 == req.URL &amp;&amp; e.Item2.Item1 == req.METHOD);</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <span class="keywordflow">if</span> (e == <span class="keyword">null</span>) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keywordflow">if</span> (e == <span class="keyword">null</span>) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            e.Item2.Item2.DynamicInvoke(req, res);</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        }</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">static</span> Dictionary&lt;Tuple&lt;string, bool&gt;, Type&gt; CollectStaticRoutes()</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        {</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>            AppDomain currentDomain = AppDomain.CurrentDomain;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>            List&lt;Assembly&gt; assemblies = currentDomain.GetAssemblies().ToList();</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>            assemblies.RemoveAll(a =&gt; a.ManifestModule.Name.StartsWith(<span class="stringliteral">&quot;System&quot;</span>));</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>            assemblies.RemoveAll(a =&gt; a.ManifestModule.Name.StartsWith(<span class="stringliteral">&quot;Microsoft&quot;</span>));</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>            assemblies.RemoveAll(a =&gt; a.ManifestModule.Name.StartsWith(<span class="stringliteral">&quot;Internal&quot;</span>));</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>            Dictionary&lt;Tuple&lt;string, bool&gt;, Type&gt; routes = <span class="keyword">new</span>();</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        e.Item2.Item2.DynamicInvoke(req, res);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    }</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">static</span> Dictionary&lt;Tuple&lt;string, bool&gt;, Type&gt; CollectStaticRoutes()</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    {</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        AppDomain currentDomain = AppDomain.CurrentDomain;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        List&lt;Assembly&gt; assemblies = currentDomain.GetAssemblies().ToList();</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        assemblies.RemoveAll(a =&gt; a.ManifestModule.Name.StartsWith(<span class="stringliteral">&quot;System&quot;</span>));</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        assemblies.RemoveAll(a =&gt; a.ManifestModule.Name.StartsWith(<span class="stringliteral">&quot;Microsoft&quot;</span>));</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        assemblies.RemoveAll(a =&gt; a.ManifestModule.Name.StartsWith(<span class="stringliteral">&quot;Internal&quot;</span>));</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span> </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            <span class="keywordflow">foreach</span> (var assem <span class="keywordflow">in</span> assemblies)</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            {</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                List&lt;Type&gt; classes = assem.GetTypes().ToList();</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                <span class="keywordflow">foreach</span> (var c <span class="keywordflow">in</span> classes)</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>                {</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>                    <span class="keywordflow">try</span></div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                    {</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                        IEnumerable&lt;Binding&gt; multiBindings = c.GetCustomAttributes&lt;<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>&gt;(<span class="keyword">false</span>);</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span> </div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                        <span class="comment">//if no class have more than one binding, we search the ones with only one</span></div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                        <span class="keywordflow">if</span> (multiBindings.Any())</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                        {</div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                            <span class="keywordflow">foreach</span> (<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a> b <span class="keywordflow">in</span> multiBindings)</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                            {</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>                                <span class="keywordflow">if</span> (b.Path != <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>                                    routes.Add(<span class="keyword">new</span>(b.Path, b.StartsWith), c);</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>                            }</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>                        }</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                        {</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                            <a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>? attr = c.GetCustomAttribute&lt;<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>&gt;(<span class="keyword">false</span>);</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                            <span class="keywordflow">if</span> (attr != <span class="keyword">null</span> &amp;&amp; attr.Path != <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                                routes.Add(<span class="keyword">new</span>(attr.Path, attr.StartsWith), c);</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                        }</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>                    }</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                    <span class="keywordflow">catch</span> (Exception)</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                    {</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                    }</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                }</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            }</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            <span class="keywordflow">return</span> routes;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        Dictionary&lt;Tuple&lt;string, bool&gt;, Type&gt; routes = <span class="keyword">new</span>();</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        <span class="keywordflow">foreach</span> (var assem <span class="keywordflow">in</span> assemblies)</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        {</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            List&lt;Type&gt; classes = assem.GetTypes().ToList();</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>            <span class="keywordflow">foreach</span> (var c <span class="keywordflow">in</span> classes)</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>            {</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                <span class="keywordflow">try</span></div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                {</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                    IEnumerable&lt;Binding&gt; multiBindings = c.GetCustomAttributes&lt;<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>&gt;(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                    <span class="comment">//if no class have more than one binding, we search the ones with only one</span></div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                    <span class="keywordflow">if</span> (multiBindings.Any())</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>                    {</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>                        <span class="keywordflow">foreach</span> (<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a> b <span class="keywordflow">in</span> multiBindings)</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>                        {</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>                            <span class="keywordflow">if</span> (b.Path != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                                routes.Add(<span class="keyword">new</span>(b.Path, b.StartsWith), c);</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                        }</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                    }</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                    {</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                        <a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>? attr = c.GetCustomAttribute&lt;<a class="code hl_class" href="class_h_s_b_1_1_binding.html">Binding</a>&gt;(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>                        <span class="keywordflow">if</span> (attr != <span class="keyword">null</span> &amp;&amp; attr.Path != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                            routes.Add(<span class="keyword">new</span>(attr.Path, attr.StartsWith), c);</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                    }</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                }</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                <span class="keywordflow">catch</span> (Exception)</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                {</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                }</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            }</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        }</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        <span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keywordtype">string</span> GetStaticRoutesInfo()</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        {</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            <span class="keywordtype">string</span> str = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>            var staticRoutes = CollectStaticRoutes();</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>            <span class="keywordflow">if</span> (staticRoutes.Any())</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            {</div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>                str += <span class="stringliteral">&quot;\nStatic routes:&quot;</span>;</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>                staticRoutes.ToList().ForEach(m =&gt; str += $<span class="stringliteral">&quot;\nPath : {m.Key.Item1} -&gt; {m.Value.Name}&quot;</span>);</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>            }</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            <span class="keywordflow">return</span> str;</div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        }</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="keyword">private</span> <span class="keywordtype">object</span>? GetInstance(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res)</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        {</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>            Dictionary&lt;Tuple&lt;string, bool&gt;, Type&gt; routes = CollectStaticRoutes();</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            <span class="keywordflow">if</span> (routes.ContainsKey(<span class="keyword">new</span>(req.URL, <span class="keyword">false</span>)))</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            {</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                Type c = routes[<span class="keyword">new</span>(req.URL, <span class="keyword">false</span>)];</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                var x = c.GetConstructors()[0];</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                <span class="keywordflow">return</span> x.GetParameters().Length <span class="keywordflow">switch</span></div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                {</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>                    3 =&gt; Activator.CreateInstance(c, req, res, config),</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                    2 =&gt; Activator.CreateInstance(c, req, res),</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                    _ =&gt; <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception($<span class="stringliteral">&quot;Invalid servlet constructor found {x.Name}&quot;</span>),</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                };</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            }</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            <span class="comment">//we omit the else branch </span></div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            <span class="comment">//we check if there is a a path that starts like the request url</span></div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>            <span class="keywordflow">return</span> (from r in routes</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                    let path = r.Key.Item1</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                    where req.URL.StartsWith(path)</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                    select r.Value</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                into c</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                    let x = c.GetConstructors()[0]</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                    select x.GetParameters().Length <span class="keywordflow">switch</span></div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                    {</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                        3 =&gt; Activator.CreateInstance(c, req, res, this),</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                        2 =&gt; Activator.CreateInstance(c, req, res),</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                        _ =&gt; throw new Exception($<span class="stringliteral">&quot;Invalid servlet constructor found {x.Name}&quot;</span>),</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                    }).FirstOrDefault();</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        }</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        <span class="keyword">private</span> <span class="keywordtype">void</span> ProcessRequest(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res)</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        {</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>            <span class="keyword">new</span> Task(() =&gt;</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>                      {</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>                          <span class="keywordflow">try</span></div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>                          {</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>                              <span class="comment">//check if request is valid                    </span></div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>                              <span class="keywordflow">if</span> (!req.validRequest)</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>                              {</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                                  config.debug.WARNING($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 400 (Invalid Request)&quot;</span>, true);</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                                  new Error(req, res, <span class="stringliteral">&quot;Invalid Request&quot;</span>, 400).Process();</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                                  return;</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                              }</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                              <span class="comment">//config.debug.INFO($&quot;Requested &#39;{req.URL}&#39;&quot;, true);</span></div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>        <span class="keywordflow">return</span> routes;</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    }</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keywordtype">string</span> GetStaticRoutesInfo()</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    {</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        <span class="keywordtype">string</span> str = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        var staticRoutes = CollectStaticRoutes();</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        <span class="keywordflow">if</span> (staticRoutes.Any())</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        {</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>            str += <span class="stringliteral">&quot;\nStatic routes:&quot;</span>;</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>            staticRoutes.ToList().ForEach(m =&gt; str += $<span class="stringliteral">&quot;\nPath : {m.Key.Item1} -&gt; {m.Value.Name}&quot;</span>);</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>        }</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="keywordflow">return</span> str;</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    }</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    <span class="keyword">private</span> <span class="keywordtype">object</span>? GetInstance(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res)</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>    {</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>        Dictionary&lt;Tuple&lt;string, bool&gt;, Type&gt; routes = CollectStaticRoutes();</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>        <span class="keywordflow">if</span> (routes.ContainsKey(<span class="keyword">new</span>(req.URL, <span class="keyword">false</span>)))</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        {           </div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>            Type c = routes[<span class="keyword">new</span>(req.URL, <span class="keyword">false</span>)];</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            var x = c.GetConstructors()[0];</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            <span class="keywordflow">return</span> x.GetParameters().Length <span class="keywordflow">switch</span></div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            {</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                3 =&gt; Activator.CreateInstance(c, req, res, config),</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                2 =&gt; Activator.CreateInstance(c, req, res),</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>                _ =&gt; <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception($<span class="stringliteral">&quot;Invalid constructor found {x.Name}&quot;</span>),</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            };</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        }</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        <span class="comment">//we omit the else branch </span></div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="comment">//we check if there is a a path that starts like the request url</span></div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        <span class="keywordflow">return</span> (from r in routes</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                let path = r.Key.Item1</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>                where req.URL.StartsWith(path)</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                select r.Value</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            into c</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                let x = c.GetConstructors()[0]</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                select x.GetParameters().Length <span class="keywordflow">switch</span></div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                    3 =&gt; Activator.CreateInstance(c, req, res, config),</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                    2 =&gt; Activator.CreateInstance(c, req, res),</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                    _ =&gt; throw new Exception($<span class="stringliteral">&quot;Invalid constructor found {x.Name}&quot;</span>),</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                }).FirstOrDefault();</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    }</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keyword">private</span> <span class="keywordtype">void</span> ProcessRequest(<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res)</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    {</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        <span class="keywordflow">try</span></div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>        {</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>            <span class="comment">//check if request is valid                    </span></div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>            <span class="keywordflow">if</span> (!req.validRequest)</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            {</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>                config.debug.WARNING($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; {HTTP_CODES.NOT_FOUND} (Invalid Request)&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, config, <span class="stringliteral">&quot;Invalid Request&quot;</span>, HTTP_CODES.NOT_FOUND).Process();</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>                <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            }</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="keywordflow">if</span> (RunIfExpressMapping(req, res))</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                              if (RunIfExpressMapping(req, res))</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                                  <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            <span class="comment">//We check if the route requested is handled by any servlet</span></div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            <span class="keywordtype">object</span>? o = GetInstance(req, res);</div>
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span> </div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>                              <span class="keywordtype">object</span>? o = GetInstance(req, res);</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                              <span class="keywordflow">if</span> (o != <span class="keyword">null</span>)</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                              {</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                                  <a class="code hl_class" href="class_h_s_b_1_1_servlet.html">Servlet</a> servlet = (<a class="code hl_class" href="class_h_s_b_1_1_servlet.html">Servlet</a>)o;</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                                  servlet.Process();</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                              }</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                              <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                              {</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                                  <span class="comment">//the client searched for a route that is not mapped by any servlet</span></div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                                  <span class="comment">//so we do some other checks like root page or static resource</span></div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                                  <span class="comment">//if no root page is set we search for and index.html file, else we show the default home page</span></div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                                  <span class="keywordflow">if</span> (req.URL == <span class="stringliteral">&quot;/&quot;</span>)</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                                  {</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                                      <span class="comment">//if the client is requesting the root file, we check if there is an index.html file</span></div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                                      <span class="comment">//if not, we use the default servlet</span></div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                                      <span class="keywordflow">if</span> (File.Exists(config.staticFolderPath + <span class="stringliteral">&quot;/index.html&quot;</span>))</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                                      {</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>                                          res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7089fa54aa956f2cd206a62882632f41">SendHTMLPage</a>(config.staticFolderPath + <span class="stringliteral">&quot;/index.html&quot;</span>);</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>                                          config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200&quot;</span>);</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>                                      }</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>                                      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>                                      {</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>                                          <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_index.html">Index</a>(req, res).Process();</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                                          config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200 (Default Index Page)&quot;</span>);</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                                      }</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                                  }</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                                  <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                                  {</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                                      <span class="comment">//we check if the client is requesting a resource, else 404 not found</span></div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                                      <span class="comment">//to check if the path is safe we use the same regex used in send.js</span></div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                                      <span class="comment">//see: https://github.com/pillarjs/send/blob/master/index.js#L63</span></div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> </div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                                      <span class="keywordflow">if</span> (Utils.IsUnsafePath(req.URL))</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                                      <span class="comment">//if (rgx.Match(req.URL).Success)</span></div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                                      {</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                                          config.debug.WARNING($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200 (Requested unsafe path, ignoring request)&quot;</span>);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                                          <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, <span class="stringliteral">&quot;&quot;</span>, 404).Process();</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                                      }</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>                                      <span class="keywordflow">if</span> (File.Exists(config.staticFolderPath + <span class="stringliteral">&quot;/&quot;</span> + req.URL))</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                                      {</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                                          <span class="comment">//config.debug.INFO($&quot;Static file found, serving &#39;{req.URL}&#39;&quot;);</span></div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                                          config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200 (Static file)&quot;</span>);</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                                          res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#ab3a338243d93f5be733a1baacfcd3edd">SendFile</a>(config.staticFolderPath + <span class="stringliteral">&quot;/&quot;</span> + req.URL);</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                                      }</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>                                      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                                      {</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                                          <span class="comment">//if no servlet or static file found, send 404</span></div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                                          config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 404 (Resource not found)&quot;</span>);</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>                                          <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, <span class="stringliteral">&quot;Page not found&quot;</span>, 404).Process();</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                                      }</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                                  }</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                              }</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                          }</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>                          <span class="keywordflow">catch</span> (Exception e)</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                          {</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>                              <span class="comment">//config.debug.ERROR(&quot;Error handling request -&gt;\n &quot; + e);</span></div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                              config.debug.ERROR($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 500 (Internal Server Error)\n{e}&quot;</span>);</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                              <span class="comment">//we show an error page with the message and code 500</span></div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                              <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, e.ToString(), 500).Process();</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                          }</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                      }).Start();</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        }</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    }</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            <span class="keywordflow">if</span> (o != <span class="keyword">null</span>)</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            {</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                <span class="comment">//we check if the object is a servlet or a websocket</span></div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                <span class="keywordflow">if</span> (o is <a class="code hl_class" href="class_h_s_b_1_1_servlet.html">Servlet</a> s)</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                {</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                    s.Process();</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                }</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                <span class="keywordflow">else</span> <span class="keywordflow">if</span> (o is <a class="code hl_class" href="class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket.html">WebSocket</a> ws)</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                {</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                    <span class="keywordflow">if</span>(!req.<a class="code hl_function" href="class_h_s_b_1_1_request.html#a5ae1b1c0549c9056041a976f40f1e2f3">IsWebSocket</a>())</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                    {</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                        config.debug.WARNING($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                        <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, config, <span class="stringliteral">&quot;Invalid Request&quot;</span>, HTTP_CODES.METHOD_NOT_ALLOWED).Process();</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>                    }</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                    <span class="keywordflow">else</span>{</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                        </div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>                        ws.Process();</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>                        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>                    }</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>                }</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>                <span class="keywordflow">else</span> <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception($<span class="stringliteral">&quot;Developer tried to map an invalid object to a route -&gt; {o.GetType()}&quot;</span>);</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>            }</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>            {</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>                <span class="comment">//the client searched for a route that is not mapped by any servlet</span></div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>                <span class="comment">//so we do some other checks like root page or static resource</span></div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>                <span class="comment">//if no root page is set we search for and index.html file, else we show the default home page</span></div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>                <span class="keywordflow">if</span> (req.URL == <span class="stringliteral">&quot;/&quot;</span>)</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>                {</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>                    <span class="comment">//if the client is requesting the root file, we check if there is an index.html file</span></div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                    <span class="comment">//if not, we use the default servlet</span></div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>                    <span class="keywordflow">if</span> (File.Exists(config.staticFolderPath + <span class="stringliteral">&quot;/index.html&quot;</span>))</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                    {</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a578a68a4d1fc372de21b1306043a99c6">SendHTMLFile</a>(config.staticFolderPath + <span class="stringliteral">&quot;/index.html&quot;</span>);</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                        config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200&quot;</span>);</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                    }</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                    {</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>                        <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_index.html">Index</a>(req, res, config).Process();</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>                        config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200 (Default Index Page)&quot;</span>);</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                    }</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>                }</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>                {</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                    <span class="comment">//we check if the client is requesting a resource, else 404 not found</span></div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>                    <span class="comment">//to check if the path is safe we use the same regex used in send.js</span></div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                    <span class="comment">//see: https://github.com/pillarjs/send/blob/master/index.js#L63</span></div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>                    <span class="keywordflow">if</span> (Utils.IsUnsafePath(req.URL))</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>                    {</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                        config.debug.WARNING($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200 (Requested unsafe path, ignoring request)&quot;</span>);</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>                        <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, config, <span class="stringliteral">&quot;&quot;</span>, HTTP_CODES.NOT_FOUND).Process();</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                    }</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>                    <span class="comment">//if the path is safe and the file exists, we send it</span></div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>                    <span class="keywordflow">if</span> (File.Exists(config.staticFolderPath + <span class="stringliteral">&quot;/&quot;</span> + req.URL))</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                    {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>                        <span class="comment">//config.debug.INFO($&quot;Static file found, serving &#39;{req.URL}&#39;&quot;);</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                        config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 200 (Static file)&quot;</span>);</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>                        res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#aded06bca97178785110cf713e7fa507a">SendFile</a>(config.staticFolderPath + <span class="stringliteral">&quot;/&quot;</span> + req.URL);</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                    }</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                    {</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                        <span class="comment">//if no servlet or static file found, send 404</span></div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                        config.debug.INFO($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 404 (Resource not found)&quot;</span>);</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>                        <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, config, <span class="stringliteral">&quot;Page not found&quot;</span>, HTTP_CODES.NOT_FOUND).Process();</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>                    }</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                }</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>            }</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        }</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="keywordflow">catch</span> (Exception e)</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        {</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            <span class="comment">//config.debug.ERROR(&quot;Error handling request -&gt;\n &quot; + e);</span></div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>            config.debug.ERROR($<span class="stringliteral">&quot;{req.METHOD} &#39;{req.URL}&#39; 500 (Internal Server Error)\n{e}&quot;</span>);</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>            <span class="comment">//we show an error page with the message and code 500</span></div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>            <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_error.html">Error</a>(req, res, config, e.ToString(), HTTP_CODES.INTERNAL_SERVER_ERROR).Process();</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        }</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    }</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>}</div>
 </div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>}</div>
 <div class="ttc" id="aclass_h_s_b_1_1_binding_html"><div class="ttname"><a href="class_h_s_b_1_1_binding.html">HSB.Binding</a></div><div class="ttdoc">Defines the path of the servlet, optionally it can catch ALL the requests that search for path starti...</div><div class="ttdef"><b>Definition</b> <a href="_binding_attribute_8cs_source.html#l00009">BindingAttribute.cs:10</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket_html"><div class="ttname"><a href="class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket.html">HSB.Components.WebSockets.WebSocket</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_web_sockets_2_web_socket_8cs_source.html#l00012">WebSocket.cs:13</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00009">Configuration.cs:10</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a22eb67f9bcac434dafec9533398db240"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HSB.Configuration.HideBranding</a></div><div class="ttdeci">bool HideBranding</div><div class="ttdoc">Hide the HSB logo on startup.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00054">Configuration.cs:54</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a3025ea1c01dc586c6de9a73b9f07fead"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">HSB.Configuration.UseIPv4Only</a></div><div class="ttdeci">bool UseIPv4Only</div><div class="ttdoc">Sets if the server must listen only to IPv4.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00024">Configuration.cs:24</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a22eb67f9bcac434dafec9533398db240"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HSB.Configuration.HideBranding</a></div><div class="ttdeci">bool HideBranding</div><div class="ttdoc">Hide the HSB logo on startup.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00046">Configuration.cs:46</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a3025ea1c01dc586c6de9a73b9f07fead"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">HSB.Configuration.UseIPv4Only</a></div><div class="ttdeci">bool UseIPv4Only</div><div class="ttdoc">Sets if the server must listen only to IPv4.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00022">Configuration.cs:22</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a437e586fdb583aa9bef15afe7824ca33"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">HSB.Configuration.address</a></div><div class="ttdeci">string address</div><div class="ttdoc">The server listening address, ex : &quot;127.0.0.1&quot; or &quot;192.168.1.2&quot; or &quot;&quot; (for any address) //check this.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00014">Configuration.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a521c9e5e0ac575cef7602bdc16c3899f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">HSB.Configuration.debug</a></div><div class="ttdeci">Debugger debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00034">Configuration.cs:34</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_adfb831e3fb1d043258847109a2065439"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">HSB.Configuration.port</a></div><div class="ttdeci">int port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00019">Configuration.cs:19</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a521c9e5e0ac575cef7602bdc16c3899f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">HSB.Configuration.debug</a></div><div class="ttdeci">Debugger debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00030">Configuration.cs:30</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_adfb831e3fb1d043258847109a2065439"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">HSB.Configuration.port</a></div><div class="ttdeci">int port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00018">Configuration.cs:18</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_error_html"><div class="ttname"><a href="class_h_s_b_1_1_error.html">HSB.Error</a></div><div class="ttdef"><b>Definition</b> <a href="_error_8cs_source.html#l00007">Error.cs:8</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception_html"><div class="ttname"><a href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">HSB.Exceptions.InvalidConfigurationParameterException</a></div><div class="ttdef"><b>Definition</b> <a href="_invalid_configuration_parameter_exception_8cs_source.html#l00009">InvalidConfigurationParameterException.cs:10</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_index_html"><div class="ttname"><a href="class_h_s_b_1_1_index.html">HSB.Index</a></div><div class="ttdef"><b>Definition</b> <a href="_index_8cs_source.html#l00006">Index.cs:7</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00043">Request.cs:44</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_index_html"><div class="ttname"><a href="class_h_s_b_1_1_index.html">HSB.Index</a></div><div class="ttdef"><b>Definition</b> <a href="_index_8cs_source.html#l00007">Index.cs:8</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00008">Request.cs:9</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html_a5ae1b1c0549c9056041a976f40f1e2f3"><div class="ttname"><a href="class_h_s_b_1_1_request.html#a5ae1b1c0549c9056041a976f40f1e2f3">HSB.Request.IsWebSocket</a></div><div class="ttdeci">bool IsWebSocket()</div><div class="ttdoc">Returns true if the request is a websocket request.</div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00279">Request.cs:279</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00013">Response.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7089fa54aa956f2cd206a62882632f41"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7089fa54aa956f2cd206a62882632f41">HSB.Response.SendHTMLPage</a></div><div class="ttdeci">void SendHTMLPage(string path, bool process=false, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Loads and HTML file from path and sends it as HTTP Response with mimeType = text/html Optionally it c...</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00067">Response.cs:67</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_ab3a338243d93f5be733a1baacfcd3edd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#ab3a338243d93f5be733a1baacfcd3edd">HSB.Response.SendFile</a></div><div class="ttdeci">void SendFile(string absPath, string? mimeType=null, int statusCode=200, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Loads a file from a given path and sends an HTTP Response.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00104">Response.cs:104</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_server_html"><div class="ttname"><a href="class_h_s_b_1_1_server.html">HSB.Server</a></div><div class="ttdef"><b>Definition</b> <a href="_server_8cs_source.html#l00010">Server.cs:11</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00004">Servlet.cs:5</a></div></div>
-<div class="ttc" id="anamespace_h_s_b_1_1_exceptions_html"><div class="ttname"><a href="namespace_h_s_b_1_1_exceptions.html">HSB.Exceptions</a></div><div class="ttdef"><b>Definition</b> <a href="_cookie_values_not_set_exception_8cs_source.html#l00002">CookieValuesNotSetException.cs:3</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a578a68a4d1fc372de21b1306043a99c6"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a578a68a4d1fc372de21b1306043a99c6">HSB.Response.SendHTMLFile</a></div><div class="ttdeci">void SendHTMLFile(string path, bool process=false, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Loads and HTML file from path and sends it as HTTP Response with mimeType = text/html Optionally it c...</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00068">Response.cs:68</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_aded06bca97178785110cf713e7fa507a"><div class="ttname"><a href="class_h_s_b_1_1_response.html#aded06bca97178785110cf713e7fa507a">HSB.Response.SendFile</a></div><div class="ttdeci">void SendFile(string absPath, string? mimeType=null, int statusCode=HTTP_CODES.OK, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Loads a file from a given path and sends an HTTP Response.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00106">Response.cs:106</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_server_html"><div class="ttname"><a href="class_h_s_b_1_1_server.html">HSB.Server</a></div><div class="ttdef"><b>Definition</b> <a href="_server_8cs_source.html#l00011">Server.cs:12</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00005">Servlet.cs:6</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_components_1_1_web_sockets_html"><div class="ttname"><a href="namespace_h_s_b_1_1_components_1_1_web_sockets.html">HSB.Components.WebSockets</a></div><div class="ttdef"><b>Definition</b> <a href="_experiments_2_web_sockets_2_web_sockets_2_frame_8cs_source.html#l00004">Frame.cs:4</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_constants_html"><div class="ttname"><a href="namespace_h_s_b_1_1_constants.html">HSB.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_http_codes_8cs_source.html#l00001">HttpCodes.cs:1</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_exceptions_html"><div class="ttname"><a href="namespace_h_s_b_1_1_exceptions.html">HSB.Exceptions</a></div><div class="ttdef"><b>Definition</b> <a href="_cookie_values_not_set_exception_8cs_source.html#l00001">CookieValuesNotSetException.cs:1</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

@@ -12,3 +12,4 @@ HSB/TLS/
 *.cs.bak
 TLSTesting/
 Runner/uploaded/
+.VSCodeCounter/

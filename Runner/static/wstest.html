@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+</head>
+<tile>WebSocket Test Page</tile>
+</head>
+
+<body>
+    <script>
+        function Connect() {
+            ws = new WebSocket('ws://localhost:8080/websocket');
+            ws.onopen = function () {
+                document.getElementById('status').innerHTML = 'Status: Connected'
+            };
+            ws.onmessage = function (e) {
+                document.getElementById('messages').value += e.data + '\\n'
+            };
+            ws.onclose = function () {
+                document.getElementById('status').innerHTML = 'Status: Disconnected'
+            };
+        }
+
+        function Send() {
+            ws.send(document.getElementById('message').value);
+            document.getElementById('messages').value += 'client: ' + document.getElementById('message').value + '\\n';
+        }
+
+        function Disconnect(){
+            if(ws != null && ws.readyState == 1){
+                ws.close();
+                ws = null;
+            }
+        }
+    </script>
+    <label id="status">Status: Disconnected</label>
+    <button onclick="Connect()"> Connect</button>
+    <button onclick="Disconnect()">Disconnect</button>
+    <textarea id="messages" style="width: 100%; height: 200px;"></textarea>
+    <input type="text" id="message" style="width: 100%;" />
+    <button onclick="Send()">Send</button>
+</body>

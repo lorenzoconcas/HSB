@@ -40,7 +40,7 @@ public class Frame
 
     /// <summary>
     /// Use this costructor to decode a frame
-    /// </summary
+    /// </summary>
     /// <param name="data"></param>
     public Frame(byte[] data)
     {

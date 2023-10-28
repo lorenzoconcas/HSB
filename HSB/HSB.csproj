@@ -7,9 +7,9 @@
 		<Nullable>enable</Nullable>
 		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 		<Deterministic>false</Deterministic>
-		<Description>The HSB-# Server</Description>
+		<Description>Http Server Boxed</Description>
 		<Configurations>Debug;Release</Configurations>
-		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<Copyright>(c) 2021-2023 Lorenzo L. Concas</Copyright>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

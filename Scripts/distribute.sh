@@ -5,7 +5,7 @@ if [ $# -eq 0 ]
   then
     echo "Usage: ./distribute.sh \"versionName\" \"otherValues\""
     echo "Example: ./distribute.sh 0.0.10 ALPHA"
-    exit 1
+    exit 0
 fi
 
 #check if version name is passed
@@ -19,13 +19,17 @@ fi
 #check if dotnet is installed
 if ! [ -x "$(command -v dotnet)" ]; then
   echo 'Error: dotnet is not installed.' >&2
-  exit 1
+  exit 2
 fi
 
-#check if HSB source exists (../HSB)
+#move to the folder this script is in
+cd "$(dirname "$0")" #this is to fix run from Apple Shortcuts or when you cannot set the working directory
+
+#check if HSB source exists (../HSB) relative to the directory this script is in
+
 if [ ! -d "../HSB" ]; then
-  echo "Error: HSB source not found. Please clone HSB source to parent directory." >&2
-  exit 1
+  echo "HSB source not found. Make sure that the HSB source is the root path of the folder this script is in"
+  exit 3
 fi
 
 #check if Releases directory exists (../Releases/HSB), if not create it
@@ -88,3 +92,4 @@ cd ..
 rm -rf HSB
 #exit
 echo "Done"
+exit 0

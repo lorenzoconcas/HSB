@@ -363,6 +363,12 @@ public class Server
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
                         res.SendFile(config.StaticFolderPath + "/" + req.URL);
                     }
+                    else if(config.ServeEmbeddedResource && Utils.IsEmbeddedResource(req.URL))
+                    {
+                        config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Embedded resource)");
+                        object resource = Utils.LoadResource<object>(req.URL);                     
+                        res.SendObject(resource, req.URL);
+                    }
                     else
                     {
                         //if no servlet or static file found, send 404

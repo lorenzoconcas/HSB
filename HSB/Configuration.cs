@@ -85,6 +85,11 @@ namespace HSB
         /// <remarks>Note that IPv6 and IPv4 are considered different ips!</remarks>
         public List<string> PermanentIPList = new();
         /// <summary>
+        /// If set to true, the server will try to search for the requested resource in the assembly resources
+        /// if fails to find it, the usual chain of execution will be followed
+        /// </summary>
+        public bool ServeEmbeddedResource = false;
+        /// <summary>
         /// Creates a default fail-safe configuration (still, the port could be in use)
         /// </summary>
         public Configuration()
@@ -120,7 +125,8 @@ namespace HSB
                 IPAutoblock = root.GetProperty("IPAutoblock").GetBoolean();
                 ListeningMode = (IPMode)root.GetProperty("ListeningMode").GetInt32();
                 CustomServerName = root.GetProperty("CustomServerName").GetString() ?? "";
-
+                ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
+                
                 foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
                 {
                     string? v = item.GetString();

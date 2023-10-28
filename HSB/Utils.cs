@@ -55,7 +55,7 @@ public static partial class Utils
         }
         return s;
     }
-    public static string LoadResourceString(string resName)
+    internal static string LoadResourceAsString(string resName)
     {
         var assembly = Assembly.GetCallingAssembly();
         string resourceName;
@@ -284,7 +284,7 @@ public static partial class Utils
     /// <returns></returns>
     public static int ToInt(this bool[] bits)
     {
-        if(bits.Length != 7) throw new ArgumentException("The array must have 7 elements");
+        if (bits.Length != 7) throw new ArgumentException("The array must have 7 elements");
         int value = 0;
         //check endianness!!
         bits = bits.Reverse().ToArray();
@@ -318,7 +318,7 @@ public static partial class Utils
 
     public static byte GetByte(params bool[] bits)
     {
-        if(bits.Length > 8) throw new ArgumentException("The array must have 8 elements");
+        if (bits.Length > 8) throw new ArgumentException("The array must have 8 elements");
         //todo Check platform endianess
         bits = bits.Reverse().ToArray();
         byte value = 0;
@@ -351,7 +351,8 @@ public static partial class Utils
     /// </summary>
     /// <param name="lenght"></param>
     /// <returns></returns>
-    public static bool[] Int64To64Bits(int lenght){
+    public static bool[] Int64To64Bits(int lenght)
+    {
         bool[] bits = new bool[64];
         for (int i = 0; i < 64; i++)
         {
@@ -360,13 +361,14 @@ public static partial class Utils
         return bits;
     }
 
-    public static byte[] ToByteArray(this bool[] bits){
-        if(bits.Length % 8 != 0) throw new ArgumentException("The array must have a length multiple of 8");
-    
+    public static byte[] ToByteArray(this bool[] bits)
+    {
+        if (bits.Length % 8 != 0) throw new ArgumentException("The array must have a length multiple of 8");
+
         List<byte> bytes = new();
-        for (int i = 0; i < bits.Length; i+=8)
+        for (int i = 0; i < bits.Length; i += 8)
         {
-            bytes.Add(GetByte(bits[i..(i+8)]));
+            bytes.Add(GetByte(bits[i..(i + 8)]));
         }
         return bytes.ToArray();
     }
@@ -378,7 +380,8 @@ public static partial class Utils
     /// <param name="array"></param>
     /// <param name="size"></param>
     /// <returns></returns>
-    public static T[] ExtendRepeating<T>(this T[] array, int size){
+    public static T[] ExtendRepeating<T>(this T[] array, int size)
+    {
         List<T> result = new();
         for (int i = 0; i < size; i++)
         {
@@ -386,6 +389,55 @@ public static partial class Utils
         }
         return result.ToArray();
 
+    }
+
+    internal static bool IsEmbeddedResource(string url)
+    {
+        if (url.StartsWith("/")) url = url[1..];
+        url = url.Replace("/", "."); 
+
+        AppDomain currentDomain = AppDomain.CurrentDomain;
+        List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
+
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+
+        foreach (var assembly in assemblies)
+        {        
+            foreach (var res in assembly.GetManifestResourceNames())
+            {
+                if (res.EndsWith(url)) return true;
+            }
+        }
+        return false;
+    }
+
+    //Search all the loaded assemblies for the resource, then reads it and returns it as object
+    internal static T LoadResource<T>(string resName)
+    {
+        if (resName.StartsWith("/")) resName = resName[1..];
+        resName = resName.Replace("/", "."); 
+        AppDomain currentDomain = AppDomain.CurrentDomain;
+        List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
+
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("ILLink"));
+        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("FxResources"));
+
+        foreach (var assembly in assemblies)
+        {
+            string resourceName = assembly.GetManifestResourceNames().First(str => str.EndsWith(resName));
+            if (resourceName != null)
+            {
+                using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
+                using StreamReader reader = new(stream);
+                return (T)Convert.ChangeType(reader.ReadToEnd(), typeof(T));
+            }
+        }
+        return default!;
     }
 }
 

@@ -53,7 +53,7 @@ public class Response
     /// <param name="mimeType">MimeType of the body</param>
     /// <param name="statusCode">Response status code</param>
     public void Send(string data, string mimeType = "text/plain", int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
-    {
+    {       
         string _mime = mimeType;
         string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
 
@@ -134,6 +134,27 @@ public class Response
         data.CopyTo(responseBytes, headersBytes.Length);
 
         Send(responseBytes);
+    }
+    /// <summary>
+    /// Sends a generic object to the client, with possible optimization (string, byte[], FilePart, generic object)
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="fileName"></param>
+    public void SendObject(object obj, string fileName = "")
+    {
+        if (obj == null) return;
+
+        if (obj is string str)
+            if (fileName != "")
+                Send(str, MimeTypeUtils.GetMimeType(Path.GetExtension(fileName)) ?? MimeTypeUtils.TEXT_PLAIN);
+            else
+                Send(str);
+        else if (obj is byte[] bytes)
+            Send(bytes);
+        else if (obj is FilePart filePart)
+            SendFile(filePart);
+        else
+            SendJSON(obj);
     }
     /// <summary>
     /// Send a FilePart to the client

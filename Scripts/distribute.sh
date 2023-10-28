@@ -1,20 +1,54 @@
 #!/bin/bash
 echo "HSB Distribution Script"
-#if no args are passed, print usage (like ./distribute.sh "0.0.10" "ALPHA")
-if [ $# -eq 0 ]
-  then
-    echo "Usage: ./distribute.sh \"versionName\" \"otherValues\""
-    echo "Example: ./distribute.sh 0.0.10 ALPHA"
-    exit 0
+
+#if first arg is -h or --help, print help
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+  echo "Usage: ./distribute.sh -v versionName -o otherValues"
+  echo "versionName: The version name of the build. If not passed, the version name will be detected from ./HSB/Properties/AssemblyInfo.cs"
+  echo "otherValues: Other values to be appended to the zip file name. If not passed, the zip file name will be HSB_v{versionName}_DEBUG.zip and HSB_v{versionName}_RELEASE.zip"
+  exit 0
 fi
 
-#check if version name is passed
-if [ -z "$1" ]
-  then
-    echo "No version name supplied"
+versionName=""
+otherValues=""
+
+#check if version name is passed, if not detect from ./HSB/Properties/AssemblyInfo.cs
+#loop arguments and check if the current argument is -v
+#then the next argument is the version name
+for var in "$@"
+do
+  if [ "$var" == "-v" ]; then
+    versionName=$2
+  fi
+done
+#if version name is not passed, detect from ./HSB/Properties/AssemblyInfo.cs
+if [ "$versionName" == "" ]; then
+  echo "Version name not passed. Using version name from ./HSB/Properties/AssemblyInfo.cs"
+  #check if AssemblyInfo.cs exists
+  if [ ! -f "../HSB/Properties/AssemblyInfo.cs" ]; then
+    echo "AssemblyInfo.cs not found. Make sure that the HSB source is the root path of the folder this script is in"
     exit 1
+  fi
+  #get version name from AssemblyInfo.cs
+  versionName=$(grep -oE '\[assembly: AssemblyVersion\(\"(\d+.\d+.\d+)' ../HSB/Properties/AssemblyInfo.cs)
+  #cut after [assembly: AssemblyVersion(" 
+  versionName=${versionName:28}
 fi
 
+
+#check if there is an argument with value -o
+#if is present then "otherValues" is the next argument
+for var in "$@"
+do
+  if [ "$var" == "-o" ]; then
+    otherValues=$2
+  fi
+done
+
+#if otherValues != "" then prepend _ to it
+if [ "$otherValues" != "" ]; then
+  otherValues="_$otherValues"
+fi
 
 #check if dotnet is installed
 if ! [ -x "$(command -v dotnet)" ]; then
@@ -38,18 +72,21 @@ if [ ! -d "../Releases/HSB" ]; then
   mkdir ../Releases
   mkdir ../Releases/HSB
 fi
+
+#clear zip files
+echo "Clearing previous archives files"
+rm -f ../Releases/HSB/*.zip 2> /dev/null
 ######DEBUG MODE BUILD######
 
 #compile HSB in debug mode
 echo "Compiling HSB in debug mode"
 dotnet publish ../HSB/HSB.csproj -c Debug -o ../Releases/HSB/Debug
 
-#archive HSB in debug mode to a zip file called HSB_v{versionName}_{otherValues}_DEBUG.zip in the ./Releases directory
+#archive HSB in debug mode to a zip file called HSB_v{versionName}{otherValues}_DEBUG.zip in the ./Releases directory
 echo "Archiving HSB in debug mode"
 cd ../Releases/HSB/Debug
-rm -f HSB_v$1_$2_DEBUG.zip 2> /dev/null
-zip -r HSB_v$1_$2_DEBUG.zip *
-mv HSB_v$1_$2_DEBUG.zip ../../HSB_v$1_$2_DEBUG.zip
+zip -r HSB_v${versionName}${otherValues}_DEBUG.zip *
+mv HSB_v${versionName}${otherValues}_DEBUG.zip ../../HSB_v${versionName}${otherValues}_DEBUG.zip
 
 #delete build folder
 echo "Deleting build folder"
@@ -67,13 +104,12 @@ pwd
 echo "Compiling HSB in release mode"
 dotnet publish ../HSB/HSB.csproj -c Release -o ../Releases/HSB/Release
 
-#archive HSB in release mode to a zip file called HSB_v{versionName}_{otherValues}_RELEASE.zip in the ./Releases directory
+#archive HSB in release mode to a zip file called HSB_v{versionName}{otherValues}_RELEASE.zip in the ./Releases directory
 #but delete the archive first if it already exists
 echo "Archiving HSB in release mode"
 cd ../Releases/HSB/Release
-rm -f HSB_v$1_$2_RELEASE.zip 2> /dev/null
-zip -r HSB_v$1_$2_RELEASE.zip *
-mv HSB_v$1_$2_RELEASE.zip ../../HSB_v$1_$2_RELEASE.zip
+zip -r HSB_v${versionName}${otherValues}_RELEASE.zip *
+mv HSB_v${versionName}${otherValues}_RELEASE.zip ../../HSB_v${versionName}${otherValues}_RELEASE.zip
 
 
 #delete build folder
@@ -81,10 +117,6 @@ echo "Deleting build folder"
 cd ..
 rm -rf Release
 
-#copy HSB_v{versionName}_{otherValues}_DEBUG.zip and HSB_v{versionName}_{otherValues}_RELEASE.zip to ../Releases
-echo "Copying HSB_v$1_$2_DEBUG.zip and HSB_v$1_$2_RELEASE.zip to ../Releases"
-cp HSB_v$1_$2_DEBUG.zip ../../HSB_v$1_$2_DEBUG.zip
-cp HSB_v$1_$2_RELEASE.zip ../../HSB_v$1_$2_RELEASE.zip
 
 #clear Releases/HSB directory
 echo "Clearing Releases/HSB directory"

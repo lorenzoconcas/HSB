@@ -6,9 +6,9 @@ internal class ManagerMain
     {
         Configuration c = new()
         {
-            port = 65001,
-            address = "127.0.0.1",
-            staticFolderPath = "./static"
+            Port = 65001,
+            Address = "127.0.0.1",
+            StaticFolderPath = "./static"
         };
 
         c.AddCustomGlobalHeader("Set-Cookie", $"managerVersion={Assembly.GetExecutingAssembly().GetName().Version}");

@@ -11,9 +11,9 @@ public class HSBRunner
 
         Configuration c = new()
         {
-            address = "", //listen any address
-            port = 8080,
-            requestMaxSize = Configuration.MEGABYTE * 2,
+            Address = "", //listen any address
+            Port = 8080,
+            RequestMaxSize = Configuration.MEGABYTE * 2,
             CustomServerName = "Runner powered by HSB",
             ListeningMode = HSB.Constants.IPMode.IPV6_ONLY
         };
@@ -57,7 +57,7 @@ public class HSBRunner
                 //print all available static files
                 html += "<h3>Available static files:</h3>";
                 html += "<table><thead><tr><th>Static files</th></tr></thead><tbody>";
-                var staticFilePath = c.staticFolderPath;
+                var staticFilePath = c.StaticFolderPath;
                 foreach (var file in Directory.GetFiles(staticFilePath))
                 {
                     var filePath = file.Replace(staticFilePath, "");

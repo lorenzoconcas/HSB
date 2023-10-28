@@ -11,11 +11,11 @@ namespace HSB
         /// <summary>
         /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) //check this
         /// </summary>
-        public string address;
+        public string Address;
         /// <summary>
         /// The server listening port
         /// </summary>
-        public int port;
+        public int Port;
         /// <summary>
         /// Set server listening mode to any, only ipv4 or only ipv6
         /// </summary>
@@ -23,15 +23,15 @@ namespace HSB
         /// <summary>
         /// Indicates the location where all static files will be searched and served from
         /// </summary>
-        public string staticFolderPath;
+        public string StaticFolderPath;
         /// <summary>
         /// Holds all debug information and routines
         /// </summary>
-        public Debugger debug;
+        public Debugger Debug;
         /// <summary>
         /// Specifies the size in bytes of the buffer that will contain the HTTP request
         /// </summary>
-        public int requestMaxSize;
+        public int RequestMaxSize;
         /// <summary>
         /// Defines the size of a kilobyte in bytes, useful to set the requestMaxSize
         /// </summary>
@@ -59,7 +59,7 @@ namespace HSB
         /// <summary>
         /// Sets the expiration time of the session
         /// </summary>
-        public ulong defaultSessionExpirationTime;
+        public ulong DefaultSessionExpirationTime;
         /// <summary>
         /// Expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
         /// </summary>
@@ -76,7 +76,7 @@ namespace HSB
         /// Setting this to BlockMode.WhiteList will make the server accept only requests from ip presents in ip_whitelist.txt
         /// if set to BlockMode.BlackList will ban requests from ip presents in ip_blacklist.txt
         /// </summary>
-        public BLOCK_MODE blockMode = BLOCK_MODE.NONE;
+        public BLOCK_MODE BlockMode = BLOCK_MODE.NONE;
         /// <summary>
         /// This list contains all the IP addresses that will be allowed/denied to access the server, it's behavior depends on the blockMode
         /// If blockmode is set to BlockMode.OKLIST, only the IP addresses in this list will be allowed to access the server
@@ -89,14 +89,14 @@ namespace HSB
         /// </summary>
         public Configuration()
         {
-            address = "";
-            port = 8080;
-            staticFolderPath = "./static";
-            debug = new Debugger();
-            requestMaxSize = KILOBYTE; //max 1KB Requests default
+            Address = "";
+            Port = 8080;
+            StaticFolderPath = "./static";
+            Debug = new Debugger();
+            RequestMaxSize = KILOBYTE; //max 1KB Requests default
             ListeningMode = IPMode.ANY; //listen to both ipv6 and ipv4
             //default one day
-            defaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
+            DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
         }
 
         /// <summary>
@@ -108,18 +108,39 @@ namespace HSB
             using var doc = JsonDocument.Parse(jsonContent);
             var root = doc.RootElement;
 
+            try
+            {
+                Address = root.GetProperty("Address").GetString() ?? "127.0.0.1";
+                Port = root.GetProperty("Port").GetInt16();
+                StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
+                Debug = Debugger.FromJson(root.GetProperty("Debug"));
+                RequestMaxSize = root.GetProperty("Port").GetInt32();
+                BlockMode = (BLOCK_MODE)root.GetProperty("BlockMode").GetInt32();
+                HideBranding = root.GetProperty("HideBranding").GetBoolean();
+                IPAutoblock = root.GetProperty("IPAutoblock").GetBoolean();
+                ListeningMode = (IPMode)root.GetProperty("ListeningMode").GetInt32();
+                CustomServerName = root.GetProperty("CustomServerName").GetString() ?? "";
 
-            address = root.GetProperty("address").GetString() ?? "127.0.0.1";
-            port = root.GetProperty("port").GetInt16();
-            staticFolderPath = root.GetProperty("staticFolderPath").GetString() ?? "";
-            debug = Debugger.FromJson(root.GetProperty("debug"));
-            requestMaxSize = root.GetProperty("port").GetInt32();
-            // UseIPv4Only = root.GetProperty(nameof(UseIPv4Only)).GetBoolean();
-            defaultSessionExpirationTime = root.GetProperty("defaultSessionExpirationTime").GetUInt64();
+                foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
+                {
+                    string? v = item.GetString();
+                    if (v != null)
+                    {
+                        PermanentIPList.Add(v!);
+                    }
+                }               
+
+                DefaultSessionExpirationTime = root.GetProperty("defaultSessionExpirationTime").GetUInt64();
+            }
+            catch (Exception)
+            {
+                Terminal.DEBUG("Cannot parse configuration file, exiting...");              
+                Environment.Exit(1);
+            }
         }
 
         /// <summary>
-        /// Instantiate a configuration with the base settings
+        /// Instantiate a configuration with the minimal settings
         /// </summary>
         /// <param name="address">Listening address (es: "127.0.0.1" or "192.168.1.2" or "" for any)</param>
         /// <param name="port">Listening port</param>
@@ -128,15 +149,15 @@ namespace HSB
         /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
         public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY)
         {
-            this.address = address;
-            this.port = port;
-            staticFolderPath = staticPath;
-            debug = debugInfo ?? new Debugger();
+            Address = address;
+            Port = port;
+            StaticFolderPath = staticPath;
+            Debug = debugInfo ?? new Debugger();
             ListeningMode = ipMode;
-            //default 1MB max requests
-            requestMaxSize = 1024;
+            //default 1KB max requests
+            RequestMaxSize = KILOBYTE;
             //default one day
-            defaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
+            DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;            
         }
 
         private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)
@@ -147,8 +168,6 @@ namespace HSB
         }
 
         protected internal List<Tuple<string, Tuple<HTTP_METHOD, Delegate>>> ExpressRoutes => expressMapping;
-
-
 
         /// <summary>
         /// Map a function to a path that will reply with a GET response 
@@ -295,11 +314,11 @@ namespace HSB
         /// <returns></returns>
         public override string ToString()
         {
-            string str = $"Current configuration:\nListening address and port: {address}:{port}";
-            if (staticFolderPath == "")
+            string str = $"Current configuration:\nListening address and port: {Address}:{Port}";
+            if (StaticFolderPath == "")
                 str += "\nStatic folder is not set";
             else
-                str += $"\nStatic folder path: {staticFolderPath}";
+                str += $"\nStatic folder path: {StaticFolderPath}";
 
             if (expressMapping.Any())
             {

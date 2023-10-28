@@ -26,12 +26,12 @@ public class Server
         if (!config.HideBranding)
             Utils.PrintLogo();
 
-        if (config.port > 65535)
+        if (config.Port > 65535)
             throw new InvalidConfigurationParameterException("Port", "Port number is over the maximum allowed (65535)");
 
         this.config = config;
 
-        if (config.address == "")
+        if (config.Address == "")
         {
             //address must be ANY
             ipAddress = config.ListeningMode switch
@@ -42,11 +42,11 @@ public class Server
         }
         else
         {
-            List<IPAddress> addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork).ToList();
+            List<IPAddress> addresses = Dns.GetHostAddresses(config.Address, AddressFamily.InterNetwork).ToList();
 
             if (config.ListeningMode != IPMode.IPV4_ONLY)
             {
-                addresses.AddRange(Dns.GetHostAddresses(config.address, AddressFamily.InterNetworkV6).ToList());
+                addresses.AddRange(Dns.GetHostAddresses(config.Address, AddressFamily.InterNetworkV6).ToList());
             }
 
             if (addresses.Any())
@@ -55,7 +55,7 @@ public class Server
                 throw new Exception("Cannot found address to listen to");
         }
 
-        localEndPoint = new(ipAddress, config.port);
+        localEndPoint = new(ipAddress, config.Port);
 
         listener = new(ipAddress.AddressFamily,
             SocketType.Stream, ProtocolType.Tcp);
@@ -65,13 +65,13 @@ public class Server
             listener.DualMode = true;
         }
 
-        config.debug.INFO("Starting logging...");
+        config.Debug.INFO("Starting logging...");
         if (config.ListeningMode == IPMode.IPV4_ONLY && ipAddress == IPAddress.Any)
         {
-            config.debug.INFO($"Listening at http://127.0.0.1:{config.port}/");
+            config.Debug.INFO($"Listening at http://127.0.0.1:{config.Port}/");
         }
         else
-            config.debug.INFO($"Listening at http://{localEndPoint}/");
+            config.Debug.INFO($"Listening at http://{localEndPoint}/");
     }
 
     public void Start(bool openInBrowser = false)
@@ -97,7 +97,7 @@ public class Server
 
                 new Task(() =>
                 {
-                    byte[] bytes = new byte[config.requestMaxSize];
+                    byte[] bytes = new byte[config.RequestMaxSize];
                     int bytesRec = socket.Receive(bytes);
                     bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
 
@@ -229,7 +229,7 @@ public class Server
     /// <returns>True if request is blocked</returns>
     private bool Filter(Request req)
     {
-        var blockMode = config.blockMode;
+        var blockMode = config.BlockMode;
         switch (blockMode)
         {
             case BLOCK_MODE.NONE: return false; //no blocking
@@ -270,7 +270,7 @@ public class Server
             //check if request is valid                    
             if (!req.validRequest)
             {
-                config.debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.NOT_FOUND} (Invalid Request)", true);
+                config.Debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.NOT_FOUND} (Invalid Request)", true);
                 new Error(req, res, config, "Invalid Request", HTTP_CODES.NOT_FOUND).Process();
                 return;
             }
@@ -294,7 +294,7 @@ public class Server
                 {
                     if (!req.IsWebSocket())
                     {
-                        config.debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
+                        config.Debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
                         new Error(req, res, config, "Invalid Request", HTTP_CODES.METHOD_NOT_ALLOWED).Process();
                         return;
                     }
@@ -316,15 +316,15 @@ public class Server
                 {
                     //if the client is requesting the root file, we check if there is an index.html file
                     //if not, we use the default servlet
-                    if (File.Exists(config.staticFolderPath + "/index.html"))
+                    if (File.Exists(config.StaticFolderPath + "/index.html"))
                     {
-                        res.SendHTMLFile(config.staticFolderPath + "/index.html");
-                        config.debug.INFO($"{req.METHOD} '{req.URL}' 200");
+                        res.SendHTMLFile(config.StaticFolderPath + "/index.html");
+                        config.Debug.INFO($"{req.METHOD} '{req.URL}' 200");
                     }
                     else
                     {
                         new Index(req, res, config).Process();
-                        config.debug.INFO($"{req.METHOD} '{req.URL}' 200 (Default Index Page)");
+                        config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Default Index Page)");
                     }
                 }
                 else
@@ -334,11 +334,11 @@ public class Server
                     //see: https://github.com/pillarjs/send/blob/master/index.js#L63
                     if (Utils.IsUnsafePath(req.URL))
                     {
-                        config.debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
+                        config.Debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
                         new Error(req, res, config, "", HTTP_CODES.NOT_FOUND).Process();
                         if (config.IPAutoblock)
                         {
-                            config.debug.WARNING($"Autoblocking IP {req.ClientIP}");
+                            config.Debug.WARNING($"Autoblocking IP {req.ClientIP}");
                             if (File.Exists("./banned_ips.txt"))
                                 File.AppendAllText("./banned_ips.txt", req.ClientIP + "\n");
                             else
@@ -346,16 +346,16 @@ public class Server
                         }
                     }
                     //if the path is safe and the file exists, we send it
-                    if (File.Exists(config.staticFolderPath + "/" + req.URL))
+                    if (File.Exists(config.StaticFolderPath + "/" + req.URL))
                     {
                         //config.debug.INFO($"Static file found, serving '{req.URL}'");
-                        config.debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
-                        res.SendFile(config.staticFolderPath + "/" + req.URL);
+                        config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
+                        res.SendFile(config.StaticFolderPath + "/" + req.URL);
                     }
                     else
                     {
                         //if no servlet or static file found, send 404
-                        config.debug.INFO($"{req.METHOD} '{req.URL}' 404 (Resource not found)");
+                        config.Debug.INFO($"{req.METHOD} '{req.URL}' 404 (Resource not found)");
                         new Error(req, res, config, "Page not found", HTTP_CODES.NOT_FOUND).Process();
                     }
                 }
@@ -364,7 +364,7 @@ public class Server
         catch (Exception e)
         {
             //config.debug.ERROR("Error handling request ->\n " + e);
-            config.debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
+            config.Debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
             //we show an error page with the message and code 500
             new Error(req, res, config, e.ToString(), HTTP_CODES.INTERNAL_SERVER_ERROR).Process();
         }

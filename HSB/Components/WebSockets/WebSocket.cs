@@ -59,7 +59,7 @@ public class WebSocket
 
         if (!req.IsWebSocket()) //not a websocket request, we cannot do anything here
         {
-            c?.debug.WARNING("Not a websocket request, this code should never be reached");
+            c?.Debug.WARNING("Not a websocket request, this code should never be reached");
             res.SendCode(HTTP_CODES.BAD_REQUEST);
             return false;
         }
@@ -69,7 +69,7 @@ public class WebSocket
         //those two values are required, if they are missing -> 400
         if (!headers.ContainsKey("Sec-WebSocket-Key") && !headers.ContainsKey("Sec-WebSocket-Version"))
         {
-            c?.debug.WARNING("Missing Sec-WebSocket-Key or Sec-WebSocket-Version, malformed request");
+            c?.Debug.WARNING("Missing Sec-WebSocket-Key or Sec-WebSocket-Version, malformed request");
             res.SendCode(HTTP_CODES.BAD_REQUEST);
             return false;
         }
@@ -81,7 +81,7 @@ public class WebSocket
             {
                 if (!headers.ContainsKey(header.Key) || headers[header.Key] != header.Value)
                 {
-                    c?.debug.WARNING($"Missing required header {header.Key} or value is not correct");
+                    c?.Debug.WARNING($"Missing required header {header.Key} or value is not correct");
                     res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
                     return false;
                 }
@@ -94,7 +94,7 @@ public class WebSocket
             {
                 if (!req.Parameters.ContainsKey(param.Key) || req.Parameters[param.Key] != param.Value)
                 {
-                    c?.debug.WARNING($"Missing required parameter {param.Key} or value is not correct");
+                    c?.Debug.WARNING($"Missing required parameter {param.Key} or value is not correct");
                     res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
                     return false;
                 }
@@ -105,7 +105,7 @@ public class WebSocket
         {
             if (!headers.ContainsKey("Authorization") || headers["Authorization"] != $"Bearer {bearerToken}")
             {
-                c?.debug.WARNING($"Missing or incorrect Authorization header");
+                c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
                 return false;
             }
@@ -114,7 +114,7 @@ public class WebSocket
         {
             if (!headers.ContainsKey("Authorization") || headers["Authorization"] != $"OAuth {oAuth2Token}")
             {
-                c?.debug.WARNING($"Missing or incorrect Authorization header");
+                c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
                 return false;
             }
@@ -124,7 +124,7 @@ public class WebSocket
             var bAuth = req.GetBasicAuthInformation();
             if (bAuth == null || bAuth.Item1 != basicAuth.Item1 || bAuth.Item2 != basicAuth.Item2)
             {
-                c?.debug.WARNING($"Missing or incorrect Authorization header");
+                c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
                 return false;
             }
@@ -134,7 +134,7 @@ public class WebSocket
             var oAuth1 = req.GetOAuth1_0Information();
             if (oAuth1 == null || oAuth1.Equals(oAuth1))
             {
-                c?.debug.WARNING($"Missing or incorrect Authorization header");
+                c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
                 return false;
             }

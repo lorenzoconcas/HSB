@@ -11,7 +11,7 @@ namespace HSBStandalone
             //#if DEBUG
             string[] fakeArgs = args;
 #if DEBUG
-            //fakeArgs = new[] { "--create-default" };
+            fakeArgs = new[] { "--create-default" };
             // fakeArgs = new[] { "--address=''" };
 #endif
 
@@ -38,7 +38,7 @@ namespace HSBStandalone
                 {
                     if (s.StartsWith("--no-verbose"))
                     {
-                        conf.debug = new Debugger
+                        conf.Debug = new Debugger
                         {
                             verbose = false
                         };
@@ -72,11 +72,11 @@ namespace HSBStandalone
                     }
                     if (s.StartsWith("--port="))
                     {
-                        conf.port = int.Parse(s.Split("--port=")[1]);
+                        conf.Port = int.Parse(s.Split("--port=")[1]);
                     }
                     if (s.StartsWith("--address="))
                     {
-                        conf.address = s.Split("--address=")[1];
+                        conf.Address = s.Split("--address=")[1];
                     }
                     if (s.StartsWith("--info") || s.StartsWith("?"))
                     {
@@ -124,7 +124,7 @@ namespace HSBStandalone
                     return;
                 }
 
-                if (conf.debug.verbose)
+                if (conf.Debug.verbose)
                 {
                     Terminal.INFO("Configuration file loaded successfully, preview:");
                     Terminal.INFO(json);

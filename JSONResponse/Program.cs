@@ -2,8 +2,8 @@
 
 Configuration c = new()
 {
-    port = 8080,
-    address = ""
+    Port = 8080,
+    Address = ""
 };
 
 //expressjs-like routing

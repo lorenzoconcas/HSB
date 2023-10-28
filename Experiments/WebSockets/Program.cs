@@ -15,9 +15,9 @@ using System.Reflection.Emit;
 
 Configuration c = new()
 {
-    port = 8081,
-    address = "127.0.0.1",
-    requestMaxSize = Configuration.KILOBYTE * 1,
+    Port = 8081,
+    Address = "127.0.0.1",
+    RequestMaxSize = Configuration.KILOBYTE * 1,
 };
 
 c.GET("/", (Request req, Response res) =>

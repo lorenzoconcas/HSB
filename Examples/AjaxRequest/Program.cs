@@ -3,9 +3,9 @@ using HSB.Constants;
 
 Configuration c = new()
 {
-    port = 8080,
-    address = "",
-    staticFolderPath = "./"
+    Port = 8080,
+    Address = "",
+    StaticFolderPath = "./"
 };
 
 var ajaxHandler = (Request req, Response res) =>

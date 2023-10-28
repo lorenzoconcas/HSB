@@ -11,9 +11,9 @@ public class Program
     {
         HSB.Configuration c = new()
         {
-            port = 8080,
-            address = "127.0.0.1",
-            staticFolderPath = "./static"
+            Port = 8080,
+            Address = "127.0.0.1",
+            StaticFolderPath = "./static"
         };
 
         new HSB.Server(c).Start();

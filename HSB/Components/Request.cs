@@ -97,7 +97,7 @@ public class Request
                 //one for IPv6 and one for IPv4
                 //i don't know why but the second request is invalid
                 validRequest = false;
-                config.debug.INFO("Got an invalid request, ignoring...");
+                config.Debug.INFO("Got an invalid request, ignoring...");
                 requestContent.Add(" ");
                 return;
             }
@@ -218,7 +218,7 @@ public class Request
 
                 session = new()
                 {
-                    ExpirationTime = DateTime.Now.AddTicks((long)config.defaultSessionExpirationTime).Ticks
+                    ExpirationTime = DateTime.Now.AddTicks((long)config.DefaultSessionExpirationTime).Ticks
                 };
                 string sessionToken = SessionManager.GetInstance().CreateSession(session);
 
@@ -226,7 +226,7 @@ public class Request
                 {
                     name = "hsbst",
                     value = sessionToken,
-                    expiration = DateTime.Now.AddTicks((long)config.defaultSessionExpirationTime),
+                    expiration = DateTime.Now.AddTicks((long)config.DefaultSessionExpirationTime),
                     path = "/",
                     priority = Cookie.CookiePriority.HIGH
                 };

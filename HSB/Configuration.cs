@@ -90,6 +90,12 @@ namespace HSB
         /// </summary>
         public bool ServeEmbeddedResource = false;
         /// <summary>
+        /// If ServeEmbeddedResource is set to true, this will be prepended to the requested resource
+        /// ex: if the requested resource is /index.html and the prefix is set to "www"
+        /// the server will search for the resource in the assembly resources at www/index.html
+        /// </summary>
+        public string EmbeddedResourcePrefix = "";
+        /// <summary>
         /// Creates a default fail-safe configuration (still, the port could be in use)
         /// </summary>
         public Configuration()
@@ -126,6 +132,7 @@ namespace HSB
                 ListeningMode = (IPMode)root.GetProperty("ListeningMode").GetInt32();
                 CustomServerName = root.GetProperty("CustomServerName").GetString() ?? "";
                 ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
+                EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
                 
                 foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
                 {

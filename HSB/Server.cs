@@ -363,10 +363,10 @@ public class Server
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
                         res.SendFile(config.StaticFolderPath + "/" + req.URL);
                     }
-                    else if(config.ServeEmbeddedResource && Utils.IsEmbeddedResource(req.URL))
+                    else if(config.ServeEmbeddedResource && Utils.IsEmbeddedResource(req.URL, config.EmbeddedResourcePrefix))
                     {
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Embedded resource)");
-                        object resource = Utils.LoadResource<object>(req.URL);                     
+                        object resource = Utils.LoadResource<object>(req.URL, config.EmbeddedResourcePrefix);                     
                         res.SendObject(resource, req.URL);
                     }
                     else

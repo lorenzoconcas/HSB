@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -391,11 +392,12 @@ public static partial class Utils
 
     }
 
-    internal static bool IsEmbeddedResource(string url)
+    internal static bool IsEmbeddedResource(string url, string prefix = "")
     {
         if (url.StartsWith("/")) url = url[1..];
-        url = url.Replace("/", "."); 
-
+        url = url.Replace("/", ".");
+        if (prefix != "")
+            url = $"{prefix}.{url}";
         AppDomain currentDomain = AppDomain.CurrentDomain;
         List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
 
@@ -404,7 +406,7 @@ public static partial class Utils
         assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
 
         foreach (var assembly in assemblies)
-        {        
+        {
             foreach (var res in assembly.GetManifestResourceNames())
             {
                 if (res.EndsWith(url)) return true;
@@ -414,10 +416,12 @@ public static partial class Utils
     }
 
     //Search all the loaded assemblies for the resource, then reads it and returns it as object
-    internal static T LoadResource<T>(string resName)
+    internal static T LoadResource<T>(string resName, string prefix = "")
     {
         if (resName.StartsWith("/")) resName = resName[1..];
-        resName = resName.Replace("/", "."); 
+        resName = resName.Replace("/", ".");
+        if (prefix != "")
+            resName = $"{prefix}.{resName}";
         AppDomain currentDomain = AppDomain.CurrentDomain;
         List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
 

@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorld", "Examples\Hell
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldServlet", "Examples\HelloWorldServlet\HelloWorldServlet.csproj", "{5E826C71-5144-40F3-8B9A-B15904DBC80A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JSONResponse", "JSONResponse\JSONResponse.csproj", "{618BE9AE-06A1-48B7-A976-DBA983C1362B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JSONResponse", "Examples\JSONResponse\JSONResponse.csproj", "{618BE9AE-06A1-48B7-A976-DBA983C1362B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomHTTPMethods", "Examples\CustomHTTPMethods\CustomHTTPMethods.csproj", "{6F48CFF1-4351-47F0-82BE-12818F548731}"
 EndProject

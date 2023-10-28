@@ -15,7 +15,7 @@ public class HSBRunner
             Port = 8080,
             RequestMaxSize = Configuration.MEGABYTE * 2,
             CustomServerName = "Runner powered by HSB",
-            ListeningMode = HSB.Constants.IPMode.ANY
+            ListeningMode = HSB.Constants.IPMode.ANY //valid only if address == ""
         };
 
         //test expressjs-like routing

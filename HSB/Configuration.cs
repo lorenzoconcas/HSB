@@ -114,9 +114,9 @@ namespace HSB
         /// Instantiate configuration from a json file (content passed as string)
         /// </summary>
         /// <param name="jsonContent">The content of the JSON file</param>
-        public Configuration(string jsonContent)
+        public Configuration(string content)
         {
-            using var doc = JsonDocument.Parse(jsonContent);
+            using var doc = JsonDocument.Parse(content);
             var root = doc.RootElement;
 
             try
@@ -133,7 +133,7 @@ namespace HSB
                 CustomServerName = root.GetProperty("CustomServerName").GetString() ?? "";
                 ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
                 EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
-                
+
                 foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
                 {
                     string? v = item.GetString();
@@ -141,17 +141,28 @@ namespace HSB
                     {
                         PermanentIPList.Add(v!);
                     }
-                }               
+                }
 
                 DefaultSessionExpirationTime = root.GetProperty("defaultSessionExpirationTime").GetUInt64();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Terminal.DEBUG("Cannot parse configuration file, exiting...");              
+                Terminal.ERROR("Cannot parse configuration file");
+                Terminal.ERROR(e);
                 Environment.Exit(1);
             }
         }
 
+        /// <summary>
+        /// Instantiate configuration from a json file passed as parameter
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static Configuration LoadFromJson(string path)
+        {
+            string content = File.ReadAllText(path);
+            return new Configuration(content);
+        }
         /// <summary>
         /// Instantiate a configuration with the minimal settings
         /// </summary>
@@ -170,7 +181,7 @@ namespace HSB
             //default 1KB max requests
             RequestMaxSize = KILOBYTE;
             //default one day
-            DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;            
+            DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
         }
 
         private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)

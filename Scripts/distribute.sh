@@ -3,11 +3,19 @@ echo "HSB Distribution Script"
 
 #if first arg is -h or --help, print help
 if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-  echo "Usage: ./distribute.sh -v versionName -o otherValues"
-  echo "versionName: The version name of the build. If not passed, the version name will be detected from ./HSB/Properties/AssemblyInfo.cs"
-  echo "otherValues: Other values to be appended to the zip file name. If not passed, the zip file name will be HSB_v{versionName}_DEBUG.zip and HSB_v{versionName}_RELEASE.zip"
+  echo "Usage: "
+  echo "./distribute.sh -h or --help"
+  echo "./distribute.sh -v versionName -o otherValues"
+  echo "./distribute.sh -v versionName"
+  echo "./distribute.sh -o otherValues"
+  echo "./distribute.sh"
+  echo "versionName: The version name (string) of the build. If not passed, the version name will be detected from ./HSB/Properties/AssemblyInfo.cs"
+  echo "otherValues: Other string values to be appended to the zip file name. If not passed, the zip file name will be HSB_v{versionName}_DEBUG.zip and HSB_v{versionName}_RELEASE.zip"
   exit 0
 fi
+
+cd "$(dirname "$0")" #this is to fix run from Apple Shortcuts or when you cannot set the working directory
+
 
 versionName=""
 otherValues=""
@@ -57,7 +65,6 @@ if ! [ -x "$(command -v dotnet)" ]; then
 fi
 
 #move to the folder this script is in
-cd "$(dirname "$0")" #this is to fix run from Apple Shortcuts or when you cannot set the working directory
 
 #check if HSB source exists (../HSB) relative to the directory this script is in
 

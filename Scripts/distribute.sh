@@ -5,58 +5,80 @@ echo "HSB Distribution Script"
 if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
   echo "Usage: "
   echo "./distribute.sh -h or --help"
-  echo "./distribute.sh -v versionName -o otherValues"
+  echo "./distribute.sh -v versionName -o otherValues -p hsbPath"
   echo "./distribute.sh -v versionName"
   echo "./distribute.sh -o otherValues"
+  echo "./distribute.sh -p hsbPath"
   echo "./distribute.sh"
   echo "versionName: The version name (string) of the build. If not passed, the version name will be detected from ./HSB/Properties/AssemblyInfo.cs"
   echo "otherValues: Other string values to be appended to the zip file name. If not passed, the zip file name will be HSB_v{versionName}_DEBUG.zip and HSB_v{versionName}_RELEASE.zip"
+  echo "hsbPath: The path to the HSB source. If not passed, the default path is ../HSB"
+  echo "If no arguments are passed, the script will use the default values"
   exit 0
 fi
 
 cd "$(dirname "$0")" #this is to fix run from Apple Shortcuts or when you cannot set the working directory
 
+function pause(){
+ read -s -n 1 -p "Press any key to continue . . ."
+ echo ""
+}
+
+function cleanup(){
+  echo "Cleaning up"
+  cd ..
+  rm -rf HSB
+  exit 0
+}
 
 versionName=""
 otherValues=""
+hsbPath="../HSB"
+baseWorkingDir=""
 
-#check if version name is passed, if not detect from ./HSB/Properties/AssemblyInfo.cs
-#loop arguments and check if the current argument is -v
-#then the next argument is the version name
-for var in "$@"
-do
-  if [ "$var" == "-v" ]; then
-    versionName=$2
-  fi
-done
-#if version name is not passed, detect from ./HSB/Properties/AssemblyInfo.cs
-if [ "$versionName" == "" ]; then
-  echo "Version name not passed. Using version name from ./HSB/Properties/AssemblyInfo.cs"
-  #check if AssemblyInfo.cs exists
-  if [ ! -f "../HSB/Properties/AssemblyInfo.cs" ]; then
-    echo "AssemblyInfo.cs not found. Make sure that the HSB source is the root path of the folder this script is in"
-    exit 1
-  fi
-  #get version name from AssemblyInfo.cs
-  versionName=$(grep -oE '\[assembly: AssemblyVersion\(\"(\d+.\d+.\d+)' ../HSB/Properties/AssemblyInfo.cs)
-  #cut after [assembly: AssemblyVersion(" 
-  versionName=${versionName:28}
-fi
+#function that builds a C# project (csproj)
+function buildProject(){
+  projPath=$1
+  mode=$2
+  destPath=$3
+  archivePath=$4
+  echo "Building project $projPath in $mode mode to $destPath"
+  dotnet publish $projPath -c $mode -o $destPath
+  echo "Archiving project"
+  cd $destPath
+  #print file name
+  fileName="HSB_v${versionName}${otherValues}_${mode}.zip"
+  echo "File name: $fileName"
+  zip -r $fileName *
+  mv HSB_v${versionName}${otherValues}_${mode}.zip ../${archivePath}/HSB_v${versionName}${otherValues}_${mode}.zip
+  cd $baseWorkingDir
+}
 
+
+#this get the value of a flag (the argument after the flag)
+function getFlagValue(){ 
+  flag=$1
+  for (( i=2; i <= $#; i++ ))
+  do
+    arg=${!i}
+    #if arg is the flag, get the next argument
+    if [ "$arg" == "$flag" ]; then
+      v=$((i+1))
+      echo ${!v}
+      break
+    fi
+  done
+}
 
 #check if there is an argument with value -o
-#if is present then "otherValues" is the next argument
-for var in "$@"
-do
-  if [ "$var" == "-o" ]; then
-    otherValues=$2
-  fi
-done
-
+otherValues=$(getFlagValue "-o" "$@")
 #if otherValues != "" then prepend _ to it
 if [ "$otherValues" != "" ]; then
   otherValues="_$otherValues"
 fi
+
+#check if a custom HSB path is passed
+hsbPath=$(getFlagValue "-p" "$@")
 
 #check if dotnet is installed
 if ! [ -x "$(command -v dotnet)" ]; then
@@ -64,71 +86,86 @@ if ! [ -x "$(command -v dotnet)" ]; then
   exit 2
 fi
 
-#move to the folder this script is in
 
-#check if HSB source exists (../HSB) relative to the directory this script is in
-
-if [ ! -d "../HSB" ]; then
-  echo "HSB source not found. Make sure that the HSB source is the root path of the folder this script is in"
-  exit 3
+if [ "$hsbPath" != "" ]; then
+  echo Custom hsbPath set to $hsbPath
+  if [ ! -d "$hsbPath" ]; then
+    echo "Custom HSB folder not found, make sure it exists and is a valid path"
+    exit 1
+  fi
+  cd $hsbPath
+  echo Current working directory is: $(pwd)
+else
+  cd "$(dirname "$0")" #if no custom path is passed, set the working directory to the script directory
+  cd .. #go to parent directory
 fi
+baseWorkingDir=$(pwd)
+echo Current working directory is: $(pwd)
+if [ ! -d "HSB" ]; then
+  echo "HSB source not found. Make sure that the HSB source is the root path of the folder this script is in"
+  exit 1
+fi
+
+
+#check if version name is passed, if not detect from ./HSB/Properties/AssemblyInfo.cs
+versionName=$(getFlagValue "-v" "$@")
+
+#if version name is not passed, detect from {hsbPath}/HSB/Properties/AssemblyInfo.cs
+if [ "$versionName" == "" ]; then
+  echo Version name not passed. Using version name from HSB/Properties/AssemblyInfo.cs
+  #check if AssemblyInfo.cs exists
+  if [ ! -f "HSB/Properties/AssemblyInfo.cs" ]; then
+    echo "AssemblyInfo.cs not found. Make sure that the HSB source is the root path of the folder this script is in"
+    exit 1
+  fi
+  #get version name from AssemblyInfo.cs
+  versionName=$(grep -oE '\[assembly: AssemblyVersion\(\"(\d+.\d+.\d+)' HSB/Properties/AssemblyInfo.cs)
+  #cut after [assembly: AssemblyVersion(" 
+  versionName=${versionName:28}
+fi
+echo Version name: $versionName
+echo Other values: $otherValues
+echo HSB path: $hsbPath
+
 
 #check if Releases directory exists (../Releases/HSB), if not create it
-if [ ! -d "../Releases/HSB" ]; then
+if [ ! -d "Releases/HSB" ]; then
   echo "Releases directory not found. Creating Releases directory"
-  mkdir ../Releases
-  mkdir ../Releases/HSB
+  mkdir Releases
+  mkdir Releases/HSB
 fi
 
+
+######CLEANUP######
 #clear zip files
 echo "Clearing previous archives files"
-rm -f ../Releases/HSB/*.zip 2> /dev/null
+rm -f Releases/HSB/*.zip 2> /dev/null
+
 ######DEBUG MODE BUILD######
 
 #compile HSB in debug mode
 echo "Compiling HSB in debug mode"
-dotnet publish ../HSB/HSB.csproj -c Debug -o ../Releases/HSB/Debug
 
-#archive HSB in debug mode to a zip file called HSB_v{versionName}{otherValues}_DEBUG.zip in the ./Releases directory
-echo "Archiving HSB in debug mode"
-cd ../Releases/HSB/Debug
-zip -r HSB_v${versionName}${otherValues}_DEBUG.zip *
-mv HSB_v${versionName}${otherValues}_DEBUG.zip ../../HSB_v${versionName}${otherValues}_DEBUG.zip
-
-#delete build folder
-echo "Deleting build folder"
-cd ..
-rm -rf Debug
-cd ..
-
-#print current directory
-echo "Current directory: "
-pwd
+buildProject HSB/HSB.csproj Debug Releases/HSB/Debug ../../Releases
 
 ######RELEASE MODE BUILD######
 
 #compile HSB in release mode
 echo "Compiling HSB in release mode"
-dotnet publish ../HSB/HSB.csproj -c Release -o ../Releases/HSB/Release
 
-#archive HSB in release mode to a zip file called HSB_v{versionName}{otherValues}_RELEASE.zip in the ./Releases directory
-#but delete the archive first if it already exists
-echo "Archiving HSB in release mode"
-cd ../Releases/HSB/Release
-zip -r HSB_v${versionName}${otherValues}_RELEASE.zip *
-mv HSB_v${versionName}${otherValues}_RELEASE.zip ../../HSB_v${versionName}${otherValues}_RELEASE.zip
+buildProject HSB/HSB.csproj Release Releases/HSB/Release ../../Releases
 
-
-#delete build folder
-echo "Deleting build folder"
-cd ..
-rm -rf Release
-
+#final cleanup
 
 #clear Releases/HSB directory
-echo "Clearing Releases/HSB directory"
+clearPath="${baseWorkingDir}/Releases/HSB"
+echo "Clearing $clearPath"
 cd ..
-rm -rf HSB
+rm -rf $clearPath
 #exit
 echo "Done"
 exit 0
+
+
+
+

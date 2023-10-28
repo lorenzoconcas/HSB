@@ -129,10 +129,11 @@ namespace HSB
                 BlockMode = (BLOCK_MODE)root.GetProperty("BlockMode").GetInt32();
                 HideBranding = root.GetProperty("HideBranding").GetBoolean();
                 IPAutoblock = root.GetProperty("IPAutoblock").GetBoolean();
-                ListeningMode = (IPMode)root.GetProperty("ListeningMode").GetInt32();
+                ListeningMode = (IPMode)root.GetProperty(nameof(ListeningMode)).GetInt32();
                 CustomServerName = root.GetProperty("CustomServerName").GetString() ?? "";
                 ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
                 EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
+                DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
 
                 foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
                 {
@@ -143,7 +144,6 @@ namespace HSB
                     }
                 }
 
-                DefaultSessionExpirationTime = root.GetProperty("defaultSessionExpirationTime").GetUInt64();
             }
             catch (Exception e)
             {
@@ -162,6 +162,15 @@ namespace HSB
         {
             string content = File.ReadAllText(path);
             return new Configuration(content);
+        }
+        /// <summary>
+        /// Save the current configuration to a json file
+        /// </summary>
+        /// <param name="path"></param>
+        public void SaveToJson(string path)
+        {
+            string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true  });
+            File.WriteAllText(path, json);
         }
         /// <summary>
         /// Instantiate a configuration with the minimal settings

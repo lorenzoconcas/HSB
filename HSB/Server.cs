@@ -329,13 +329,13 @@ public class Server
                     //if not, we use the default servlet
                     if (File.Exists(config.StaticFolderPath + "/index.html"))
                     {
-                        res.SendHTMLFile(config.StaticFolderPath + "/index.html");
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200");
+                        res.SendHTMLFile(config.StaticFolderPath + "/index.html");
                     }
                     else
                     {
-                        new Index(req, res, config).Process();
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Default Index Page)");
+                        new Index(req, res, config).Process();
                     }
                 }
                 else

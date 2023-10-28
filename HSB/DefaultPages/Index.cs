@@ -39,7 +39,7 @@ namespace HSB
             }
 
             //set attributes
-            res.AddAttribute("logo", logo);
+            res.AddAttribute("logo", logo); //this break some configurations, logo must be replaced with a smaller image
             res.AddAttribute("title", title);
             res.AddAttribute("serverName", server_name);
             res.AddAttribute("footer_div", footer_div);

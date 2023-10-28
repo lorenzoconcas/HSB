@@ -34,13 +34,17 @@ public class Server
         if (config.address == "")
         {
             //address must be ANY
-            ipAddress = config.UseIPv4Only ? IPAddress.Any : IPAddress.IPv6Any;
+            ipAddress = config.ListeningMode switch
+            {
+                IPMode.IPV4_ONLY => IPAddress.Any,
+                _ => IPAddress.IPv6Any,
+            };
         }
         else
         {
             List<IPAddress> addresses = Dns.GetHostAddresses(config.address, AddressFamily.InterNetwork).ToList();
 
-            if (!config.UseIPv4Only)
+            if (config.ListeningMode != IPMode.IPV4_ONLY)
             {
                 addresses.AddRange(Dns.GetHostAddresses(config.address, AddressFamily.InterNetworkV6).ToList());
             }
@@ -56,8 +60,18 @@ public class Server
         listener = new(ipAddress.AddressFamily,
             SocketType.Stream, ProtocolType.Tcp);
 
+        if (config.ListeningMode == IPMode.ANY)
+        {
+            listener.DualMode = true;
+        }
+
         config.debug.INFO("Starting logging...");
-        config.debug.INFO($"Listening at http://{localEndPoint}/");
+        if (config.ListeningMode == IPMode.IPV4_ONLY && ipAddress == IPAddress.Any)
+        {
+            config.debug.INFO($"Listening at http://127.0.0.1:{config.port}/");
+        }
+        else
+            config.debug.INFO($"Listening at http://{localEndPoint}/");
     }
 
     public void Start(bool openInBrowser = false)
@@ -182,7 +196,7 @@ public class Server
 
 
         if (routes.ContainsKey(new(req.URL, false)))
-        {           
+        {
             Type c = routes[new(req.URL, false)];
             var x = c.GetConstructors()[0];
             return x.GetParameters().Length switch
@@ -208,7 +222,47 @@ public class Server
                     _ => throw new Exception($"Invalid constructor found {x.Name}"),
                 }).FirstOrDefault();
     }
+    /// <summary>
+    /// Check if the request is blocked by a blocking rule
+    /// </summary>
+    /// <param name="req"></param>
+    /// <returns>True if request is blocked</returns>
+    private bool Filter(Request req)
+    {
+        var blockMode = config.blockMode;
+        switch (blockMode)
+        {
+            case BLOCK_MODE.NONE: return false; //no blocking
+            case BLOCK_MODE.BANLIST:
+                if (config.PermanentIPList.Any(ip => ip == req.ClientIP))
+                {
+                    return true; //blocked request
+                }
+                if (File.Exists("./banned_ips.txt"))
+                {
+                    var bannedIps = File.ReadAllLines("./banned_ips.txt");
+                    if (bannedIps.Contains(req.ClientIP))
+                    {
+                        return true; //blocked request
+                    }
+                }
+                return true;
+            case BLOCK_MODE.OKLIST:
+                if (config.PermanentIPList.Any(ip => ip == req.ClientIP))
+                {
+                    return false; //allowed request
+                }
 
+                if (File.Exists("./allowed_ips.txt"))
+                {
+                    var allowedIps = File.ReadAllLines("./allowed_ips.txt");
+                    return !allowedIps.Contains(req.ClientIP);
+                }
+
+                return false; //no allowed_ips.txt file found, so we allow all requests
+        }
+        return false;
+    }
     private void ProcessRequest(Request req, Response res)
     {
         try
@@ -220,8 +274,11 @@ public class Server
                 new Error(req, res, config, "Invalid Request", HTTP_CODES.NOT_FOUND).Process();
                 return;
             }
-            if (RunIfExpressMapping(req, res))
-                return;
+            //check if there is a filter that blocks the request
+            if (Filter(req)) return;
+
+            //if dev has used the express mapping, we run the mapped function
+            if (RunIfExpressMapping(req, res)) return;
 
             //We check if the route requested is handled by any servlet
             object? o = GetInstance(req, res);
@@ -235,14 +292,15 @@ public class Server
                 }
                 else if (o is WebSocket ws)
                 {
-                    if(!req.IsWebSocket())
+                    if (!req.IsWebSocket())
                     {
                         config.debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
                         new Error(req, res, config, "Invalid Request", HTTP_CODES.METHOD_NOT_ALLOWED).Process();
                         return;
                     }
-                    else{
-                        
+                    else
+                    {
+
                         ws.Process();
                         return;
                     }
@@ -278,6 +336,14 @@ public class Server
                     {
                         config.debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
                         new Error(req, res, config, "", HTTP_CODES.NOT_FOUND).Process();
+                        if (config.IPAutoblock)
+                        {
+                            config.debug.WARNING($"Autoblocking IP {req.ClientIP}");
+                            if (File.Exists("./banned_ips.txt"))
+                                File.AppendAllText("./banned_ips.txt", req.ClientIP + "\n");
+                            else
+                                File.WriteAllText("./banned_ips.txt", req.ClientIP + "\n");
+                        }
                     }
                     //if the path is safe and the file exists, we send it
                     if (File.Exists(config.staticFolderPath + "/" + req.URL))

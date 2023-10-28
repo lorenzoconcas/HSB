@@ -1,5 +1,4 @@
 ﻿using HSB;
-using HSB.Components.WebSockets;
 
 namespace Runner;
 
@@ -15,7 +14,8 @@ public class HSBRunner
             address = "", //listen any address
             port = 8080,
             requestMaxSize = Configuration.MEGABYTE * 2,
-            CustomServerName = "Runner powered by HSB"
+            CustomServerName = "Runner powered by HSB",
+            ListeningMode = HSB.Constants.IPMode.IPV6_ONLY
         };
 
         //test expressjs-like routing

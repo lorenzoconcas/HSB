@@ -13,8 +13,8 @@
 		<Copyright>(c) 2021-2023 Lorenzo L. Concas</Copyright>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	  <DebugType>full</DebugType>
-	  <Optimize>true</Optimize>
+	  <DebugType>embedded</DebugType>
+	  <Optimize>false</Optimize>
 		<WarningLevel>4</WarningLevel>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>

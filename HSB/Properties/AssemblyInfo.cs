@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("HSB")]
-[assembly: AssemblyDescription("HttpServerBoxed")]
+[assembly: AssemblyDescription("Http Server Boxed")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Lorenzo L. Concas")]
 [assembly: AssemblyProduct("HSB-#")]

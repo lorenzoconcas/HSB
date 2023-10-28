@@ -17,9 +17,9 @@ namespace HSB
         /// </summary>
         public int port;
         /// <summary>
-        /// Sets if the server must listen only to IPv4
+        /// Set server listening mode to any, only ipv4 or only ipv6
         /// </summary>
-        public bool UseIPv4Only { get; set; }
+        public IPMode ListeningMode { get; set; }
         /// <summary>
         /// Indicates the location where all static files will be searched and served from
         /// </summary>
@@ -69,6 +69,22 @@ namespace HSB
         /// </summary>
         public string CustomServerName = "";
         /// <summary>
+        /// If this is set, the server will block the IP of the client if they try to access unsafe paths
+        /// </summary>
+        public bool IPAutoblock = false;
+        /// <summary>
+        /// Setting this to BlockMode.WhiteList will make the server accept only requests from ip presents in ip_whitelist.txt
+        /// if set to BlockMode.BlackList will ban requests from ip presents in ip_blacklist.txt
+        /// </summary>
+        public BLOCK_MODE blockMode = BLOCK_MODE.NONE;
+        /// <summary>
+        /// This list contains all the IP addresses that will be allowed/denied to access the server, it's behavior depends on the blockMode
+        /// If blockmode is set to BlockMode.OKLIST, only the IP addresses in this list will be allowed to access the server
+        /// If blockmode is set to BlockMode.BANLIST, the IP addresses in this list will be banned from accessing the server
+        /// </summary>
+        /// <remarks>Note that IPv6 and IPv4 are considered different ips!</remarks>
+        public List<string> PermanentIPList = new();
+        /// <summary>
         /// Creates a default fail-safe configuration (still, the port could be in use)
         /// </summary>
         public Configuration()
@@ -78,7 +94,7 @@ namespace HSB
             staticFolderPath = "./static";
             debug = new Debugger();
             requestMaxSize = KILOBYTE; //max 1KB Requests default
-            UseIPv4Only = false;
+            ListeningMode = IPMode.ANY; //listen to both ipv6 and ipv4
             //default one day
             defaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
         }
@@ -98,7 +114,7 @@ namespace HSB
             staticFolderPath = root.GetProperty("staticFolderPath").GetString() ?? "";
             debug = Debugger.FromJson(root.GetProperty("debug"));
             requestMaxSize = root.GetProperty("port").GetInt32();
-            UseIPv4Only = root.GetProperty(nameof(UseIPv4Only)).GetBoolean();
+            // UseIPv4Only = root.GetProperty(nameof(UseIPv4Only)).GetBoolean();
             defaultSessionExpirationTime = root.GetProperty("defaultSessionExpirationTime").GetUInt64();
         }
 
@@ -110,13 +126,13 @@ namespace HSB
         /// <param name="staticPath">Path of the static folder</param>
         /// <param name="debugInfo">Class holding debugging information</param>
         /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
-        public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, bool IPv4Only = false)
+        public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY)
         {
             this.address = address;
             this.port = port;
             staticFolderPath = staticPath;
             debug = debugInfo ?? new Debugger();
-            UseIPv4Only = IPv4Only;
+            ListeningMode = ipMode;
             //default 1MB max requests
             requestMaxSize = 1024;
             //default one day

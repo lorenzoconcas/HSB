@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Net.Sockets;
-using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -11,22 +10,22 @@ namespace HSB.Components.WebSockets;
 
 public class WebSocket
 {
-
+    //todo -> add multiframe support
     protected Response res;
     protected Request req;
-    private Socket socket;
+    private readonly Socket socket;
     protected Configuration? c;
 
     private WebSocketState state = WebSocketState.CLOSED;
 
-    //acceptance requirements
+    #region Acceptance Requirements
     Dictionary<string, string> requiredHeaders;
     Dictionary<string, string> requiredParams;
     string bearerToken = "";
     string oAuth2Token = "";
     Tuple<string, string>? basicAuth = null;
     OAuth1_0Information? oAuth1_0Information = null;
-
+    #endregion
     private byte[] messageSentOnOpen = Array.Empty<byte>();
 
     public WebSocket(Request req, Response res, Configuration? c = null)
@@ -252,7 +251,7 @@ public class WebSocket
         }
     }
 
-    //public methods
+    #region PUBLIC METHODS
 
     //this is should be use only by HSB/Server.cs or HSB/Configuration.cs
     public void Process()
@@ -261,10 +260,10 @@ public class WebSocket
         var method = frame?.GetMethod();
         var rfn = method?.ReflectedType?.Name ?? "";
         var callerName = method?.Name ?? "";
-        if(rfn != "Server" && callerName != "ProcessRequest")
+        if (rfn != "Server" && callerName != "ProcessRequest")
         {
             throw new Exception("This function must be called ONLY by the server process");
-        }            
+        }
 
         if (Accept())
         {
@@ -357,6 +356,10 @@ public class WebSocket
             throw new Exception("WebSocket is not connected");
         }
     }
+    /// <summary>
+    /// Closes the websocket connection
+    /// </summary>
+    /// <exception cref="Exception"></exception>
     public void Close()
     {
         if (state == WebSocketState.OPEN)
@@ -365,7 +368,7 @@ public class WebSocket
             f.SetOpcode(Opcode.CLOSE);
             socket?.Send(f.Build());
             socket?.Close();
-            
+
             OnClose();
         }
         else
@@ -373,6 +376,16 @@ public class WebSocket
             throw new Exception("WebSocket is not connected, cannot close");
         }
     }
+
+    /// <summary>
+    /// Set requirements to accept the connection request
+    /// </summary>
+    /// <param name="requiredHeaders"></param>
+    /// <param name="requiredParams"></param>
+    /// <param name="bearerToken"></param>
+    /// <param name="oAuth2Token"></param>
+    /// <param name="basicAuth"></param>
+    /// <param name="oAuth1_0Information"></param>
     public void SetConnectionRequirements(
         Dictionary<string, string> requiredHeaders,
         Dictionary<string, string> requiredParams,
@@ -391,13 +404,27 @@ public class WebSocket
         this.oAuth1_0Information = oAuth1_0Information;
 
     }
-    //events
+    /// <summary>
+    /// Returns the current state of the websocket
+    /// </summary>
+    /// <returns></returns>
+    public WebSocketState GetState(){
+        return state;
+    }
+    #endregion
+    #region EVENTS
+    /// <summary>
+    /// OnMessage is called when a message is received from the client
+    /// </summary>
+    /// <param name="msg"></param>
     public virtual void OnMessage(Message msg) { }
-
+    /// <summary>
+    /// OnOpen is called after a connection request is received from the client
+    /// </summary>
     public virtual void OnOpen() { }
     /// <summary>
     /// OnClose is called after a close request is received from the client, to directly close the connection use Close()
     /// </summary>
     public virtual void OnClose() { }
+    #endregion
 }
-

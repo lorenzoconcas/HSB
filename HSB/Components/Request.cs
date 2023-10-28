@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using HSB.Components;
 using HSB.Constants;
@@ -20,6 +21,9 @@ public class Request
     public bool validRequest = false;
     HTTP_METHOD _method = HTTP_METHOD.UNKNOWN;
     HTTP_PROTOCOL _protocol = HTTP_PROTOCOL.UNKNOWN; //HTTP1.0 ecc
+    string clientIP = "";
+    int clientPort = -1;
+    AddressFamily clientIPVersion;
     string _url = "";
     string body = "";
     readonly Dictionary<string, string> headers = new();
@@ -51,6 +55,15 @@ public class Request
         if (data == null)
         {
             return;
+        }
+        var rEP = socket.RemoteEndPoint;
+        //extract ipv4 or ipv6 from the remote endpoint
+        if (rEP != null)
+        {
+            var rIEP = (IPEndPoint)rEP;
+            clientIP = rIEP.Address.ToString();
+            clientPort = rIEP.Port;
+            clientIPVersion = rIEP.AddressFamily;
         }
 
 
@@ -247,21 +260,58 @@ public class Request
         }
 
     }
-
+    /// <summary>
+    /// Return the method of the request
+    /// </summary>
     public HTTP_METHOD METHOD => _method;
+    /// <summary>
+    /// Return the protocol of the request
+    /// </summary>
     public HTTP_PROTOCOL PROTOCOL => _protocol;
+    /// <summary>
+    /// Return the url of the request
+    /// </summary>
     public string URL => _url;
+    /// <summary>
+    /// Return the ip of the client (request source ip)
+    /// </summary>
+    public string ClientIP => clientIP;
+    /// <summary>
+    /// Return the port of the client (request source port)
+    /// </summary>
+    public int ClientPort => clientPort;
+    /// <summary>
+    /// Return the ip version of the client (request source ip version (v4 or v6))
+    /// </summary>
+    public AddressFamily ClientIPVersion => clientIPVersion;
+    /// <summary>
+    /// Return the raw body of the request
+    /// </summary>
     public byte[] RawBody => rawBody;
+    /// <summary>
+    /// Return the body of the request parsed as string
+    /// </summary>
     public string Body => body;
-
+    /// <summary>
+    /// Return the headers
+    /// </summary>
     public Dictionary<string, string> Headers => headers;
- 
+    /// <summary>
+    /// Return the unparsed headers
+    /// </summary>
     public List<string> RawHeaders => rawHeaders;
+    /// <summary>
+    /// Return the parameters
+    /// </summary>
     public Dictionary<string, string> Parameters => parameters;
-   
+    /// <summary>
+    /// Return the session associated with the request
+    /// </summary>
+    /// <returns></returns>
     public Session GetSession() => session;
     public Tuple<string, string>? GetBasicAuthInformation() => basicAuth;
     public OAuth1_0Information? GetOAuth1_0Information() => oAuth1_0Information;
+
 
     /// <summary>
     /// Test if a request contains a JSON document in the body
@@ -350,7 +400,7 @@ public class Request
     }
 }
 
-
+//todo -> move to a separate file, ideally in Constants
 public static class HttpUtils
 {
     public static string MethodAsString(HTTP_METHOD method) => method switch

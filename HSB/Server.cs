@@ -40,19 +40,30 @@ public class Server
                 _ => IPAddress.IPv6Any,
             };
         }
-        else
+        else //in this case ListeningMode is NOT a valid parameter
         {
             List<IPAddress> addresses = Dns.GetHostAddresses(config.Address, AddressFamily.InterNetwork).ToList();
 
-            if (config.ListeningMode != IPMode.IPV4_ONLY)
-            {
-                addresses.AddRange(Dns.GetHostAddresses(config.Address, AddressFamily.InterNetworkV6).ToList());
-            }
+            //this fixes an error where user specifies an ipv4 address but want the server to listene to BOTH or ipv6 only
 
             if (addresses.Any())
+            {
                 ipAddress = addresses.First();
+                config.ListeningMode = IPMode.IPV4_ONLY;
+            }
             else
-                throw new Exception("Cannot found address to listen to");
+            {
+                addresses = Dns.GetHostAddresses(config.Address, AddressFamily.InterNetworkV6).ToList();
+                if (addresses.Any())
+                {
+                    ipAddress = addresses.First();
+                    config.ListeningMode = IPMode.IPV6_ONLY;
+                }
+                else
+                {
+                    throw new Exception("Cannot found address to listen to");
+                }
+            }
         }
 
         localEndPoint = new(ipAddress, config.Port);

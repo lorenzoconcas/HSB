@@ -9,15 +9,15 @@ namespace HSB
     public class Configuration
     {
         /// <summary>
-        /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) //check this
+        /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address)
         /// </summary>
-        public string Address;
+        public string Address; //Todo -> support for multiple addresses?
         /// <summary>
         /// The server listening port
         /// </summary>
         public int Port;
         /// <summary>
-        /// Set server listening mode to any, only ipv4 or only ipv6
+        /// Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to ""
         /// </summary>
         public IPMode ListeningMode { get; set; }
         /// <summary>

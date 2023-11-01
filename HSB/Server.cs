@@ -361,8 +361,8 @@ public class Server
                     {
                         return;
                     }
-                    //if the path is safe and the file exists, we send it
-                    if (File.Exists(config.StaticFolderPath + "/" + req.URL))
+                    //if the path is safe, the static folder is set and the file exists, we send it
+                    if (config.StaticFolderPath != "" && File.Exists(config.StaticFolderPath + "/" + req.URL))
                     {
                         //config.debug.INFO($"Static file found, serving '{req.URL}'");
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");

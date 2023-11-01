@@ -110,7 +110,7 @@ public class Configuration
     {
         Address = "";
         Port = 8080;
-        StaticFolderPath = "./static";
+        StaticFolderPath = ""; //no static file support if not set
         Debug = new Debugger();
         RequestMaxSize = KILOBYTE; //max 1KB Requests default
         ListeningMode = IPMode.ANY; //listen to both ipv6 and ipv4

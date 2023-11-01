@@ -15,7 +15,8 @@ public class HSBRunner
             Port = 8080,
             RequestMaxSize = Configuration.MEGABYTE * 2,
             CustomServerName = "Runner powered by HSB",
-            ListeningMode = HSB.Constants.IPMode.ANY //valid only if address == ""
+            ListeningMode = HSB.Constants.IPMode.ANY, //valid only if address == "",
+            StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "/static")
         };
 
         //test expressjs-like routing
@@ -55,13 +56,17 @@ public class HSBRunner
                 html += "</tbody></table>";
 
                 //print all available static files
-                html += "<h3>Available static files:</h3>";
-                html += "<table><thead><tr><th>Static files</th></tr></thead><tbody>";
-                var staticFilePath = c.StaticFolderPath;
-                foreach (var file in Directory.GetFiles(staticFilePath))
+                var staticFilePath = c.StaticFolderPath;               
+                if (staticFilePath != "" && Directory.Exists(staticFilePath))
                 {
-                    var filePath = file.Replace(staticFilePath, "");
-                    html += $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>";
+
+                    html += "<h3>Available static files:</h3>";
+                    html += "<table><thead><tr><th>Static files</th></tr></thead><tbody>";
+                    foreach (var file in Directory.GetFiles(staticFilePath))
+                    {
+                        var filePath = file.Replace(staticFilePath, "");
+                        html += $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>";
+                    }
                 }
                 html += "</tbody></table>";
                 html += "<br/><hr><footer>HSB-# Runner &copy; 2021-2023</footer>";

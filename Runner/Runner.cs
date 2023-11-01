@@ -18,8 +18,7 @@ public class HSBRunner
             ListeningMode = HSB.Constants.IPMode.ANY, //valid only if address == "",
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static")
         };
-        Terminal.DEBUG(c.StaticFolderPath);
-        Terminal.DEBUG(AppDomain.CurrentDomain.BaseDirectory);
+     
         //test expressjs-like routing
         //note that these are controlled first, so eventual servlet
         //with same routing will be ignored if they respond to that http method

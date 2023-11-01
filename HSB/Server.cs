@@ -148,9 +148,9 @@ public class Server
         AppDomain currentDomain = AppDomain.CurrentDomain;
         List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
 
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Internal"));
 
         Dictionary<Tuple<string, bool>, Type> routes = new();
 

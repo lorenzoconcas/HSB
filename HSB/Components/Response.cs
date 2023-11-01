@@ -263,12 +263,13 @@ public class Response
     /// <typeparam name="T"></typeparam>
     /// <param name="o"></param>
     /// <param name="includeFields">Whether or not or not include fields of the object</param>
-    public void JSON<T>(T o, bool includeFields = true)
+    public void JSON<T>(T o, bool includeFields = true, bool WriteIndented = true)
     {
         JsonSerializerOptions jo = new()
         {
             IncludeFields = includeFields,
-            MaxDepth = 0
+            MaxDepth = 0,
+            WriteIndented = WriteIndented
         };
 
         JSON(JsonSerializer.Serialize(o, jo));

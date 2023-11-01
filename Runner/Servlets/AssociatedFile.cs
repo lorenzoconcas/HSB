@@ -24,6 +24,7 @@ public class AssociatedFileServletMultipleMethods : Servlet
     }
 }
 
+//test with postman, curl or custom scripts/pages
 [Binding("/associatedfile3")]
 [AssociatedFile("./static/main.html", "HSBCUSTOMHTTPMETHOD")]
 public class AssociatedFileServletCustomMethods : Servlet

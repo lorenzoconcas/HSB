@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -22,15 +21,16 @@ public static partial class Utils
         Terminal.Write(" (Http Server Boxed)");
         Terminal.WriteLine($" v{Assembly.GetExecutingAssembly().GetName().Version}");
     }
+
     public static void PrintLoadedAssemblies(bool filter = true)
     {
         AppDomain currentDomain = AppDomain.CurrentDomain;
         List<Assembly> assems = currentDomain.GetAssemblies().ToList();
         if (filter)
         {
-            assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
-            assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
-            assems.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+            assems.RemoveAll(a => a.ToString().StartsWith("System"));
+            assems.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
+            assems.RemoveAll(a => a.ToString().StartsWith("Internal"));
         }
 
         foreach (Assembly assem in assems)
@@ -401,9 +401,9 @@ public static partial class Utils
         AppDomain currentDomain = AppDomain.CurrentDomain;
         List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
 
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Internal"));
 
         foreach (var assembly in assemblies)
         {
@@ -425,11 +425,11 @@ public static partial class Utils
         AppDomain currentDomain = AppDomain.CurrentDomain;
         List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
 
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("System"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Microsoft"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("Internal"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("ILLink"));
-        assemblies.RemoveAll(a => a.ManifestModule.Name.StartsWith("FxResources"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Internal"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("ILLink"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("FxResources"));
 
         foreach (var assembly in assemblies)
         {

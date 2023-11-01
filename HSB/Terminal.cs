@@ -105,6 +105,11 @@
             Console.WriteLine(FG_TO_STRING(foreground));
         }
 
+        public static void Clear()
+        {
+            Console.Clear();
+        }
+
 
         private static string BG_TO_STRING(BG_COLOR color) => color switch
         {

@@ -1,10 +1,11 @@
-﻿using System.Diagnostics;
+﻿using HSB.Components.WebSockets;
+using HSB.Constants;
+using HSB.DefaultPages;
+using HSB.Exceptions;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using HSB.Components.WebSockets;
-using HSB.Constants;
-using HSB.Exceptions;
 
 namespace HSB;
 
@@ -141,6 +142,7 @@ public class Server
     /// Collect all the static routes from the assemblies
     /// </summary>
     /// <returns></returns>
+    
     protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
     {
         AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -187,7 +189,7 @@ public class Server
 
         return routes;
     }
-
+    
     protected internal string GetStaticRoutesInfo()
     {
         string str = "";
@@ -200,7 +202,7 @@ public class Server
         }
         return str;
     }
-
+    
     private object? GetInstance(Request req, Response res)
     {
         Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
@@ -274,6 +276,8 @@ public class Server
         }
         return false;
     }
+   
+    
     private void ProcessRequest(Request req, Response res)
     {
         try
@@ -287,6 +291,16 @@ public class Server
             }
             //check if there is a filter that blocks the request
             if (Filter(req)) return;
+
+            //check if server is launched with --listFiles
+            if (config.GetRawArguments().Contains("--listFiles"))
+            {
+                if (CheckSafePath(req.URL, req, res)) return;
+
+                new FileList(req, res, config).Process();
+                return;
+            }
+
 
             //if dev has used the express mapping, we run the mapped function
             if (RunIfExpressMapping(req, res)) return;
@@ -343,18 +357,9 @@ public class Server
                     //we check if the client is requesting a resource, else 404 not found
                     //to check if the path is safe we use the same regex used in send.js
                     //see: https://github.com/pillarjs/send/blob/master/index.js#L63
-                    if (Utils.IsUnsafePath(req.URL))
+                    if (CheckSafePath(req.URL, req, res))
                     {
-                        config.Debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
-                        new Error(req, res, config, "", HTTP_CODES.NOT_FOUND).Process();
-                        if (config.IPAutoblock)
-                        {
-                            config.Debug.WARNING($"Autoblocking IP {req.ClientIP}");
-                            if (File.Exists("./banned_ips.txt"))
-                                File.AppendAllText("./banned_ips.txt", req.ClientIP + "\n");
-                            else
-                                File.WriteAllText("./banned_ips.txt", req.ClientIP + "\n");
-                        }
+                        return;
                     }
                     //if the path is safe and the file exists, we send it
                     if (File.Exists(config.StaticFolderPath + "/" + req.URL))
@@ -363,10 +368,10 @@ public class Server
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
                         res.SendFile(config.StaticFolderPath + "/" + req.URL);
                     }
-                    else if(config.ServeEmbeddedResource && Utils.IsEmbeddedResource(req.URL, config.EmbeddedResourcePrefix))
+                    else if (config.ServeEmbeddedResource && Utils.IsEmbeddedResource(req.URL, config.EmbeddedResourcePrefix))
                     {
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Embedded resource)");
-                        object resource = Utils.LoadResource<object>(req.URL, config.EmbeddedResourcePrefix);                     
+                        object resource = Utils.LoadResource<object>(req.URL, config.EmbeddedResourcePrefix);
                         res.SendObject(resource, req.URL);
                     }
                     else
@@ -385,5 +390,24 @@ public class Server
             //we show an error page with the message and code 500
             new Error(req, res, config, e.ToString(), HTTP_CODES.INTERNAL_SERVER_ERROR).Process();
         }
+    }
+
+    private bool CheckSafePath(string path, Request req, Response res)
+    {
+        if (Utils.IsUnsafePath(path))
+        {
+            config.Debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
+            new Error(req, res, config, "", HTTP_CODES.NOT_FOUND).Process();
+            if (config.IPAutoblock)
+            {
+                config.Debug.WARNING($"Autoblocking IP {req.ClientIP}");
+                if (File.Exists("./banned_ips.txt"))
+                    File.AppendAllText("./banned_ips.txt", req.ClientIP + "\n");
+                else
+                    File.WriteAllText("./banned_ips.txt", req.ClientIP + "\n");
+            }
+            return true;
+        }
+        return false;
     }
 }

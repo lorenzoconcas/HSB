@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8" />
     <style>
         body {
             font-family: "system-ui", "eSans", "Roboto", "serif";
@@ -15,7 +16,7 @@
             width: 75%;
             height: auto;
             left: 12.5%;
-            top: 25%;
+            top: 20px;
             border: 0.5px solid #C5C5C5;
             border-radius: 4px;
             box-shadow: -1px 4px 9px 3px #b9b9b94f;
@@ -50,6 +51,11 @@
             padding: 6px;
         }
 
+        #itemsCollector {
+            text-align: left;
+            max-height:600px;
+            overflow-y:scroll;
+        }
 
         @media (prefers-color-scheme: light) {
         }
@@ -90,20 +96,30 @@
                 background: #13222E;
                 border-top: 0.5px solid #1f3a5c;
             }
+
+            a {
+                color: white;
+            }
+
+                a:visited {
+                    color: #ef9ab4;
+                }
         }
     </style>
-    <title>#{page_title}</title>
+    <title>Directory listing for #{folder}</title>
 </head>
-
 <body>
+
+
+
+
     <div id="root">
-        <div id="title">#{title}</div>
-        <div>
-            #{errorMsg}
+        <div id="title"> Directory listing for #{folder}</div>
+        <div id="itemsCollector">
+            #{items}
         </div>
-        <div class="footer">#{serverName} #{hsbVersion}</div>
-       #{footer_div}
+        <div class="footer">#{serverName} #{hsbVersion} #{footerExtra}</div>
+        #{footer_div}
     </div>
 </body>
-
 </html>

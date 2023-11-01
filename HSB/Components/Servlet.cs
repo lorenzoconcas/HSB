@@ -125,6 +125,7 @@ public class Servlet
                 ProcessConnect();
                 break;
             default:
+                if (!CustomMethodsMap.Any()) { res.Send(HTTP_CODES.METHOD_NOT_ALLOWED); return; };
                 if (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))
                 {
                     Terminal.INFO($"Custom method requested for route '{req.URL}'", true);

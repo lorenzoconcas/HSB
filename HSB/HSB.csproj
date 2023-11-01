@@ -28,6 +28,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="DefaultPages\" />
+		<None Remove="DefaultPages\filelisting.html" />
 		<None Remove="DefaultPages\index.html" />
 		<None Remove="DefaultPages\error.html" />
 		<None Remove="TLS\.DS_Store" />
@@ -37,7 +38,6 @@
 		<None Remove="DefaultPages\logo_b64" />
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="DefaultPages\" />
 		<Folder Include="Components\" />
 	</ItemGroup>
 	<ItemGroup>
@@ -76,6 +76,9 @@
 	  <Compile Remove="TLS\MACAlgorithm.cs" />
 	  <Compile Remove="TLS\CipherSuite.cs" />
 	  <Compile Remove="TLS\Certificates\FakeCert.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="DefaultPages\filelisting.html" />
 	</ItemGroup>
 	<ProjectExtensions>
 	  <MonoDevelop>

@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33920.267
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -32,15 +33,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{40FD9F8E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Experiments", "Experiments", "{8B5CD76D-9C1D-43F4-B674-3FD5986E4F97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TLSImpl", "Experiments\TLSImpl\TLSImpl.csproj", "{10F5B4B7-D342-4DC9-ACB1-635FBAF7016A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TLSImpl", "Experiments\TLSImpl\TLSImpl.csproj", "{10F5B4B7-D342-4DC9-ACB1-635FBAF7016A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AjaxRequest", "Examples\AjaxRequest\AjaxRequest.csproj", "{7022025F-BE3E-49C7-A0E6-DCE13296D0C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AjaxRequest", "Examples\AjaxRequest\AjaxRequest.csproj", "{7022025F-BE3E-49C7-A0E6-DCE13296D0C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSockets", "Experiments\WebSockets\WebSockets.csproj", "{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSockets", "Experiments\WebSockets\WebSockets.csproj", "{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormHandling", "Examples\FormHandling\FormHandling.csproj", "{49B5955B-8C12-4CFF-A525-DDA5666E8BAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormHandling", "Examples\FormHandling\FormHandling.csproj", "{49B5955B-8C12-4CFF-A525-DDA5666E8BAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empty", "Examples\Empty\Empty.csproj", "{6BA5E3DA-F484-4483-94B3-DA1EC185D99E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Empty", "Examples\Empty\Empty.csproj", "{6BA5E3DA-F484-4483-94B3-DA1EC185D99E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileListing", "Examples\FileListing\FileListing.csproj", "{D278AF2A-8DE9-4793-9AFD-889AD70647D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -116,6 +119,10 @@ Global
 		{6BA5E3DA-F484-4483-94B3-DA1EC185D99E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BA5E3DA-F484-4483-94B3-DA1EC185D99E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BA5E3DA-F484-4483-94B3-DA1EC185D99E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D278AF2A-8DE9-4793-9AFD-889AD70647D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D278AF2A-8DE9-4793-9AFD-889AD70647D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D278AF2A-8DE9-4793-9AFD-889AD70647D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D278AF2A-8DE9-4793-9AFD-889AD70647D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +139,7 @@ Global
 		{B778BBCB-9DF1-4BCD-9E6C-380B708CC1B9} = {8B5CD76D-9C1D-43F4-B674-3FD5986E4F97}
 		{49B5955B-8C12-4CFF-A525-DDA5666E8BAB} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
 		{6BA5E3DA-F484-4483-94B3-DA1EC185D99E} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
+		{D278AF2A-8DE9-4793-9AFD-889AD70647D2} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB06B193-55A8-4511-BBE7-B6E49532B2B3}

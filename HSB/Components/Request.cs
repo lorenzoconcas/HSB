@@ -52,7 +52,7 @@ public class Request
         this.config = config;
         requestContent = new();
 
-        if (data == null)
+        if (data == null || data.Length == 0)
         {
             return;
         }

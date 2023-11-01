@@ -56,7 +56,7 @@ namespace HSB
                 version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
             }
 
-             string footer_div = "";
+            string footer_div = "";
             string server_name = "";
             if (configuration.CustomServerName != "")
             {
@@ -67,6 +67,7 @@ namespace HSB
                 server_name = "HSB<sup>#</sup>";
                 footer_div = "<div class=\"footer\">Copyright &copy; 2021-2023 Lorenzo L. Concas</div>";
             }
+            res.AddAttribute("page_title", "Error " + errorCode);
             res.AddAttribute("serverName", server_name);
             res.AddAttribute("footer_div", footer_div);
             res.AddAttribute("hsbVersion", version);

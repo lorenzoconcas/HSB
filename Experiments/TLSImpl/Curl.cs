@@ -36,7 +36,7 @@ public class Curl
     private string getCurlCommand()
     {
 
-        string command = $"curl --tlsv{protocolVersion} --tls-max {protocolVersion} ";
+        string command = $"curl -k --tlsv{protocolVersion} --tls-max {protocolVersion} ";
         if (cipherSuitesString != "")
         {
             command += $"--ciphers {cipherSuitesString} ";

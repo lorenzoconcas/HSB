@@ -180,7 +180,7 @@ namespace HSB
         /// <param name="staticPath">Path of the static folder</param>
         /// <param name="debugInfo">Class holding debugging information</param>
         /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
-        public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY)
+        public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null)
         {
             Address = address;
             Port = port;
@@ -188,9 +188,9 @@ namespace HSB
             Debug = debugInfo ?? new Debugger();
             ListeningMode = ipMode;
             //default 1KB max requests
-            RequestMaxSize = KILOBYTE;
+            RequestMaxSize = requestMaxSize;
             //default one day
-            DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
+            DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong)TimeSpan.FromDays(1).Ticks;
         }
 
         private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)

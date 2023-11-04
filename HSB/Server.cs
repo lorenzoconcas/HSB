@@ -4,6 +4,7 @@ using HSB.DefaultPages;
 using HSB.Exceptions;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 
@@ -84,6 +85,16 @@ public class Server
         }
         else
             config.Debug.INFO($"Listening at http://{localEndPoint}/");
+
+        if (config.SslSettings.enabled)
+        {
+            config.Debug.INFO("Server is running in SSL mode");
+            if (!config.SslSettings.ConfigIsValid())
+            {
+                config.Debug.WARNING("Certificate not found or invalid, SSL mode aborted, running in HTTP mode");                
+            }
+            
+        }
     }
 
     public void Start(bool openInBrowser = false)
@@ -110,13 +121,31 @@ public class Server
                 new Task(() =>
                 {
                     byte[] bytes = new byte[config.RequestMaxSize];
-                    int bytesRec = socket.Receive(bytes);
+                    int bytesRec = 0;
+                    //todo -> write upgrade from http to https
+                    SslStream? sslStream = null;
+                    if (config.SslSettings.enabled && config.SslSettings.ConfigIsValid())
+                    {
+
+                        sslStream = new(new NetworkStream(socket), true);
+                        sslStream.AuthenticateAsServer(
+                            config.SslSettings.GetCertificate(),
+                            config.SslSettings.ClientCertificateRequired,
+                            config.SslSettings.GetProtocols(),
+                            config.SslSettings.CheckCertificateRevocation
+                        );
+                        bytesRec = sslStream.Read(bytes);
+                    }
+                    else
+                    {
+                        bytesRec = socket.Receive(bytes);
+                    }
                     bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
 
                     Request req = new(bytes, socket, config);
                     if (req.proceedWithElaboration)
                     {
-                        Response res = new(socket, req, config);
+                        Response res = new(socket, req, config, sslStream);
                         new Task(() => ProcessRequest(req, res)).Start();
                     }
 
@@ -142,7 +171,7 @@ public class Server
     /// Collect all the static routes from the assemblies
     /// </summary>
     /// <returns></returns>
-    
+
     protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
     {
         AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -189,7 +218,7 @@ public class Server
 
         return routes;
     }
-    
+
     protected internal string GetStaticRoutesInfo()
     {
         string str = "";
@@ -202,7 +231,7 @@ public class Server
         }
         return str;
     }
-    
+
     private object? GetInstance(Request req, Response res)
     {
         Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
@@ -276,8 +305,8 @@ public class Server
         }
         return false;
     }
-   
-    
+
+
     private void ProcessRequest(Request req, Response res)
     {
         try

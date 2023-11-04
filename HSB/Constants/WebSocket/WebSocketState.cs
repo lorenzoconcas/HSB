@@ -1,4 +1,4 @@
-﻿namespace HSB.Constants;
+﻿namespace HSB.Constants.WebSocket;
 
 public enum WebSocketState
 {

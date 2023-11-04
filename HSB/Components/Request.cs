@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
 using HSB.Components;
@@ -16,7 +17,7 @@ public class Request
     internal byte[] rawBody;
     private readonly Configuration config;
 
-
+  
     //Request variables
     public bool validRequest = false;
     HTTP_METHOD _method = HTTP_METHOD.UNKNOWN;

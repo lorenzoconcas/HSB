@@ -7,6 +7,7 @@ using System.Text.Json;
 using HSB.Constants;
 using HSB.Components;
 using HSB.Exceptions;
+using System.Net.Security;
 
 namespace HSB;
 
@@ -15,15 +16,17 @@ public class Response
     private const string NEW_LINE = "\r\n";
 
     private readonly Socket socket;
+    private SslStream? sslStream;
     private readonly Request request;
     private readonly Configuration config;
     readonly Dictionary<string, string> attributes = new();
 
 
-    public Response(Socket socket, Request request, Configuration c)
+    public Response(Socket socket, Request request, Configuration c, SslStream? sslStream)
     {
         this.socket = socket;
         this.request = request;
+        this.sslStream = sslStream;
         config = c;
     }
 
@@ -38,8 +41,18 @@ public class Response
     {
         try
         {
-            int totalBytes = socket.Send(data);
-            socket.Disconnect(disconnect);
+            if (sslStream != null)
+            {
+                sslStream.Write(data);
+                if(disconnect)
+                    sslStream.Close();
+            }
+            else
+            {
+
+                int totalBytes = socket.Send(data);
+                socket.Disconnect(disconnect);
+            }
         }
         catch (Exception e)
         {
@@ -53,7 +66,7 @@ public class Response
     /// <param name="mimeType">MimeType of the body</param>
     /// <param name="statusCode">Response status code</param>
     public void Send(string data, string mimeType = "text/plain", int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
-    {       
+    {
         string _mime = mimeType;
         string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
 

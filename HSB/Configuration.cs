@@ -102,6 +102,10 @@ public class Configuration
     /// </summary>
     private readonly List<string> rawArguments = Environment.GetCommandLineArgs().ToList();
 
+    /// <summary>
+    /// Contains the SSL configuration properties
+    /// </summary>
+    public SslConfiguration SslSettings;
 
     /// <summary>
     /// Creates a default fail-safe configuration (still, the port could be in use)
@@ -116,6 +120,7 @@ public class Configuration
         ListeningMode = IPMode.ANY; //listen to both ipv6 and ipv4
         //default one day
         DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
+        SslSettings = new SslConfiguration();
     }
 
     /// <summary>
@@ -133,6 +138,7 @@ public class Configuration
             Port = root.GetProperty("Port").GetInt16();
             StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
             Debug = Debugger.FromJson(root.GetProperty("Debug"));
+            SslSettings = SslConfiguration.FromJSON(root.GetProperty("SslConfiguration"));
             RequestMaxSize = root.GetProperty("Port").GetInt32();
             BlockMode = (BLOCK_MODE)root.GetProperty("BlockMode").GetInt32();
             HideBranding = root.GetProperty("HideBranding").GetBoolean();
@@ -152,6 +158,8 @@ public class Configuration
                 }
             }
 
+            
+
         }
         catch (Exception e)
         {
@@ -161,6 +169,29 @@ public class Configuration
         }
     }
 
+    
+    /// <summary>
+    /// Instantiate a configuration with the minimal settings
+    /// </summary>
+    /// <param name="address">Listening address (es: "127.0.0.1" or "192.168.1.2" or "" for any)</param>
+    /// <param name="port">Listening port</param>
+    /// <param name="staticPath">Path of the static folder</param>
+    /// <param name="debugInfo">Class holding debugging information</param>
+    /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
+    public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null, SslConfiguration? sslConfiguration = null)
+    {
+        Address = address;
+        Port = port;
+        StaticFolderPath = staticPath;
+        Debug = debugInfo ?? new Debugger();
+        ListeningMode = ipMode;
+        //default 1KB max requests
+        RequestMaxSize = requestMaxSize;
+        //default one day
+        DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong)TimeSpan.FromDays(1).Ticks;
+        SslSettings = sslConfiguration ?? new SslConfiguration();
+    }
+    
     /// <summary>
     /// Instantiate configuration from a json file passed as parameter
     /// </summary>
@@ -180,27 +211,6 @@ public class Configuration
         string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true  });
         File.WriteAllText(path, json);
     }
-    /// <summary>
-    /// Instantiate a configuration with the minimal settings
-    /// </summary>
-    /// <param name="address">Listening address (es: "127.0.0.1" or "192.168.1.2" or "" for any)</param>
-    /// <param name="port">Listening port</param>
-    /// <param name="staticPath">Path of the static folder</param>
-    /// <param name="debugInfo">Class holding debugging information</param>
-    /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
-    public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null)
-    {
-        Address = address;
-        Port = port;
-        StaticFolderPath = staticPath;
-        Debug = debugInfo ?? new Debugger();
-        ListeningMode = ipMode;
-        //default 1KB max requests
-        RequestMaxSize = requestMaxSize;
-        //default one day
-        DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong)TimeSpan.FromDays(1).Ticks;
-    }
-
     private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)
     {
         Tuple<HTTP_METHOD, Delegate> x = new(method, func);

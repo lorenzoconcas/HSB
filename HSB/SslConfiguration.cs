@@ -13,6 +13,8 @@ public class SslConfiguration
 
     //TODO -> add support for loading certificates from store
     public bool enabled = false;
+    public bool serveOnlyWithSSL = false;
+    public bool upgradeUnsecureRequests = true;
     public string? CertificatePath;
     public string? CertificatePassword;
     public List<TLSVersion> TLSVersions;

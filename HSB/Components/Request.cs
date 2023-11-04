@@ -17,7 +17,7 @@ public class Request
     internal byte[] rawBody;
     private readonly Configuration config;
 
-  
+
     //Request variables
     public bool validRequest = false;
     HTTP_METHOD _method = HTTP_METHOD.UNKNOWN;
@@ -38,11 +38,6 @@ public class Request
     private Session session = new();
     private MultiPartFormData? multiPartFormData;
     private Form? form;
-
-
-    //WIP for TLS support
-    private bool IsTLS;
-    //private TLS.ProtocolVersion ProtocolVersion;
 
     public bool proceedWithElaboration = true;
     public Request(byte[] data, Socket socket, Configuration config)
@@ -67,45 +62,34 @@ public class Request
             clientIPVersion = rIEP.AddressFamily;
         }
 
-
-        IsTLS = data[0] == 22;//(int)TLS.ContentType.Handshake;
-
-        if (IsTLS)
+        switch (Utils.GetEncoding(data))
         {
-            proceedWithElaboration = false;
+            case UTF8Encoding:
+                reqText = Encoding.UTF8.GetString(data);
+                break;
+            case UTF32Encoding:
+                reqText = Encoding.UTF32.GetString(data);
+                break;
+            case ASCIIEncoding:
+                reqText = Encoding.ASCII.GetString(data);
+                break;
+        }
+
+        if (reqText.Replace("\0", "") == "")
+        {
+            //note:
+            //it can happen in programs like postman that a request to localhost produces two requests
+            //one for IPv6 and one for IPv4
+            //i don't know why but the second request is invalid
+            validRequest = false;
+            config.Debug.INFO("Got an invalid request, ignoring...");
+            requestContent.Add(" ");
             return;
-            // ParseTLSRequest(data);
         }
-        else
-        {
-            switch (Utils.GetEncoding(data))
-            {
-                case UTF8Encoding:
-                    reqText = Encoding.UTF8.GetString(data);
-                    break;
-                case UTF32Encoding:
-                    reqText = Encoding.UTF32.GetString(data);
-                    break;
-                case ASCIIEncoding:
-                    reqText = Encoding.ASCII.GetString(data);
-                    break;
-            }
+        // reqText = Encoding.UTF8.GetString(data);
+        requestContent = reqText.Split("\r\n").ToList();
+        ParseRequest();
 
-            if (reqText.Replace("\0", "") == "")
-            {
-                //note:
-                //it can happen in programs like postman that a request to localhost produces two requests
-                //one for IPv6 and one for IPv4
-                //i don't know why but the second request is invalid
-                validRequest = false;
-                config.Debug.INFO("Got an invalid request, ignoring...");
-                requestContent.Add(" ");
-                return;
-            }
-            // reqText = Encoding.UTF8.GetString(data);
-            requestContent = reqText.Split("\r\n").ToList();
-            ParseRequest();
-        }
 
     }
 
@@ -261,6 +245,7 @@ public class Request
         }
 
     }
+
     /// <summary>
     /// Return the method of the request
     /// </summary>

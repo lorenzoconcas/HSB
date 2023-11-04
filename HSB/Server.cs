@@ -79,22 +79,25 @@ public class Server
         }
 
         config.Debug.INFO("Starting logging...");
-        if (config.ListeningMode == IPMode.IPV4_ONLY && ipAddress == IPAddress.Any)
-        {
-            config.Debug.INFO($"Listening at http://127.0.0.1:{config.Port}/");
-        }
-        else
-            config.Debug.INFO($"Listening at http://{localEndPoint}/");
 
         if (config.SslSettings.enabled)
         {
             config.Debug.INFO("Server is running in SSL mode");
             if (!config.SslSettings.ConfigIsValid())
             {
-                config.Debug.WARNING("Certificate not found or invalid, SSL mode aborted, running in HTTP mode");                
+                config.Debug.WARNING("Certificate not found or invalid, SSL mode aborted, running in HTTP mode");
             }
-            
+
         }
+        var prefix = "http";
+        if (config.SslSettings.enabled)
+            prefix += "s";
+        if (config.ListeningMode == IPMode.IPV4_ONLY && ipAddress == IPAddress.Any)
+        {
+            config.Debug.INFO($"Listening at {prefix}://127.0.0.1:{config.Port}/");
+        }
+        else
+            config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
     }
 
     public void Start(bool openInBrowser = false)
@@ -122,29 +125,68 @@ public class Server
                 {
                     byte[] bytes = new byte[config.RequestMaxSize];
                     int bytesRec = 0;
-                    //todo -> write upgrade from http to https
+                    /*
+                    * todo -> write a better upgrade from http to https
+                    * a more precise upgrade will probably be possibile only with a custom ssl implementation
+                    * or with dual port listening (one for http and one for https)
+                    * At the moment if a request 
+                    */
                     SslStream? sslStream = null;
                     if (config.SslSettings.enabled && config.SslSettings.ConfigIsValid())
                     {
 
-                        sslStream = new(new NetworkStream(socket), true);
-                        sslStream.AuthenticateAsServer(
-                            config.SslSettings.GetCertificate(),
-                            config.SslSettings.ClientCertificateRequired,
-                            config.SslSettings.GetProtocols(),
-                            config.SslSettings.CheckCertificateRevocation
-                        );
-                        bytesRec = sslStream.Read(bytes);
+                        var netstream = new NetworkStream(socket);
+                        sslStream = new(netstream, true);
+
+                        try
+                        {
+
+                            sslStream.AuthenticateAsServer(
+                                config.SslSettings.GetCertificate(),
+                                config.SslSettings.ClientCertificateRequired,
+                                config.SslSettings.GetProtocols(),
+                                config.SslSettings.CheckCertificateRevocation
+                            );
+                            bytesRec = sslStream.Read(bytes);
+                        }
+                        catch (Exception)
+                        {
+                            sslStream.Dispose();
+                            //upgrade request redirecting to https
+                            if (config.SslSettings.upgradeUnsecureRequests)
+                            {
+                                //attempt upgrade
+                                Request _req = new(bytes, socket, config);
+                                Response res = new(socket, _req, config, null);
+                                res.Redirect("https://" + localEndPoint, HTTP_CODES.MOVED_PERMANENTLY);
+                                return;
+                            }
+                            else if (config.SslSettings.serveOnlyWithSSL)
+                            {
+                                //if the server is set to serve only with ssl, we send a 403 forbidden
+                                Request _req = new(bytes, socket, config);
+                                Response res = new(socket, _req, config, null);
+                                res.Send(HTTP_CODES.FORBIDDEN);
+                                return;
+                            }
+                            else
+                            {                               
+                                socket.Close();
+                                return;
+                            }
+                        }
                     }
                     else
                     {
                         bytesRec = socket.Receive(bytes);
+
                     }
                     bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
 
                     Request req = new(bytes, socket, config);
                     if (req.proceedWithElaboration)
                     {
+
                         Response res = new(socket, req, config, sslStream);
                         new Task(() => ProcessRequest(req, res)).Start();
                     }
@@ -318,6 +360,8 @@ public class Server
                 new Error(req, res, config, "Invalid Request", HTTP_CODES.NOT_FOUND).Process();
                 return;
             }
+
+
             //check if there is a filter that blocks the request
             if (Filter(req)) return;
 

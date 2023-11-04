@@ -14,6 +14,6 @@ TLSTesting/
 Runner/uploaded/
 .VSCodeCounter/
 Releases/
-*/build/
+build/
 Tests/
 MultiplatformLauncher/CompileCode.sh

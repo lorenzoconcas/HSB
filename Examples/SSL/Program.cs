@@ -6,14 +6,20 @@
 * On macOS you can extract your localhost certificate to test on the machine
 * */
 
+var arglist = args.ToList();
+var port = arglist.Find(a => a.StartsWith("--port="))?.Split("=")[1] ?? "8443";
+var certificatePath = arglist.Find(a => a.StartsWith("--cert="))?.Split("=")[1];
+var certificatePassword = arglist.Find(a => a.StartsWith("--pass="))?.Split("=")[1];
+
+
 var sslConfig = new SslConfiguration(
-    certificatePath: "PATH_TO_CERTIFICATE",
-    certificatePassword: "CERTIFICATE_PASSWORD"
+    certificatePath: certificatePath ?? throw new Exception("You must provide a certificate path"),
+    certificatePassword: certificatePassword ?? throw new Exception("You must provide a certificate password")
 );
 
 
 Configuration c = new(){
-    Port = 443,
+    Port = int.Parse(port),
     SslSettings = sslConfig
 };
 

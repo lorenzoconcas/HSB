@@ -9,7 +9,7 @@ using HSB.TLS.Messages;
 
 namespace HSB.TLS;
 
-public class TLS
+public class CustomTLS
 {
     Socket socket;
     //items of the TLS request
@@ -23,7 +23,7 @@ public class TLS
     List<Ciphers> cipherSuites = new();
 
 
-    public TLS(Socket socket)
+    public CustomTLS(Socket socket)
     {
         this.socket = socket;
         clientRandom = Array.Empty<byte>();

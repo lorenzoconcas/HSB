@@ -96,6 +96,7 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_ssl_configuration.html
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#properties">Properties</a> &#124;
 <a href="class_h_s_b_1_1_ssl_configuration-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">HSB.SslConfiguration Class Reference</div></div>
 </div><!--header-->
@@ -107,9 +108,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8c6f000159c15a094d76d8b4879645c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affebc6b3756d39f1ee481ff25957baf4" id="r_affebc6b3756d39f1ee481ff25957baf4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#affebc6b3756d39f1ee481ff25957baf4">SslConfiguration</a> (string certificatePath, string certificatePassword, List&lt; TLSVersion &gt; tlsVersions, bool checkCertificateRevocation=true, bool validateClientCertificate=false, bool clientCertificateRequired=false)</td></tr>
 <tr class="separator:affebc6b3756d39f1ee481ff25957baf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f058d45b0126a8e176df2a2932c8093" id="r_a2f058d45b0126a8e176df2a2932c8093"><td class="memItemLeft" align="right" valign="top"><a id="a2f058d45b0126a8e176df2a2932c8093" name="a2f058d45b0126a8e176df2a2932c8093"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>ConfigIsValid</b> ()</td></tr>
-<tr class="separator:a2f058d45b0126a8e176df2a2932c8093"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e87048a361afacb94101734a3487037" id="r_a1e87048a361afacb94101734a3487037"><td class="memItemLeft" align="right" valign="top">X509Certificate2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#a1e87048a361afacb94101734a3487037">GetCertificate</a> ()</td></tr>
 <tr class="memdesc:a1e87048a361afacb94101734a3487037"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a X509Certificate2 object from the certificate path and password. If a certificate in form of bytes is provided, it will be used instead of the path.  <br /></td></tr>
 <tr class="separator:a1e87048a361afacb94101734a3487037"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,10 +128,10 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:adecdbd6e97f45adcd4c2d1d103de708f" id="r_adecdbd6e97f45adcd4c2d1d103de708f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#adecdbd6e97f45adcd4c2d1d103de708f">enabled</a> = false</td></tr>
-<tr class="separator:adecdbd6e97f45adcd4c2d1d103de708f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0db98f876a16097b9a10a09f8b00a3ea" id="r_a0db98f876a16097b9a10a09f8b00a3ea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#a0db98f876a16097b9a10a09f8b00a3ea">serveOnlyWithSSL</a> = false</td></tr>
-<tr class="separator:a0db98f876a16097b9a10a09f8b00a3ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcd894fc3086625ffd32196b826b1a26" id="r_afcd894fc3086625ffd32196b826b1a26"><td class="memItemLeft" align="right" valign="top">ushort&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#afcd894fc3086625ffd32196b826b1a26">SslPort</a> = 8443</td></tr>
+<tr class="separator:afcd894fc3086625ffd32196b826b1a26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5f9d7e164c81eac5876bb9e4a3c749a" id="r_ae5f9d7e164c81eac5876bb9e4a3c749a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#ae5f9d7e164c81eac5876bb9e4a3c749a">PortMode</a> = SSL_PORT_MODE.DUAL_PORT</td></tr>
+<tr class="separator:ae5f9d7e164c81eac5876bb9e4a3c749a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c5cb2f5a37aff1d74a5df4bc32feeab" id="r_a7c5cb2f5a37aff1d74a5df4bc32feeab"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#a7c5cb2f5a37aff1d74a5df4bc32feeab">upgradeUnsecureRequests</a> = true</td></tr>
 <tr class="separator:a7c5cb2f5a37aff1d74a5df4bc32feeab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4018fcd2082bc4dfc24e094c82802aa" id="r_ad4018fcd2082bc4dfc24e094c82802aa"><td class="memItemLeft" align="right" valign="top">string?&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#ad4018fcd2082bc4dfc24e094c82802aa">CertificatePath</a></td></tr>
@@ -150,6 +148,11 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a0f2faf4b3ff13f1ac59fc84af66239e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e9a98f1bb85ea6cfa6fc4a0eb06bdaf" id="r_a7e9a98f1bb85ea6cfa6fc4a0eb06bdaf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#a7e9a98f1bb85ea6cfa6fc4a0eb06bdaf">ClientCertificateRequired</a> = false</td></tr>
 <tr class="separator:a7e9a98f1bb85ea6cfa6fc4a0eb06bdaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="properties" name="properties"></a>
+Properties</h2></td></tr>
+<tr class="memitem:ab1adab5f3abb2d6c9c4893dec02523a2" id="r_ab1adab5f3abb2d6c9c4893dec02523a2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html#ab1adab5f3abb2d6c9c4893dec02523a2">IsEnabled</a><code> [get]</code></td></tr>
+<tr class="separator:ab1adab5f3abb2d6c9c4893dec02523a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -170,12 +173,12 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00027">27</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   28</span>    {</div>
-<div class="line"><span class="lineno">   29</span>        enabled = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">   30</span>        TLSVersions = <span class="keyword">new</span> List&lt;TLSVersion&gt;();</div>
-<div class="line"><span class="lineno">   31</span>     </div>
-<div class="line"><span class="lineno">   32</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00028">28</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   29</span>    {</div>
+<div class="line"><span class="lineno">   30</span> </div>
+<div class="line"><span class="lineno">   31</span>        TLSVersions = <span class="keyword">new</span> List&lt;TLSVersion&gt;();</div>
+<div class="line"><span class="lineno">   32</span> </div>
+<div class="line"><span class="lineno">   33</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -205,13 +208,13 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00034">34</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   35</span>    {</div>
-<div class="line"><span class="lineno">   36</span>        enabled = <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   37</span>        TLSVersions = <span class="keyword">new</span> List&lt;TLSVersion&gt;();</div>
-<div class="line"><span class="lineno">   38</span>        CertificatePassword = certificatePassword;</div>
-<div class="line"><span class="lineno">   39</span>        CertificatePath = certificatePath;</div>
-<div class="line"><span class="lineno">   40</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00035">35</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   36</span>    {</div>
+<div class="line"><span class="lineno">   37</span> </div>
+<div class="line"><span class="lineno">   38</span>        TLSVersions = <span class="keyword">new</span> List&lt;TLSVersion&gt;();</div>
+<div class="line"><span class="lineno">   39</span>        CertificatePassword = certificatePassword;</div>
+<div class="line"><span class="lineno">   40</span>        CertificatePath = certificatePath;</div>
+<div class="line"><span class="lineno">   41</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -265,16 +268,16 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00042">42</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   49</span>    {</div>
-<div class="line"><span class="lineno">   50</span>        enabled = <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   51</span>        TLSVersions = tlsVersions;</div>
-<div class="line"><span class="lineno">   52</span>        CertificatePassword = certificatePassword;</div>
-<div class="line"><span class="lineno">   53</span>        CertificatePath = certificatePath;</div>
-<div class="line"><span class="lineno">   54</span>        CheckCertificateRevocation = checkCertificateRevocation;</div>
-<div class="line"><span class="lineno">   55</span>        ValidateClientCertificate = validateClientCertificate;</div>
-<div class="line"><span class="lineno">   56</span>        ClientCertificateRequired = clientCertificateRequired;</div>
-<div class="line"><span class="lineno">   57</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00043">43</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   50</span>    {</div>
+<div class="line"><span class="lineno">   51</span> </div>
+<div class="line"><span class="lineno">   52</span>        TLSVersions = tlsVersions;</div>
+<div class="line"><span class="lineno">   53</span>        CertificatePassword = certificatePassword;</div>
+<div class="line"><span class="lineno">   54</span>        CertificatePath = certificatePath;</div>
+<div class="line"><span class="lineno">   55</span>        CheckCertificateRevocation = checkCertificateRevocation;</div>
+<div class="line"><span class="lineno">   56</span>        ValidateClientCertificate = validateClientCertificate;</div>
+<div class="line"><span class="lineno">   57</span>        ClientCertificateRequired = clientCertificateRequired;</div>
+<div class="line"><span class="lineno">   58</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -303,19 +306,20 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00123">123</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  124</span>    {</div>
-<div class="line"><span class="lineno">  125</span>        <span class="keywordflow">return</span> <span class="keyword">new</span>()</div>
-<div class="line"><span class="lineno">  126</span>        {</div>
-<div class="line"><span class="lineno">  127</span>            enabled = <span class="keyword">true</span>,</div>
-<div class="line"><span class="lineno">  128</span>            CertificatePath = json.GetProperty(<span class="stringliteral">&quot;certificatePath&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>,</div>
-<div class="line"><span class="lineno">  129</span>            CertificatePassword = json.GetProperty(<span class="stringliteral">&quot;certificatePassword&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>,</div>
-<div class="line"><span class="lineno">  130</span>            CheckCertificateRevocation = json.GetProperty(<span class="stringliteral">&quot;checkCertificateRevocation&quot;</span>).GetBoolean(),</div>
-<div class="line"><span class="lineno">  131</span>            ValidateClientCertificate = json.GetProperty(<span class="stringliteral">&quot;validateClientCertificate&quot;</span>).GetBoolean(),</div>
-<div class="line"><span class="lineno">  132</span>            ClientCertificateRequired = json.GetProperty(<span class="stringliteral">&quot;ClientCertificateRequired&quot;</span>).GetBoolean()</div>
-<div class="line"><span class="lineno">  133</span>        };</div>
-<div class="line"><span class="lineno">  134</span> </div>
-<div class="line"><span class="lineno">  135</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00126">126</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  127</span>    {</div>
+<div class="line"><span class="lineno">  128</span>        <span class="keywordflow">return</span> <span class="keyword">new</span>()</div>
+<div class="line"><span class="lineno">  129</span>        {</div>
+<div class="line"><span class="lineno">  130</span>           </div>
+<div class="line"><span class="lineno">  131</span>            CertificatePath = json.GetProperty(<span class="stringliteral">&quot;certificatePath&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><span class="lineno">  132</span>            CertificatePassword = json.GetProperty(<span class="stringliteral">&quot;certificatePassword&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><span class="lineno">  133</span>            CheckCertificateRevocation = Utils.Safe(json.GetProperty(<span class="stringliteral">&quot;checkCertificateRevocation&quot;</span>).GetBoolean(), <span class="keyword">true</span>),</div>
+<div class="line"><span class="lineno">  134</span>            ValidateClientCertificate = Utils.Safe(json.GetProperty(<span class="stringliteral">&quot;validateClientCertificate&quot;</span>).GetBoolean(), <span class="keyword">false</span>),</div>
+<div class="line"><span class="lineno">  135</span>            ClientCertificateRequired = Utils.Safe(json.GetProperty(<span class="stringliteral">&quot;ClientCertificateRequired&quot;</span>).GetBoolean(), <span class="keyword">false</span>),</div>
+<div class="line"><span class="lineno">  136</span>            SslPort = Utils.Safe(json.GetProperty(<span class="stringliteral">&quot;sslPort&quot;</span>).GetUInt16(), (ushort)8443),</div>
+<div class="line"><span class="lineno">  137</span>        };</div>
+<div class="line"><span class="lineno">  138</span> </div>
+<div class="line"><span class="lineno">  139</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -337,14 +341,14 @@ Public Attributes</h2></td></tr>
 <p>Returns a X509Certificate2 object from the certificate path and password. If a certificate in form of bytes is provided, it will be used instead of the path. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00067">67</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   68</span>    {</div>
-<div class="line"><span class="lineno">   69</span>        <span class="keywordflow">if</span> (CertificateBytes != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   70</span>        {</div>
-<div class="line"><span class="lineno">   71</span>            <span class="keywordflow">return</span> <span class="keyword">new</span>(CertificateBytes, CertificatePassword!);</div>
-<div class="line"><span class="lineno">   72</span>        }</div>
-<div class="line"><span class="lineno">   73</span>        <span class="keywordflow">return</span> <span class="keyword">new</span>(CertificatePath!, CertificatePassword!);</div>
-<div class="line"><span class="lineno">   74</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00068">68</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   69</span>    {</div>
+<div class="line"><span class="lineno">   70</span>        <span class="keywordflow">if</span> (CertificateBytes != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   71</span>        {</div>
+<div class="line"><span class="lineno">   72</span>            <span class="keywordflow">return</span> <span class="keyword">new</span>(CertificateBytes, CertificatePassword!);</div>
+<div class="line"><span class="lineno">   73</span>        }</div>
+<div class="line"><span class="lineno">   74</span>        <span class="keywordflow">return</span> <span class="keyword">new</span>(CertificatePath!, CertificatePassword!);</div>
+<div class="line"><span class="lineno">   75</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -372,10 +376,10 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00087">87</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   88</span>    {</div>
-<div class="line"><span class="lineno">   89</span>        CertificateBytes = bytes;</div>
-<div class="line"><span class="lineno">   90</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00088">88</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   89</span>    {</div>
+<div class="line"><span class="lineno">   90</span>        CertificateBytes = bytes;</div>
+<div class="line"><span class="lineno">   91</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -403,10 +407,10 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00079">79</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   80</span>    {</div>
-<div class="line"><span class="lineno">   81</span>        CertificatePath = path;</div>
-<div class="line"><span class="lineno">   82</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00080">80</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   81</span>    {</div>
+<div class="line"><span class="lineno">   82</span>        CertificatePath = path;</div>
+<div class="line"><span class="lineno">   83</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -434,10 +438,10 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00095">95</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   96</span>    {</div>
-<div class="line"><span class="lineno">   97</span>        CertificatePassword = password;</div>
-<div class="line"><span class="lineno">   98</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00096">96</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   97</span>    {</div>
+<div class="line"><span class="lineno">   98</span>        CertificatePassword = password;</div>
+<div class="line"><span class="lineno">   99</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -454,7 +458,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00019">19</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00020">20</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
@@ -470,7 +474,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00020">20</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00021">21</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
@@ -486,7 +490,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00018">18</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00019">19</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
@@ -502,7 +506,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00022">22</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00023">23</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
@@ -518,34 +522,34 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00024">24</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00025">25</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
-<a id="adecdbd6e97f45adcd4c2d1d103de708f" name="adecdbd6e97f45adcd4c2d1d103de708f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adecdbd6e97f45adcd4c2d1d103de708f">&#9670;&#160;</a></span>enabled</h2>
+<a id="ae5f9d7e164c81eac5876bb9e4a3c749a" name="ae5f9d7e164c81eac5876bb9e4a3c749a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5f9d7e164c81eac5876bb9e4a3c749a">&#9670;&#160;</a></span>PortMode</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool HSB.SslConfiguration.enabled = false</td>
+          <td class="memname"><a class="el" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a> HSB.SslConfiguration.PortMode = SSL_PORT_MODE.DUAL_PORT</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00015">15</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00017">17</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
-<a id="a0db98f876a16097b9a10a09f8b00a3ea" name="a0db98f876a16097b9a10a09f8b00a3ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0db98f876a16097b9a10a09f8b00a3ea">&#9670;&#160;</a></span>serveOnlyWithSSL</h2>
+<a id="afcd894fc3086625ffd32196b826b1a26" name="afcd894fc3086625ffd32196b826b1a26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afcd894fc3086625ffd32196b826b1a26">&#9670;&#160;</a></span>SslPort</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool HSB.SslConfiguration.serveOnlyWithSSL = false</td>
+          <td class="memname">ushort HSB.SslConfiguration.SslPort = 8443</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -566,7 +570,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00021">21</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00022">22</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
@@ -582,7 +586,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00017">17</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00018">18</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>
@@ -598,7 +602,32 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00023">23</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00024">24</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Property Documentation</h2>
+<a id="ab1adab5f3abb2d6c9c4893dec02523a2" name="ab1adab5f3abb2d6c9c4893dec02523a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1adab5f3abb2d6c9c4893dec02523a2">&#9670;&#160;</a></span>IsEnabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HSB.SslConfiguration.IsEnabled</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_ssl_configuration_8cs_source.html#l00060">60</a> of file <a class="el" href="_ssl_configuration_8cs_source.html">SslConfiguration.cs</a>.</p>
 
 </div>
 </div>

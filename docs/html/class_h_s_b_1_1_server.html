@@ -114,7 +114,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00013">13</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00014">14</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aed62cede6d1929ba44b78da50b8a9e2b" name="aed62cede6d1929ba44b78da50b8a9e2b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aed62cede6d1929ba44b78da50b8a9e2b">&#9670;&#160;</a></span>Server()</h2>
@@ -132,89 +132,108 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00026">26</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   27</span>    {</div>
-<div class="line"><span class="lineno">   28</span>        <span class="keywordflow">if</span> (!config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a>)</div>
-<div class="line"><span class="lineno">   29</span>            Utils.PrintLogo();</div>
-<div class="line"><span class="lineno">   30</span> </div>
-<div class="line"><span class="lineno">   31</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">Port</a> &gt; 65535)</div>
-<div class="line"><span class="lineno">   32</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">InvalidConfigurationParameterException</a>(<span class="stringliteral">&quot;Port&quot;</span>, <span class="stringliteral">&quot;Port number is over the maximum allowed (65535)&quot;</span>);</div>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00029">29</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   30</span>    {</div>
+<div class="line"><span class="lineno">   31</span>        <span class="keywordflow">if</span> (!config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a>)</div>
+<div class="line"><span class="lineno">   32</span>            Utils.PrintLogo();</div>
 <div class="line"><span class="lineno">   33</span> </div>
-<div class="line"><span class="lineno">   34</span>        this.config = config;</div>
-<div class="line"><span class="lineno">   35</span> </div>
-<div class="line"><span class="lineno">   36</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><span class="lineno">   37</span>        {</div>
-<div class="line"><span class="lineno">   38</span>            <span class="comment">//address must be ANY</span></div>
-<div class="line"><span class="lineno">   39</span>            ipAddress = config.ListeningMode <span class="keywordflow">switch</span></div>
-<div class="line"><span class="lineno">   40</span>            {</div>
-<div class="line"><span class="lineno">   41</span>                IPMode.IPV4_ONLY =&gt; IPAddress.Any,</div>
-<div class="line"><span class="lineno">   42</span>                _ =&gt; IPAddress.IPv6Any,</div>
-<div class="line"><span class="lineno">   43</span>            };</div>
-<div class="line"><span class="lineno">   44</span>        }</div>
-<div class="line"><span class="lineno">   45</span>        <span class="keywordflow">else</span> <span class="comment">//in this case ListeningMode is NOT a valid parameter</span></div>
-<div class="line"><span class="lineno">   46</span>        {</div>
-<div class="line"><span class="lineno">   47</span>            List&lt;IPAddress&gt; addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a>, AddressFamily.InterNetwork).ToList();</div>
-<div class="line"><span class="lineno">   48</span> </div>
-<div class="line"><span class="lineno">   49</span>            <span class="comment">//this fixes an error where user specifies an ipv4 address but want the server to listene to BOTH or ipv6 only</span></div>
-<div class="line"><span class="lineno">   50</span> </div>
-<div class="line"><span class="lineno">   51</span>            <span class="keywordflow">if</span> (addresses.Any())</div>
-<div class="line"><span class="lineno">   52</span>            {</div>
-<div class="line"><span class="lineno">   53</span>                ipAddress = addresses.First();</div>
-<div class="line"><span class="lineno">   54</span>                config.ListeningMode = <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.IPV4_ONLY;</div>
-<div class="line"><span class="lineno">   55</span>            }</div>
-<div class="line"><span class="lineno">   56</span>            <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">   57</span>            {</div>
-<div class="line"><span class="lineno">   58</span>                addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a>, AddressFamily.InterNetworkV6).ToList();</div>
-<div class="line"><span class="lineno">   59</span>                <span class="keywordflow">if</span> (addresses.Any())</div>
-<div class="line"><span class="lineno">   60</span>                {</div>
-<div class="line"><span class="lineno">   61</span>                    ipAddress = addresses.First();</div>
-<div class="line"><span class="lineno">   62</span>                    config.ListeningMode = <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.IPV6_ONLY;</div>
-<div class="line"><span class="lineno">   63</span>                }</div>
-<div class="line"><span class="lineno">   64</span>                <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">   65</span>                {</div>
-<div class="line"><span class="lineno">   66</span>                    <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot found address to listen to&quot;</span>);</div>
-<div class="line"><span class="lineno">   67</span>                }</div>
-<div class="line"><span class="lineno">   68</span>            }</div>
-<div class="line"><span class="lineno">   69</span>        }</div>
-<div class="line"><span class="lineno">   70</span> </div>
-<div class="line"><span class="lineno">   71</span>        localEndPoint = <span class="keyword">new</span>(ipAddress, config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">Port</a>);</div>
-<div class="line"><span class="lineno">   72</span> </div>
-<div class="line"><span class="lineno">   73</span>        listener = <span class="keyword">new</span>(ipAddress.AddressFamily,</div>
-<div class="line"><span class="lineno">   74</span>            SocketType.Stream, ProtocolType.Tcp);</div>
-<div class="line"><span class="lineno">   75</span> </div>
-<div class="line"><span class="lineno">   76</span>        <span class="keywordflow">if</span> (config.<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a> == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.ANY)</div>
-<div class="line"><span class="lineno">   77</span>        {</div>
-<div class="line"><span class="lineno">   78</span>            listener.DualMode = <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   79</span>        }</div>
-<div class="line"><span class="lineno">   80</span> </div>
-<div class="line"><span class="lineno">   81</span>        config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO(<span class="stringliteral">&quot;Starting logging...&quot;</span>);</div>
-<div class="line"><span class="lineno">   82</span> </div>
-<div class="line"><span class="lineno">   83</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.enabled)</div>
-<div class="line"><span class="lineno">   84</span>        {</div>
-<div class="line"><span class="lineno">   85</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO(<span class="stringliteral">&quot;Server is running in SSL mode&quot;</span>);</div>
-<div class="line"><span class="lineno">   86</span>            <span class="keywordflow">if</span> (!config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.ConfigIsValid())</div>
-<div class="line"><span class="lineno">   87</span>            {</div>
-<div class="line"><span class="lineno">   88</span>                config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.WARNING(<span class="stringliteral">&quot;Certificate not found or invalid, SSL mode aborted, running in HTTP mode&quot;</span>);</div>
-<div class="line"><span class="lineno">   89</span>            }</div>
-<div class="line"><span class="lineno">   90</span> </div>
-<div class="line"><span class="lineno">   91</span>        }</div>
-<div class="line"><span class="lineno">   92</span>        var prefix = <span class="stringliteral">&quot;http&quot;</span>;</div>
-<div class="line"><span class="lineno">   93</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.enabled)</div>
-<div class="line"><span class="lineno">   94</span>            prefix += <span class="stringliteral">&quot;s&quot;</span>;</div>
-<div class="line"><span class="lineno">   95</span>        <span class="keywordflow">if</span> (config.<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a> == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.IPV4_ONLY &amp;&amp; ipAddress == IPAddress.Any)</div>
-<div class="line"><span class="lineno">   96</span>        {</div>
-<div class="line"><span class="lineno">   97</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO($<span class="stringliteral">&quot;Listening at {prefix}://127.0.0.1:{config.Port}/&quot;</span>);</div>
-<div class="line"><span class="lineno">   98</span>        }</div>
-<div class="line"><span class="lineno">   99</span>        <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">  100</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO($<span class="stringliteral">&quot;Listening at {prefix}://{localEndPoint}/&quot;</span>);</div>
-<div class="line"><span class="lineno">  101</span>    }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a22eb67f9bcac434dafec9533398db240"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HSB.Configuration.HideBranding</a></div><div class="ttdeci">bool HideBranding</div><div class="ttdoc">Hide the HSB logo on startup.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00048">Configuration.cs:48</a></div></div>
+<div class="line"><span class="lineno">   34</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a85d8ec8abb5266cba795eb2783db950d">Port</a> == 0)</div>
+<div class="line"><span class="lineno">   35</span>        {</div>
+<div class="line"><span class="lineno">   36</span>            <span class="comment">//if port is 0, we use a random port in the range 1024-65535</span></div>
+<div class="line"><span class="lineno">   37</span>            config.Port = (ushort)<span class="keyword">new</span> Random().Next(1024, 65535);</div>
+<div class="line"><span class="lineno">   38</span>        }</div>
+<div class="line"><span class="lineno">   39</span> </div>
+<div class="line"><span class="lineno">   40</span>        this.config = config;</div>
+<div class="line"><span class="lineno">   41</span> </div>
+<div class="line"><span class="lineno">   42</span>        <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">   43</span>        {</div>
+<div class="line"><span class="lineno">   44</span>            <span class="comment">//address must be ANY</span></div>
+<div class="line"><span class="lineno">   45</span>            ipAddress = config.ListeningMode <span class="keywordflow">switch</span></div>
+<div class="line"><span class="lineno">   46</span>            {</div>
+<div class="line"><span class="lineno">   47</span>                IPMode.IPV4_ONLY =&gt; IPAddress.Any,</div>
+<div class="line"><span class="lineno">   48</span>                _ =&gt; IPAddress.IPv6Any,</div>
+<div class="line"><span class="lineno">   49</span>            };</div>
+<div class="line"><span class="lineno">   50</span>        }</div>
+<div class="line"><span class="lineno">   51</span>        <span class="keywordflow">else</span> <span class="comment">//in this case ListeningMode is NOT a valid parameter</span></div>
+<div class="line"><span class="lineno">   52</span>        {</div>
+<div class="line"><span class="lineno">   53</span>            List&lt;IPAddress&gt; addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a>, AddressFamily.InterNetwork).ToList();</div>
+<div class="line"><span class="lineno">   54</span> </div>
+<div class="line"><span class="lineno">   55</span>            <span class="comment">//this fixes an error where user specifies an ipv4 address but want the server to listene to BOTH or ipv6 only</span></div>
+<div class="line"><span class="lineno">   56</span> </div>
+<div class="line"><span class="lineno">   57</span>            <span class="keywordflow">if</span> (addresses.Any())</div>
+<div class="line"><span class="lineno">   58</span>            {</div>
+<div class="line"><span class="lineno">   59</span>                ipAddress = addresses.First();</div>
+<div class="line"><span class="lineno">   60</span>                config.ListeningMode = <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.IPV4_ONLY;</div>
+<div class="line"><span class="lineno">   61</span>            }</div>
+<div class="line"><span class="lineno">   62</span>            <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   63</span>            {</div>
+<div class="line"><span class="lineno">   64</span>                addresses = Dns.GetHostAddresses(config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a>, AddressFamily.InterNetworkV6).ToList();</div>
+<div class="line"><span class="lineno">   65</span>                <span class="keywordflow">if</span> (addresses.Any())</div>
+<div class="line"><span class="lineno">   66</span>                {</div>
+<div class="line"><span class="lineno">   67</span>                    ipAddress = addresses.First();</div>
+<div class="line"><span class="lineno">   68</span>                    config.ListeningMode = <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.IPV6_ONLY;</div>
+<div class="line"><span class="lineno">   69</span>                }</div>
+<div class="line"><span class="lineno">   70</span>                <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   71</span>                {</div>
+<div class="line"><span class="lineno">   72</span>                    <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot found address to listen to&quot;</span>);</div>
+<div class="line"><span class="lineno">   73</span>                }</div>
+<div class="line"><span class="lineno">   74</span>            }</div>
+<div class="line"><span class="lineno">   75</span>        }</div>
+<div class="line"><span class="lineno">   76</span> </div>
+<div class="line"><span class="lineno">   77</span>        <span class="comment">//initilize the endpoints</span></div>
+<div class="line"><span class="lineno">   78</span>        localEndPoint = <span class="keyword">new</span>(ipAddress, config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a85d8ec8abb5266cba795eb2783db950d">Port</a>);</div>
+<div class="line"><span class="lineno">   79</span>        listener = <span class="keyword">new</span>(ipAddress.AddressFamily,</div>
+<div class="line"><span class="lineno">   80</span>            SocketType.Stream, ProtocolType.Tcp);</div>
+<div class="line"><span class="lineno">   81</span> </div>
+<div class="line"><span class="lineno">   82</span>        SslConfiguration sslConf = config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>;</div>
+<div class="line"><span class="lineno">   83</span> </div>
+<div class="line"><span class="lineno">   84</span> </div>
+<div class="line"><span class="lineno">   85</span>        <span class="comment">//if ssl is set and configuration is set to use two ports we start the sslListener</span></div>
+<div class="line"><span class="lineno">   86</span>        <span class="keywordflow">if</span> (sslConf.IsEnabled &amp;&amp; sslConf.PortMode == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a>.DUAL_PORT)</div>
+<div class="line"><span class="lineno">   87</span>        {</div>
+<div class="line"><span class="lineno">   88</span>            sslLocalEndPoint = <span class="keyword">new</span>(ipAddress, config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.SslPort);</div>
+<div class="line"><span class="lineno">   89</span>            <span class="keywordflow">if</span> (sslLocalEndPoint == <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   90</span>            {</div>
+<div class="line"><span class="lineno">   91</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot create SSL endpoint&quot;</span>);</div>
+<div class="line"><span class="lineno">   92</span>            }</div>
+<div class="line"><span class="lineno">   93</span>            sslListener = <span class="keyword">new</span>(ipAddress.AddressFamily,</div>
+<div class="line"><span class="lineno">   94</span>                SocketType.Stream, ProtocolType.Tcp);</div>
+<div class="line"><span class="lineno">   95</span>            <span class="keywordflow">if</span> (sslListener == <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   96</span>            {</div>
+<div class="line"><span class="lineno">   97</span>                <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;Cannot create SSL listener&quot;</span>);</div>
+<div class="line"><span class="lineno">   98</span>            }</div>
+<div class="line"><span class="lineno">   99</span>        }</div>
+<div class="line"><span class="lineno">  100</span> </div>
+<div class="line"><span class="lineno">  101</span>        <span class="keywordflow">if</span> (config.<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a> == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.ANY)</div>
+<div class="line"><span class="lineno">  102</span>        {</div>
+<div class="line"><span class="lineno">  103</span>            listener.DualMode = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  104</span>            <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.IsEnabled)</div>
+<div class="line"><span class="lineno">  105</span>                sslListener!.DualMode = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  106</span>        }</div>
+<div class="line"><span class="lineno">  107</span> </div>
+<div class="line"><span class="lineno">  108</span>        config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO(<span class="stringliteral">&quot;Starting logging...&quot;</span>);</div>
+<div class="line"><span class="lineno">  109</span> </div>
+<div class="line"><span class="lineno">  110</span>        <span class="keywordflow">if</span> (sslConf.IsEnabled)</div>
+<div class="line"><span class="lineno">  111</span>        {</div>
+<div class="line"><span class="lineno">  112</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO(<span class="stringliteral">&quot;Server is running in SSL mode&quot;</span>);</div>
+<div class="line"><span class="lineno">  113</span> </div>
+<div class="line"><span class="lineno">  114</span>        }</div>
+<div class="line"><span class="lineno">  115</span>        var prefix = <span class="stringliteral">&quot;http&quot;</span>;</div>
+<div class="line"><span class="lineno">  116</span>        <span class="keywordflow">if</span> (sslConf.IsEnabled &amp;&amp; sslConf.PortMode == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a>.DUAL_PORT)</div>
+<div class="line"><span class="lineno">  117</span>            config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO($<span class="stringliteral">&quot;Listening at https://{sslLocalEndPoint}/&quot;</span>);</div>
+<div class="line"><span class="lineno">  118</span> </div>
+<div class="line"><span class="lineno">  119</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (sslConf.IsEnabled &amp;&amp; sslConf.PortMode == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a>.SINGLE_PORT)</div>
+<div class="line"><span class="lineno">  120</span>            prefix += <span class="stringliteral">&quot;s&quot;</span>;</div>
+<div class="line"><span class="lineno">  121</span>        config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.INFO($<span class="stringliteral">&quot;Listening at {prefix}://{localEndPoint}/&quot;</span>);</div>
+<div class="line"><span class="lineno">  122</span>        <span class="comment">//end of the server initialization</span></div>
+<div class="line"><span class="lineno">  123</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a22eb67f9bcac434dafec9533398db240"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HSB.Configuration.HideBranding</a></div><div class="ttdeci">bool HideBranding</div><div class="ttdoc">Hide the HSB logo on startup.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00049">Configuration.cs:49</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a2b5fd3027ef77e20707b0f58607a1c2a"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">HSB.Configuration.Address</a></div><div class="ttdeci">string Address</div><div class="ttdoc">The server listening address, ex : &quot;127.0.0.1&quot; or &quot;192.168.1.2&quot; or &quot;&quot; (for any address)</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00016">Configuration.cs:16</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a404826d0febee64b2f3498036e5f636b"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">HSB.Configuration.Port</a></div><div class="ttdeci">int Port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00020">Configuration.cs:20</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a7b3a0ba00cf393dfa8eb89d2a9b3a805"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">HSB.Configuration.Debug</a></div><div class="ttdeci">Debugger Debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00032">Configuration.cs:32</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a89bcd63e087d9b9727ebd98c8c0a0f73"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">HSB.Configuration.ListeningMode</a></div><div class="ttdeci">IPMode ListeningMode</div><div class="ttdoc">Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00024">Configuration.cs:24</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_ad31c9beaf15c8eab28aa364e1303df02"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">HSB.Configuration.SslSettings</a></div><div class="ttdeci">SslConfiguration SslSettings</div><div class="ttdoc">Contains the SSL configuration properties.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00108">Configuration.cs:108</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception_html"><div class="ttname"><a href="class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html">HSB.Exceptions.InvalidConfigurationParameterException</a></div><div class="ttdef"><b>Definition</b> <a href="_invalid_configuration_parameter_exception_8cs_source.html#l00009">InvalidConfigurationParameterException.cs:10</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a7b3a0ba00cf393dfa8eb89d2a9b3a805"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">HSB.Configuration.Debug</a></div><div class="ttdeci">Debugger Debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00033">Configuration.cs:33</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a85d8ec8abb5266cba795eb2783db950d"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a85d8ec8abb5266cba795eb2783db950d">HSB.Configuration.Port</a></div><div class="ttdeci">ushort Port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00020">Configuration.cs:20</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a89bcd63e087d9b9727ebd98c8c0a0f73"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">HSB.Configuration.ListeningMode</a></div><div class="ttdeci">IPMode ListeningMode</div><div class="ttdoc">Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00025">Configuration.cs:25</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_ad31c9beaf15c8eab28aa364e1303df02"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">HSB.Configuration.SslSettings</a></div><div class="ttdeci">SslConfiguration SslSettings</div><div class="ttdoc">Contains the SSL configuration properties.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00109">Configuration.cs:109</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_constants_1_1_t_l_s_html_a5303cb52c30ae5e6842ec7ad423215c4"><div class="ttname"><a href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">HSB.Constants.TLS.SSL_PORT_MODE</a></div><div class="ttdeci">SSL_PORT_MODE</div><div class="ttdoc">This enum is used to determine if the server should listen on a single port for both HTTP and HTTPS o...</div><div class="ttdef"><b>Definition</b> <a href="_s_s_l_port_mode_8cs_source.html#l00007">SSLPortMode.cs:7</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_1_1_constants_html_ae676eaf623ca920f8fe00170a5658235"><div class="ttname"><a href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">HSB.Constants.IPMode</a></div><div class="ttdeci">IPMode</div><div class="ttdoc">Defines the listening mode of the server.</div><div class="ttdef"><b>Definition</b> <a href="_i_p_mode_8cs_source.html#l00007">IPMode.cs:8</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -243,12 +262,12 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00020">20</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   21</span>    {</div>
-<div class="line"><span class="lineno">   22</span>        Terminal.INFO(<span class="stringliteral">&quot;HSB-# has wrongfully been compiled has executable and will not run!&quot;</span>);</div>
-<div class="line"><span class="lineno">   23</span>        Terminal.INFO(<span class="stringliteral">&quot;To run as standalone you must compile/execute the \&quot;Standalone\&quot; or the \&quot;Launcher\&quot; project&quot;</span>);</div>
-<div class="line"><span class="lineno">   24</span>        Terminal.INFO(<span class="stringliteral">&quot;Check the documentation for more info (\&quot;https://github.com/lorenzoconcas/HSB-Sharp\&quot;)&quot;</span>);</div>
-<div class="line"><span class="lineno">   25</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00023">23</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   24</span>    {</div>
+<div class="line"><span class="lineno">   25</span>        Terminal.INFO(<span class="stringliteral">&quot;HSB-# has wrongfully been compiled has executable and will not run!&quot;</span>);</div>
+<div class="line"><span class="lineno">   26</span>        Terminal.INFO(<span class="stringliteral">&quot;To run as standalone you must compile/execute the \&quot;Standalone\&quot; or the \&quot;Launcher\&quot; project&quot;</span>);</div>
+<div class="line"><span class="lineno">   27</span>        Terminal.INFO(<span class="stringliteral">&quot;Check the documentation for more info (\&quot;https://github.com/lorenzoconcas/HSB-Sharp\&quot;)&quot;</span>);</div>
+<div class="line"><span class="lineno">   28</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -268,106 +287,50 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00103">103</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  104</span>    {</div>
-<div class="line"><span class="lineno">  105</span> </div>
-<div class="line"><span class="lineno">  106</span>        <span class="keywordflow">try</span></div>
-<div class="line"><span class="lineno">  107</span>        {</div>
-<div class="line"><span class="lineno">  108</span>            listener.Bind(localEndPoint);</div>
-<div class="line"><span class="lineno">  109</span>            listener.Listen(100);</div>
-<div class="line"><span class="lineno">  110</span> </div>
-<div class="line"><span class="lineno">  111</span>            <span class="keywordflow">if</span> (openInBrowser)</div>
-<div class="line"><span class="lineno">  112</span>            {</div>
-<div class="line"><span class="lineno">  113</span>                var psi = <span class="keyword">new</span> ProcessStartInfo</div>
-<div class="line"><span class="lineno">  114</span>                {</div>
-<div class="line"><span class="lineno">  115</span>                    FileName = $<span class="stringliteral">&quot;http:{localEndPoint}&quot;</span>,</div>
-<div class="line"><span class="lineno">  116</span>                    UseShellExecute = <span class="keyword">true</span></div>
-<div class="line"><span class="lineno">  117</span>                };</div>
-<div class="line"><span class="lineno">  118</span>                Process.Start(psi);</div>
-<div class="line"><span class="lineno">  119</span>            }</div>
-<div class="line"><span class="lineno">  120</span>            <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
-<div class="line"><span class="lineno">  121</span>            {</div>
-<div class="line"><span class="lineno">  122</span>                Socket socket = listener.Accept();</div>
-<div class="line"><span class="lineno">  123</span> </div>
-<div class="line"><span class="lineno">  124</span>                <span class="keyword">new</span> Task(() =&gt;</div>
-<div class="line"><span class="lineno">  125</span>                {</div>
-<div class="line"><span class="lineno">  126</span>                    <span class="keywordtype">byte</span>[] bytes = <span class="keyword">new</span> <span class="keywordtype">byte</span>[config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68">RequestMaxSize</a>];</div>
-<div class="line"><span class="lineno">  127</span>                    <span class="keywordtype">int</span> bytesRec = 0;</div>
-<div class="line"><span class="lineno">  128</span>                    <span class="comment">/*</span></div>
-<div class="line"><span class="lineno">  129</span><span class="comment">                    * todo -&gt; write a better upgrade from http to https</span></div>
-<div class="line"><span class="lineno">  130</span><span class="comment">                    * a more precise upgrade will probably be possibile only with a custom ssl implementation</span></div>
-<div class="line"><span class="lineno">  131</span><span class="comment">                    * or with dual port listening (one for http and one for https)</span></div>
-<div class="line"><span class="lineno">  132</span><span class="comment">                    * At the moment if a request </span></div>
-<div class="line"><span class="lineno">  133</span><span class="comment">                    */</span></div>
-<div class="line"><span class="lineno">  134</span>                    SslStream? sslStream = <span class="keyword">null</span>;</div>
-<div class="line"><span class="lineno">  135</span>                    <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.enabled &amp;&amp; config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.ConfigIsValid())</div>
-<div class="line"><span class="lineno">  136</span>                    {</div>
-<div class="line"><span class="lineno">  137</span> </div>
-<div class="line"><span class="lineno">  138</span>                        var netstream = new NetworkStream(socket);</div>
-<div class="line"><span class="lineno">  139</span>                        sslStream = new(netstream, true);</div>
+<p class="definition">Definition at line <a class="el" href="_server_8cs_source.html#l00125">125</a> of file <a class="el" href="_server_8cs_source.html">Server.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  126</span>    {</div>
+<div class="line"><span class="lineno">  127</span> </div>
+<div class="line"><span class="lineno">  128</span>        <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">  129</span>        {</div>
+<div class="line"><span class="lineno">  130</span>            listener.Bind(localEndPoint);</div>
+<div class="line"><span class="lineno">  131</span>            listener.Listen(100);</div>
+<div class="line"><span class="lineno">  132</span> </div>
+<div class="line"><span class="lineno">  133</span>            var sslConf = config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>;</div>
+<div class="line"><span class="lineno">  134</span> </div>
+<div class="line"><span class="lineno">  135</span>            <span class="keywordflow">if</span> (sslConf.IsEnabled)</div>
+<div class="line"><span class="lineno">  136</span>            { <span class="comment">//sslListener and sslLocalEndPoint are not null because we checked in the constructor</span></div>
+<div class="line"><span class="lineno">  137</span>                sslListener!.Bind(sslLocalEndPoint!);</div>
+<div class="line"><span class="lineno">  138</span>                sslListener.Listen(100);</div>
+<div class="line"><span class="lineno">  139</span>            }</div>
 <div class="line"><span class="lineno">  140</span> </div>
-<div class="line"><span class="lineno">  141</span>                        try</div>
-<div class="line"><span class="lineno">  142</span>                        {</div>
-<div class="line"><span class="lineno">  143</span> </div>
-<div class="line"><span class="lineno">  144</span>                            sslStream.AuthenticateAsServer(</div>
-<div class="line"><span class="lineno">  145</span>                                config.SslSettings.GetCertificate(),</div>
-<div class="line"><span class="lineno">  146</span>                                config.SslSettings.ClientCertificateRequired,</div>
-<div class="line"><span class="lineno">  147</span>                                config.SslSettings.GetProtocols(),</div>
-<div class="line"><span class="lineno">  148</span>                                config.SslSettings.CheckCertificateRevocation</div>
-<div class="line"><span class="lineno">  149</span>                            );</div>
-<div class="line"><span class="lineno">  150</span>                            bytesRec = sslStream.Read(bytes);</div>
-<div class="line"><span class="lineno">  151</span>                        }</div>
-<div class="line"><span class="lineno">  152</span>                        catch (Exception)</div>
-<div class="line"><span class="lineno">  153</span>                        {</div>
-<div class="line"><span class="lineno">  154</span>                            sslStream.Dispose();</div>
-<div class="line"><span class="lineno">  155</span>                            <span class="comment">//upgrade request redirecting to https</span></div>
-<div class="line"><span class="lineno">  156</span>                            <span class="keywordflow">if</span> (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.upgradeUnsecureRequests)</div>
-<div class="line"><span class="lineno">  157</span>                            {</div>
-<div class="line"><span class="lineno">  158</span>                                <span class="comment">//attempt upgrade</span></div>
-<div class="line"><span class="lineno">  159</span>                                Request _req = new(bytes, socket, config);</div>
-<div class="line"><span class="lineno">  160</span>                                Response res = new(socket, _req, config, null);</div>
-<div class="line"><span class="lineno">  161</span>                                res.Redirect(<span class="stringliteral">&quot;https://&quot;</span> + localEndPoint, HTTP_CODES.MOVED_PERMANENTLY);</div>
-<div class="line"><span class="lineno">  162</span>                                return;</div>
-<div class="line"><span class="lineno">  163</span>                            }</div>
-<div class="line"><span class="lineno">  164</span>                            <span class="keywordflow">else</span> if (config.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a>.serveOnlyWithSSL)</div>
-<div class="line"><span class="lineno">  165</span>                            {</div>
-<div class="line"><span class="lineno">  166</span>                                <span class="comment">//if the server is set to serve only with ssl, we send a 403 forbidden</span></div>
-<div class="line"><span class="lineno">  167</span>                                Request _req = new(bytes, socket, config);</div>
-<div class="line"><span class="lineno">  168</span>                                Response res = new(socket, _req, config, null);</div>
-<div class="line"><span class="lineno">  169</span>                                res.Send(HTTP_CODES.FORBIDDEN);</div>
-<div class="line"><span class="lineno">  170</span>                                return;</div>
-<div class="line"><span class="lineno">  171</span>                            }</div>
-<div class="line"><span class="lineno">  172</span>                            <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">  173</span>                            {                               </div>
-<div class="line"><span class="lineno">  174</span>                                socket.Close();</div>
-<div class="line"><span class="lineno">  175</span>                                return;</div>
-<div class="line"><span class="lineno">  176</span>                            }</div>
-<div class="line"><span class="lineno">  177</span>                        }</div>
-<div class="line"><span class="lineno">  178</span>                    }</div>
-<div class="line"><span class="lineno">  179</span>                    <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">  180</span>                    {</div>
-<div class="line"><span class="lineno">  181</span>                        bytesRec = socket.Receive(bytes);</div>
-<div class="line"><span class="lineno">  182</span> </div>
-<div class="line"><span class="lineno">  183</span>                    }</div>
-<div class="line"><span class="lineno">  184</span>                    bytes = bytes[..bytesRec]; <span class="comment">//trim the array to the actual size of the request</span></div>
-<div class="line"><span class="lineno">  185</span> </div>
-<div class="line"><span class="lineno">  186</span>                    Request req = <span class="keyword">new</span>(bytes, socket, config);</div>
-<div class="line"><span class="lineno">  187</span>                    <span class="keywordflow">if</span> (req.proceedWithElaboration)</div>
-<div class="line"><span class="lineno">  188</span>                    {</div>
-<div class="line"><span class="lineno">  189</span> </div>
-<div class="line"><span class="lineno">  190</span>                        Response res = <span class="keyword">new</span>(socket, req, config, sslStream);</div>
-<div class="line"><span class="lineno">  191</span>                        <span class="keyword">new</span> Task(() =&gt; ProcessRequest(req, res)).Start();</div>
-<div class="line"><span class="lineno">  192</span>                    }</div>
-<div class="line"><span class="lineno">  193</span> </div>
-<div class="line"><span class="lineno">  194</span>                }).Start();</div>
-<div class="line"><span class="lineno">  195</span>            }</div>
-<div class="line"><span class="lineno">  196</span>        }</div>
-<div class="line"><span class="lineno">  197</span>        <span class="keywordflow">catch</span> (Exception e)</div>
-<div class="line"><span class="lineno">  198</span>        {</div>
-<div class="line"><span class="lineno">  199</span>            Terminal.ERROR(e);</div>
-<div class="line"><span class="lineno">  200</span>        }</div>
-<div class="line"><span class="lineno">  201</span>    }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_aa260c9d1bc475cfd186e138d840f2c68"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68">HSB.Configuration.RequestMaxSize</a></div><div class="ttdeci">int RequestMaxSize</div><div class="ttdoc">Specifies the size in bytes of the buffer that will contain the HTTP request.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00036">Configuration.cs:36</a></div></div>
+<div class="line"><span class="lineno">  141</span>            OpenInBrowserIfSet(openInBrowser, sslConf.IsEnabled, sslConf.PortMode == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a>.DUAL_PORT ? sslLocalEndPoint! : localEndPoint);</div>
+<div class="line"><span class="lineno">  142</span> </div>
+<div class="line"><span class="lineno">  143</span>            <span class="comment">//this makes the second port listen to SSL requests</span></div>
+<div class="line"><span class="lineno">  144</span>            <span class="keywordflow">if</span> (sslConf.IsEnabled &amp;&amp; sslConf.PortMode == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a>.DUAL_PORT)</div>
+<div class="line"><span class="lineno">  145</span>            {</div>
+<div class="line"><span class="lineno">  146</span>                <span class="keyword">new</span> Task(() =&gt;</div>
+<div class="line"><span class="lineno">  147</span>                {</div>
+<div class="line"><span class="lineno">  148</span>                    <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
+<div class="line"><span class="lineno">  149</span>                    {</div>
+<div class="line"><span class="lineno">  150</span>                        Step(sslListener!, <span class="keyword">true</span>);</div>
+<div class="line"><span class="lineno">  151</span>                    }</div>
+<div class="line"><span class="lineno">  152</span>                }).Start();</div>
+<div class="line"><span class="lineno">  153</span>            }</div>
+<div class="line"><span class="lineno">  154</span> </div>
+<div class="line"><span class="lineno">  155</span>            <span class="comment">//since the base port is alwyas listening this is always executed</span></div>
+<div class="line"><span class="lineno">  156</span>            <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
+<div class="line"><span class="lineno">  157</span>            {</div>
+<div class="line"><span class="lineno">  158</span>                <span class="comment">//if ssl is enabled and single port is used</span></div>
+<div class="line"><span class="lineno">  159</span>                var sslMode = sslConf.IsEnabled &amp;&amp; sslConf.PortMode == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a>.SINGLE_PORT;</div>
+<div class="line"><span class="lineno">  160</span>             </div>
+<div class="line"><span class="lineno">  161</span>                Step(listener, sslMode);</div>
+<div class="line"><span class="lineno">  162</span>            }</div>
+<div class="line"><span class="lineno">  163</span>        }</div>
+<div class="line"><span class="lineno">  164</span>        <span class="keywordflow">catch</span> (Exception e)</div>
+<div class="line"><span class="lineno">  165</span>        {</div>
+<div class="line"><span class="lineno">  166</span>            Terminal.ERROR(e);</div>
+<div class="line"><span class="lineno">  167</span>        }</div>
+<div class="line"><span class="lineno">  168</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>

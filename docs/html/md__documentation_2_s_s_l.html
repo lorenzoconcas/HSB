@@ -120,25 +120,24 @@ Methods and parameters</h2>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Name   </th><th class="markdownTableHeadNone">Return Type   </th><th class="markdownTableHeadNone">Type   </th><th class="markdownTableHeadNone">Description    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>enabled</code>   </td><td class="markdownTableBodyNone"><code>bool</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyNone">Set if the ssl mode is enabled, this value is set automatically when a valid path or certificate is set    </td></tr>
+<td class="markdownTableBodyNone"><code>IsEnabled</code>   </td><td class="markdownTableBodyNone"><code>bool</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyNone">Set if the ssl mode is enabled, this value is set automatically when a valid path or certificate is set    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>serveOnlyWithSSL</code>   </td><td class="markdownTableBodyNone"><code>bool</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyNone">If set, only HTTPS requests are accepted    </td></tr>
+<td class="markdownTableBodyNone"><code>PortMode</code>   </td><td class="markdownTableBodyNone"><code>void</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyNone">Sets if the server must listen to a secondary port for TLS requests    </td></tr>
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code>upgradeUnsecureRequests</code>   </td><td class="markdownTableBodyNone"><code>bool</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyNone">If set, http requests are redirected to <a href="https://">https://</a>    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>TLSVersions</code>   </td><td class="markdownTableBodyNone"><code>List&lt;TLSVersion&gt;</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyNone">If set the server will use these TLS version with the client *    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SetCertificatePassword(string)   </td><td class="markdownTableBodyNone">void   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyNone"></td></tr>
+<td class="markdownTableBodyNone"><code>SetCertificatePassword(string)</code>   </td><td class="markdownTableBodyNone">void   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyNone"></td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">SetCertificate(string)   </td><td class="markdownTableBodyNone">void   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyNone">Sets the path of the certificate    </td></tr>
+<td class="markdownTableBodyNone"><code>SetCertificate(string)</code>   </td><td class="markdownTableBodyNone">void   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyNone">Sets the path of the certificate    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">SetCertificate(byte[])   </td><td class="markdownTableBodyNone">void   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyNone">Loads the certificate from a byte array    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">ConfigIsValid()   </td><td class="markdownTableBodyNone">bool   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyNone">Checks if provided SSL configuration is valid for use   </td></tr>
+<td class="markdownTableBodyNone"><code>SetCertificate(byte[])</code>   </td><td class="markdownTableBodyNone">void   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyNone">Loads the certificate from a byte array   </td></tr>
 </table>
 <ul>
 <li>TLS 1.0 (SSL3.0) and TLS 1.1 (SSL 3.1) are deprecated and their usage will throw an Exception</li>
 </ul>
+<p>Note that <code>upgradeUnsecureRequests</code> will also redirect normal plain request sent to the base port, not only the invalid plain request that the SslPort can receive</p>
 <h2><a class="anchor" id="exceptions"></a>
 Exceptions</h2>
 <table class="markdownTable">

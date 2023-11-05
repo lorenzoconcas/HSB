@@ -11,6 +11,9 @@ var port = arglist.Find(a => a.StartsWith("--port="))?.Split("=")[1] ?? "8443";
 var certificatePath = arglist.Find(a => a.StartsWith("--cert="))?.Split("=")[1];
 var certificatePassword = arglist.Find(a => a.StartsWith("--pass="))?.Split("=")[1];
 
+certificatePassword = "lore";
+certificatePath = "/Users/lore/Certificati/localhost.p12";
+port = "8080";
 
 
 var sslConfig = new SslConfiguration(

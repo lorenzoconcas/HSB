@@ -100,6 +100,11 @@ $(document).ready(function(){initNavTree('namespace_h_s_b_1_1_constants_1_1_t_l_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:a5303cb52c30ae5e6842ec7ad423215c4" id="r_a5303cb52c30ae5e6842ec7ad423215c4"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">SSL_PORT_MODE</a> { <b>SINGLE_PORT</b>
+, <b>DUAL_PORT</b>
+ }</td></tr>
+<tr class="memdesc:a5303cb52c30ae5e6842ec7ad423215c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This enum is used to determine if the server should listen on a single port for both HTTP and HTTPS or if it should listen on two different ports Note that when SSL is not set this setting is ignored (and is considered analog to a single port)  <a href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">More...</a><br /></td></tr>
+<tr class="separator:a5303cb52c30ae5e6842ec7ad423215c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81cb60264e0a1d6a0aab1583e57c99db" id="r_a81cb60264e0a1d6a0aab1583e57c99db"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>TLSVersion</b> { <br />
 &#160;&#160;<b>NOT_SET</b> = 0x0000
 , <b>TLS_1_0</b> = 0x0301
@@ -112,6 +117,28 @@ Enumerations</h2></td></tr>
 <tr class="separator:a81cb60264e0a1d6a0aab1583e57c99db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a5303cb52c30ae5e6842ec7ad423215c4" name="a5303cb52c30ae5e6842ec7ad423215c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5303cb52c30ae5e6842ec7ad423215c4">&#9670;&#160;</a></span>SSL_PORT_MODE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4">HSB.Constants.TLS.SSL_PORT_MODE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This enum is used to determine if the server should listen on a single port for both HTTP and HTTPS or if it should listen on two different ports Note that when SSL is not set this setting is ignored (and is considered analog to a single port) </p>
+
+<p class="definition">Definition at line <a class="el" href="_s_s_l_port_mode_8cs_source.html#l00007">7</a> of file <a class="el" href="_s_s_l_port_mode_8cs_source.html">SSLPortMode.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">    7</span>                         {</div>
+<div class="line"><span class="lineno">    8</span>    SINGLE_PORT, <span class="comment">//One port for both HTTP and HTTPS, note that at the moment if SSL is enabled we cannot determine if the content of an HTTP request</span></div>
+<div class="line"><span class="lineno">    9</span>    DUAL_PORT, <span class="comment">//One for the SSL and one for the plain HTTP</span></div>
+<div class="line"><span class="lineno">   10</span>}</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a81cb60264e0a1d6a0aab1583e57c99db" name="a81cb60264e0a1d6a0aab1583e57c99db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a81cb60264e0a1d6a0aab1583e57c99db">&#9670;&#160;</a></span>TLSVersion</h2>
 

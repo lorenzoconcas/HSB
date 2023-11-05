@@ -1,6 +1,11 @@
 var namespace_h_s_b_1_1_constants =
 [
-    [ "TLS", "namespace_h_s_b_1_1_constants_1_1_t_l_s.html", null ],
+    [ "TLS", "namespace_h_s_b_1_1_constants_1_1_t_l_s.html", [
+      [ "SSL_PORT_MODE", "namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4", [
+        [ "SINGLE_PORT", "namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4a20edd1f31b0adf11352b3e7463889033", null ],
+        [ "DUAL_PORT", "namespace_h_s_b_1_1_constants_1_1_t_l_s.html#a5303cb52c30ae5e6842ec7ad423215c4a2163576ffd7a27981ba2c11a6bca188e", null ]
+      ] ]
+    ] ],
     [ "WebSocket", "namespace_h_s_b_1_1_constants_1_1_web_socket.html", [
       [ "Opcode", "namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6", [
         [ "CONTINUATION", "namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6aa912ad8cd8aeb3f2762b4359d4c36583", null ],

@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extracssfordocumentation.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -24,9 +25,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.11 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -97,7 +98,7 @@ $(document).ready(function(){initNavTree('md__documentation_2_library.html','');
 <div class="textblock"><p><a class="anchor" id="library"></a>Here will be explained how to use the core library (HSB.dll)</p>
 <h2><a class="anchor" id="basic-information"></a>
 Basic information</h2>
-<p>This information is up to date until commit <a href="https://github.com/lorenzoconcas/HSB/commit/6a776ade800e7d323a00361c02a2a300b71d5066">6a776ad</a></p>
+<p>This information is up to date until commit <a href="https://github.com/lorenzoconcas/HSB/commit/1da2a6f0a73124c63f5853276c6f6b3bcef7af64">1da2a6f</a> (5 November 2023)</p>
 <p>To include the library you must follow your IDE instruction</p>
 <p>Although <a class="el" href="namespace_h_s_b.html">HSB</a> is primarily intended for creating complete standalone web servers, it is possible to integrate the library into other types of projects</p>
 <p>There are two fundamental components to make it run, the Configuration class and the Server class. The first holds any information about the server and the second effectively run the server itself. The Server class expects a configuration to be instantied and to run. So the minimal code to run the server is something like:</p>
@@ -107,93 +108,31 @@ Basic information</h2>
 <div class="line"><span class="keyword">new</span> Server(c).Start();</div>
 <div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
 </div><!-- fragment --> <hr  />
- <h2><a class="anchor" id="the-configuration-class"></a>
-The Configuration Class</h2>
-<p>The default Configuration constructor holds the following properties:</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Property name   </th><th class="markdownTableHeadNone">Default value   </th><th class="markdownTableHeadNone">C# Type   </th><th class="markdownTableHeadLeft">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>address</code>   </td><td class="markdownTableBodyNone"><code>127.0.0.1</code>   </td><td class="markdownTableBodyNone">string   </td><td class="markdownTableBodyLeft">The server will be visibile only to the running machine, to expose it to the network you must provide a valid ip address or pass an empty string (?)    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>port</code>   </td><td class="markdownTableBodyNone"><code>8080</code>   </td><td class="markdownTableBodyNone">int   </td><td class="markdownTableBodyLeft">The listening port of the server    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>staticFolderPath</code>   </td><td class="markdownTableBodyNone"><code>./static</code>   </td><td class="markdownTableBodyNone">string   </td><td class="markdownTableBodyLeft">This is the folder where the server will attempt to find public files    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>requestMaxSize</code>   </td><td class="markdownTableBodyNone"><code>1024</code> (1MB)   </td><td class="markdownTableBodyNone">int   </td><td class="markdownTableBodyLeft">Set the max size of an HTTP request    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>verbose</code>   </td><td class="markdownTableBodyNone"><code>true</code>   </td><td class="markdownTableBodyNone">boolean   </td><td class="markdownTableBodyLeft">Whether or not print the log to the console    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>defaultSessionExpirationTime</code>   </td><td class="markdownTableBodyNone"><code>true</code>   </td><td class="markdownTableBodyNone">long   </td><td class="markdownTableBodyLeft">The lifespan in Ticks of the Session   </td></tr>
-</table>
-<p>The configuration class provides also some utilities, like object sharing between servlets (so you can avoid to use the singleton tecnique) and global headers (used to append custom headers to ALL responses)</p>
-<h4><a class="anchor" id="shared-objects"></a>
-Shared Objects</h4>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>void AddSharedObject(string, object)</code>   </td><td class="markdownTableBodyNone">Add an object shared between all servlet    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>object GetSharedObject(string)</code>   </td><td class="markdownTableBodyNone">Get an object shared between all servlet    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>object RemoveSharedObject(string)</code>   </td><td class="markdownTableBodyNone">Remove an object shared between all servlet   </td></tr>
-</table>
-<h4><a class="anchor" id="global-headers"></a>
-Global Headers</h4>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>void AddCustomGlobalHeader(string, string)</code>   </td><td class="markdownTableBodyNone">Add an HTTP Response header that will be added to ALL the responses    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>void RemoveCustomGlobalHeader(string, string)</code>   </td><td class="markdownTableBodyNone">Remove a global HTTP Response header previously added    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>void GetCustomGlobalHeader(string, string)</code>   </td><td class="markdownTableBodyNone">Gets the value of a global HTTP Response header previously added    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>void Dictionary&lt;string, string&gt; GetCustomGlobalHeaders</code>   </td><td class="markdownTableBodyNone">Gets all globabl HTTP Response headers   </td></tr>
-</table>
-<h4><a class="anchor" id="global-cookies"></a>
-Global Cookies</h4>
-<p>Cookies added to each request</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>void AddCustomGlobalCookie(string, string)</code>   </td><td class="markdownTableBodyNone">Add (Or replaces) a cookie that will be added to ALL the responses    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>void RemoveCustomGlobalCookie(string, string)</code>   </td><td class="markdownTableBodyNone">Remove a global cookie previously added    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>void GetCustomGlobalCookie(string, string)</code>   </td><td class="markdownTableBodyNone">Gets the value of a global cookie previously added    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>void Dictionary&lt;string, string&gt; GetCustomGlobalCookies</code>   </td><td class="markdownTableBodyNone">Gets all global cookies   </td></tr>
-</table>
-<hr  />
-<h1><a class="anchor" id="api--faq"></a>
-API &amp; F.A.Q.</h1>
-<p><a class="el" href="namespace_h_s_b.html">HSB</a> provides different function to create routes and to send replys to the client</p>
+<p>This will make the server listen to any address (IPv4 and IPv6) on port 8080 All parameters are documented <a class="el" href="md__documentation_2_configuration.html">here</a></p>
+<h1><a class="anchor" id="api--quick-faq"></a>
+API &amp; Quick F.A.Q.</h1>
 <h2><a class="anchor" id="how-to-define-a-route"></a>
 How to define a route?</h2>
 <p>There are two ways, one is like the nodejs library ExpressJS, the other is follows a more classical approach.</p>
 <h2><a class="anchor" id="expressjs-like"></a>
 ExpressJS-like</h2>
-<p>The configuration class provides 5 methods to handle the various HTTP methods : <code>GET; POST; HEAD; PUT; DELETE; PATCH; TRACE; OPTIONS; CONNECT</code> These methods require two arguments, one is the path and the other one is a delegate that will handle the call. Example:</p>
+<p>The configuration class provides 9 methods to handle the various HTTP methods : <code>GET; POST; HEAD; PUT; DELETE; PATCH; TRACE; OPTIONS; CONNECT</code> These methods require two arguments, one is the path and the other one is a delegate that will handle the call. Example:</p>
 <div class="fragment"><div class="line"><span class="keyword">using </span><a class="code hl_namespace" href="namespace_h_s_b.html">HSB</a>;</div>
 <div class="line"><a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a> c = <span class="keyword">new</span>();</div>
 <div class="line">c.GET(<span class="stringliteral">&quot;/&quot;</span>, (<a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res) =&gt;{</div>
 <div class="line">    res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676">SendHTMLContent</a>(<span class="stringliteral">&quot;&lt;h1&gt;Hello World&lt;/h1&gt;&quot;</span>);</div>
 <div class="line">});</div>
 <div class="line"><span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_server.html">Server</a>(c).Start();</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00009">Configuration.cs:10</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00008">Request.cs:9</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00013">Response.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a95d557def4c8f20e9bcf69731ea94676"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, int statusCode=HTTP_CODES.OK, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00094">Response.cs:94</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_server_html"><div class="ttname"><a href="class_h_s_b_1_1_server.html">HSB.Server</a></div><div class="ttdef"><b>Definition</b> <a href="_server_8cs_source.html#l00011">Server.cs:12</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00011">Configuration.cs:12</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00010">Request.cs:11</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00014">Response.cs:15</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a95d557def4c8f20e9bcf69731ea94676"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, int statusCode=HTTP_CODES.OK, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00107">Response.cs:107</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_server_html"><div class="ttname"><a href="class_h_s_b_1_1_server.html">HSB.Server</a></div><div class="ttdef"><b>Definition</b> <a href="_server_8cs_source.html#l00013">Server.cs:14</a></div></div>
 </div><!-- fragment --><p>will route the index page to that delegate, printing 'Hello World' while visiting the root page</p>
 <p>Note that custom HTTP Methods are not supported by this routing style, therefore the Servlet method must be used</p>
 <h2><a class="anchor" id="classic-method"></a>
 "Classic" method</h2>
-<p>To create a routing in the classic method you create a class that extends the Servlet base class, the constructor MUST have two parameters : Request and Response, and pass them to the base class The new class also needs the <b>Binding attribute,</b> that requires a string (the path) and optionally a boolean indicating whether or not that servlet must handle all routes starting with the given path. Example:</p>
+<p>To create a routing in the classic method you create a class that extends the Servlet base class, the constructor MUST have two parameters : Request and Response, and pass them to the base class The new class also needs the <b>Binding Attribute,</b> that requires a string (the path) and optionally a boolean indicating whether or not that servlet must handle all routes starting with the given path. Example:</p>
 <div class="fragment"><div class="line"><span class="keyword">import</span> <a class="code hl_namespace" href="namespace_h_s_b.html">HSB</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">namespace </span>Test{</div>
@@ -256,119 +195,15 @@ Custom method handling</h2>
 <div class="line">    }</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>This code will handle ONLY the requests that have the method "MyCustomHTTPMethod". Example request header: </p><div class="fragment"><div class="line">MyCustomHTTPMethod / HTTP/1.1</div>
-</div><!-- fragment --><h1><a class="anchor" id="the-request-class"></a>
-The Request Class</h1>
-<p>In this class there are some utilities to better handle the request itself</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Type   </th><th class="markdownTableHeadLeft">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>HTTP_METHOD METHOD</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyLeft">Returns an enum reppresentating the request method    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>HTTP_PROTOCOL PROTOCOL</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyLeft">Returns an enum reppresentating the request protocol    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>string URL</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyLeft">Returns the request URL    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>string RawBody</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyLeft">Returns the raw request body (useful in case like json ecc)    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Dictionary&lt;string, string&gt; GetHeaders</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyLeft">Returns the parsed headers of the request    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>List&lt;string&gt; GetRawHeaders</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyLeft">Returns the raw headers of the request    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Dictionary&lt;string, string&gt; GetParameters</code>   </td><td class="markdownTableBodyNone">Property   </td><td class="markdownTableBodyLeft">Returns the parameters present in the URL    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Session GetSession()</code>   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyLeft">Returns the session associated with the request    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>bool IsJSON()</code>   </td><td class="markdownTableBodyNone">Function   </td><td class="markdownTableBodyLeft">Returns whether a request contains a json file or not   </td></tr>
-</table>
-<h1><a class="anchor" id="the-session-class"></a>
-The Session Class</h1>
-<p>A session is created every time a request without the cookie "hsbst" is made.</p>
-<h1><a class="anchor" id="the-response-class"></a>
-The Response Class</h1>
-<h3><a class="anchor" id="included-methods"></a>
-Included methods</h3>
-<h4><a class="anchor" id="complex-methods"></a>
-Complex methods</h4>
-<p>These methods are more used by the library then by users, but are still available, for example user can bypass the entire elaboration usually made by the library and send what it wants to the client. All methods have void return type, so it's omitted here.</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Send(byte[])</code>   </td><td class="markdownTableBodyNone">Sends a byte array as response    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>Send(string, string?, int, Dictionary&lt;string, string&gt;)</code>   </td><td class="markdownTableBodyNone">Sends a string a content, with optional mimetype, custom status code (default is 200), optional custom headers    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>Send(int)</code>   </td><td class="markdownTableBodyNone">Send a response with empty body and custom status code, short-hand for SendCode(int)    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>SendCode(int)</code>   </td><td class="markdownTableBodyNone">Like Send(int)   </td></tr>
-</table>
-<h4><a class="anchor" id="shorts-and-for-common-http-status-response-codes"></a>
-Shorts and for common HTTP Status response codes</h4>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>E400()</code>   </td><td class="markdownTableBodyNone">Shorthand for SendCode(400)    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>E401()</code>   </td><td class="markdownTableBodyNone">Shorthand for SendCode(401)    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>E404()</code>   </td><td class="markdownTableBodyNone">Shorthand for SendCode(404)    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>E500()</code>   </td><td class="markdownTableBodyNone">Shorthand for SendCode(500)   </td></tr>
-</table>
-<h4><a class="anchor" id="common-methods"></a>
-Common methods</h4>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>SendHTMLPage(string, bool, Dictionary&lt;string, string&gt;?)</code>   </td><td class="markdownTableBodyNone">Sends and HTML Page loaded from disk as given path, optionally processes it (default false), optional custom headers    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>SendHTMLContent(string, bool, string, Dictionary&lt;string, string&gt;?)</code>   </td><td class="markdownTableBodyNone">Sends an HTML content, optional processing, optional custom headers, is analog to SendHTMLPage but content is passed as parameter    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>SendFile(string, string?, int, Dictionary&lt;string, string&gt;?)</code>   </td><td class="markdownTableBodyNone">Send a file loaded from the given path (absolute), optional mimetype (default autodetected), optionl headers    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>SendFile(byte[] data, string?, int, Dictionary&lt;string, string&gt;?)</code>   </td><td class="markdownTableBodyNone">Same as the other SendFile, but instead of path takes the byte array to be sent   </td></tr>
-</table>
-<p><a class="anchor" id="json-related-response-methods"></a> </p><h5>JSON-related response methods</h5>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>JSON(string)</code>   </td><td class="markdownTableBodyNone">Sends a string as JSON    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>JSON&lt;T&gt;(T, bool)</code>   </td><td class="markdownTableBodyNone">Sends an object that will be serialized and sent as JSON string, boolean to set if include fields or not, default true    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>JSON&lt;T&gt;(T, JsonSerializerOptions)</code>   </td><td class="markdownTableBodyNone">Same as JSON&lt;T&gt;(T, bool) but with possibily to set option of the serializer    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>SendJSON(string)</code>   </td><td class="markdownTableBodyNone">Not-so shorthand for JSON(string)    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>SendJSON&lt;T&gt;(T, bool)</code>   </td><td class="markdownTableBodyNone">Not-so shorthand for JSON&lt;T&gt;(T, bool)    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>SendJSON&lt;T&gt;(T, JsonSerializerOptions)</code>   </td><td class="markdownTableBodyNone">Not-so shorthand for JSON&lt;T&gt;(T, JsonSerializerOptions)   </td></tr>
-</table>
-<p><a class="anchor" id="html-processing-related-response-methods"></a> </p><h5>HTML-processing related response methods</h5>
-<p>Methods realated to the process of the HTML files, it works like JSP SetAttribute The values inside this characters: #{} will be replaced</p>
-<div class="fragment"><div class="line">res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">AddAttribute</a>(<span class="stringliteral">&quot;valueToBeReplaced&quot;</span>, <span class="stringliteral">&quot;value&quot;</span>);</div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a28441b69e0487b1e5231c0f9d4f7571d"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">HSB.Response.AddAttribute</a></div><div class="ttdeci">void AddAttribute(string name, string value)</div><div class="ttdoc">Adds an attribute to the HTML file that will be processed, if it already exists it will be overwritte...</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00366">Response.cs:366</a></div></div>
-</div><!-- fragment --><div class="fragment"><div class="line">&lt;h1&gt;#{valueToBeReplaced}&lt;/h1&gt;</div>
-</div><!-- fragment --><p> Will result In :</p>
-<div class="fragment"><div class="line">&lt;h1&gt;value&lt;/h1&gt;</div>
-</div><!-- fragment --><p> An example usage of this function is in the default pages of the server, located at HSB.DefaultPages, in the classes <a class="el" href="_index_8cs_source.html">Index.cs</a> and <a class="el" href="_error_8cs_source.html">Error.cs</a>, where the <a class="el" href="namespace_h_s_b.html">HSB</a> version is set this way</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Signature   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>AddAttribute(string, string)</code>   </td><td class="markdownTableBodyNone">Adds a parameter to be replaced with the given value    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>RemoveAttribute(string)</code>   </td><td class="markdownTableBodyNone">Remove a parameter    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>GetAttribute(string)</code>   </td><td class="markdownTableBodyNone">Retrieves the value of the given parameter name   </td></tr>
-</table>
-<h2><a class="anchor" id="examples"></a>
-Examples</h2>
-<p>You can use the TestRunner project as example, more will be added in future </p>
+</div><!-- fragment --><p>Both the ExpressJS-like mapping and Servlet class contains a reference to the "Request" and "Response" class, optionally they can also hold the Configuration. Details about the Request class can be found <a class="el" href="md__documentation_2_request.html">here</a>, while for Response <a class="el" href="md__documentation_2_response.html">here</a></p>
+<p>All information about ExpressJS mapping and Servlet are available here</p>
+<hr  />
+ <h1><a class="anchor" id="ssl"></a>
+SSL</h1>
+<p>To make <a class="el" href="namespace_h_s_b.html">HSB</a> use the SSL/TLS mode you must provide a valid certificate and modify the configuration. See <a class="el" href="md__documentation_2_s_s_l.html">set SSL </a> for more information</p>
+<h1><a class="anchor" id="websocket"></a>
+WebSocket</h1>
+<p><a class="el" href="namespace_h_s_b.html">HSB</a> support the creation of WebSockets, these follow a structure similar to the servlets but with different functions for sending data A complete guide is available <a class="el" href="md__documentation_2_web_sockets.html">here</a> </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

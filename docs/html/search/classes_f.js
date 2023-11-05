@@ -11,6 +11,8 @@ var searchData=
   ['signaturealgorithms_8',['SignatureAlgorithms',['../class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_signature_algorithms.html',1,'HSB::TLS::Extensions']]],
   ['simpleobject_9',['SimpleObject',['../class_runner_1_1_runner_models_1_1_simple_object.html',1,'Runner::RunnerModels']]],
   ['singlebinding_10',['SingleBinding',['../class_runner_1_1_single_binding.html',1,'Runner']]],
-  ['supportedgroups_11',['SupportedGroups',['../class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_supported_groups.html',1,'HSB::TLS::Extensions']]],
-  ['supportedgroupstypes_12',['SupportedGroupsTypes',['../class_h_s_b_1_1_t_l_s_1_1_constants_1_1_supported_groups_types.html',1,'HSB::TLS::Constants']]]
+  ['sslconfiguration_11',['SslConfiguration',['../class_h_s_b_1_1_ssl_configuration.html',1,'HSB']]],
+  ['supportedgroups_12',['SupportedGroups',['../class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_supported_groups.html',1,'HSB::TLS::Extensions']]],
+  ['supportedgroupstypes_13',['SupportedGroupsTypes',['../class_h_s_b_1_1_t_l_s_1_1_constants_1_1_supported_groups_types.html',1,'HSB::TLS::Constants']]],
+  ['systemtls_14',['SystemTLS',['../class_h_s_b_1_1_system_t_l_s.html',1,'HSB']]]
 ];

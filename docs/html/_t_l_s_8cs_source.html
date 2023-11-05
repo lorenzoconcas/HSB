@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extracssfordocumentation.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -24,9 +25,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.11 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -111,7 +112,7 @@ $(document).ready(function(){initNavTree('_t_l_s_8cs_source.html',''); initResiz
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_h_s_b_1_1_t_l_s.html">HSB.TLS</a>;</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="foldopen" id="foldopen00012" data-start="{" data-end="};">
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="class_h_s_b_1_1_t_l_s_1_1_t_l_s.html">   12</a></span><span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_t_l_s.html">TLS</a></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">   12</a></span><span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">CustomTLS</a></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>{</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    Socket socket;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="comment">//items of the TLS request</span></div>
@@ -125,7 +126,7 @@ $(document).ready(function(){initNavTree('_t_l_s_8cs_source.html',''); initResiz
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    List&lt;Ciphers&gt; cipherSuites = <span class="keyword">new</span>();</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keyword">public</span> <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_t_l_s.html">TLS</a>(Socket socket)</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keyword">public</span> <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">CustomTLS</a>(Socket socket)</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    {</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        this.socket = socket;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        clientRandom = Array.Empty&lt;<span class="keywordtype">byte</span>&gt;();</div>
@@ -462,9 +463,9 @@ $(document).ready(function(){initNavTree('_t_l_s_8cs_source.html',''); initResiz
 </div>
 <div class="ttc" id="aclass_h_s_b_1_1_data_reader_html"><div class="ttname"><a href="class_h_s_b_1_1_data_reader.html">HSB.DataReader</a></div><div class="ttdoc">A class to simplify reading data from a byte array.</div><div class="ttdef"><b>Definition</b> <a href="_data_reader_8cs_source.html#l00005">DataReader.cs:6</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_constants_1_1_cipher_suite_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_constants_1_1_cipher_suite.html">HSB.TLS.Constants.CipherSuite</a></div><div class="ttdef"><b>Definition</b> <a href="_cipher_suite_8cs_source.html#l00005">CipherSuite.cs:6</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_custom_t_l_s_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">HSB.TLS.CustomTLS</a></div><div class="ttdef"><b>Definition</b> <a href="_t_l_s_8cs_source.html#l00012">TLS.cs:13</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html">HSB.TLS.Messages.ClientHello</a></div><div class="ttdef"><b>Definition</b> <a href="_client_hello_8cs_source.html#l00005">ClientHello.cs:6</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_messages_1_1_server_hello_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_messages_1_1_server_hello.html">HSB.TLS.Messages.ServerHello</a></div><div class="ttdef"><b>Definition</b> <a href="_server_hello_8cs_source.html#l00005">ServerHello.cs:5</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_t_l_s_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_t_l_s.html">HSB.TLS.TLS</a></div><div class="ttdef"><b>Definition</b> <a href="_t_l_s_8cs_source.html#l00012">TLS.cs:13</a></div></div>
 <div class="ttc" id="ainterface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension_html"><div class="ttname"><a href="interface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension.html">HSB.TLS.Extensions.IExtension</a></div><div class="ttdef"><b>Definition</b> <a href="_i_extension_8cs_source.html#l00007">IExtension.cs:8</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_1_1_t_l_s_1_1_constants_html"><div class="ttname"><a href="namespace_h_s_b_1_1_t_l_s_1_1_constants.html">HSB.TLS.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_cipher_suite_8cs_source.html#l00004">CipherSuite.cs:4</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_1_1_t_l_s_1_1_extensions_html"><div class="ttname"><a href="namespace_h_s_b_1_1_t_l_s_1_1_extensions.html">HSB.TLS.Extensions</a></div><div class="ttdef"><b>Definition</b> <a href="_application_layer_protocol_negotiation_8cs_source.html#l00004">ApplicationLayerProtocolNegotiation.cs:4</a></div></div>

@@ -1,0 +1,8 @@
+img[alt='Logo'] {
+    width: 96px;
+}
+
+img.inline[title='alt text'] {
+    width: 600px;
+    max-width: 600px;
+}

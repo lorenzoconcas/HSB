@@ -9,6 +9,7 @@ var dir_187502d3c353039c1e0023e1d214844d =
     [ "Configuration.cs", "_configuration_8cs_source.html", null ],
     [ "Debugger.cs", "_debugger_8cs_source.html", null ],
     [ "Server.cs", "_server_8cs_source.html", null ],
+    [ "SslConfiguration.cs", "_ssl_configuration_8cs_source.html", null ],
     [ "Terminal.cs", "_terminal_8cs_source.html", null ],
     [ "Utils.cs", "_h_s_b_2_utils_8cs_source.html", null ]
 ];

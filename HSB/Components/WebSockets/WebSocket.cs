@@ -251,10 +251,9 @@ public class WebSocket
         }
     }
 
-    #region PUBLIC METHODS
 
     //this is should be use only by HSB/Server.cs or HSB/Configuration.cs
-    public void Process()
+    internal void Process()
     {
         var frame = new System.Diagnostics.StackTrace().GetFrame(1);
         var method = frame?.GetMethod();
@@ -270,6 +269,7 @@ public class WebSocket
             new Thread(MessageLoop).Start();
         }
     }
+    #region PUBLIC METHODS
     /// <summary>
     /// Sets a message to be sent to the client when the connection is open
     /// </summary>
@@ -408,7 +408,8 @@ public class WebSocket
     /// Returns the current state of the websocket
     /// </summary>
     /// <returns></returns>
-    public WebSocketState GetState(){
+    public WebSocketState GetState()
+    {
         return state;
     }
     #endregion

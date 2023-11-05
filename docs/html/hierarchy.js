@@ -11,10 +11,13 @@ var hierarchy =
     [ "HSB.Configuration", "class_h_s_b_1_1_configuration.html", null ],
     [ "HSB.Cookie", "class_h_s_b_1_1_cookie.html", null ],
     [ "HSB.TLS.Curl", "class_h_s_b_1_1_t_l_s_1_1_curl.html", null ],
+    [ "HSB.Custom", "class_h_s_b_1_1_custom.html", null ],
+    [ "HSB.TLS.CustomTLS", "class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html", null ],
     [ "HSB.DataReader", "class_h_s_b_1_1_data_reader.html", null ],
     [ "HSB.DataWriter", "class_h_s_b_1_1_data_writer.html", null ],
     [ "HSB.Debugger", "class_h_s_b_1_1_debugger.html", null ],
     [ "Exception", null, [
+      [ "DeprecatedTLSVersionException", "class_deprecated_t_l_s_version_exception.html", null ],
       [ "HSB.Exceptions.CookieValuesNotSetException", "class_h_s_b_1_1_exceptions_1_1_cookie_values_not_set_exception.html", null ],
       [ "HSB.Exceptions.InvalidConfigurationParameterException", "class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html", null ],
       [ "HSB.Exceptions.InvalidHttpCodeException", "class_h_s_b_1_1_exceptions_1_1_invalid_http_code_exception.html", null ],
@@ -46,6 +49,7 @@ var hierarchy =
     [ "HSB.Server", "class_h_s_b_1_1_server.html", null ],
     [ "HSB.TLS.Messages.ServerHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_server_hello.html", null ],
     [ "HSB.Servlet", "class_h_s_b_1_1_servlet.html", [
+      [ "HSB.DefaultPages.FileList", "class_h_s_b_1_1_default_pages_1_1_file_list.html", null ],
       [ "HSB.Error", "class_h_s_b_1_1_error.html", null ],
       [ "HSB.Index", "class_h_s_b_1_1_index.html", null ],
       [ "Runner.AssociatedFileServletCustomMethods", "class_runner_1_1_associated_file_servlet_custom_methods.html", null ],
@@ -67,8 +71,10 @@ var hierarchy =
     [ "HSB.Session", "class_h_s_b_1_1_session.html", null ],
     [ "HSB.SessionManager", "class_h_s_b_1_1_session_manager.html", null ],
     [ "Runner.RunnerModels.SimpleObject", "class_runner_1_1_runner_models_1_1_simple_object.html", null ],
+    [ "HSB.SslConfiguration", "class_h_s_b_1_1_ssl_configuration.html", null ],
     [ "HSB.TLS.Constants.SupportedGroupsTypes", "class_h_s_b_1_1_t_l_s_1_1_constants_1_1_supported_groups_types.html", null ],
-    [ "HSB.TLS.TLS", "class_h_s_b_1_1_t_l_s_1_1_t_l_s.html", null ],
+    [ "HSB.SystemTLS", "class_h_s_b_1_1_system_t_l_s.html", null ],
+    [ "HSB.TLSImpl", "class_h_s_b_1_1_t_l_s_impl.html", null ],
     [ "HSB.Components.WebSockets.WebSocket", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket.html", [
       [ "Runner.WebSocketHandler", "class_runner_1_1_web_socket_handler.html", null ]
     ] ],

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['library_0',['Library',['../md__documentation_2_library.html',1,'']]],
-  ['license_1',['LICENSE',['../license.html',1,'']]]
+  ['httpserverboxed_0',['httpserverboxed',['../md__h_s_b_2_readme.html',1,'HttpServerBoxed'],['../index.html',1,'HttpServerBoxed']]]
 ];

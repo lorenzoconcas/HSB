@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extracssfordocumentation.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -24,9 +25,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.11 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -141,7 +142,7 @@ $(document).ready(function(){initNavTree('_index_8cs_source.html',''); initResiz
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            }</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            <span class="comment">//set attributes</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">AddAttribute</a>(<span class="stringliteral">&quot;logo&quot;</span>, logo);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">AddAttribute</a>(<span class="stringliteral">&quot;logo&quot;</span>, logo); <span class="comment">//this break some configurations, logo must be replaced with a smaller image</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">AddAttribute</a>(<span class="stringliteral">&quot;title&quot;</span>, title);</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">AddAttribute</a>(<span class="stringliteral">&quot;serverName&quot;</span>, server_name);</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">AddAttribute</a>(<span class="stringliteral">&quot;footer_div&quot;</span>, footer_div);</div>
@@ -154,16 +155,16 @@ $(document).ready(function(){initNavTree('_index_8cs_source.html',''); initResiz
 </div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00009">Configuration.cs:10</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a6e35d65169ac38e711f72c11b7cf7647"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a6e35d65169ac38e711f72c11b7cf7647">HSB.Configuration.CustomServerName</a></div><div class="ttdeci">string CustomServerName</div><div class="ttdoc">When set, the server will use this name instead of the default one (default is: HSB-#/assembly_versio...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00070">Configuration.cs:70</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00011">Configuration.cs:12</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a6e35d65169ac38e711f72c11b7cf7647"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a6e35d65169ac38e711f72c11b7cf7647">HSB.Configuration.CustomServerName</a></div><div class="ttdeci">string CustomServerName</div><div class="ttdoc">When set, the server will use this name instead of the default one (default is: HSB-#/assembly_versio...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00072">Configuration.cs:72</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_index_html"><div class="ttname"><a href="class_h_s_b_1_1_index.html">HSB.Index</a></div><div class="ttdef"><b>Definition</b> <a href="_index_8cs_source.html#l00007">Index.cs:8</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00008">Request.cs:9</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00013">Response.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a28441b69e0487b1e5231c0f9d4f7571d"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">HSB.Response.AddAttribute</a></div><div class="ttdeci">void AddAttribute(string name, string value)</div><div class="ttdoc">Adds an attribute to the HTML file that will be processed, if it already exists it will be overwritte...</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00366">Response.cs:366</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_response_html_a95d557def4c8f20e9bcf69731ea94676"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, int statusCode=HTTP_CODES.OK, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00094">Response.cs:94</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00010">Request.cs:11</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00014">Response.cs:15</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a28441b69e0487b1e5231c0f9d4f7571d"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a28441b69e0487b1e5231c0f9d4f7571d">HSB.Response.AddAttribute</a></div><div class="ttdeci">void AddAttribute(string name, string value)</div><div class="ttdoc">Adds an attribute to the HTML file that will be processed, if it already exists it will be overwritte...</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00401">Response.cs:401</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a95d557def4c8f20e9bcf69731ea94676"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676">HSB.Response.SendHTMLContent</a></div><div class="ttdeci">void SendHTMLContent(string content, bool process=false, int statusCode=HTTP_CODES.OK, string encoding=&quot;UTF-8&quot;, Dictionary&lt; string, string &gt;? customHeaders=null)</div><div class="ttdoc">Sends an html page passed as string.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00107">Response.cs:107</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_servlet_html"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a></div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00005">Servlet.cs:6</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_servlet_html_a826fdde9fbfe96ffbb897c0a2b3a23e6"><div class="ttname"><a href="class_h_s_b_1_1_servlet.html#a826fdde9fbfe96ffbb897c0a2b3a23e6">HSB.Servlet.ReadFromResources</a></div><div class="ttdeci">static string ReadFromResources(string resourceName)</div><div class="ttdoc">Extract a string from an embedded resource.</div><div class="ttdef"><b>Definition</b> <a href="_h_s_b_2_components_2_servlet_8cs_source.html#l00055">Servlet.cs:55</a></div></div>
-<div class="ttc" id="anamespace_h_s_b_1_1_constants_html"><div class="ttname"><a href="namespace_h_s_b_1_1_constants.html">HSB.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_http_codes_8cs_source.html#l00001">HttpCodes.cs:1</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_constants_html"><div class="ttname"><a href="namespace_h_s_b_1_1_constants.html">HSB.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_block_mode_8cs_source.html#l00001">BlockMode.cs:1</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

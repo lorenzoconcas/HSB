@@ -2,7 +2,7 @@
 Here will be explained how to use the core library (HSB.dll)
 
 ### Basic information
-This information is up to date until commit [6a776ad](https://github.com/lorenzoconcas/HSB/commit/6a776ade800e7d323a00361c02a2a300b71d5066)
+This information is up to date until commit [1da2a6f](https://github.com/lorenzoconcas/HSB/commit/1da2a6f0a73124c63f5853276c6f6b3bcef7af64) (5 November 2023)
 
 To include the library you must follow your IDE instruction
 
@@ -20,54 +20,12 @@ Configuration c = new();
 new Server(c).Start();
 ```
 -----
-### The Configuration Class
-The default Configuration constructor holds the following properties:
 
-| Property name    | Default value | C# Type | Description                                                                                                                                          |
-|------------------|---------------|---------|:-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| ```address```          | ```127.0.0.1```     | string  | The server will be visibile only to the running machine, to expose it to the network you must provide a valid ip address or pass an empty string (?) |
-| ```port```             | ```8080```          | int     | The listening port of the server                                                                                                                     |
-| ```staticFolderPath``` | ```./static```      | string  | This is the folder where the server will attempt to find public files                                                                                |
-| ```requestMaxSize```   | ```1024``` (1MB)    | int     | Set the max size of an HTTP request                                                                                                                  |
-| ```verbose```          | ```true```          | boolean | Whether or not print the log to the console                                                                                                          |
-| ```defaultSessionExpirationTime```          | ```true```          | long | The lifespan in Ticks of the Session                                                                                                          |
+This will make the server listen to any address (IPv4 and IPv6) on port 8080
+All parameters are documented [here](./Configuration.md)
 
 
-The configuration class provides also some utilities, like object sharing between servlets (so you can avoid to use the singleton tecnique) and global headers (used to append custom headers to ALL responses)
-
-##### Shared Objects
-
-| Signature                                  | Description                              |
-|--------------------------------------------|------------------------------------------|
-| ```void AddSharedObject(string, object)``` | Add an object shared between all servlet |
-| ```object GetSharedObject(string)``` | Get an object shared between all servlet |
-| ```object RemoveSharedObject(string)``` | Remove an object shared between all servlet |
-
-##### Global Headers
-
-| Signature                                  | Description                              |
-|--------------------------------------------|------------------------------------------|
-| ```void AddCustomGlobalHeader(string, string)``` | Add an HTTP Response header that will be added to ALL the responses |
-| ```void RemoveCustomGlobalHeader(string, string)``` | Remove a global HTTP Response header previously added |
-| ```void GetCustomGlobalHeader(string, string)``` | Gets the value of a global HTTP Response header previously added |
-| ```void Dictionary<string, string> GetCustomGlobalHeaders``` |  Gets all globabl HTTP Response headers  |
-
-##### Global Cookies
-Cookies added to each request
-
-| Signature                                  | Description                              |
-|--------------------------------------------|------------------------------------------|
-| ```void AddCustomGlobalCookie(string, string)``` | Add (Or replaces) a cookie that will be added to ALL the responses |
-| ```void RemoveCustomGlobalCookie(string, string)``` | Remove a global cookie previously added |
-| ```void GetCustomGlobalCookie(string, string)``` | Gets the value of a global cookie previously added |
-| ```void Dictionary<string, string> GetCustomGlobalCookies``` |  Gets all global cookies  |
-
-
------
-
-## API & F.A.Q.
-
-HSB provides different function to create routes and to send replys to the client
+## API & Quick F.A.Q.
 
 
 ### How to define a route?
@@ -77,7 +35,7 @@ There are two ways, one is like the nodejs library ExpressJS, the other is follo
 
 ### ExpressJS-like
 
-The configuration class provides 5 methods to handle the various HTTP methods :  `GET; POST; HEAD; PUT; DELETE; PATCH; TRACE; OPTIONS; CONNECT`
+The configuration class provides 9 methods to handle the various HTTP methods :  `GET; POST; HEAD; PUT; DELETE; PATCH; TRACE; OPTIONS; CONNECT`
 These methods require two arguments, one is the path and the other one is a delegate that will handle the call.
 Example:
 
@@ -97,7 +55,7 @@ Note that custom HTTP Methods are not supported by this routing style, therefore
 ### "Classic" method
 
 To create a routing in the classic method you create a class that extends the Servlet base class, the constructor MUST have two parameters : Request and Response, and pass them to the base class
-The new class also needs the **Binding attribute,** that requires a string (the path) and optionally a boolean indicating whether or not that servlet must handle all routes starting with the given path.
+The new class also needs the **Binding Attribute,** that requires a string (the path) and optionally a boolean indicating whether or not that servlet must handle all routes starting with the given path.
 Example: 
 
 ```cs
@@ -178,98 +136,16 @@ Example request header:
 MyCustomHTTPMethod / HTTP/1.1
 ```
 
-# The Request Class
+Both the ExpressJS-like mapping and Servlet class contains a reference to the "Request" and "Response" class, optionally they can also hold the Configuration.
+Details about the Request class can be found [here](./Request.md), while for Response [here](./Response.md)
 
-In this class there are some utilities to better handle the request itself
+All information about ExpressJS mapping and Servlet are available [here](./servlets.md)
 
-
-| Signature                                | Type     | Description                                                 |
-|------------------------------------------|----------|:------------------------------------------------------------|
-| ```HTTP_METHOD METHOD```                      | Property | Returns an enum reppresentating the request method          |
-| ```HTTP_PROTOCOL PROTOCOL```                   | Property | Returns an enum reppresentating the request protocol        |
-| ```string URL```                               | Property | Returns the request URL                                     |
-| ```string RawBody```                           | Property | Returns the raw request body (useful in case like json ecc) |
-| ```Dictionary<string, string> GetHeaders```    | Property | Returns the parsed headers of the request                   |
-| ```List<string> GetRawHeaders```              | Property | Returns the raw headers of the request                      |
-| ```Dictionary<string, string> GetParameters``` | Property | Returns the parameters present in the URL                   |
-| ```Session GetSession()```                         | Function | Returns the session associated with the request       |
-| ```bool IsJSON()```                         | Function | Returns whether a request contains a json file or not       |
-
-# The Session Class
-A session is created every time a request without the cookie "hsbst" is made.
+----------
+## SSL 
+To make HSB use the SSL/TLS mode you must provide a valid certificate and modify the configuration. See [set SSL ](./SSL.md) for more information
 
 
-# The Response Class
-
-### Included methods
-
-#### Complex methods
-These methods are more used by the library then by users, but are still available, for example user can bypass the entire elaboration usually made by the library and send what it wants to the client.
-All methods have void return type, so it's omitted here.
-
-| Signature               | Description                    |
-|-------------------------|--------------------------------|
-| ```Send(byte[])``` | Sends a byte array as response |
-| ```Send(string, string?, int, Dictionary<string, string>)``` | Sends a string a content, with optional mimetype, custom status code (default is 200), optional custom headers|
-| ```Send(int)``` | Send a response with empty body and custom status code, short-hand for SendCode(int) |
-| ```SendCode(int)``` | Like Send(int) |
-
-#### Shorts and for common HTTP Status response codes
-
-| Signature               | Description                    |
-|-------------------------|--------------------------------|
-| ```E400()``` | Shorthand for SendCode(400) |
-| ```E401()``` | Shorthand for SendCode(401) |
-| ```E404()``` | Shorthand for SendCode(404) |
-| ```E500()``` | Shorthand for SendCode(500) |
-
-
-#### Common methods
-
-| Signature               | Description                    |
-|-------------------------|--------------------------------|
-| ```SendHTMLPage(string, bool, Dictionary<string, string>?)``` | Sends and HTML Page loaded from disk as given path, optionally processes it (default false), optional custom headers |
-| ```SendHTMLContent(string, bool, string, Dictionary<string, string>?)``` | Sends an HTML content, optional processing, optional custom headers, is analog to SendHTMLPage but content is passed as parameter |
-| ```SendFile(string, string?, int, Dictionary<string, string>?)``` | Send a file loaded from the given path (absolute), optional mimetype (default autodetected), optionl headers |
-| ```SendFile(byte[] data, string?, int, Dictionary<string, string>?)``` | Same as the other SendFile, but instead of path takes the byte array to be sent |
-
-##### JSON-related response methods
-
-| Signature               | Description                    |
-|-------------------------|--------------------------------|
-| ```JSON(string)``` | Sends a string as JSON |
-| ```JSON<T>(T, bool)``` | Sends an object that will be serialized and sent as JSON string, boolean to set if include fields or not, default true |
-| ```JSON<T>(T, JsonSerializerOptions)``` | Same as JSON<T>(T, bool) but with possibily to set option of the serializer |
-| ```SendJSON(string)``` | Not-so shorthand for JSON(string) |
-| ```SendJSON<T>(T, bool)``` | Not-so shorthand for JSON<T>(T, bool) |
-| ```SendJSON<T>(T, JsonSerializerOptions)``` | Not-so shorthand for JSON<T>(T, JsonSerializerOptions)  |
-
-
-##### HTML-processing related response methods
-Methods realated to the process of the HTML files, it works like JSP SetAttribute 
-The values inside this characters:  #{} will be replaced
-
-```cs
-res.AddAttribute("valueToBeReplaced", "value");
-```
-
-```html
-<h1>#{valueToBeReplaced}</h1>
-```
-Will result In :
-
-```html
-<h1>value</h1>
-```
-An example usage of this function is in the default pages of the server, located at HSB.DefaultPages, in the classes Index.cs and Error.cs, where the HSB version is set this way
-
-| Signature               | Description                    |
-|-------------------------|--------------------------------|
-| ```AddAttribute(string, string)``` | Adds a parameter to be replaced with the given value |
-| ```RemoveAttribute(string)``` | Remove a parameter |
-| ```GetAttribute(string)``` | Retrieves the value of the given parameter name |
-
-
-## Examples
-
-You can use the TestRunner project as example, more will be added in future
+## WebSocket
+HSB support the creation of WebSockets, these follow a structure similar to the servlets but with different functions for sending data
+A complete guide is available [here](./WebSockets.md) 

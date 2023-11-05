@@ -12,6 +12,9 @@ var annotated_dup =
         [ "FormPart", "class_h_s_b_1_1_components_1_1_form_part.html", null ],
         [ "MultiPartFormData", "class_h_s_b_1_1_components_1_1_multi_part_form_data.html", "class_h_s_b_1_1_components_1_1_multi_part_form_data" ]
       ] ],
+      [ "DefaultPages", "namespace_h_s_b_1_1_default_pages.html", [
+        [ "FileList", "class_h_s_b_1_1_default_pages_1_1_file_list.html", "class_h_s_b_1_1_default_pages_1_1_file_list" ]
+      ] ],
       [ "Exceptions", "namespace_h_s_b_1_1_exceptions.html", [
         [ "CookieValuesNotSetException", "class_h_s_b_1_1_exceptions_1_1_cookie_values_not_set_exception.html", null ],
         [ "InvalidConfigurationParameterException", "class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html", null ],
@@ -38,8 +41,8 @@ var annotated_dup =
           [ "ServerHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_server_hello.html", null ]
         ] ],
         [ "Curl", "class_h_s_b_1_1_t_l_s_1_1_curl.html", "class_h_s_b_1_1_t_l_s_1_1_curl" ],
-        [ "ProtocolVersion", "class_h_s_b_1_1_t_l_s_1_1_protocol_version.html", "class_h_s_b_1_1_t_l_s_1_1_protocol_version" ],
-        [ "TLS", "class_h_s_b_1_1_t_l_s_1_1_t_l_s.html", null ]
+        [ "CustomTLS", "class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html", null ],
+        [ "ProtocolVersion", "class_h_s_b_1_1_t_l_s_1_1_protocol_version.html", "class_h_s_b_1_1_t_l_s_1_1_protocol_version" ]
       ] ],
       [ "WebSockets", "namespace_h_s_b_1_1_web_sockets.html", [
         [ "WebSocket", "class_h_s_b_1_1_web_sockets_1_1_web_socket.html", null ]
@@ -48,6 +51,7 @@ var annotated_dup =
       [ "Binding", "class_h_s_b_1_1_binding.html", null ],
       [ "Configuration", "class_h_s_b_1_1_configuration.html", "class_h_s_b_1_1_configuration" ],
       [ "Cookie", "class_h_s_b_1_1_cookie.html", null ],
+      [ "Custom", "class_h_s_b_1_1_custom.html", null ],
       [ "DataReader", "class_h_s_b_1_1_data_reader.html", "class_h_s_b_1_1_data_reader" ],
       [ "DataWriter", "class_h_s_b_1_1_data_writer.html", "class_h_s_b_1_1_data_writer" ],
       [ "Debugger", "class_h_s_b_1_1_debugger.html", null ],
@@ -59,7 +63,10 @@ var annotated_dup =
       [ "Server", "class_h_s_b_1_1_server.html", null ],
       [ "Servlet", "class_h_s_b_1_1_servlet.html", null ],
       [ "Session", "class_h_s_b_1_1_session.html", null ],
-      [ "SessionManager", "class_h_s_b_1_1_session_manager.html", null ]
+      [ "SessionManager", "class_h_s_b_1_1_session_manager.html", null ],
+      [ "SslConfiguration", "class_h_s_b_1_1_ssl_configuration.html", "class_h_s_b_1_1_ssl_configuration" ],
+      [ "SystemTLS", "class_h_s_b_1_1_system_t_l_s.html", null ],
+      [ "TLSImpl", "class_h_s_b_1_1_t_l_s_impl.html", null ]
     ] ],
     [ "HSBStandalone", "namespace_h_s_b_standalone.html", [
       [ "HSBStandalone", "class_h_s_b_standalone_1_1_h_s_b_standalone.html", null ]
@@ -90,5 +97,6 @@ var annotated_dup =
     [ "Template", "namespace_template.html", [
       [ "Servlet", "class_template_1_1_servlet.html", null ]
     ] ],
+    [ "DeprecatedTLSVersionException", "class_deprecated_t_l_s_version_exception.html", null ],
     [ "PluginLoadContext", "class_plugin_load_context.html", null ]
 ];

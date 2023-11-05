@@ -134,7 +134,7 @@ public class Configuration
 
         try
         {
-            Address = root.GetProperty("Address").GetString() ?? "127.0.0.1";
+            Address = root.GetProperty("Address").GetString() ?? "";
             Port = root.GetProperty("Port").GetInt16();
             StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
             Debug = Debugger.FromJson(root.GetProperty("Debug"));

@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extracssfordocumentation.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -24,9 +25,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.11 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -93,6 +94,7 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_configuration.html',''
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
@@ -110,12 +112,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9ed733219b854a37a087ca712e721680" id="r_a9ed733219b854a37a087ca712e721680"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a9ed733219b854a37a087ca712e721680">Configuration</a> ()</td></tr>
 <tr class="memdesc:a9ed733219b854a37a087ca712e721680"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a default fail-safe configuration (still, the port could be in use)  <br /></td></tr>
 <tr class="separator:a9ed733219b854a37a087ca712e721680"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf57bf96671949e7f6bbb0cc5966732e" id="r_adf57bf96671949e7f6bbb0cc5966732e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#adf57bf96671949e7f6bbb0cc5966732e">Configuration</a> (string jsonContent)</td></tr>
-<tr class="memdesc:adf57bf96671949e7f6bbb0cc5966732e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate configuration from a json file (content passed as string)  <br /></td></tr>
-<tr class="separator:adf57bf96671949e7f6bbb0cc5966732e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e7da306c3d4bbd18bea424b15fc5fe2" id="r_a8e7da306c3d4bbd18bea424b15fc5fe2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a8e7da306c3d4bbd18bea424b15fc5fe2">Configuration</a> (string <a class="el" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>, int <a class="el" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a>, string staticPath, <a class="el" href="class_h_s_b_1_1_debugger.html">Debugger</a>? debugInfo=null, bool IPv4Only=false)</td></tr>
-<tr class="memdesc:a8e7da306c3d4bbd18bea424b15fc5fe2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate a configuration with the base settings.  <br /></td></tr>
-<tr class="separator:a8e7da306c3d4bbd18bea424b15fc5fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25555c41e54a0e9c3595f69e1fe6dc58" id="r_a25555c41e54a0e9c3595f69e1fe6dc58"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a25555c41e54a0e9c3595f69e1fe6dc58">Configuration</a> (string content)</td></tr>
+<tr class="memdesc:a25555c41e54a0e9c3595f69e1fe6dc58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate configuration from a json file (content passed as string)  <br /></td></tr>
+<tr class="separator:a25555c41e54a0e9c3595f69e1fe6dc58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8d9a0e0227d6abe4e9dd2fa61387ffd" id="r_ae8d9a0e0227d6abe4e9dd2fa61387ffd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#ae8d9a0e0227d6abe4e9dd2fa61387ffd">Configuration</a> (string address, int port, string staticPath, <a class="el" href="class_h_s_b_1_1_debugger.html">Debugger</a>? debugInfo=null, <a class="el" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a> ipMode=IPMode.ANY, int requestMaxSize=<a class="el" href="class_h_s_b_1_1_configuration.html#ad25c25b3295ccd92cd5d34963b6e464a">KILOBYTE</a>, ulong? defaultSessionExpirationTime=null, <a class="el" href="class_h_s_b_1_1_ssl_configuration.html">SslConfiguration</a>? sslConfiguration=null)</td></tr>
+<tr class="memdesc:ae8d9a0e0227d6abe4e9dd2fa61387ffd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate a configuration with the minimal settings.  <br /></td></tr>
+<tr class="separator:ae8d9a0e0227d6abe4e9dd2fa61387ffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac415ee0628588a7ac99eff5f67d68be3" id="r_ac415ee0628588a7ac99eff5f67d68be3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#ac415ee0628588a7ac99eff5f67d68be3">SaveToJson</a> (string path)</td></tr>
+<tr class="memdesc:ac415ee0628588a7ac99eff5f67d68be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the current configuration to a json file.  <br /></td></tr>
+<tr class="separator:ac415ee0628588a7ac99eff5f67d68be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af455c7c63d8704292b35d3d46abb83b5" id="r_af455c7c63d8704292b35d3d46abb83b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#af455c7c63d8704292b35d3d46abb83b5">GET</a> (string path, Delegate func)</td></tr>
 <tr class="memdesc:af455c7c63d8704292b35d3d46abb83b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map a function to a path that will reply with a GET response.  <br /></td></tr>
 <tr class="separator:af455c7c63d8704292b35d3d46abb83b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,6 +175,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a33482453f5bc98b504cb13bd64c4a911" id="r_a33482453f5bc98b504cb13bd64c4a911"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_h_s_b_1_1_cookie.html">Cookie</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a33482453f5bc98b504cb13bd64c4a911">GetCustomGlobalCookie</a> (string name)</td></tr>
 <tr class="memdesc:a33482453f5bc98b504cb13bd64c4a911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of a global cookie previously added.  <br /></td></tr>
 <tr class="separator:a33482453f5bc98b504cb13bd64c4a911"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6c5076e937b2883dbaf7ceb950093d5" id="r_af6c5076e937b2883dbaf7ceb950093d5"><td class="memItemLeft" align="right" valign="top"><a id="af6c5076e937b2883dbaf7ceb950093d5" name="af6c5076e937b2883dbaf7ceb950093d5"></a>
+List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetRawArguments</b> ()</td></tr>
+<tr class="separator:af6c5076e937b2883dbaf7ceb950093d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63519eea54f72d6433328f1901ae229c" id="r_a63519eea54f72d6433328f1901ae229c"><td class="memItemLeft" align="right" valign="top"><a id="a63519eea54f72d6433328f1901ae229c" name="a63519eea54f72d6433328f1901ae229c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>HideBrandingOnStartup</b> ()</td></tr>
 <tr class="separator:a63519eea54f72d6433328f1901ae229c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,32 +187,56 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>HideBrandingOnStartup
 <tr class="memitem:acd6e5d7ad76ccf36c050ee657bed538b" id="r_acd6e5d7ad76ccf36c050ee657bed538b"><td class="memItemLeft" align="right" valign="top">List&lt; Tuple&lt; string, string &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#acd6e5d7ad76ccf36c050ee657bed538b">GetAllRoutes</a> ()</td></tr>
 <tr class="separator:acd6e5d7ad76ccf36c050ee657bed538b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a83a32fe56213a0b09b209e664236d3eb" id="r_a83a32fe56213a0b09b209e664236d3eb"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_h_s_b_1_1_configuration.html">Configuration</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a83a32fe56213a0b09b209e664236d3eb">LoadFromJson</a> (string path)</td></tr>
+<tr class="memdesc:a83a32fe56213a0b09b209e664236d3eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate configuration from a json file passed as parameter.  <br /></td></tr>
+<tr class="separator:a83a32fe56213a0b09b209e664236d3eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a437e586fdb583aa9bef15afe7824ca33" id="r_a437e586fdb583aa9bef15afe7824ca33"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a></td></tr>
-<tr class="memdesc:a437e586fdb583aa9bef15afe7824ca33"><td class="mdescLeft">&#160;</td><td class="mdescRight">The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) //check this.  <br /></td></tr>
-<tr class="separator:a437e586fdb583aa9bef15afe7824ca33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfb831e3fb1d043258847109a2065439" id="r_adfb831e3fb1d043258847109a2065439"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a></td></tr>
-<tr class="memdesc:adfb831e3fb1d043258847109a2065439"><td class="mdescLeft">&#160;</td><td class="mdescRight">The server listening port.  <br /></td></tr>
-<tr class="separator:adfb831e3fb1d043258847109a2065439"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a706f609b54eb9a95f831993698808456" id="r_a706f609b54eb9a95f831993698808456"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a706f609b54eb9a95f831993698808456">staticFolderPath</a></td></tr>
-<tr class="memdesc:a706f609b54eb9a95f831993698808456"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates the location where all static files will be searched and served from.  <br /></td></tr>
-<tr class="separator:a706f609b54eb9a95f831993698808456"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a521c9e5e0ac575cef7602bdc16c3899f" id="r_a521c9e5e0ac575cef7602bdc16c3899f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_h_s_b_1_1_debugger.html">Debugger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a></td></tr>
-<tr class="memdesc:a521c9e5e0ac575cef7602bdc16c3899f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds all debug information and routines.  <br /></td></tr>
-<tr class="separator:a521c9e5e0ac575cef7602bdc16c3899f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ce77e3d9596a6150857088415f30d98" id="r_a5ce77e3d9596a6150857088415f30d98"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">requestMaxSize</a></td></tr>
-<tr class="memdesc:a5ce77e3d9596a6150857088415f30d98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specifies the size in bytes of the buffer that will contain the HTTP request.  <br /></td></tr>
-<tr class="separator:a5ce77e3d9596a6150857088415f30d98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b5fd3027ef77e20707b0f58607a1c2a" id="r_a2b5fd3027ef77e20707b0f58607a1c2a"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a></td></tr>
+<tr class="memdesc:a2b5fd3027ef77e20707b0f58607a1c2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address)  <br /></td></tr>
+<tr class="separator:a2b5fd3027ef77e20707b0f58607a1c2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a404826d0febee64b2f3498036e5f636b" id="r_a404826d0febee64b2f3498036e5f636b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">Port</a></td></tr>
+<tr class="memdesc:a404826d0febee64b2f3498036e5f636b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The server listening port.  <br /></td></tr>
+<tr class="separator:a404826d0febee64b2f3498036e5f636b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08fbe19d91dfdd52caf6dac4f98b519f" id="r_a08fbe19d91dfdd52caf6dac4f98b519f"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a08fbe19d91dfdd52caf6dac4f98b519f">StaticFolderPath</a></td></tr>
+<tr class="memdesc:a08fbe19d91dfdd52caf6dac4f98b519f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates the location where all static files will be searched and served from.  <br /></td></tr>
+<tr class="separator:a08fbe19d91dfdd52caf6dac4f98b519f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b3a0ba00cf393dfa8eb89d2a9b3a805" id="r_a7b3a0ba00cf393dfa8eb89d2a9b3a805"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_h_s_b_1_1_debugger.html">Debugger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a></td></tr>
+<tr class="memdesc:a7b3a0ba00cf393dfa8eb89d2a9b3a805"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds all debug information and routines.  <br /></td></tr>
+<tr class="separator:a7b3a0ba00cf393dfa8eb89d2a9b3a805"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa260c9d1bc475cfd186e138d840f2c68" id="r_aa260c9d1bc475cfd186e138d840f2c68"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68">RequestMaxSize</a></td></tr>
+<tr class="memdesc:aa260c9d1bc475cfd186e138d840f2c68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specifies the size in bytes of the buffer that will contain the HTTP request.  <br /></td></tr>
+<tr class="separator:aa260c9d1bc475cfd186e138d840f2c68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a22eb67f9bcac434dafec9533398db240" id="r_a22eb67f9bcac434dafec9533398db240"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a> = false</td></tr>
 <tr class="memdesc:a22eb67f9bcac434dafec9533398db240"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hide the <a class="el" href="namespace_h_s_b.html">HSB</a> logo on startup.  <br /></td></tr>
 <tr class="separator:a22eb67f9bcac434dafec9533398db240"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad253db7ca802690ae4278904d67492d2" id="r_ad253db7ca802690ae4278904d67492d2"><td class="memItemLeft" align="right" valign="top">ulong&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#ad253db7ca802690ae4278904d67492d2">defaultSessionExpirationTime</a></td></tr>
-<tr class="memdesc:ad253db7ca802690ae4278904d67492d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the expiration time of the session.  <br /></td></tr>
-<tr class="separator:ad253db7ca802690ae4278904d67492d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09145149545f4e5538c785579ccccf83" id="r_a09145149545f4e5538c785579ccccf83"><td class="memItemLeft" align="right" valign="top">ulong&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a09145149545f4e5538c785579ccccf83">DefaultSessionExpirationTime</a></td></tr>
+<tr class="memdesc:a09145149545f4e5538c785579ccccf83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the expiration time of the session.  <br /></td></tr>
+<tr class="separator:a09145149545f4e5538c785579ccccf83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e35d65169ac38e711f72c11b7cf7647" id="r_a6e35d65169ac38e711f72c11b7cf7647"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a6e35d65169ac38e711f72c11b7cf7647">CustomServerName</a> = &quot;&quot;</td></tr>
 <tr class="memdesc:a6e35d65169ac38e711f72c11b7cf7647"><td class="mdescLeft">&#160;</td><td class="mdescRight">When set, the server will use this name instead of the default one (default is: HSB-#/assembly_version (os_version))  <br /></td></tr>
 <tr class="separator:a6e35d65169ac38e711f72c11b7cf7647"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a044a463e6cd75bcbbf7073a3e6035f9d" id="r_a044a463e6cd75bcbbf7073a3e6035f9d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a044a463e6cd75bcbbf7073a3e6035f9d">IPAutoblock</a> = false</td></tr>
+<tr class="memdesc:a044a463e6cd75bcbbf7073a3e6035f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">If this is set, the server will block the IP of the client if they try to access unsafe paths.  <br /></td></tr>
+<tr class="separator:a044a463e6cd75bcbbf7073a3e6035f9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a910a07a963f5377c6e376a427aaf82a0" id="r_a910a07a963f5377c6e376a427aaf82a0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_h_s_b_1_1_constants.html#a2251796566c9606a1c146d792c4902a4">BLOCK_MODE</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a910a07a963f5377c6e376a427aaf82a0">BlockMode</a> = BLOCK_MODE.NONE</td></tr>
+<tr class="memdesc:a910a07a963f5377c6e376a427aaf82a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting this to BlockMode.WhiteList will make the server accept only requests from ip presents in ip_whitelist.txt if set to BlockMode.BlackList will ban requests from ip presents in ip_blacklist.txt.  <br /></td></tr>
+<tr class="separator:a910a07a963f5377c6e376a427aaf82a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14912c05081f54a504a8582f979a9ba4" id="r_a14912c05081f54a504a8582f979a9ba4"><td class="memItemLeft" align="right" valign="top">List&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a14912c05081f54a504a8582f979a9ba4">PermanentIPList</a> = new()</td></tr>
+<tr class="memdesc:a14912c05081f54a504a8582f979a9ba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">This list contains all the IP addresses that will be allowed/denied to access the server, it's behavior depends on the blockMode If blockmode is set to BlockMode.OKLIST, only the IP addresses in this list will be allowed to access the server If blockmode is set to BlockMode.BANLIST, the IP addresses in this list will be banned from accessing the server.  <br /></td></tr>
+<tr class="separator:a14912c05081f54a504a8582f979a9ba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accad064ebef5991c910d7ab3942bda68" id="r_accad064ebef5991c910d7ab3942bda68"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#accad064ebef5991c910d7ab3942bda68">ServeEmbeddedResource</a> = false</td></tr>
+<tr class="memdesc:accad064ebef5991c910d7ab3942bda68"><td class="mdescLeft">&#160;</td><td class="mdescRight">If set to true, the server will try to search for the requested resource in the assembly resources if fails to find it, the usual chain of execution will be followed.  <br /></td></tr>
+<tr class="separator:accad064ebef5991c910d7ab3942bda68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa23df3b3a87a58d1da0cbcfb631a2c38" id="r_aa23df3b3a87a58d1da0cbcfb631a2c38"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#aa23df3b3a87a58d1da0cbcfb631a2c38">EmbeddedResourcePrefix</a> = &quot;&quot;</td></tr>
+<tr class="memdesc:aa23df3b3a87a58d1da0cbcfb631a2c38"><td class="mdescLeft">&#160;</td><td class="mdescRight">If ServeEmbeddedResource is set to true, this will be prepended to the requested resource ex: if the requested resource is /index.html and the prefix is set to "www" the server will search for the resource in the assembly resources at www/index.html.  <br /></td></tr>
+<tr class="separator:aa23df3b3a87a58d1da0cbcfb631a2c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad31c9beaf15c8eab28aa364e1303df02" id="r_ad31c9beaf15c8eab28aa364e1303df02"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html">SslConfiguration</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a></td></tr>
+<tr class="memdesc:ad31c9beaf15c8eab28aa364e1303df02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the SSL configuration properties.  <br /></td></tr>
+<tr class="separator:ad31c9beaf15c8eab28aa364e1303df02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -229,9 +261,9 @@ Protected Attributes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="properties" name="properties"></a>
 Properties</h2></td></tr>
-<tr class="memitem:a3025ea1c01dc586c6de9a73b9f07fead" id="r_a3025ea1c01dc586c6de9a73b9f07fead"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a><code> [get, set]</code></td></tr>
-<tr class="memdesc:a3025ea1c01dc586c6de9a73b9f07fead"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets if the server must listen only to IPv4.  <br /></td></tr>
-<tr class="separator:a3025ea1c01dc586c6de9a73b9f07fead"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89bcd63e087d9b9727ebd98c8c0a0f73" id="r_a89bcd63e087d9b9727ebd98c8c0a0f73"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:a89bcd63e087d9b9727ebd98c8c0a0f73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to "".  <br /></td></tr>
+<tr class="separator:a89bcd63e087d9b9727ebd98c8c0a0f73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76c7cfe6eb881da5ef5e7c3e39faaa7f" id="r_a76c7cfe6eb881da5ef5e7c3e39faaa7f"><td class="memItemLeft" align="right" valign="top">Dictionary&lt; string, string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_configuration.html#a76c7cfe6eb881da5ef5e7c3e39faaa7f">CustomGlobalHeaders</a><code> [get]</code></td></tr>
 <tr class="memdesc:a76c7cfe6eb881da5ef5e7c3e39faaa7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all global HTTP Response headers.  <br /></td></tr>
 <tr class="separator:a76c7cfe6eb881da5ef5e7c3e39faaa7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -242,7 +274,7 @@ Properties</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class contains all the settings of the server. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00009">9</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00011">11</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9ed733219b854a37a087ca712e721680" name="a9ed733219b854a37a087ca712e721680"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9ed733219b854a37a087ca712e721680">&#9670;&#160;</a></span>Configuration() <span class="overload">[1/3]</span></h2>
@@ -261,30 +293,33 @@ Properties</h2></td></tr>
 
 <p>Creates a default fail-safe configuration (still, the port could be in use) </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00074">74</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   75</span>        {</div>
-<div class="line"><span class="lineno">   76</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a> = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><span class="lineno">   77</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a> = 8080;</div>
-<div class="line"><span class="lineno">   78</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a706f609b54eb9a95f831993698808456">staticFolderPath</a> = <span class="stringliteral">&quot;./static&quot;</span>;</div>
-<div class="line"><span class="lineno">   79</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a> = <span class="keyword">new</span> Debugger();</div>
-<div class="line"><span class="lineno">   80</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">requestMaxSize</a> = <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad25c25b3295ccd92cd5d34963b6e464a">KILOBYTE</a>; <span class="comment">//max 1KB Requests default</span></div>
-<div class="line"><span class="lineno">   81</span>            <a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a> = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">   82</span>            <span class="comment">//default one day</span></div>
-<div class="line"><span class="lineno">   83</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad253db7ca802690ae4278904d67492d2">defaultSessionExpirationTime</a> = (ulong)TimeSpan.FromDays(1).Ticks;</div>
-<div class="line"><span class="lineno">   84</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a3025ea1c01dc586c6de9a73b9f07fead"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">HSB.Configuration.UseIPv4Only</a></div><div class="ttdeci">bool UseIPv4Only</div><div class="ttdoc">Sets if the server must listen only to IPv4.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00022">Configuration.cs:22</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a437e586fdb583aa9bef15afe7824ca33"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">HSB.Configuration.address</a></div><div class="ttdeci">string address</div><div class="ttdoc">The server listening address, ex : &quot;127.0.0.1&quot; or &quot;192.168.1.2&quot; or &quot;&quot; (for any address) //check this.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00014">Configuration.cs:14</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a521c9e5e0ac575cef7602bdc16c3899f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">HSB.Configuration.debug</a></div><div class="ttdeci">Debugger debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00030">Configuration.cs:30</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a5ce77e3d9596a6150857088415f30d98"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">HSB.Configuration.requestMaxSize</a></div><div class="ttdeci">int requestMaxSize</div><div class="ttdoc">Specifies the size in bytes of the buffer that will contain the HTTP request.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00034">Configuration.cs:34</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a706f609b54eb9a95f831993698808456"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a706f609b54eb9a95f831993698808456">HSB.Configuration.staticFolderPath</a></div><div class="ttdeci">string staticFolderPath</div><div class="ttdoc">Indicates the location where all static files will be searched and served from.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00026">Configuration.cs:26</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_ad253db7ca802690ae4278904d67492d2"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#ad253db7ca802690ae4278904d67492d2">HSB.Configuration.defaultSessionExpirationTime</a></div><div class="ttdeci">ulong defaultSessionExpirationTime</div><div class="ttdoc">Sets the expiration time of the session.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00062">Configuration.cs:62</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_ad25c25b3295ccd92cd5d34963b6e464a"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#ad25c25b3295ccd92cd5d34963b6e464a">HSB.Configuration.KILOBYTE</a></div><div class="ttdeci">const int KILOBYTE</div><div class="ttdoc">Defines the size of a kilobyte in bytes, useful to set the requestMaxSize.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00038">Configuration.cs:38</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_adfb831e3fb1d043258847109a2065439"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">HSB.Configuration.port</a></div><div class="ttdeci">int port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00018">Configuration.cs:18</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00113">113</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  114</span>    {</div>
+<div class="line"><span class="lineno">  115</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a> = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  116</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">Port</a> = 8080;</div>
+<div class="line"><span class="lineno">  117</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a08fbe19d91dfdd52caf6dac4f98b519f">StaticFolderPath</a> = <span class="stringliteral">&quot;&quot;</span>; <span class="comment">//no static file support if not set</span></div>
+<div class="line"><span class="lineno">  118</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a> = <span class="keyword">new</span> Debugger();</div>
+<div class="line"><span class="lineno">  119</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68">RequestMaxSize</a> = <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad25c25b3295ccd92cd5d34963b6e464a">KILOBYTE</a>; <span class="comment">//max 1KB Requests default</span></div>
+<div class="line"><span class="lineno">  120</span>        <a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a> = <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>.ANY; <span class="comment">//listen to both ipv6 and ipv4</span></div>
+<div class="line"><span class="lineno">  121</span>        <span class="comment">//default one day</span></div>
+<div class="line"><span class="lineno">  122</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a09145149545f4e5538c785579ccccf83">DefaultSessionExpirationTime</a> = (ulong)TimeSpan.FromDays(1).Ticks;</div>
+<div class="line"><span class="lineno">  123</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a> = <span class="keyword">new</span> SslConfiguration();</div>
+<div class="line"><span class="lineno">  124</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a08fbe19d91dfdd52caf6dac4f98b519f"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a08fbe19d91dfdd52caf6dac4f98b519f">HSB.Configuration.StaticFolderPath</a></div><div class="ttdeci">string StaticFolderPath</div><div class="ttdoc">Indicates the location where all static files will be searched and served from.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00028">Configuration.cs:28</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a09145149545f4e5538c785579ccccf83"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a09145149545f4e5538c785579ccccf83">HSB.Configuration.DefaultSessionExpirationTime</a></div><div class="ttdeci">ulong DefaultSessionExpirationTime</div><div class="ttdoc">Sets the expiration time of the session.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00064">Configuration.cs:64</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a2b5fd3027ef77e20707b0f58607a1c2a"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">HSB.Configuration.Address</a></div><div class="ttdeci">string Address</div><div class="ttdoc">The server listening address, ex : &quot;127.0.0.1&quot; or &quot;192.168.1.2&quot; or &quot;&quot; (for any address)</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00016">Configuration.cs:16</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a404826d0febee64b2f3498036e5f636b"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">HSB.Configuration.Port</a></div><div class="ttdeci">int Port</div><div class="ttdoc">The server listening port.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00020">Configuration.cs:20</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a7b3a0ba00cf393dfa8eb89d2a9b3a805"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">HSB.Configuration.Debug</a></div><div class="ttdeci">Debugger Debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00032">Configuration.cs:32</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a89bcd63e087d9b9727ebd98c8c0a0f73"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">HSB.Configuration.ListeningMode</a></div><div class="ttdeci">IPMode ListeningMode</div><div class="ttdoc">Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00024">Configuration.cs:24</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_aa260c9d1bc475cfd186e138d840f2c68"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68">HSB.Configuration.RequestMaxSize</a></div><div class="ttdeci">int RequestMaxSize</div><div class="ttdoc">Specifies the size in bytes of the buffer that will contain the HTTP request.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00036">Configuration.cs:36</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_ad25c25b3295ccd92cd5d34963b6e464a"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#ad25c25b3295ccd92cd5d34963b6e464a">HSB.Configuration.KILOBYTE</a></div><div class="ttdeci">const int KILOBYTE</div><div class="ttdoc">Defines the size of a kilobyte in bytes, useful to set the requestMaxSize.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00040">Configuration.cs:40</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_ad31c9beaf15c8eab28aa364e1303df02"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">HSB.Configuration.SslSettings</a></div><div class="ttdeci">SslConfiguration SslSettings</div><div class="ttdoc">Contains the SSL configuration properties.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00108">Configuration.cs:108</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_constants_html_ae676eaf623ca920f8fe00170a5658235"><div class="ttname"><a href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">HSB.Constants.IPMode</a></div><div class="ttdeci">IPMode</div><div class="ttdoc">Defines the listening mode of the server.</div><div class="ttdef"><b>Definition</b> <a href="_i_p_mode_8cs_source.html#l00007">IPMode.cs:8</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="adf57bf96671949e7f6bbb0cc5966732e" name="adf57bf96671949e7f6bbb0cc5966732e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf57bf96671949e7f6bbb0cc5966732e">&#9670;&#160;</a></span>Configuration() <span class="overload">[2/3]</span></h2>
+<a id="a25555c41e54a0e9c3595f69e1fe6dc58" name="a25555c41e54a0e9c3595f69e1fe6dc58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25555c41e54a0e9c3595f69e1fe6dc58">&#9670;&#160;</a></span>Configuration() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -293,7 +328,7 @@ Properties</h2></td></tr>
           <td class="memname">HSB.Configuration.Configuration </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>jsonContent</em></td><td>)</td>
+          <td class="paramname"><em>content</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -307,25 +342,60 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00090">90</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   91</span>        {</div>
-<div class="line"><span class="lineno">   92</span>            <span class="keyword">using </span>var doc = JsonDocument.Parse(jsonContent);</div>
-<div class="line"><span class="lineno">   93</span>            var root = doc.RootElement;</div>
-<div class="line"><span class="lineno">   94</span> </div>
-<div class="line"><span class="lineno">   95</span> </div>
-<div class="line"><span class="lineno">   96</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a> = root.GetProperty(<span class="stringliteral">&quot;address&quot;</span>).GetString() ?? <span class="stringliteral">&quot;127.0.0.1&quot;</span>;</div>
-<div class="line"><span class="lineno">   97</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a> = root.GetProperty(<span class="stringliteral">&quot;port&quot;</span>).GetInt16();</div>
-<div class="line"><span class="lineno">   98</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a706f609b54eb9a95f831993698808456">staticFolderPath</a> = root.GetProperty(<span class="stringliteral">&quot;staticFolderPath&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><span class="lineno">   99</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a> = Debugger.FromJson(root.GetProperty(<span class="stringliteral">&quot;debug&quot;</span>));</div>
-<div class="line"><span class="lineno">  100</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">requestMaxSize</a> = root.GetProperty(<span class="stringliteral">&quot;port&quot;</span>).GetInt32();</div>
-<div class="line"><span class="lineno">  101</span>            <a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a> = root.GetProperty(nameof(<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a>)).GetBoolean();</div>
-<div class="line"><span class="lineno">  102</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad253db7ca802690ae4278904d67492d2">defaultSessionExpirationTime</a> = root.GetProperty(<span class="stringliteral">&quot;defaultSessionExpirationTime&quot;</span>).GetUInt64();</div>
-<div class="line"><span class="lineno">  103</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00130">130</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  131</span>    {</div>
+<div class="line"><span class="lineno">  132</span>        <span class="keyword">using </span>var doc = JsonDocument.Parse(content);</div>
+<div class="line"><span class="lineno">  133</span>        var root = doc.RootElement;</div>
+<div class="line"><span class="lineno">  134</span> </div>
+<div class="line"><span class="lineno">  135</span>        <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">  136</span>        {</div>
+<div class="line"><span class="lineno">  137</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a> = root.GetProperty(<span class="stringliteral">&quot;Address&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  138</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">Port</a> = root.GetProperty(<span class="stringliteral">&quot;Port&quot;</span>).GetInt16();</div>
+<div class="line"><span class="lineno">  139</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a08fbe19d91dfdd52caf6dac4f98b519f">StaticFolderPath</a> = root.GetProperty(<span class="stringliteral">&quot;StaticFolderPath&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  140</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a> = Debugger.FromJson(root.GetProperty(<span class="stringliteral">&quot;Debug&quot;</span>));</div>
+<div class="line"><span class="lineno">  141</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a> = SslConfiguration.FromJSON(root.GetProperty(<span class="stringliteral">&quot;SslConfiguration&quot;</span>));</div>
+<div class="line"><span class="lineno">  142</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68">RequestMaxSize</a> = root.GetProperty(<span class="stringliteral">&quot;Port&quot;</span>).GetInt32();</div>
+<div class="line"><span class="lineno">  143</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a910a07a963f5377c6e376a427aaf82a0">BlockMode</a> = (<a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#a2251796566c9606a1c146d792c4902a4">BLOCK_MODE</a>)root.GetProperty(<span class="stringliteral">&quot;BlockMode&quot;</span>).GetInt32();</div>
+<div class="line"><span class="lineno">  144</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HideBranding</a> = root.GetProperty(<span class="stringliteral">&quot;HideBranding&quot;</span>).GetBoolean();</div>
+<div class="line"><span class="lineno">  145</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a044a463e6cd75bcbbf7073a3e6035f9d">IPAutoblock</a> = root.GetProperty(<span class="stringliteral">&quot;IPAutoblock&quot;</span>).GetBoolean();</div>
+<div class="line"><span class="lineno">  146</span>            <a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a> = (<a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>)root.GetProperty(nameof(<a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a>)).GetInt32();</div>
+<div class="line"><span class="lineno">  147</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a6e35d65169ac38e711f72c11b7cf7647">CustomServerName</a> = root.GetProperty(<span class="stringliteral">&quot;CustomServerName&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  148</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#accad064ebef5991c910d7ab3942bda68">ServeEmbeddedResource</a> = root.GetProperty(<span class="stringliteral">&quot;ServeEmbeddedResource&quot;</span>).GetBoolean();</div>
+<div class="line"><span class="lineno">  149</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#aa23df3b3a87a58d1da0cbcfb631a2c38">EmbeddedResourcePrefix</a> = root.GetProperty(<span class="stringliteral">&quot;EmbeddedResourcePrefix&quot;</span>).GetString() ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  150</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a09145149545f4e5538c785579ccccf83">DefaultSessionExpirationTime</a> = root.GetProperty(<span class="stringliteral">&quot;DefaultSessionExpirationTime&quot;</span>).GetUInt64();</div>
+<div class="line"><span class="lineno">  151</span> </div>
+<div class="line"><span class="lineno">  152</span>            <span class="keywordflow">foreach</span> (var item <span class="keywordflow">in</span> root.GetProperty(<span class="stringliteral">&quot;PermanentIPList&quot;</span>).EnumerateArray())</div>
+<div class="line"><span class="lineno">  153</span>            {</div>
+<div class="line"><span class="lineno">  154</span>                <span class="keywordtype">string</span>? v = item.GetString();</div>
+<div class="line"><span class="lineno">  155</span>                <span class="keywordflow">if</span> (v != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  156</span>                {</div>
+<div class="line"><span class="lineno">  157</span>                    <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a14912c05081f54a504a8582f979a9ba4">PermanentIPList</a>.Add(v!);</div>
+<div class="line"><span class="lineno">  158</span>                }</div>
+<div class="line"><span class="lineno">  159</span>            }</div>
+<div class="line"><span class="lineno">  160</span> </div>
+<div class="line"><span class="lineno">  161</span>            </div>
+<div class="line"><span class="lineno">  162</span> </div>
+<div class="line"><span class="lineno">  163</span>        }</div>
+<div class="line"><span class="lineno">  164</span>        <span class="keywordflow">catch</span> (Exception e)</div>
+<div class="line"><span class="lineno">  165</span>        {</div>
+<div class="line"><span class="lineno">  166</span>            Terminal.ERROR(<span class="stringliteral">&quot;Cannot parse configuration file&quot;</span>);</div>
+<div class="line"><span class="lineno">  167</span>            Terminal.ERROR(e);</div>
+<div class="line"><span class="lineno">  168</span>            Environment.Exit(1);</div>
+<div class="line"><span class="lineno">  169</span>        }</div>
+<div class="line"><span class="lineno">  170</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a044a463e6cd75bcbbf7073a3e6035f9d"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a044a463e6cd75bcbbf7073a3e6035f9d">HSB.Configuration.IPAutoblock</a></div><div class="ttdeci">bool IPAutoblock</div><div class="ttdoc">If this is set, the server will block the IP of the client if they try to access unsafe paths.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00076">Configuration.cs:76</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a14912c05081f54a504a8582f979a9ba4"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a14912c05081f54a504a8582f979a9ba4">HSB.Configuration.PermanentIPList</a></div><div class="ttdeci">List&lt; string &gt; PermanentIPList</div><div class="ttdoc">This list contains all the IP addresses that will be allowed/denied to access the server,...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00088">Configuration.cs:88</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a22eb67f9bcac434dafec9533398db240"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a22eb67f9bcac434dafec9533398db240">HSB.Configuration.HideBranding</a></div><div class="ttdeci">bool HideBranding</div><div class="ttdoc">Hide the HSB logo on startup.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00048">Configuration.cs:48</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a6e35d65169ac38e711f72c11b7cf7647"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a6e35d65169ac38e711f72c11b7cf7647">HSB.Configuration.CustomServerName</a></div><div class="ttdeci">string CustomServerName</div><div class="ttdoc">When set, the server will use this name instead of the default one (default is: HSB-#/assembly_versio...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00072">Configuration.cs:72</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a910a07a963f5377c6e376a427aaf82a0"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a910a07a963f5377c6e376a427aaf82a0">HSB.Configuration.BlockMode</a></div><div class="ttdeci">BLOCK_MODE BlockMode</div><div class="ttdoc">Setting this to BlockMode.WhiteList will make the server accept only requests from ip presents in ip_...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00081">Configuration.cs:81</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_aa23df3b3a87a58d1da0cbcfb631a2c38"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#aa23df3b3a87a58d1da0cbcfb631a2c38">HSB.Configuration.EmbeddedResourcePrefix</a></div><div class="ttdeci">string EmbeddedResourcePrefix</div><div class="ttdoc">If ServeEmbeddedResource is set to true, this will be prepended to the requested resource ex: if the ...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00099">Configuration.cs:99</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_accad064ebef5991c910d7ab3942bda68"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#accad064ebef5991c910d7ab3942bda68">HSB.Configuration.ServeEmbeddedResource</a></div><div class="ttdeci">bool ServeEmbeddedResource</div><div class="ttdoc">If set to true, the server will try to search for the requested resource in the assembly resources if...</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00093">Configuration.cs:93</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_constants_html_a2251796566c9606a1c146d792c4902a4"><div class="ttname"><a href="namespace_h_s_b_1_1_constants.html#a2251796566c9606a1c146d792c4902a4">HSB.Constants.BLOCK_MODE</a></div><div class="ttdeci">BLOCK_MODE</div><div class="ttdoc">Defines how to block requests.</div><div class="ttdef"><b>Definition</b> <a href="_block_mode_8cs_source.html#l00006">BlockMode.cs:7</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a8e7da306c3d4bbd18bea424b15fc5fe2" name="a8e7da306c3d4bbd18bea424b15fc5fe2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e7da306c3d4bbd18bea424b15fc5fe2">&#9670;&#160;</a></span>Configuration() <span class="overload">[3/3]</span></h2>
+<a id="ae8d9a0e0227d6abe4e9dd2fa61387ffd" name="ae8d9a0e0227d6abe4e9dd2fa61387ffd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8d9a0e0227d6abe4e9dd2fa61387ffd">&#9670;&#160;</a></span>Configuration() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -357,8 +427,26 @@ Properties</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>IPv4Only</em> = <code>false</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a>&#160;</td>
+          <td class="paramname"><em>ipMode</em> = <code>IPMode::ANY</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>requestMaxSize</em> = <code><a class="el" href="class_h_s_b_1_1_configuration.html#ad25c25b3295ccd92cd5d34963b6e464a">KILOBYTE</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ulong?&#160;</td>
+          <td class="paramname"><em>defaultSessionExpirationTime</em> = <code>null</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html">SslConfiguration</a>?&#160;</td>
+          <td class="paramname"><em>sslConfiguration</em> = <code>null</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -368,7 +456,7 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Instantiate a configuration with the base settings. </p>
+<p>Instantiate a configuration with the minimal settings. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">address</td><td>Listening address (es: "127.0.0.1" or "192.168.1.2" or "" for any)</td></tr>
@@ -380,18 +468,19 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00113">113</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  114</span>        {</div>
-<div class="line"><span class="lineno">  115</span>            this.address = <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a437e586fdb583aa9bef15afe7824ca33">address</a>;</div>
-<div class="line"><span class="lineno">  116</span>            this.port = <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#adfb831e3fb1d043258847109a2065439">port</a>;</div>
-<div class="line"><span class="lineno">  117</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a706f609b54eb9a95f831993698808456">staticFolderPath</a> = staticPath;</div>
-<div class="line"><span class="lineno">  118</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a521c9e5e0ac575cef7602bdc16c3899f">debug</a> = debugInfo ?? <span class="keyword">new</span> Debugger();</div>
-<div class="line"><span class="lineno">  119</span>            <a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a3025ea1c01dc586c6de9a73b9f07fead">UseIPv4Only</a> = IPv4Only;</div>
-<div class="line"><span class="lineno">  120</span>            <span class="comment">//default 1MB max requests</span></div>
-<div class="line"><span class="lineno">  121</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a5ce77e3d9596a6150857088415f30d98">requestMaxSize</a> = 1024;</div>
-<div class="line"><span class="lineno">  122</span>            <span class="comment">//default one day</span></div>
-<div class="line"><span class="lineno">  123</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad253db7ca802690ae4278904d67492d2">defaultSessionExpirationTime</a> = (ulong)TimeSpan.FromDays(1).Ticks;</div>
-<div class="line"><span class="lineno">  124</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00181">181</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  182</span>    {</div>
+<div class="line"><span class="lineno">  183</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a">Address</a> = address;</div>
+<div class="line"><span class="lineno">  184</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a404826d0febee64b2f3498036e5f636b">Port</a> = port;</div>
+<div class="line"><span class="lineno">  185</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a08fbe19d91dfdd52caf6dac4f98b519f">StaticFolderPath</a> = staticPath;</div>
+<div class="line"><span class="lineno">  186</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a> = debugInfo ?? <span class="keyword">new</span> Debugger();</div>
+<div class="line"><span class="lineno">  187</span>        <a class="code hl_property" href="class_h_s_b_1_1_configuration.html#a89bcd63e087d9b9727ebd98c8c0a0f73">ListeningMode</a> = ipMode;</div>
+<div class="line"><span class="lineno">  188</span>        <span class="comment">//default 1KB max requests</span></div>
+<div class="line"><span class="lineno">  189</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68">RequestMaxSize</a> = requestMaxSize;</div>
+<div class="line"><span class="lineno">  190</span>        <span class="comment">//default one day</span></div>
+<div class="line"><span class="lineno">  191</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a09145149545f4e5538c785579ccccf83">DefaultSessionExpirationTime</a> = defaultSessionExpirationTime ?? (ulong)TimeSpan.FromDays(1).Ticks;</div>
+<div class="line"><span class="lineno">  192</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#ad31c9beaf15c8eab28aa364e1303df02">SslSettings</a> = sslConfiguration ?? <span class="keyword">new</span> SslConfiguration();</div>
+<div class="line"><span class="lineno">  193</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -421,12 +510,12 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00249">249</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  250</span>        {</div>
-<div class="line"><span class="lineno">  251</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a15979c065c0651bd8a2b01b987989c88">customGlobalCookies</a>.Remove(cookie.name);</div>
-<div class="line"><span class="lineno">  252</span>            <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a15979c065c0651bd8a2b01b987989c88">customGlobalCookies</a>.Add(cookie.name, cookie);</div>
-<div class="line"><span class="lineno">  253</span>        }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a15979c065c0651bd8a2b01b987989c88"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a15979c065c0651bd8a2b01b987989c88">HSB.Configuration.customGlobalCookies</a></div><div class="ttdeci">Dictionary&lt; string, Cookie &gt; customGlobalCookies</div><div class="ttdoc">Cookies added to ANY response.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00058">Configuration.cs:58</a></div></div>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00321">321</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  322</span>    {</div>
+<div class="line"><span class="lineno">  323</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a15979c065c0651bd8a2b01b987989c88">customGlobalCookies</a>.Remove(cookie.name);</div>
+<div class="line"><span class="lineno">  324</span>        <a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a15979c065c0651bd8a2b01b987989c88">customGlobalCookies</a>.Add(cookie.name, cookie);</div>
+<div class="line"><span class="lineno">  325</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a15979c065c0651bd8a2b01b987989c88"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a15979c065c0651bd8a2b01b987989c88">HSB.Configuration.customGlobalCookies</a></div><div class="ttdeci">Dictionary&lt; string, Cookie &gt; customGlobalCookies</div><div class="ttdoc">Cookies added to ANY response.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00060">Configuration.cs:60</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -630,14 +719,14 @@ Properties</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00305">305</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  306</span>        {</div>
-<div class="line"><span class="lineno">  307</span>            List&lt;Tuple&lt;string, string&gt;&gt; routes = <span class="keyword">new</span>();</div>
-<div class="line"><span class="lineno">  308</span>            expressMapping.ForEach(m =&gt; routes.Add(<span class="keyword">new</span>(m.Item1, m.Item2.Item1.ToString())));</div>
-<div class="line"><span class="lineno">  309</span>            var staticRoutes = Server.CollectStaticRoutes();</div>
-<div class="line"><span class="lineno">  310</span>            staticRoutes.ToList().ForEach(m =&gt; routes.Add(<span class="keyword">new</span>(m.Key.Item1, <span class="stringliteral">&quot;&quot;</span>)));</div>
-<div class="line"><span class="lineno">  311</span>            <span class="keywordflow">return</span> routes;</div>
-<div class="line"><span class="lineno">  312</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00374">374</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  375</span>    {</div>
+<div class="line"><span class="lineno">  376</span>        List&lt;Tuple&lt;string, string&gt;&gt; routes = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  377</span>        expressMapping.ForEach(m =&gt; routes.Add(<span class="keyword">new</span>(m.Item1, m.Item2.Item1.ToString())));</div>
+<div class="line"><span class="lineno">  378</span>        var staticRoutes = Server.CollectStaticRoutes();</div>
+<div class="line"><span class="lineno">  379</span>        staticRoutes.ToList().ForEach(m =&gt; routes.Add(<span class="keyword">new</span>(m.Key.Item1, <span class="stringliteral">&quot;&quot;</span>)));</div>
+<div class="line"><span class="lineno">  380</span>        <span class="keywordflow">return</span> routes;</div>
+<div class="line"><span class="lineno">  381</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -754,6 +843,48 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 
+</div>
+</div>
+<a id="a83a32fe56213a0b09b209e664236d3eb" name="a83a32fe56213a0b09b209e664236d3eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83a32fe56213a0b09b209e664236d3eb">&#9670;&#160;</a></span>LoadFromJson()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_h_s_b_1_1_configuration.html">Configuration</a> HSB.Configuration.LoadFromJson </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Instantiate configuration from a json file passed as parameter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00200">200</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  201</span>    {</div>
+<div class="line"><span class="lineno">  202</span>        <span class="keywordtype">string</span> content = File.ReadAllText(path);</div>
+<div class="line"><span class="lineno">  203</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> <a class="code hl_function" href="class_h_s_b_1_1_configuration.html#a9ed733219b854a37a087ca712e721680">Configuration</a>(content);</div>
+<div class="line"><span class="lineno">  204</span>    }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a9ed733219b854a37a087ca712e721680"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a9ed733219b854a37a087ca712e721680">HSB.Configuration.Configuration</a></div><div class="ttdeci">Configuration()</div><div class="ttdoc">Creates a default fail-safe configuration (still, the port could be in use)</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00113">Configuration.cs:113</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="aa4cca3649400ad42931f41317337d3d3" name="aa4cca3649400ad42931f41317337d3d3"></a>
@@ -982,6 +1113,38 @@ Properties</h2></td></tr>
 
 </div>
 </div>
+<a id="ac415ee0628588a7ac99eff5f67d68be3" name="ac415ee0628588a7ac99eff5f67d68be3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac415ee0628588a7ac99eff5f67d68be3">&#9670;&#160;</a></span>SaveToJson()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void HSB.Configuration.SaveToJson </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Save the current configuration to a json file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00209">209</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  210</span>    {</div>
+<div class="line"><span class="lineno">  211</span>        <span class="keywordtype">string</span> json = JsonSerializer.Serialize(<span class="keyword">this</span>, <span class="keyword">new</span> JsonSerializerOptions { WriteIndented = <span class="keyword">true</span>, IncludeFields = <span class="keyword">true</span>  });</div>
+<div class="line"><span class="lineno">  212</span>        File.WriteAllText(path, json);</div>
+<div class="line"><span class="lineno">  213</span>    }</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a45ff5e81c00eaf83f589b16f447fcccf" name="a45ff5e81c00eaf83f589b16f447fcccf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a45ff5e81c00eaf83f589b16f447fcccf">&#9670;&#160;</a></span>ToString()</h2>
 
@@ -1000,29 +1163,29 @@ Properties</h2></td></tr>
 <p>String representing the configuration. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00280">280</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  281</span>        {</div>
-<div class="line"><span class="lineno">  282</span>            <span class="keywordtype">string</span> str = $<span class="stringliteral">&quot;Current configuration:\nListening address and port: {address}:{port}&quot;</span>;</div>
-<div class="line"><span class="lineno">  283</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a706f609b54eb9a95f831993698808456">staticFolderPath</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
-<div class="line"><span class="lineno">  284</span>                str += <span class="stringliteral">&quot;\nStatic folder is not set&quot;</span>;</div>
-<div class="line"><span class="lineno">  285</span>            <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">  286</span>                str += $<span class="stringliteral">&quot;\nStatic folder path: {staticFolderPath}&quot;</span>;</div>
-<div class="line"><span class="lineno">  287</span> </div>
-<div class="line"><span class="lineno">  288</span>            <span class="keywordflow">if</span> (expressMapping.Any())</div>
-<div class="line"><span class="lineno">  289</span>            {</div>
-<div class="line"><span class="lineno">  290</span>                str += <span class="stringliteral">&quot;\nExpressJS-Like routing map:&quot;</span>;</div>
-<div class="line"><span class="lineno">  291</span>                expressMapping.ForEach(m =&gt; str += $<span class="stringliteral">&quot;\nPath : {m.Item1} -&gt; {m.Item2.Item2.Method.Name}&quot;</span>);</div>
-<div class="line"><span class="lineno">  292</span>            }</div>
-<div class="line"><span class="lineno">  293</span> </div>
-<div class="line"><span class="lineno">  294</span>            var staticRoutes = Server.CollectStaticRoutes();</div>
-<div class="line"><span class="lineno">  295</span> </div>
-<div class="line"><span class="lineno">  296</span>            <span class="keywordflow">if</span> (staticRoutes.Any())</div>
-<div class="line"><span class="lineno">  297</span>            {</div>
-<div class="line"><span class="lineno">  298</span>                str += <span class="stringliteral">&quot;\nStatic routes:&quot;</span>;</div>
-<div class="line"><span class="lineno">  299</span>                staticRoutes.ToList().ForEach(m =&gt; str += $<span class="stringliteral">&quot;\nPath : {m.Key.Item1} -&gt; {m.Value.Name}&quot;</span>);</div>
-<div class="line"><span class="lineno">  300</span>            }</div>
-<div class="line"><span class="lineno">  301</span>            <span class="keywordflow">return</span> str;</div>
-<div class="line"><span class="lineno">  302</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00350">350</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  351</span>    {</div>
+<div class="line"><span class="lineno">  352</span>        <span class="keywordtype">string</span> str = $<span class="stringliteral">&quot;Current configuration:\nListening address and port: {Address}:{Port}&quot;</span>;</div>
+<div class="line"><span class="lineno">  353</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a08fbe19d91dfdd52caf6dac4f98b519f">StaticFolderPath</a> == <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">  354</span>            str += <span class="stringliteral">&quot;\nStatic folder is not set&quot;</span>;</div>
+<div class="line"><span class="lineno">  355</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">  356</span>            str += $<span class="stringliteral">&quot;\nStatic folder path: {StaticFolderPath}&quot;</span>;</div>
+<div class="line"><span class="lineno">  357</span> </div>
+<div class="line"><span class="lineno">  358</span>        <span class="keywordflow">if</span> (expressMapping.Any())</div>
+<div class="line"><span class="lineno">  359</span>        {</div>
+<div class="line"><span class="lineno">  360</span>            str += <span class="stringliteral">&quot;\nExpressJS-Like routing map:&quot;</span>;</div>
+<div class="line"><span class="lineno">  361</span>            expressMapping.ForEach(m =&gt; str += $<span class="stringliteral">&quot;\nPath : {m.Item1} -&gt; {m.Item2.Item2.Method.Name}&quot;</span>);</div>
+<div class="line"><span class="lineno">  362</span>        }</div>
+<div class="line"><span class="lineno">  363</span> </div>
+<div class="line"><span class="lineno">  364</span>        var staticRoutes = Server.CollectStaticRoutes();</div>
+<div class="line"><span class="lineno">  365</span> </div>
+<div class="line"><span class="lineno">  366</span>        <span class="keywordflow">if</span> (staticRoutes.Any())</div>
+<div class="line"><span class="lineno">  367</span>        {</div>
+<div class="line"><span class="lineno">  368</span>            str += <span class="stringliteral">&quot;\nStatic routes:&quot;</span>;</div>
+<div class="line"><span class="lineno">  369</span>            staticRoutes.ToList().ForEach(m =&gt; str += $<span class="stringliteral">&quot;\nPath : {m.Key.Item1} -&gt; {m.Value.Name}&quot;</span>);</div>
+<div class="line"><span class="lineno">  370</span>        }</div>
+<div class="line"><span class="lineno">  371</span>        <span class="keywordflow">return</span> str;</div>
+<div class="line"><span class="lineno">  372</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1064,21 +1227,39 @@ Properties</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a437e586fdb583aa9bef15afe7824ca33" name="a437e586fdb583aa9bef15afe7824ca33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a437e586fdb583aa9bef15afe7824ca33">&#9670;&#160;</a></span>address</h2>
+<a id="a2b5fd3027ef77e20707b0f58607a1c2a" name="a2b5fd3027ef77e20707b0f58607a1c2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b5fd3027ef77e20707b0f58607a1c2a">&#9670;&#160;</a></span>Address</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">string HSB.Configuration.address</td>
+          <td class="memname">string HSB.Configuration.Address</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) //check this. </p>
+<p>The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address) </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00014">14</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00016">16</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+
+</div>
+</div>
+<a id="a910a07a963f5377c6e376a427aaf82a0" name="a910a07a963f5377c6e376a427aaf82a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a910a07a963f5377c6e376a427aaf82a0">&#9670;&#160;</a></span>BlockMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespace_h_s_b_1_1_constants.html#a2251796566c9606a1c146d792c4902a4">BLOCK_MODE</a> HSB.Configuration.BlockMode = BLOCK_MODE.NONE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Setting this to BlockMode.WhiteList will make the server accept only requests from ip presents in ip_whitelist.txt if set to BlockMode.BlackList will ban requests from ip presents in ip_blacklist.txt. </p>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00081">81</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1104,7 +1285,7 @@ Properties</h2></td></tr>
 
 <p>Cookies added to ANY response. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00058">58</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00060">60</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1130,7 +1311,7 @@ Properties</h2></td></tr>
 
 <p>headers added to ANY response </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00054">54</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00056">56</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1148,43 +1329,61 @@ Properties</h2></td></tr>
 
 <p>When set, the server will use this name instead of the default one (default is: HSB-#/assembly_version (os_version)) </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00070">70</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00072">72</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
-<a id="a521c9e5e0ac575cef7602bdc16c3899f" name="a521c9e5e0ac575cef7602bdc16c3899f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a521c9e5e0ac575cef7602bdc16c3899f">&#9670;&#160;</a></span>debug</h2>
+<a id="a7b3a0ba00cf393dfa8eb89d2a9b3a805" name="a7b3a0ba00cf393dfa8eb89d2a9b3a805"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b3a0ba00cf393dfa8eb89d2a9b3a805">&#9670;&#160;</a></span>Debug</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_h_s_b_1_1_debugger.html">Debugger</a> HSB.Configuration.debug</td>
+          <td class="memname"><a class="el" href="class_h_s_b_1_1_debugger.html">Debugger</a> HSB.Configuration.Debug</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Holds all debug information and routines. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00030">30</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00032">32</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
-<a id="ad253db7ca802690ae4278904d67492d2" name="ad253db7ca802690ae4278904d67492d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad253db7ca802690ae4278904d67492d2">&#9670;&#160;</a></span>defaultSessionExpirationTime</h2>
+<a id="a09145149545f4e5538c785579ccccf83" name="a09145149545f4e5538c785579ccccf83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09145149545f4e5538c785579ccccf83">&#9670;&#160;</a></span>DefaultSessionExpirationTime</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">ulong HSB.Configuration.defaultSessionExpirationTime</td>
+          <td class="memname">ulong HSB.Configuration.DefaultSessionExpirationTime</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Sets the expiration time of the session. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00062">62</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00064">64</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+
+</div>
+</div>
+<a id="aa23df3b3a87a58d1da0cbcfb631a2c38" name="aa23df3b3a87a58d1da0cbcfb631a2c38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa23df3b3a87a58d1da0cbcfb631a2c38">&#9670;&#160;</a></span>EmbeddedResourcePrefix</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string HSB.Configuration.EmbeddedResourcePrefix = &quot;&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If ServeEmbeddedResource is set to true, this will be prepended to the requested resource ex: if the requested resource is /index.html and the prefix is set to "www" the server will search for the resource in the assembly resources at www/index.html. </p>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00099">99</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1202,7 +1401,25 @@ Properties</h2></td></tr>
 
 <p>Hide the <a class="el" href="namespace_h_s_b.html">HSB</a> logo on startup. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00046">46</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00048">48</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+
+</div>
+</div>
+<a id="a044a463e6cd75bcbbf7073a3e6035f9d" name="a044a463e6cd75bcbbf7073a3e6035f9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a044a463e6cd75bcbbf7073a3e6035f9d">&#9670;&#160;</a></span>IPAutoblock</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HSB.Configuration.IPAutoblock = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If this is set, the server will block the IP of the client if they try to access unsafe paths. </p>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00076">76</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1228,7 +1445,7 @@ Properties</h2></td></tr>
 
 <p>Defines the size of a kilobyte in bytes, useful to set the requestMaxSize. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00038">38</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00040">40</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1254,43 +1471,80 @@ Properties</h2></td></tr>
 
 <p>Defines the size of a megabyte in bytes, useful to set the requestMaxSize. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00042">42</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00044">44</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
-<a id="adfb831e3fb1d043258847109a2065439" name="adfb831e3fb1d043258847109a2065439"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adfb831e3fb1d043258847109a2065439">&#9670;&#160;</a></span>port</h2>
+<a id="a14912c05081f54a504a8582f979a9ba4" name="a14912c05081f54a504a8582f979a9ba4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14912c05081f54a504a8582f979a9ba4">&#9670;&#160;</a></span>PermanentIPList</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int HSB.Configuration.port</td>
+          <td class="memname">List&lt;string&gt; HSB.Configuration.PermanentIPList = new()</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>This list contains all the IP addresses that will be allowed/denied to access the server, it's behavior depends on the blockMode If blockmode is set to BlockMode.OKLIST, only the IP addresses in this list will be allowed to access the server If blockmode is set to BlockMode.BANLIST, the IP addresses in this list will be banned from accessing the server. </p>
+<p>Note that IPv6 and IPv4 are considered different ips!</p>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00088">88</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+
+</div>
+</div>
+<a id="a404826d0febee64b2f3498036e5f636b" name="a404826d0febee64b2f3498036e5f636b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a404826d0febee64b2f3498036e5f636b">&#9670;&#160;</a></span>Port</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int HSB.Configuration.Port</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>The server listening port. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00018">18</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00020">20</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
-<a id="a5ce77e3d9596a6150857088415f30d98" name="a5ce77e3d9596a6150857088415f30d98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ce77e3d9596a6150857088415f30d98">&#9670;&#160;</a></span>requestMaxSize</h2>
+<a id="aa260c9d1bc475cfd186e138d840f2c68" name="aa260c9d1bc475cfd186e138d840f2c68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa260c9d1bc475cfd186e138d840f2c68">&#9670;&#160;</a></span>RequestMaxSize</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int HSB.Configuration.requestMaxSize</td>
+          <td class="memname">int HSB.Configuration.RequestMaxSize</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Specifies the size in bytes of the buffer that will contain the HTTP request. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00034">34</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00036">36</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+
+</div>
+</div>
+<a id="accad064ebef5991c910d7ab3942bda68" name="accad064ebef5991c910d7ab3942bda68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accad064ebef5991c910d7ab3942bda68">&#9670;&#160;</a></span>ServeEmbeddedResource</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool HSB.Configuration.ServeEmbeddedResource = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If set to true, the server will try to search for the requested resource in the assembly resources if fails to find it, the usual chain of execution will be followed. </p>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00093">93</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1316,25 +1570,43 @@ Properties</h2></td></tr>
 
 <p>Useful to share objects between servlets without using the singleton technique. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00050">50</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00052">52</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
-<a id="a706f609b54eb9a95f831993698808456" name="a706f609b54eb9a95f831993698808456"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a706f609b54eb9a95f831993698808456">&#9670;&#160;</a></span>staticFolderPath</h2>
+<a id="ad31c9beaf15c8eab28aa364e1303df02" name="ad31c9beaf15c8eab28aa364e1303df02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad31c9beaf15c8eab28aa364e1303df02">&#9670;&#160;</a></span>SslSettings</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">string HSB.Configuration.staticFolderPath</td>
+          <td class="memname"><a class="el" href="class_h_s_b_1_1_ssl_configuration.html">SslConfiguration</a> HSB.Configuration.SslSettings</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contains the SSL configuration properties. </p>
+
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00108">108</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+
+</div>
+</div>
+<a id="a08fbe19d91dfdd52caf6dac4f98b519f" name="a08fbe19d91dfdd52caf6dac4f98b519f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08fbe19d91dfdd52caf6dac4f98b519f">&#9670;&#160;</a></span>StaticFolderPath</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string HSB.Configuration.StaticFolderPath</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Indicates the location where all static files will be searched and served from. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00026">26</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00028">28</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1361,7 +1633,7 @@ Properties</h2></td></tr>
 
 <p>Gets all global cookies. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00271">271</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00340">340</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
@@ -1387,12 +1659,12 @@ Properties</h2></td></tr>
 
 <p>Gets all global HTTP Response headers. </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00241">241</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00313">313</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
 
 </div>
 </div>
-<a id="a3025ea1c01dc586c6de9a73b9f07fead" name="a3025ea1c01dc586c6de9a73b9f07fead"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3025ea1c01dc586c6de9a73b9f07fead">&#9670;&#160;</a></span>UseIPv4Only</h2>
+<a id="a89bcd63e087d9b9727ebd98c8c0a0f73" name="a89bcd63e087d9b9727ebd98c8c0a0f73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89bcd63e087d9b9727ebd98c8c0a0f73">&#9670;&#160;</a></span>ListeningMode</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1401,7 +1673,7 @@ Properties</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool HSB.Configuration.UseIPv4Only</td>
+          <td class="memname"><a class="el" href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">IPMode</a> HSB.Configuration.ListeningMode</td>
         </tr>
       </table>
   </td>
@@ -1411,10 +1683,10 @@ Properties</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Sets if the server must listen only to IPv4. </p>
+<p>Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to "". </p>
 
-<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00022">22</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   22</span>{ <span class="keyword">get</span>; <span class="keyword">set</span>; }</div>
+<p class="definition">Definition at line <a class="el" href="_configuration_8cs_source.html#l00024">24</a> of file <a class="el" href="_configuration_8cs_source.html">Configuration.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   24</span>{ <span class="keyword">get</span>; <span class="keyword">set</span>; }</div>
 </div><!-- fragment -->
 </div>
 </div>

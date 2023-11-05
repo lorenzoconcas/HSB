@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['configuration_0',['configuration',['../class_h_s_b_1_1_configuration.html#a9ed733219b854a37a087ca712e721680',1,'HSB.Configuration.Configuration()'],['../class_h_s_b_1_1_configuration.html#adf57bf96671949e7f6bbb0cc5966732e',1,'HSB.Configuration.Configuration(string jsonContent)'],['../class_h_s_b_1_1_configuration.html#a8e7da306c3d4bbd18bea424b15fc5fe2',1,'HSB.Configuration.Configuration(string address, int port, string staticPath, Debugger? debugInfo=null, bool IPv4Only=false)']]],
-  ['connect_1',['CONNECT',['../class_h_s_b_1_1_configuration.html#a4e20f8d1409eb070323ede3a940ab722',1,'HSB::Configuration']]]
+  ['close_0',['Close',['../class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket.html#a5ef9da8c60cdd1a3984a222f91061ebe',1,'HSB::Components::WebSockets::WebSocket']]],
+  ['configuration_1',['configuration',['../class_h_s_b_1_1_configuration.html#a9ed733219b854a37a087ca712e721680',1,'HSB.Configuration.Configuration()'],['../class_h_s_b_1_1_configuration.html#a25555c41e54a0e9c3595f69e1fe6dc58',1,'HSB.Configuration.Configuration(string content)'],['../class_h_s_b_1_1_configuration.html#ae8d9a0e0227d6abe4e9dd2fa61387ffd',1,'HSB.Configuration.Configuration(string address, int port, string staticPath, Debugger? debugInfo=null, IPMode ipMode=IPMode.ANY, int requestMaxSize=KILOBYTE, ulong? defaultSessionExpirationTime=null, SslConfiguration? sslConfiguration=null)']]],
+  ['connect_2',['CONNECT',['../class_h_s_b_1_1_configuration.html#a4e20f8d1409eb070323ede3a940ab722',1,'HSB::Configuration']]]
 ];

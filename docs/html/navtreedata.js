@@ -25,25 +25,35 @@
 var NAVTREE =
 [
   [ "HttpServerBoxed", "index.html", [
+    [ "Configuration Class", "md__documentation_2_configuration.html", [
+      [ "🇬🇧🇺🇸 Description", "index.html#autotoc_md-description-1", [
+        [ "Roadmap", "index.html#roadmap-1", null ],
+        [ "The Configuration Class", "md__documentation_2_configuration.html#the-configuration-class", [
+          [ "Other utilities", "md__documentation_2_configuration.html#other-utilities", null ]
+        ] ]
+      ] ]
+    ] ],
     [ "Library", "md__documentation_2_library.html", [
-      [ "🇬🇧🇺🇸 Description", "index.html#autotoc_md-description", [
-        [ "Roadmap", "index.html#roadmap", null ],
+      [ "API & Quick F.A.Q.", "md__documentation_2_library.html#api--quick-faq", [
         [ "Basic information", "md__documentation_2_library.html#basic-information", null ],
-        [ "The Configuration Class", "md__documentation_2_library.html#the-configuration-class", null ]
-      ] ],
-      [ "API & F.A.Q.", "md__documentation_2_library.html#api--faq", [
         [ "How to define a route?", "md__documentation_2_library.html#how-to-define-a-route", null ],
         [ "ExpressJS-like", "md__documentation_2_library.html#expressjs-like", null ],
         [ "\"Classic\" method", "md__documentation_2_library.html#classic-method", null ],
         [ "Custom method handling", "md__documentation_2_library.html#custom-method-handling", null ]
       ] ],
-      [ "The Request Class", "md__documentation_2_library.html#the-request-class", null ],
-      [ "The Session Class", "md__documentation_2_library.html#the-session-class", null ],
-      [ "The Response Class", "md__documentation_2_library.html#the-response-class", [
-        [ "Examples", "md__documentation_2_library.html#examples", null ]
-      ] ]
+      [ "SSL", "md__documentation_2_library.html#ssl", null ],
+      [ "WebSocket", "md__documentation_2_library.html#websocket", null ]
     ] ],
+    [ "The Request Class", "md__documentation_2_request.html", null ],
+    [ "The Response Class", "md__documentation_2_response.html", [
+      [ "Examples", "md__documentation_2_response.html#examples", null ]
+    ] ],
+    [ "Servlet class", "md__documentation_2_servlet.html", null ],
+    [ "The Session Class", "md__documentation_2_session.html", null ],
+    [ "SSL", "md__documentation_2_s_s_l.html", null ],
     [ "Standalone", "md__documentation_2_standalone.html", null ],
+    [ "WebSockets", "md__documentation_2_web_sockets.html", null ],
+    [ "HttpServerBoxed", "md__h_s_b_2_readme.html", null ],
     [ "LICENSE", "license.html", null ],
     [ "Packages", "namespaces.html", [
       [ "Package List", "namespaces.html", "namespaces_dup" ],
@@ -71,9 +81,9 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_8_n_e_t_core_app_00_version_0av6_80_8_assembly_attributes_8cs_source.html",
-"class_h_s_b_1_1_configuration.html#a4e20f8d1409eb070323ede3a940ab722",
-"dir_06571c0e5795ce9ca6d33626449b2c25.html"
+"_application_layer_protocol_negotiation_8cs_source.html",
+"class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a",
+"class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_generic_extension.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

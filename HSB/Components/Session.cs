@@ -69,7 +69,7 @@ public class Session
 
     public T? GetAttribute<T>(string name)
     {
-        return (T)attributes[name];
+        return (T)attributes[name] ?? default(T);
     }
 
 

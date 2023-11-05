@@ -17,6 +17,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="extracssfordocumentation.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -24,9 +25,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="icon-64.png"/></td>
+  <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign">
-   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.10 alpha</span>
+   <div id="projectname">HttpServerBoxed<span id="projectnumber">&#160;0.0.11 alpha</span>
    </div>
    <div id="projectbrief">A simple http server for C# and .NET</div>
   </td>
@@ -105,11 +106,11 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_response.html',''); in
   <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a7b508162e2ef7c09bfc0ab157e3c507b">GetAttribute</a>(string name)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440">JSON</a>(string content)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a804f171d3cf5519057662a4dd3d7b44f">JSON&lt; T &gt;</a>(T o, JsonSerializerOptions options)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a8d7792e85fbf7285996fadfd9ee380c3">JSON&lt; T &gt;</a>(T o, bool includeFields=true)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a107dc7b120fe1a59b6985a72f75e36b2">JSON&lt; T &gt;</a>(T o, bool includeFields=true, bool WriteIndented=true)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a703e88e9f60bd7831c814b3d81773e9b">Redirect</a>(string route, int statusCode=HTTP_CODES.FOUND)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a854fd399e2cfd933685b780fc0dc5682">Redirect</a>(Servlet s, int statusCode=HTTP_CODES.FOUND)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a2d09f660805f772bb439ceba59c992ff">RemoveAttribute</a>(string name)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Response</b>(Socket socket, Request request, Configuration c) (defined in <a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a>)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Response</b>(Socket socket, Request request, Configuration c, SslStream? sslStream) (defined in <a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a>)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#aaf92b7ff521d2e401d66cf8eda948dd0">Send</a>(byte[] data, bool disconnect=true)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a378c88b326054cc27f3833c080d51926">Send</a>(string data, string mimeType=&quot;text/plain&quot;, int statusCode=HTTP_CODES.OK, Dictionary&lt; string, string &gt;? customHeaders=null)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#af67a7e98aad1bd8c480838c3fd0a5b7c">Send</a>(int statusCode)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
@@ -122,6 +123,7 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_response.html',''); in
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>SendJSON</b>(string content) (defined in <a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a>)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a18a5b743e82c23058ac36d900fe28d06">SendJSON&lt; T &gt;</a>(T o, JsonSerializerOptions options)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a3e4d8a7a8ead270effbceb0212d457fc">SendJSON&lt; T &gt;</a>(T o, bool includeFields=true)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html#a7917bb12fe933c4a132aade1b51fc1f7">SendObject</a>(object obj, string fileName=&quot;&quot;)</td><td class="entry"><a class="el" href="class_h_s_b_1_1_response.html">HSB.Response</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

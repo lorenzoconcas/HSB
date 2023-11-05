@@ -7,7 +7,7 @@ var class_h_s_b_1_1_response =
     [ "E500", "class_h_s_b_1_1_response.html#a184f2e797a0cf888685699c51c2722e4", null ],
     [ "GetAttribute", "class_h_s_b_1_1_response.html#a7b508162e2ef7c09bfc0ab157e3c507b", null ],
     [ "JSON", "class_h_s_b_1_1_response.html#a4194117350da77ed769b6ee7be3fd440", null ],
-    [ "JSON< T >", "class_h_s_b_1_1_response.html#a8d7792e85fbf7285996fadfd9ee380c3", null ],
+    [ "JSON< T >", "class_h_s_b_1_1_response.html#a107dc7b120fe1a59b6985a72f75e36b2", null ],
     [ "JSON< T >", "class_h_s_b_1_1_response.html#a804f171d3cf5519057662a4dd3d7b44f", null ],
     [ "Redirect", "class_h_s_b_1_1_response.html#a854fd399e2cfd933685b780fc0dc5682", null ],
     [ "Redirect", "class_h_s_b_1_1_response.html#a703e88e9f60bd7831c814b3d81773e9b", null ],
@@ -22,5 +22,6 @@ var class_h_s_b_1_1_response =
     [ "SendHTMLContent", "class_h_s_b_1_1_response.html#a95d557def4c8f20e9bcf69731ea94676", null ],
     [ "SendHTMLFile", "class_h_s_b_1_1_response.html#a578a68a4d1fc372de21b1306043a99c6", null ],
     [ "SendJSON< T >", "class_h_s_b_1_1_response.html#a3e4d8a7a8ead270effbceb0212d457fc", null ],
-    [ "SendJSON< T >", "class_h_s_b_1_1_response.html#a18a5b743e82c23058ac36d900fe28d06", null ]
+    [ "SendJSON< T >", "class_h_s_b_1_1_response.html#a18a5b743e82c23058ac36d900fe28d06", null ],
+    [ "SendObject", "class_h_s_b_1_1_response.html#a7917bb12fe933c4a132aade1b51fc1f7", null ]
 ];

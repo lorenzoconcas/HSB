@@ -39,7 +39,7 @@ public class Request
     private MultiPartFormData? multiPartFormData;
     private Form? form;
 
-    public bool proceedWithElaboration = true;
+    public bool IsValidRequest = true;
     public Request(byte[] data, Socket socket, Configuration config)
     {
         connectionSocket = socket;

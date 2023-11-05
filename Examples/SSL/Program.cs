@@ -12,15 +12,19 @@ var certificatePath = arglist.Find(a => a.StartsWith("--cert="))?.Split("=")[1];
 var certificatePassword = arglist.Find(a => a.StartsWith("--pass="))?.Split("=")[1];
 
 
+
 var sslConfig = new SslConfiguration(
     certificatePath: certificatePath ?? throw new Exception("You must provide a certificate path"),
     certificatePassword: certificatePassword ?? throw new Exception("You must provide a certificate password")
-);
+){
+    upgradeUnsecureRequests = false,
+    SslPort = 443,
+};
 
 
 Configuration c = new(){
-    Port = int.Parse(port),
-    SslSettings = sslConfig
+    Port = ushort.Parse(port),
+    SslSettings = sslConfig,
 };
 
 new Server(c).Start();

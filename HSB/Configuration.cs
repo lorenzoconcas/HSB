@@ -17,7 +17,8 @@ public class Configuration
     /// <summary>
     /// The server listening port
     /// </summary>
-    public int Port;
+    public ushort Port;
+    
     /// <summary>
     /// Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to ""
     /// </summary>
@@ -135,7 +136,7 @@ public class Configuration
         try
         {
             Address = root.GetProperty("Address").GetString() ?? "";
-            Port = root.GetProperty("Port").GetInt16();
+            Port = root.GetProperty("Port").GetUInt16();
             StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
             Debug = Debugger.FromJson(root.GetProperty("Debug"));
             SslSettings = SslConfiguration.FromJSON(root.GetProperty("SslConfiguration"));
@@ -148,6 +149,7 @@ public class Configuration
             ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
             EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
             DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
+           
 
             foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
             {
@@ -178,7 +180,7 @@ public class Configuration
     /// <param name="staticPath">Path of the static folder</param>
     /// <param name="debugInfo">Class holding debugging information</param>
     /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
-    public Configuration(string address, int port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null, SslConfiguration? sslConfiguration = null)
+    public Configuration(string address, ushort port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null, SslConfiguration? sslConfiguration = null, ushort? sslPort = null)
     {
         Address = address;
         Port = port;
@@ -190,6 +192,7 @@ public class Configuration
         //default one day
         DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong)TimeSpan.FromDays(1).Ticks;
         SslSettings = sslConfiguration ?? new SslConfiguration();
+       
     }
     
     /// <summary>

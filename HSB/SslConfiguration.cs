@@ -12,8 +12,9 @@ public class SslConfiguration
 {
 
     //TODO -> add support for loading certificates from store
-    public bool enabled = false;
-    public bool serveOnlyWithSSL = false;
+
+    public ushort SslPort = 8443;
+    public SSL_PORT_MODE PortMode = SSL_PORT_MODE.DUAL_PORT; //by default we use two ports, one for HTTP and one for HTTPS
     public bool upgradeUnsecureRequests = true;
     public string? CertificatePath;
     public byte[]? CertificateBytes;
@@ -26,14 +27,14 @@ public class SslConfiguration
 
     public SslConfiguration()
     {
-        enabled = false;
+
         TLSVersions = new List<TLSVersion>();
-     
+
     }
 
     public SslConfiguration(string certificatePath, string certificatePassword)
     {
-        enabled = true;
+
         TLSVersions = new List<TLSVersion>();
         CertificatePassword = certificatePassword;
         CertificatePath = certificatePath;
@@ -47,7 +48,7 @@ public class SslConfiguration
         bool validateClientCertificate = false,
         bool clientCertificateRequired = false)
     {
-        enabled = true;
+
         TLSVersions = tlsVersions;
         CertificatePassword = certificatePassword;
         CertificatePath = certificatePath;
@@ -56,7 +57,7 @@ public class SslConfiguration
         ClientCertificateRequired = clientCertificateRequired;
     }
 
-    public bool ConfigIsValid() => enabled && (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath);
+    public bool IsEnabled => (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath);
 
 
     /// <summary>
@@ -101,10 +102,12 @@ public class SslConfiguration
     /// </summary>
     /// <returns></returns>
     /// <exception cref="DeprecatedTLSVersionException"></exception>
-    internal SslProtocols GetProtocols(){
+    internal SslProtocols GetProtocols()
+    {
         SslProtocols protocols = SslProtocols.None;
-        if(TLSVersions.Count == 0){
-           return SslProtocols.None;
+        if (TLSVersions.Count == 0)
+        {
+            return SslProtocols.None;
         }
         foreach (var version in TLSVersions)
         {
@@ -112,7 +115,7 @@ public class SslConfiguration
             {
                 TLSVersion.TLS_1_2 => SslProtocols.Tls12,
                 TLSVersion.TLS_1_3 => SslProtocols.Tls13,
-                TLSVersion.NOT_SET => SslProtocols.None,             
+                TLSVersion.NOT_SET => SslProtocols.None,
                 _ => throw new DeprecatedTLSVersionException(version)
             };
         }
@@ -124,12 +127,13 @@ public class SslConfiguration
     {
         return new()
         {
-            enabled = true,
+           
             CertificatePath = json.GetProperty("certificatePath").GetString() ?? "",
             CertificatePassword = json.GetProperty("certificatePassword").GetString() ?? "",
-            CheckCertificateRevocation = json.GetProperty("checkCertificateRevocation").GetBoolean(),
-            ValidateClientCertificate = json.GetProperty("validateClientCertificate").GetBoolean(),
-            ClientCertificateRequired = json.GetProperty("ClientCertificateRequired").GetBoolean()
+            CheckCertificateRevocation = Utils.Safe(json.GetProperty("checkCertificateRevocation").GetBoolean(), true),
+            ValidateClientCertificate = Utils.Safe(json.GetProperty("validateClientCertificate").GetBoolean(), false),
+            ClientCertificateRequired = Utils.Safe(json.GetProperty("ClientCertificateRequired").GetBoolean(), false),
+            SslPort = Utils.Safe(json.GetProperty("sslPort").GetUInt16(), (ushort)8443),
         };
 
     }

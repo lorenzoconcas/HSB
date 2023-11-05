@@ -28,18 +28,19 @@ This code is very similiar to the example shown [here](./Library.md), with the a
 
 The SslConfiguration contains the following parameters
 
-| Name                           | Return Type        | Type     | Description                                                                                             |
-| ------------------------------ | ------------------ | -------- | ------------------------------------------------------------------------------------------------------- |
-| `enabled`                      | `bool`             | Property | Set if the ssl mode is enabled, this value is set automatically when a valid path or certificate is set |
-| `serveOnlyWithSSL`             | `bool`             | Property | If set, only HTTPS requests are accepted                                                                |
-| `upgradeUnsecureRequests`      | `bool`             | Property | If set, http requests are redirected to https://                                                        |
-| `TLSVersions`                  | `List<TLSVersion>` | Property | If set the server will use these TLS version with the client \*                                         |
-| SetCertificatePassword(string) | void               | Function |                                                                                                         |
-| SetCertificate(string)         | void               | Function | Sets the path of the certificate                                                                        |
-| SetCertificate(byte[])         | void               | Function | Loads the certificate from a byte array                                                                 |
-| ConfigIsValid()                | bool               | Function | Checks if provided SSL configuration is valid for use                                                   |
+| Name                             | Return Type        | Type     | Description                                                                                             |
+| -------------------------------- | ------------------ | -------- | ------------------------------------------------------------------------------------------------------- |
+| `IsEnabled`                      | `bool`             | Property | Set if the ssl mode is enabled, this value is set automatically when a valid path or certificate is set |
+| `PortMode`                       | `void`             | Property | Sets if the server must listen to a secondary port for TLS requests                                     |
+| `upgradeUnsecureRequests`        | `bool`             | Property | If set, http requests are redirected to https://                                                        |
+| `TLSVersions`                    | `List<TLSVersion>` | Property | If set the server will use these TLS version with the client \*                                         |
+| `SetCertificatePassword(string)` | void               | Function |                                                                                                         |
+| `SetCertificate(string)`         | void               | Function | Sets the path of the certificate                                                                        |
+| `SetCertificate(byte[])`         | void               | Function | Loads the certificate from a byte array                                                                 |
 
 - TLS 1.0 (SSL3.0) and TLS 1.1 (SSL 3.1) are deprecated and their usage will throw an Exception
+
+Note that `upgradeUnsecureRequests` will also redirect normal plain request sent to the base port, not only the invalid plain request that the SslPort can receive
 
 ### Exceptions
 

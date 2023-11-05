@@ -1,5 +1,6 @@
 ﻿using HSB.Components.WebSockets;
 using HSB.Constants;
+using HSB.Constants.TLS;
 using HSB.DefaultPages;
 using HSB.Exceptions;
 using System.Diagnostics;
@@ -14,8 +15,10 @@ public class Server
 {
     private readonly IPAddress ipAddress;
     private readonly IPEndPoint localEndPoint;
+    private readonly IPEndPoint? sslLocalEndPoint;
     private readonly Configuration config;
     private readonly Socket listener;
+    private readonly Socket? sslListener;
 
     public static void Main()
     {
@@ -28,8 +31,11 @@ public class Server
         if (!config.HideBranding)
             Utils.PrintLogo();
 
-        if (config.Port > 65535)
-            throw new InvalidConfigurationParameterException("Port", "Port number is over the maximum allowed (65535)");
+        if (config.Port == 0)
+        {
+            //if port is 0, we use a random port in the range 1024-65535
+            config.Port = (ushort)new Random().Next(1024, 65535);
+        }
 
         this.config = config;
 
@@ -68,36 +74,52 @@ public class Server
             }
         }
 
+        //initilize the endpoints
         localEndPoint = new(ipAddress, config.Port);
-
         listener = new(ipAddress.AddressFamily,
             SocketType.Stream, ProtocolType.Tcp);
+
+        SslConfiguration sslConf = config.SslSettings;
+
+
+        //if ssl is set and configuration is set to use two ports we start the sslListener
+        if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+        {
+            sslLocalEndPoint = new(ipAddress, config.SslSettings.SslPort);
+            if (sslLocalEndPoint == null)
+            {
+                throw new Exception("Cannot create SSL endpoint");
+            }
+            sslListener = new(ipAddress.AddressFamily,
+                SocketType.Stream, ProtocolType.Tcp);
+            if (sslListener == null)
+            {
+                throw new Exception("Cannot create SSL listener");
+            }
+        }
 
         if (config.ListeningMode == IPMode.ANY)
         {
             listener.DualMode = true;
+            if (config.SslSettings.IsEnabled)
+                sslListener!.DualMode = true;
         }
 
         config.Debug.INFO("Starting logging...");
 
-        if (config.SslSettings.enabled)
+        if (sslConf.IsEnabled)
         {
             config.Debug.INFO("Server is running in SSL mode");
-            if (!config.SslSettings.ConfigIsValid())
-            {
-                config.Debug.WARNING("Certificate not found or invalid, SSL mode aborted, running in HTTP mode");
-            }
 
         }
         var prefix = "http";
-        if (config.SslSettings.enabled)
+        if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+            config.Debug.INFO($"Listening at https://{sslLocalEndPoint}/");
+
+        else if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
             prefix += "s";
-        if (config.ListeningMode == IPMode.IPV4_ONLY && ipAddress == IPAddress.Any)
-        {
-            config.Debug.INFO($"Listening at {prefix}://127.0.0.1:{config.Port}/");
-        }
-        else
-            config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
+        config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
+        //end of the server initialization
     }
 
     public void Start(bool openInBrowser = false)
@@ -108,90 +130,35 @@ public class Server
             listener.Bind(localEndPoint);
             listener.Listen(100);
 
-            if (openInBrowser)
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = $"http:{localEndPoint}",
-                    UseShellExecute = true
-                };
-                Process.Start(psi);
-            }
-            while (true)
-            {
-                Socket socket = listener.Accept();
+            var sslConf = config.SslSettings;
 
+            if (sslConf.IsEnabled)
+            { //sslListener and sslLocalEndPoint are not null because we checked in the constructor
+                sslListener!.Bind(sslLocalEndPoint!);
+                sslListener.Listen(100);
+            }
+
+            OpenInBrowserIfSet(openInBrowser, sslConf.IsEnabled, sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint);
+
+            //this makes the second port listen to SSL requests
+            if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+            {
                 new Task(() =>
                 {
-                    byte[] bytes = new byte[config.RequestMaxSize];
-                    int bytesRec = 0;
-                    /*
-                    * todo -> write a better upgrade from http to https
-                    * a more precise upgrade will probably be possibile only with a custom ssl implementation
-                    * or with dual port listening (one for http and one for https)
-                    * At the moment if a request 
-                    */
-                    SslStream? sslStream = null;
-                    if (config.SslSettings.enabled && config.SslSettings.ConfigIsValid())
+                    while (true)
                     {
-
-                        var netstream = new NetworkStream(socket);
-                        sslStream = new(netstream, true);
-
-                        try
-                        {
-
-                            sslStream.AuthenticateAsServer(
-                                config.SslSettings.GetCertificate(),
-                                config.SslSettings.ClientCertificateRequired,
-                                config.SslSettings.GetProtocols(),
-                                config.SslSettings.CheckCertificateRevocation
-                            );
-                            bytesRec = sslStream.Read(bytes);
-                        }
-                        catch (Exception)
-                        {
-                            sslStream.Dispose();
-                            //upgrade request redirecting to https
-                            if (config.SslSettings.upgradeUnsecureRequests)
-                            {
-                                //attempt upgrade
-                                Request _req = new(bytes, socket, config);
-                                Response res = new(socket, _req, config, null);
-                                res.Redirect("https://" + localEndPoint, HTTP_CODES.MOVED_PERMANENTLY);
-                                return;
-                            }
-                            else if (config.SslSettings.serveOnlyWithSSL)
-                            {
-                                //if the server is set to serve only with ssl, we send a 403 forbidden
-                                Request _req = new(bytes, socket, config);
-                                Response res = new(socket, _req, config, null);
-                                res.Send(HTTP_CODES.FORBIDDEN);
-                                return;
-                            }
-                            else
-                            {                               
-                                socket.Close();
-                                return;
-                            }
-                        }
+                        Step(sslListener!, true);
                     }
-                    else
-                    {
-                        bytesRec = socket.Receive(bytes);
-
-                    }
-                    bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
-
-                    Request req = new(bytes, socket, config);
-                    if (req.proceedWithElaboration)
-                    {
-
-                        Response res = new(socket, req, config, sslStream);
-                        new Task(() => ProcessRequest(req, res)).Start();
-                    }
-
                 }).Start();
+            }
+
+            //since the base port is alwyas listening this is always executed
+            while (true)
+            {
+                //if ssl is enabled and single port is used
+                var sslMode = sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
+             
+                Step(listener, sslMode);
             }
         }
         catch (Exception e)
@@ -199,6 +166,101 @@ public class Server
             Terminal.ERROR(e);
         }
     }
+
+    private static void OpenInBrowserIfSet(bool openInBrowser, bool ssl, IPEndPoint endpoint)
+    {
+        if (openInBrowser)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = $"http{(ssl ? "s" : "")}:{endpoint}",
+                UseShellExecute = true
+            };
+            Process.Start(psi);
+        }
+    }
+
+
+    private void Step(Socket listener, bool sslMode)
+    {
+        Socket socket = listener.Accept();
+        byte[] bytes = new byte[config.RequestMaxSize];
+        int bytesRec = 0;
+        SslStream? sslStream = null;
+        if (sslMode)
+        {
+            var netstream = new NetworkStream(socket);
+            sslStream = new(netstream, true);
+            try
+            {
+                sslStream.AuthenticateAsServer(
+                    config.SslSettings.GetCertificate(),
+                    config.SslSettings.ClientCertificateRequired,
+                    config.SslSettings.GetProtocols(),
+                    config.SslSettings.CheckCertificateRevocation
+                );
+                bytesRec = sslStream.Read(bytes);
+            }
+            catch (Exception)
+            {
+                //if auth fails, the behaviour depends on the configuration
+                sslStream.Dispose();
+                if (config.SslSettings.upgradeUnsecureRequests)
+                {
+                    config.Debug.WARNING("SSL authentication failed, redirecting to SSL");
+                    //attempt redirect
+                    Request _req = new(bytes, socket, config);
+                    Response res = new(socket, _req, config, null);
+
+                    //the endpoint varies if by the port mode
+                    //if the port mode is dual port, we redirect to the ssl port
+                    IPEndPoint redirectEndpoint = config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint;
+                    res.Redirect("https://" + redirectEndpoint, HTTP_CODES.MOVED_PERMANENTLY);
+                    return;
+                }
+
+                else
+                {
+                    config.Debug.WARNING("SSL authentication failed, closing connection");
+                    socket.Close();
+                    return;
+                }
+            }
+        }
+        else
+        {
+            if(config.SslSettings.IsEnabled && config.SslSettings.upgradeUnsecureRequests){
+                config.Debug.WARNING("Unsecure request received, redirecting to SSL");
+                //attempt redirect
+                Request _req = new(bytes, socket, config);
+                Response res = new(socket, _req, config, null);
+
+                //the endpoint varies if by the port mode
+                //if the port mode is dual port, we redirect to the ssl port
+                IPEndPoint redirectEndpoint = config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint;
+                res.Redirect("https://" + redirectEndpoint, HTTP_CODES.MOVED_PERMANENTLY);
+                return;
+            }
+            bytesRec = socket.Receive(bytes);
+        }
+
+        bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
+
+        //parse the request
+        Request req = new(bytes, socket, config);
+        //if is valid we process it
+        if (req.IsValidRequest)
+        {
+            Response res = new(socket, req, config, sslStream);
+            new Task(() => ProcessRequest(req, res)).Start();
+        }
+        else
+        {
+            //abort if the request is not valid
+            socket.Close();
+        }
+    }
+
     private bool RunIfExpressMapping(Request req, Response res)
     {
         var e = config.ExpressRoutes.Find(e => e.Item1 == req.URL && e.Item2.Item1 == req.METHOD);

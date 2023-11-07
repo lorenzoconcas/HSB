@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runner", "Runner\Runner.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Standalone", "Standalone\Standalone.csproj", "{0DE25B84-6320-42CD-8C07-354B5BE1EC18}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manager", "Manager\Manager.csproj", "{D6FA18ED-AEA5-4DE9-87E0-941F7AFEE6AE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template", "Template\Template.csproj", "{419E6EF9-552A-446E-BCF9-1B91FD241593}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplatformLauncher", "MultiplatformLauncher\MultiplatformLauncher.csproj", "{F7472E27-F302-4BBA-9695-8EA79A774F03}"
@@ -65,10 +63,6 @@ Global
 		{0DE25B84-6320-42CD-8C07-354B5BE1EC18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DE25B84-6320-42CD-8C07-354B5BE1EC18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DE25B84-6320-42CD-8C07-354B5BE1EC18}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D6FA18ED-AEA5-4DE9-87E0-941F7AFEE6AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D6FA18ED-AEA5-4DE9-87E0-941F7AFEE6AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6FA18ED-AEA5-4DE9-87E0-941F7AFEE6AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D6FA18ED-AEA5-4DE9-87E0-941F7AFEE6AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{419E6EF9-552A-446E-BCF9-1B91FD241593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{419E6EF9-552A-446E-BCF9-1B91FD241593}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{419E6EF9-552A-446E-BCF9-1B91FD241593}.Release|Any CPU.ActiveCfg = Release|Any CPU

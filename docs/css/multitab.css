@@ -1,0 +1,83 @@
+
+/*Tabs styles*/
+multitab-section {
+    border: 1px solid #2B4E7B;
+    box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
+    border-radius: 8px;
+    background: #000000;
+    background: rgba(19, 34, 46, 0.91);
+    font-family: CascadiaMonoPLRoman-Bold;
+    font-size: 32px;
+    color: #FFFFFF;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+
+
+    font-size: 27px;
+    gap: 16px;
+
+    width: 75%;
+
+    margin: 10px 30px;
+}
+
+multitab-header {
+    display: flex;
+    flex-direction: column;
+}
+
+multitab-header-title {
+    font-family: CascadiaMonoPL;
+    border-bottom: 1px solid #2B4E7B;
+    margin: 0px;
+    font-size: 16px;
+    position: relative;
+    padding: 16px;
+    width: calc(100% - 32px);
+}
+
+multitab-tabs {
+    font-family: CascadiaMonoPL;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    vertical-align: middle;
+    border-bottom: 1px solid #2B4E7B;
+}
+
+multitab-tabs span {
+    font-size: 16px;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 0px;
+    border-collapse: collapse;
+    border-right: 1px solid #2B4E7B;
+    display: flex;
+    align-items: center;
+    gap:16px;
+}
+
+multitab-tabs span:hover {
+    background-color: #376198;
+}
+multitab-tabs span.tab-selected {
+    background-color: #2B4E7B;
+}
+.contentDescription{
+    font-family: monospace;
+    font-size: 14px;
+    padding: 8px 16px;
+    display: block;
+}
+
+.tab {
+    display: none;
+}
+
+.selected {
+    display: block;
+}

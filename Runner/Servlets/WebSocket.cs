@@ -20,8 +20,7 @@ public class WebSocketHandler : WebSocket
     {
         //echo the message
         Terminal.DEBUG($"Got message : {msg.GetMessage()}");
-        Send(msg);
-        Send("ciao");
+        Send(msg.GetMessage());
     }
 
     public override void OnClose()

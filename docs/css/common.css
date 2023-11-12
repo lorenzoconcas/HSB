@@ -17,18 +17,35 @@ body {
     height: 100%;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "CascadiaMonoPL";
+
+}
+
 .footer {
-    position: absolute;
-    padding-bottom: 20px;
-    bottom: 0px;
+    font-family: CascadiaMonoPL;
     width: 100%;
     text-align: center;
+
+    position: fixed;
+    padding: 20px 0px;
+    bottom: 0px;
+    z-index: 2;
+    background: #14212d8a;
+    backdrop-filter: blur(4px);
 }
+
 #background {
     position: fixed;
     float: right;
     right: -100px;
     height: 100%;
+    z-index: -1;
 }
 
 .font_cascadia {
@@ -36,33 +53,6 @@ body {
 }
 
 
-.button {
-    border: 1px solid #2B4E7B;
-    box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
-    border-radius: 8px;
-    background: #000000;
-    background: rgba(19, 34, 46, 0.91);
-    font-family: CascadiaMonoPLRoman-Bold;
-    font-size: 32px;
-    color: #FFFFFF;
-    padding:4px;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-    padding: 16px;
-    font-size: 27px;
-    gap:16px;
-}
-.button > img{
-    padding-left:8px;
-}
-.button > span{
-    margin-right:8px;
-}
 
 #actionbar {
     position: absolute;
@@ -75,6 +65,7 @@ body {
     z-index: 20;
 
 }
+
 .actionbar_item {
     padding: 16px;
     display: flex;
@@ -85,31 +76,37 @@ body {
     gap: 16px;
     text-decoration: none;
 }
-.invert{
+
+.invert {
     filter: invert(1);
 }
-.hflex{
+
+.hflex {
     display: flex;
     text-align: center;
     align-items: center;
 }
-a:visited{
+
+a:visited {
     color: white;
 }
-a:link{
+
+a:link {
     text-decoration: none;
 }
 
-.whiteLink{
+.whiteLink {
     color: white;
     cursor: pointer;
-    
+
 }
-.whiteLink:link{
+
+.whiteLink:link {
     text-decoration: underline;
 }
-.whiteLink:visited{
-    color:white;
+
+.whiteLink:visited {
+    color: white;
 }
 
 
@@ -132,24 +129,36 @@ a:link{
     font-family: CascadiaMonoPLRoman-Bold;
     font-size: 32px;
     color: #FFFFFF;
-    padding:4px;
+    padding: 4px;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    text-align: center;
+    justify-content: start;
 
     padding: 16px;
     font-size: 27px;
-    gap:16px;
+    gap: 16px;
+    width: fit-content;
 }
-.button > img{
-    padding-left:8px;
+
+.button>img {
+    padding-left: 8px;
 }
-.button > span{
-    margin-right:8px;
+
+.button>span {
+    margin-right: 8px;
 }
+
+/*spacers*/
+spacer {
+    display: block;
+    height: 16px;
+    width: 16px;
+    position: relative;
+
+}
+
 
 
 @media screen and (max-width: 1919px) {

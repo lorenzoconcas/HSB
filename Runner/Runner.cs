@@ -18,7 +18,7 @@ public class HSBRunner
             ListeningMode = HSB.Constants.IPMode.ANY, //valid only if address == "",
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static")
         };
-     
+
         //test expressjs-like routing
         //note that these are controlled first, so eventual servlet
         //with same routing will be ignored if they respond to that http method
@@ -39,6 +39,57 @@ public class HSBRunner
             res.Redirect("/");
         });
 
+        c.GET("/websocketpage", (Request req, Response res) =>
+        {
+            //return a page to test websocket
+            // a text showing the connection status
+            //a button that connects to the server
+            //the page contains a textarea that displays message from the server
+            //a text input to send messages to the server
+            // a button to send the message
+
+            string html = @"<html><head></head><body><h1>Websocket test page</h1>
+            <div id='status'>Not connected</div>
+            <button onclick='connect()'>Connect</button>
+            <button onclick='disconnect()'>Disconnect</button>
+            <br/>
+            <textarea id='messages' row='10' col='15'></textarea>
+            <br/>
+            <input type='text' id='message' />
+            <button onclick='send()'>Send</button>
+            <script> 
+            var ws = null;
+            function connect(){
+                ws = new WebSocket('ws://' + window.location.host + '/websocket');
+                ws.onmessage = function (event) {
+                    var messages = document.getElementById('messages');
+                    console.log(event.data);
+                    messages.value += event.data + '\n';
+                };
+                ws.onopen = function (event) {
+                    var status = document.getElementById('status');
+                    status.innerHTML = 'Connected';
+                };
+                ws.onclose = function (event) {
+                    var status = document.getElementById('status');
+                    status.innerHTML = 'Not connected';
+                };
+            }
+            function disconnect(){
+                ws.close();
+            }
+            function send(){
+                var message = document.getElementById('message').value;
+                ws.send(message);
+            }
+
+            </script>
+            </body></html>";
+            res.SendHTMLContent(html);
+
+
+        });
+
         c.GET("/", (Request req, Response res) =>
             {
                 //return an html page with all the routes and a link
@@ -56,7 +107,7 @@ public class HSBRunner
                 html += "</tbody></table>";
 
                 //print all available static files
-                var staticFilePath = c.StaticFolderPath;               
+                var staticFilePath = c.StaticFolderPath;
                 if (staticFilePath != "" && Directory.Exists(staticFilePath))
                 {
 

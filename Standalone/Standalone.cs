@@ -72,7 +72,7 @@ namespace HSBStandalone
                     }
                     if (s.StartsWith("--port="))
                     {
-                        conf.Port = int.Parse(s.Split("--port=")[1]);
+                        conf.Port = uint.Parse(s.Split("--port=")[1]);
                     }
                     if (s.StartsWith("--address="))
                     {

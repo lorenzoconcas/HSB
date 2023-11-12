@@ -5,6 +5,7 @@
     <title>Http Server Boxed</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style_downloads.css">
+    <link rel="stylesheet" href="css/multitab.css">
     <!--favicon -->
     <link rel="shortcut icon" href="icon.png" type="image/x-icon">
     <!--update every 2 seconds-->
@@ -12,7 +13,7 @@
 </head>
 
 <body>
-    
+
     <img src="./assets/background.png" alt="background" id="background">
     <div id="actionbar" class="font_cascadia">
         <a class="actionbar_item">
@@ -25,127 +26,287 @@
             <span>Documentation</span>
         </a>
     </div>
-    <div id="container">
-        <div class="header">
-            <img class="icon" src="icon.png" alt="banner" width="128px" height="128px">
-            <div>
-                <h1 class="font_cascadia">Downloads</h1>
-                <h3 class="font_cascadia">Http Server Boxed <sup>&reg;</sup></h3>
-            </div>
+
+    <div class="header">
+        <img class="icon" src="icon.png" alt="banner" width="128px" height="128px">
+        <div>
+            <h1 class="font_cascadia">Downloads</h1>
+            <h3 class="font_cascadia">Http Server Boxed <sup>&reg;</sup></h3>
         </div>
-
-
-        <div class="subcontainer">
-            <section id="librarySection">
-                <h2>Library</h2>
-                <h3>Stable</h3>
-                <section id="libStable" class="twoItemsCol">
-                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.10/HSB_v0.0.10_Release.zip" class="button">
-                        <img src="./assets/downloadIcon.png" alt="download">
-                        <span class="font_cascadia">
-                            v0.0.10 Release
-                        </span>
-                    </a>
-                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.10/HSB_v0.0.10_Debug.zip" class="button">
-                        <img src="./assets/downloadIcon.png" alt="download">
-                        <span class="font_cascadia">
-                            v0.0.10 Debug
-                        </span>
-                    </a>
-                </section>
-                <br />
-                <h3>Alpha</h3>
-                <section id="libAlpha" class="twoItemsCol">
-                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.11-alpha/HSB_v0.0.11_ALPHA_Release.zip" class="button">
-                        <img src="./assets/downloadIcon.png" alt="download">
-                        <span class="font_cascadia">
-                            v0.0.11a Release
-                        </span>
-                    </a>
-                    <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.11-alpha/HSB_v0.0.11_ALPHA_Debug.zip" class="button">
-                        <img src="./assets/downloadIcon.png" alt="download">
-                        <span class="font_cascadia">
-                            v0.0.11a Debug
-                        </span>
-                    </a>
-                </section>
-                <br />
-                <h3>Other versions</h3>
-                <section id="libAlpha" class="twoItemsCol">
-                    <a href="https://github.com/lorenzoconcas/HSB/releases/" class="button">
-                        <img src="./assets/GithubIcon.png" alt="download" class="normalSize">
-                        <span class="font_cascadia">
-                            GitHub releases page
-                        </span>
-                    </a>
-                 
-                </section>
-            </section>
-            <section id="utilitiesSection">
-                <h2>Utilities</h2>
-                <h3>Multiplatform Launcher</h3>
-                <h4>Precompiled binaries for the launcher, more info : <a href="">Launcher project page</a></h4>
-                <div class="twoItemsCol" id="windows">
-                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_x64.exe.zip" class="button">
-                        <img src="./assets/windows11.svg" alt="download" class="invert normalizeSize">
-                        <span class="font_cascadia">
-                            Windows 10+ (x64)
-                        </span>
-                    </a>
-                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_arm64.exe.zip" class="button">
-                        <img src="./assets/windows11.svg" alt="download" class="invert normalizeSize">
-                        <span class="font_cascadia">
-                            Windows 10+ (x64)
-                        </span>
-                    </a>
-                </div>
-                <br />
-                <div class="twoItemsCol" id="mac">
-                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_macOS_intel.zip" class="button">
-                        <img src="./assets/apple.logo.svg" alt="download" class="invert normalizeSize">
-                        <span class="font_cascadia">
-                            MacOS 10.15+ (x64)
-                        </span>
-                    </a>
-                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_appleSilicon.zip" class="button">
-                        <img src="./assets/apple.logo.svg" alt="download" class="invert normalizeSize">
-                        <span class="font_cascadia">
-                            MacOS 11+ (arm64)
-                        </span>
-                    </a>
-                </div>
-                <br />
-                <div class="twoItemsCol" id="linux">
-                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_x64.zip" class="button">
-                        <img src="./assets/linux.png" alt="download" class="invert normalizeSize">
-                        <span class="font_cascadia">
-                            Linux (x64)
-                        </span>
-                    </a>
-                    <a href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_arm64.zip" class="button">
-                        <img src="./assets/linux.png" alt="download" class="invert normalizeSize">
-                        <span class="font_cascadia">
-                            Linux (arm64)
-                        </span>
-                    </a>
-                </div>
-                <br>
-
-                <h3>.NET Framework</h3>
-                <h4>HSB is written in C# (hence the name HSB-#) and targets .NET 7</h4>
-                <div class="twoItemsCol" id="dotnet">
-                    <a href="https://dotnet.microsoft.com/en-us/download" class="button">
-                        <img src="./assets/downloadIcon.png" alt="download">
-                        <span class="font_cascadia">
-                            Download .NET 7
-                        </span>
-                    </a>
-                </div>
-                <br/>
-            </section>
-        </div>
-        <br />
     </div>
+
+
+    <div class="subcontainer">
+        <multitab-section id="librarySection">
+            <multitab-header>
+                <multitab-header-title>
+                    <span>Library</span>
+                </multitab-header-title>
+
+                <multitab-tabs>
+                    <span class="tab-selected">Stable</span>
+                    <span>Alpha</span>
+                    <span>Other</span>
+                </multitab-tabs>
+            </multitab-header>
+
+            <multitab-content>
+
+                <section class="tab" default-tab id="stable_download">
+                    <span class="contentDescription">
+                        This release brings support for WebSockets, IP listening mode, IP Block mode
+                        (banlist/oklist), FormData and FileUpload support
+                    </span>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.10/HSB_v0.0.10_Release.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                v0.0.10 Release
+                            </span>
+                        </div>
+
+                        <span> </span>
+                    </a>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.10/HSB_v0.0.10_Debug.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                v0.0.10 Debug
+                            </span>
+
+                            <span class="contentDescription">
+                                Debug symbols are embedded in the dll file
+                            </span>
+                        </div>
+                    </a>
+
+                </section>
+
+                <section id="alpha_download" class="tab">
+                    <span class="contentDescription">
+                        This alpha contains preliminary support to SSL/TLS (HTTPS), with some changes to the
+                        Configuration class
+                    </span>
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.11-alpha/HSB_v0.0.11_ALPHA_Release.zip">
+                        <div>
+
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+
+                            <span class="font_cascadia">
+                                v0.0.11 Release
+                            </span>
+                        </div>
+                    </a>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.11-alpha/HSB_v0.0.11_ALPHA_Debug.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                v0.0.11 Debug
+                            </span>
+
+                            <span class="contentDescription">
+                                Debug symbols are embedded in the dll file
+                            </span>
+                        </div>
+                    </a>
+
+                </section>
+
+                <section class="tab" default-tab id="stable_download">
+
+                    <span class="contentDescription">
+                        All published version are hosted on the Github releases page
+                    </span>
+                    <a class="downloadLink" href="https://github.com/lorenzoconcas/HSB/releases/">
+                        <div>
+                            <img src="./assets/GithubIcon.png" alt="download" class="normalSize">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                GitHub releases page
+                            </span>
+
+
+                        </div>
+                    </a>
+                </section>
+
+            </multitab-content>
+        </multitab-section>
+
+        <br />
+
+        <section>
+            <h2>Utilities</h2>
+            <h3>Multiplatform Launcher</h3>
+            <h4>Precompiled binaries for the launcher, more info : <a href="">Launcher project page</a></h4>
+        </section>
+
+
+        <multitab-section>
+            <multitab-header>
+                <multitab-header-title>
+                    <span>Launcher</span>
+                </multitab-header-title>
+
+                <multitab-tabs>
+                    <span class="tab-selected"> <img src="./assets/windows11.svg" alt="download"
+                            class="invert normalizeSize">Windows</span>
+                    <span> <img src="./assets/apple.logo.svg" alt="download" class="invert normalizeSize">macOS</span>
+                    <span> <img src="./assets/linux.png" alt="download" class="invert normalizeSize">Linux</span>
+                </multitab-tabs>
+            </multitab-header>
+
+
+            <mulitab-content>
+                <section class="tab">
+                    <span class="contentDescription">
+                        To run the launcher, .NET is not required as it is bundled with the executable
+                        <br>
+                        Windows 10 or later is required
+                    </span>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_x64.exe.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                x64 (Intel/AMD 64 bit)
+                            </span>
+                        </div>
+                    </a>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_win_arm64.exe.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                arm64 (Qualcomm/Arm VMs/ecc 64 bit arm)
+                            </span>
+                        </div>
+                    </a>
+                </section>
+
+                <section class="tab">
+                    <span class="contentDescription">
+                        To run the launcher, .NET is not required as it is bundled with the executable
+                        <br>
+                        macOS 10.15 (Catalina) or later is required to run the x64 version
+                        <br>
+                        macOS 11 (Big Sur) or later is required to run the arm64 version, as is the first version
+                        that supports arm processors
+                    </span>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_macOS_intel.zip">
+                        <div>
+
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                x64 (Intel/AMD 64 bit)
+                            </span>
+                        </div>
+                    </a>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_appleSilicon.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                Apple Silicon (arm64, M processors)
+                            </span>
+                        </div>
+                    </a>
+                </section>
+
+                <section class="tab">
+                    <span class="contentDescription">
+                        To run the launcher, .NET is not required as it is bundled with the executable
+                    </span>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_x64.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                x64 (Intel/AMD 64 bit)
+                            </span>
+                        </div>
+                    </a>
+
+                    <a class="downloadLink"
+                        href="https://github.com/lorenzoconcas/HSB-Sharp/releases/download/v0.0.5-rc1/MultiplatformLauncher_linux_arm64.zip">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                arm64 (Qualcomm/Arm VMs/Arm SBCs 64 bit arm)
+                            </span>
+                        </div>
+                    </a>
+
+                </section>
+
+            </mulitab-content>
+        </multitab-section>
+
+
+
+        <section id="utilitiesSection">
+
+            <br>
+
+            <h3>.NET Framework</h3>
+            <h4>HSB is written in C# (hence the name HSB-#) and targets .NET 7+</h4>
+            <h4>The library will always target the current stable version of .NET</h4>
+            <div id="dotnet">
+                <a href="https://dotnet.microsoft.com/en-us/download" class="button">
+                    <img src="./assets/downloadIcon.png" alt="download">
+                    <span class="font_cascadia">
+                        .NET 7
+                    </span>
+                </a>
+                <br>
+                <a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0" class="button">
+                    <img src="./assets/downloadIcon.png" alt="download">
+                    <span class="font_cascadia">
+                        .NET 8 (Preview)
+                    </span>
+                </a>
+
+            </div>
+            <br />
+        </section>
+    </div>
+    <spacer vspace="16px"></spacer>
+
+
     <div class="footer">
         <span>HSB-#</span>
         <span>&bull;</span>
@@ -157,12 +318,70 @@
     </div>
 
     <script>
-        var items = document.getElementsByClassName("twoItemsCol");
+        /*let items = document.getElementsByClassName("twoItemsCol");
         for (let i in items)
             items[i].addEventListener("wheel", function (e) {
                 if (e.deltaY > 0) items[i].scrollLeft += 75;
                 else items[i].scrollLeft -= 75;
             });
+*/
+
+        //add event listener to tabs
+        let multitabHeaders = document.getElementsByTagName("multitab-tabs");
+        if (multitabHeaders.length > 0) {
+            for (let i = 0; i < multitabHeaders.length; i++) {
+                let tabs = multitabHeaders[i].getElementsByTagName("span");
+                for (let j = 0; j < tabs.length; j++) {
+                    tabs[j].addEventListener("click", function (e) {
+                        //hide all tabs of this multitab
+                        let allTabs = e.target.parentElement.children;
+                        for (let k = 0; k < allTabs.length; k++) {
+                            allTabs[k].classList.remove("selected");
+                        }
+
+
+
+                        let tab = e.target;
+                        let tabs = tab.parentElement.children;
+                        let tabContent = tab.parentElement.parentElement.parentElement.children[1].children;
+                        for (let k = 0; k < tabs.length; k++) {
+                            tabs[k].classList.remove("tab-selected");
+                            tabContent[k].classList.remove("selected");
+                        }
+                        tab.classList.add("tab-selected");
+                        tabContent[j].classList.add("selected");
+                    });
+                }
+            }
+
+
+            let multitabSections = document.getElementsByTagName("multitab-section");
+            for (let i = 0; i < multitabSections.length; i++) {
+                let defaultTab = multitabSections[i].querySelector(".tab[default-tab]");
+                if (defaultTab == null) defaultTab = multitabSections[i].querySelector(".tab");
+                defaultTab.classList.add("selected");
+            }
+
+
+
+        }
+    </script>
+
+    <script>
+        //spacers
+        let spacers = document.getElementsByTagName("spacer");
+        for (let i = 0; i < spacers.length; i++) {
+            let spacer = spacers[i];
+            let height = spacer.getAttribute("vspace");
+            if (height == null) height = "16px";
+            spacer.style.paddingTop = height;
+            spacer.style.paddingBottom = height;
+            
+            let width = spacer.getAttribute("hspace");
+            if (width == null) width = "16px";
+            spacer.style.paddingLeft = width;
+            spacer.style.paddingRight = width;
+        }
     </script>
 
 </body>

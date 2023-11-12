@@ -184,9 +184,11 @@ public class WebSocket
     }
     private void MessageLoop()
     {
+        //todo add error loop detection
+        int errorCount = 0;
         var buffer = new byte[Configuration.KILOBYTE * 32];
 
-        while (state == WebSocketState.OPEN)
+        while (state == WebSocketState.OPEN && errorCount < 10)
         {
             try
             {
@@ -198,6 +200,7 @@ public class WebSocket
                     if (socket == null)
                     {
                         Terminal.DEBUG("socket is null??");
+                        errorCount++;
                         return;
                     }
                     int received = 0;
@@ -207,11 +210,13 @@ public class WebSocket
                     }
                     catch (Exception)
                     {
+
                         return;
                     }
                     if (received < 2)
                     {
                         Terminal.DEBUG("wrong data length?? -> " + received);
+                        errorCount++;
                         return;
                     }
                     Frame f = new(buffer[..received]);

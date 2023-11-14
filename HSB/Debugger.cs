@@ -1,23 +1,16 @@
 using System.Text.Json;
-
+using HSB.Constants;
 namespace HSB;
 
 public class Debugger
 {
-    public enum LogLevel
-    {
-        ERROR,
-        WARNING,
-        INFO,
-        ALL
-    }
 
     public bool enabled;
     public bool verbose;
     public int port;
     public string address;
     public string logPath;
-    public LogLevel logLevel;
+    public LOG_LEVEL logLevel;
 
     //Todo : add an authentication method to access the socket of the debugger
     //Todo : establish communication rules between debugger and client
@@ -29,14 +22,14 @@ public class Debugger
         port = 8081;
         address = "127.0.0.1";
         logPath = Path.Combine(AppContext.BaseDirectory, $"log_{GetDateFormatted()}.txt");
-        logLevel = LogLevel.INFO;
+        logLevel = LOG_LEVEL.INFO;
 
         StartDebugServer();
     }
 
 
     public Debugger(bool enabled, bool verbose, int port, string address, string logPath = "",
-        LogLevel logLevel = LogLevel.INFO)
+        LOG_LEVEL logLevel = LOG_LEVEL.INFO)
     {
         this.enabled = enabled;
         this.verbose = verbose;
@@ -71,7 +64,7 @@ public class Debugger
             json.GetProperty("port").GetInt16(),
             json.GetProperty("address").GetString() ?? "127.0.0.1",
             json.GetProperty("logPath").GetString() ?? "",
-            (LogLevel)json.GetProperty("logLevel").GetInt16()
+            (LOG_LEVEL)json.GetProperty("logLevel").GetInt16()
         );
     }
 
@@ -79,10 +72,10 @@ public class Debugger
     {
         if (verbose)
             Terminal.ERROR(o, printExtraInfo);
-        if (o != null)
+        if((int) logLevel <= (int)LOG_LEVEL.ERROR && logLevel > 0 && o != null)
         {
             var msg = o.ToString() ?? "";
-            AppendToFile(GetMessage("E", msg));
+            AppendToFile(GetMessage("W", msg));
         }
     }
 
@@ -91,7 +84,7 @@ public class Debugger
         if (verbose)
             Terminal.WARNING(o, printExtraInfo);
 
-        if (logLevel == LogLevel.INFO && logLevel == LogLevel.WARNING && logLevel == LogLevel.ALL && o != null)
+        if((int) logLevel <= (int)LOG_LEVEL.WARNING && logLevel > 0 && o != null)
         {
             var msg = o.ToString() ?? "";
             AppendToFile(GetMessage("W", msg));
@@ -103,7 +96,7 @@ public class Debugger
         if (verbose)
             Terminal.INFO(o, printExtraInfo);
 
-        if (logLevel == LogLevel.INFO && logLevel == LogLevel.ALL && o != null)
+         if((int) logLevel <= (int)LOG_LEVEL.INFO && logLevel > 0 && o != null)
         {
             var msg = o.ToString() ?? "";
             AppendToFile(GetMessage("I", msg));
@@ -114,7 +107,7 @@ public class Debugger
     {
         if (verbose)
             Terminal.DEBUG(o, printExtraInfo);
-        if (logLevel == LogLevel.ALL && o != null)
+        if (logLevel == LOG_LEVEL.ALL && logLevel > 0 && o != null)
         {
             var msg = o.ToString() ?? "";
             AppendToFile(GetMessage("D", msg));
@@ -131,6 +124,6 @@ public class Debugger
 
     private static string GetMessage(string lvl, string msg)
     {
-        return $"[{GetDateFormatted()}][{lvl}][{msg}]";
+        return $"[{GetDateFormatted()}][{lvl}][{msg}]\n";
     }
 }

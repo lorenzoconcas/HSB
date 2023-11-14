@@ -28,7 +28,7 @@ public class Debugger
         verbose = true;
         port = 8081;
         address = "127.0.0.1";
-        logPath = Path.Combine(AppContext.BaseDirectory, $"log_{GetDateFormatted()}");
+        logPath = Path.Combine(AppContext.BaseDirectory, $"log_{GetDateFormatted()}.txt");
         logLevel = LogLevel.INFO;
 
         StartDebugServer();
@@ -42,7 +42,7 @@ public class Debugger
         this.verbose = verbose;
         this.port = port;
         this.address = address;
-        this.logPath = logPath == "" ? $"{AppContext.BaseDirectory}log_{GetDateFormatted()}" : logPath;
+        this.logPath = logPath == "" ? $"{AppContext.BaseDirectory}log_{GetDateFormatted()}.txt" : logPath;
         this.logLevel = logLevel;
 
         StartDebugServer();
@@ -59,8 +59,8 @@ public class Debugger
 
 
     private static string GetDateFormatted()
-    {
-        return new DateTime().ToString("yyyy_mm_dd_hh_MM");
+    {       
+        return DateTime.Now.ToString("yyyy_mm_dd_hh_MM");
     }
 
     public static Debugger FromJson(JsonElement json)

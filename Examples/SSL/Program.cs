@@ -20,7 +20,7 @@ var sslConfig = new SslConfiguration(
     certificatePath: certificatePath ?? throw new Exception("You must provide a certificate path"),
     certificatePassword: certificatePassword ?? throw new Exception("You must provide a certificate password")
 ){
-    upgradeUnsecureRequests = false,
+    UpgradeUnsecureRequests = false,
     SslPort = 443,
 };
 

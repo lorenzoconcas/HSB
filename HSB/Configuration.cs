@@ -18,7 +18,10 @@ public class Configuration
     /// The server listening port
     /// </summary>
     public ushort Port;
-    
+    /// <summary>
+    /// When this field is set, it will be used for Unsecure SSL requests upgrade 
+    /// </summary>
+    public string PublicURL = "";
     /// <summary>
     /// Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to ""
     /// </summary>
@@ -132,25 +135,27 @@ public class Configuration
     {
         using var doc = JsonDocument.Parse(content);
         var root = doc.RootElement;
-
+        string lastProp = "";
         try
         {
-            Address = root.GetProperty("Address").GetString() ?? "";
-            Port = root.GetProperty("Port").GetUInt16();
-            StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
-            Debug = Debugger.FromJson(root.GetProperty("Debug"));
-            SslSettings = SslConfiguration.FromJSON(root.GetProperty("SslConfiguration"));
-            RequestMaxSize = root.GetProperty("Port").GetInt32();
-            BlockMode = (BLOCK_MODE)root.GetProperty("BlockMode").GetInt32();
-            HideBranding = root.GetProperty("HideBranding").GetBoolean();
-            IPAutoblock = root.GetProperty("IPAutoblock").GetBoolean();
-            ListeningMode = (IPMode)root.GetProperty(nameof(ListeningMode)).GetInt32();
-            CustomServerName = root.GetProperty("CustomServerName").GetString() ?? "";
-            ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
-            EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
-            DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
-           
 
+            lastProp = "Address"; Address = root.GetProperty("Address").GetString() ?? "";
+            lastProp = "Port"; Port = root.GetProperty("Port").GetUInt16();
+            lastProp = "PublicURL"; PublicURL = root.GetProperty("PublicURL").GetString() ?? "";
+            lastProp = "StaticFolderPath"; StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
+            lastProp = "Debug"; Debug = Debugger.FromJson(root.GetProperty("Debug"));
+            lastProp = "SslSettings"; SslSettings = SslConfiguration.FromJSON(root.GetProperty("SslSettings"));
+            lastProp = "RequestMaxSize"; RequestMaxSize = root.GetProperty("Port").GetInt32();
+            lastProp = "BlockMode"; BlockMode = (BLOCK_MODE)root.GetProperty("BlockMode").GetInt32();
+            lastProp = "HideBranding"; HideBranding = root.GetProperty("HideBranding").GetBoolean();
+            lastProp = "IPAutoblock"; IPAutoblock = root.GetProperty("IPAutoblock").GetBoolean();
+            lastProp = "ListeningMode"; ListeningMode = (IPMode)root.GetProperty(nameof(ListeningMode)).GetInt32();
+            lastProp = "CustomServerName"; CustomServerName = root.GetProperty("CustomServerName").GetString() ?? "";
+            lastProp = "ServeEmbeddedResource"; ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
+            lastProp = "EmbeddedResourcePrefix"; EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
+            lastProp = "DefaultSessionExpirationTime"; DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
+
+            lastProp = "PermanentIPList";
             foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
             {
                 string? v = item.GetString();
@@ -160,18 +165,19 @@ public class Configuration
                 }
             }
 
-            
+
 
         }
         catch (Exception e)
         {
             Terminal.ERROR("Cannot parse configuration file");
             Terminal.ERROR(e);
+            Terminal.ERROR($"Last property that was being parsed: {lastProp}");
             Environment.Exit(1);
         }
     }
 
-    
+
     /// <summary>
     /// Instantiate a configuration with the minimal settings
     /// </summary>
@@ -192,9 +198,9 @@ public class Configuration
         //default one day
         DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong)TimeSpan.FromDays(1).Ticks;
         SslSettings = sslConfiguration ?? new SslConfiguration();
-       
+
     }
-    
+
     /// <summary>
     /// Instantiate configuration from a json file passed as parameter
     /// </summary>
@@ -211,7 +217,7 @@ public class Configuration
     /// <param name="path"></param>
     public void SaveToJson(string path)
     {
-        string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true  });
+        string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
         File.WriteAllText(path, json);
     }
     private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)
@@ -314,7 +320,7 @@ public class Configuration
     /// Gets all global HTTP Response headers 
     /// </summary>
     public Dictionary<string, string> CustomGlobalHeaders => customGlobalHeaders;
-     
+
 
     /// <summary>
     /// Add (Or replaces) a cookie that will be added to ALL the responses
@@ -343,7 +349,7 @@ public class Configuration
     public Dictionary<string, Cookie> CustomGlobalCookies => customGlobalCookies;
 
     public List<string> GetRawArguments() => rawArguments;
-    
+
     public void HideBrandingOnStartup() => HideBranding = true;
     /// <summary>
     /// String representing the configuration
@@ -373,7 +379,7 @@ public class Configuration
         }
         return str;
     }
-    
+
     public List<Tuple<string, string>> GetAllRoutes()
     {
         List<Tuple<string, string>> routes = new();

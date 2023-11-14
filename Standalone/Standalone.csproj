@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Configurations>Release;DebugWithDefaults;Debug</Configurations>
@@ -11,15 +11,16 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType></DebugType>
     <WarningLevel>4</WarningLevel>
-    <AssemblyName>HSB_Standalone</AssemblyName>
+    <AssemblyName>Standalone</AssemblyName>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWithDefaults|AnyCPU' ">
-    <IntermediateOutputPath>obj\Debug\net7.0</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\Debug\net8.0</IntermediateOutputPath>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\DebugWithDefaults\net7.0</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET;NET7_0;NETCOREAPP</DefineConstants>
+    <OutputPath>bin\DebugWithDefaults\net8.0</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET;NET8_0;NETCOREAPP</DefineConstants>
     <WarningLevel>7</WarningLevel>
     <AssemblyName>Standalone</AssemblyName>
     <NoWarn>1701;1702</NoWarn>

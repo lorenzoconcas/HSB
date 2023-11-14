@@ -83,7 +83,7 @@ public class Server
 
 
         //if ssl is set and configuration is set to use two ports we start the sslListener
-        if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+        if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
         {
             sslLocalEndPoint = new(ipAddress, config.SslSettings.SslPort);
             if (sslLocalEndPoint == null)
@@ -101,24 +101,32 @@ public class Server
         if (config.ListeningMode == IPMode.ANY)
         {
             listener.DualMode = true;
-            if (config.SslSettings.IsEnabled)
+            if (config.SslSettings.IsEnabled())
                 sslListener!.DualMode = true;
         }
 
         config.Debug.INFO("Starting logging...");
 
-        if (sslConf.IsEnabled)
+        if (sslConf.IsEnabled())
         {
             config.Debug.INFO("Server is running in SSL mode");
 
         }
         var prefix = "http";
-        if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
-            config.Debug.INFO($"Listening at https://{sslLocalEndPoint}/");
+        if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+        {
+            if (config.PublicURL == "")
+                config.Debug.INFO($"Listening at https://{sslLocalEndPoint}/");
+            else config.Debug.INFO($"Listening at https://{config.PublicURL}:{sslConf.SslPort}/");
+        }
 
-        else if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
+        else if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
             prefix += "s";
-        config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
+            
+        if (config.PublicURL == "")
+            config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
+        else config.Debug.INFO($"Listening at {prefix}://{config.PublicURL}:{config.Port}/");
+
         //end of the server initialization
     }
 
@@ -132,16 +140,16 @@ public class Server
 
             var sslConf = config.SslSettings;
 
-            if (sslConf.IsEnabled)
+            if (sslConf.IsEnabled())
             { //sslListener and sslLocalEndPoint are not null because we checked in the constructor
                 sslListener!.Bind(sslLocalEndPoint!);
                 sslListener.Listen(100);
             }
 
-            OpenInBrowserIfSet(openInBrowser, sslConf.IsEnabled, sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint);
+            OpenInBrowserIfSet(openInBrowser, sslConf.IsEnabled(), sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint);
 
             //this makes the second port listen to SSL requests
-            if (sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+            if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
             {
                 new Task(() =>
                 {
@@ -156,8 +164,8 @@ public class Server
             while (true)
             {
                 //if ssl is enabled and single port is used
-                var sslMode = sslConf.IsEnabled && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
-             
+                var sslMode = sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
+
                 Step(listener, sslMode);
             }
         }
@@ -205,7 +213,7 @@ public class Server
             {
                 //if auth fails, the behaviour depends on the configuration
                 sslStream.Dispose();
-                if (config.SslSettings.upgradeUnsecureRequests)
+                if (config.SslSettings.UpgradeUnsecureRequests)
                 {
                     config.Debug.WARNING("SSL authentication failed, redirecting to SSL");
                     //attempt redirect
@@ -229,7 +237,8 @@ public class Server
         }
         else
         {
-            if(config.SslSettings.IsEnabled && config.SslSettings.upgradeUnsecureRequests){
+            if (config.SslSettings.IsEnabled() && config.SslSettings.UpgradeUnsecureRequests)
+            {
                 config.Debug.WARNING("Unsecure request received, redirecting to SSL");
                 //attempt redirect
                 Request _req = new(bytes, socket, config);

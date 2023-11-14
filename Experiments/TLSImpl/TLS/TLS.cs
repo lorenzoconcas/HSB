@@ -58,6 +58,10 @@ public class CustomTLS
 
         if (data[9] == 0x03 && data[10] == 0x03)
         {
+            ClientHello c = new (data[9..]);
+            Console.WriteLine(c);
+            return;
+
             Console.WriteLine("Detected client TLS v1.3");
             ParseTLS_1_3(data, handshakeLength);
             ParseTLSv1_3(data);

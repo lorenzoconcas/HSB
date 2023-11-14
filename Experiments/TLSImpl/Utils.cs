@@ -1,5 +1,5 @@
 namespace HSB;
-//todo -> move to HSB/Utils.cs
+//todo -> merge with HSB/Utils.cs
 public static class Utils
 {
     public static uint UInt24ToUInt32(byte[] data)

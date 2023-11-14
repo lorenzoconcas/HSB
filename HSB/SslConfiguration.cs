@@ -5,6 +5,7 @@
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using HSB.Constants.TLS;
 namespace HSB;
 
@@ -15,8 +16,10 @@ public class SslConfiguration
 
     public ushort SslPort = 8443;
     public SSL_PORT_MODE PortMode = SSL_PORT_MODE.DUAL_PORT; //by default we use two ports, one for HTTP and one for HTTPS
-    public bool upgradeUnsecureRequests = true;
+    public bool UpgradeUnsecureRequests = true;
     public string? CertificatePath;
+    
+    [JsonIgnore]
     public byte[]? CertificateBytes;
     public string? CertificatePassword;
     public List<TLSVersion> TLSVersions;
@@ -28,14 +31,14 @@ public class SslConfiguration
     public SslConfiguration()
     {
 
-        TLSVersions = new List<TLSVersion>();
+        TLSVersions = [];
 
     }
 
     public SslConfiguration(string certificatePath, string certificatePassword)
     {
 
-        TLSVersions = new List<TLSVersion>();
+        TLSVersions = [];
         CertificatePassword = certificatePassword;
         CertificatePath = certificatePath;
     }
@@ -57,7 +60,7 @@ public class SslConfiguration
         ClientCertificateRequired = clientCertificateRequired;
     }
 
-    public bool IsEnabled => (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath);
+    public bool IsEnabled() => (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath);
 
 
     /// <summary>
@@ -125,16 +128,43 @@ public class SslConfiguration
 
     public static SslConfiguration FromJSON(JsonElement json)
     {
-        return new()
+
+        //IsEnabled 
+
+        var lastProp = "SslPort";
+        try
         {
-           
-            CertificatePath = json.GetProperty("certificatePath").GetString() ?? "",
-            CertificatePassword = json.GetProperty("certificatePassword").GetString() ?? "",
-            CheckCertificateRevocation = Utils.Safe(json.GetProperty("checkCertificateRevocation").GetBoolean(), true),
-            ValidateClientCertificate = Utils.Safe(json.GetProperty("validateClientCertificate").GetBoolean(), false),
-            ClientCertificateRequired = Utils.Safe(json.GetProperty("ClientCertificateRequired").GetBoolean(), false),
-            SslPort = Utils.Safe(json.GetProperty("sslPort").GetUInt16(), (ushort)8443),
-        };
+
+            var SslPort = Utils.Safe(json.GetProperty("SslPort").GetUInt16(), (ushort)8443);
+            lastProp = "PortMode"; SSL_PORT_MODE PortMode = (SSL_PORT_MODE)Utils.Safe(json.GetProperty("PortMode").GetInt16(), (int)SSL_PORT_MODE.DUAL_PORT);
+            lastProp = "upgradeUnsecureRequests"; bool upgradeUnsecureRequests = Utils.Safe(json.GetProperty("UpgradeUnsecureRequests").GetBoolean(), true);
+            lastProp = "CertificatePath"; var CertificatePath = json.GetProperty("CertificatePath").GetString();
+            lastProp = "CertificatePassword"; var CertificatePassword = json.GetProperty("CertificatePassword").GetString();
+            lastProp = "CheckCertificateRevocation"; var CheckCertificateRevocation = Utils.Safe(json.GetProperty("CheckCertificateRevocation").GetBoolean(), true);
+            lastProp = "ValidateClientCertificate"; var ValidateClientCertificate = Utils.Safe(json.GetProperty("ValidateClientCertificate").GetBoolean(), false);
+            lastProp = "ClientCertificateRequired"; var ClientCertificateRequired = Utils.Safe(json.GetProperty("ClientCertificateRequired").GetBoolean(), false);
+            lastProp = "tlsVersions"; var tlsVersions = json.GetProperty("TLSVersions").EnumerateArray().Select(x => (TLSVersion)x.GetInt16()).ToList();
+
+            return new()
+            {
+
+                PortMode = PortMode,
+                SslPort = SslPort,
+                UpgradeUnsecureRequests = upgradeUnsecureRequests,
+                CertificatePath = CertificatePath,
+                CertificatePassword = CertificatePassword,
+                TLSVersions = tlsVersions,
+                CheckCertificateRevocation = CheckCertificateRevocation,
+                ValidateClientCertificate = ValidateClientCertificate,
+                ClientCertificateRequired = ClientCertificateRequired,
+            };
+        }
+        catch (Exception e)
+        {
+            Terminal.ERROR("Error while parsing SslSettings property: " + lastProp + " " + e.Message);
+            return new();
+        }
+
 
     }
 

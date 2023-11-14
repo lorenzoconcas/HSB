@@ -127,23 +127,20 @@ a:link {
     background: #000000;
     background: rgba(19, 34, 46, 0.91);
     font-family: CascadiaMonoPLRoman-Bold;
-    font-size: 32px;
     color: #FFFFFF;
-    padding: 4px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: start;
-
-    padding: 16px;
-    font-size: 27px;
+    padding: 8px;
+    font-size: 18px;
     gap: 16px;
     width: fit-content;
 }
 
 .button>img {
-    padding-left: 8px;
+    width: 24px;
+    padding: 4px 0px 4px 4px;
 }
 
 .button>span {

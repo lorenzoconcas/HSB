@@ -31,12 +31,14 @@ multitab-header {
 
 multitab-header-title {
     font-family: CascadiaMonoPL;
-    border-bottom: 1px solid #2B4E7B;
+    border-bottom: 1px solid #101f32;
     margin: 0px;
     font-size: 16px;
     position: relative;
     padding: 16px;
     width: calc(100% - 32px);
+    background: #1f3859;
+    border-radius: 8px 8px 0 0;
 }
 
 multitab-tabs {
@@ -46,7 +48,8 @@ multitab-tabs {
     justify-content: flex-start;
     align-items: stretch;
     vertical-align: middle;
-    border-bottom: 1px solid #2B4E7B;
+    border-bottom: 1px solid #0d1b2b;
+    background: #13253d;
 }
 
 multitab-tabs span {
@@ -55,7 +58,7 @@ multitab-tabs span {
     cursor: pointer;
     border-radius: 0px;
     border-collapse: collapse;
-    border-right: 1px solid #2B4E7B;
+    /* border-right: 1px solid #2B4E7B; */
     display: flex;
     align-items: center;
     gap:16px;
@@ -80,4 +83,11 @@ multitab-tabs span.tab-selected {
 
 .selected {
     display: block;
+}
+
+multitab-header-title > span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
 }

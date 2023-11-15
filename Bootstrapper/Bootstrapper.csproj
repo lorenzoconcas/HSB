@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -11,7 +11,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType></DebugType>
     <WarningLevel>4</WarningLevel>
-    <AssemblyName>Standalone</AssemblyName>
+    <AssemblyName>Bootstrapper</AssemblyName>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugWithDefaults|AnyCPU' ">
@@ -22,7 +22,7 @@
     <OutputPath>bin\DebugWithDefaults\net8.0</OutputPath>
     <DefineConstants>TRACE;DEBUG;NET;NET8_0;NETCOREAPP</DefineConstants>
     <WarningLevel>7</WarningLevel>
-    <AssemblyName>Standalone</AssemblyName>
+    <AssemblyName>Bootstrapper</AssemblyName>
     <NoWarn>1701;1702</NoWarn>
     <NoStdLib>true</NoStdLib>
     <Nullable>enable</Nullable>

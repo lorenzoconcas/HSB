@@ -7,4 +7,4 @@ dotnet publish --self-contained -r osx-x64 -c release -o ./build/apple_intel -p:
 #windows
 dotnet publish --self-contained -r win-arm64 -c release -o ./build/win_arm64 -p:PublishSingleFile=true
 dotnet publish --self-contained -r win-x64 -c release -o ./build/win_x64 -p:PublishSingleFile=true
-dotnet publish --self-contained -r win-xx86 -c release -o ./build/win_x86 -p:PublishSingleFile=true
+dotnet publish --self-contained -r win-x86 -c release -o ./build/win_x86 -p:PublishSingleFile=true

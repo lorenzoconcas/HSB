@@ -2,9 +2,9 @@
 using System.Reflection;
 using System.Text.Json;
 using HSB;
-namespace HSBStandalone;
+namespace HSBBootstrapper;
 
-public class HSBStandalone
+public class Bootstrapper
 {
     private static readonly JsonSerializerOptions sr = new()
     {

@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HSB", "HSB\HSB.csproj", "{3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Runner", "Runner\Runner.csproj", "{370F5E96-BF40-4036-9E2C-E6C840177063}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Standalone", "Standalone\Standalone.csproj", "{0DE25B84-6320-42CD-8C07-354B5BE1EC18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bootstrapper", "Bootstrapper\Bootstrapper.csproj", "{0DE25B84-6320-42CD-8C07-354B5BE1EC18}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Template", "Template\Template.csproj", "{419E6EF9-552A-446E-BCF9-1B91FD241593}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplatformLauncher", "MultiplatformLauncher\MultiplatformLauncher.csproj", "{F7472E27-F302-4BBA-9695-8EA79A774F03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Launcher", "Launcher\Launcher.csproj", "{F7472E27-F302-4BBA-9695-8EA79A774F03}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaunchableExample", "Examples\LaunchableExample\LaunchableExample.csproj", "{3A5CE49F-3D5A-4D59-92F0-A2E4A44A8846}"
 EndProject
@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JSONResponse", "Examples\JS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomHTTPMethods", "Examples\CustomHTTPMethods\CustomHTTPMethods.csproj", "{6F48CFF1-4351-47F0-82BE-12818F548731}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TLSTesting", "Tests\TLSTesting\TLSTesting.csproj", "{7EFE8E90-965F-46E1-9951-B214757A8D3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TLSTesting", "Tests\TLSTesting\TLSTesting.csproj", "{7EFE8E90-965F-46E1-9951-B214757A8D3D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{40FD9F8E-0EDB-491C-8DB1-0B2946646F86}"
 EndProject
@@ -41,9 +41,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FormHandling", "Examples\Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Empty", "Examples\Empty\Empty.csproj", "{6BA5E3DA-F484-4483-94B3-DA1EC185D99E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileListing", "Examples\FileListing\FileListing.csproj", "{D278AF2A-8DE9-4793-9AFD-889AD70647D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileListing", "Examples\FileListing\FileListing.csproj", "{D278AF2A-8DE9-4793-9AFD-889AD70647D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSL", "Examples\SSL\SSL.csproj", "{6768F953-8A9A-483C-9FA8-5B7863F2E2EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSL", "Examples\SSL\SSL.csproj", "{6768F953-8A9A-483C-9FA8-5B7863F2E2EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

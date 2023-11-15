@@ -25,7 +25,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 
-public static class LauncherMain
+public static class Launcher
 {
     public static void Main(string[] args)
     {
@@ -56,7 +56,8 @@ public static class LauncherMain
 
         if (info == null)
         {
-            Console.WriteLine("HSBMain not found! Exiting...");
+            Console.WriteLine("HSBMain not found! Press any key to exit...");
+            Console.ReadKey();
             return;
         }
         else

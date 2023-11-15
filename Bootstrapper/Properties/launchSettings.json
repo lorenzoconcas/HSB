@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Standalone": {
+    "Bootstrapper": {
       "commandName": "Project"
     },
     "WSL": {

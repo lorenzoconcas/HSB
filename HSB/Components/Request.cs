@@ -22,15 +22,15 @@ public class Request
     public bool validRequest = false;
     HTTP_METHOD _method = HTTP_METHOD.UNKNOWN;
     HTTP_PROTOCOL _protocol = HTTP_PROTOCOL.UNKNOWN; //HTTP1.0 ecc
-    string clientIP = "";
-    int clientPort = -1;
-    AddressFamily clientIPVersion;
+    readonly string clientIP = "";
+    readonly int clientPort = -1;
+    readonly AddressFamily clientIPVersion;
     string _url = "";
     string body = "";
-    readonly Dictionary<string, string> headers = new();
-    readonly Dictionary<string, string> parameters = new();
-    readonly List<string> rawHeaders = new();
-    readonly Dictionary<string, Cookie> cookies = new();
+    readonly Dictionary<string, string> headers = [];
+    readonly Dictionary<string, string> parameters = [];
+    readonly List<string> rawHeaders = [];
+    readonly Dictionary<string, Cookie> cookies = [];
     //Auth structs
     private Tuple<string, string>? basicAuth;
     private OAuth1_0Information? oAuth1_0Information;
@@ -44,9 +44,9 @@ public class Request
     {
         connectionSocket = socket;
         rawData = data;
-        rawBody = Array.Empty<byte>();
+        rawBody = [];
         this.config = config;
-        requestContent = new();
+        requestContent = [];
 
         if (data == null || data.Length == 0)
         {
@@ -87,7 +87,7 @@ public class Request
             return;
         }
         // reqText = Encoding.UTF8.GetString(data);
-        requestContent = reqText.Split("\r\n").ToList();
+        requestContent = [.. reqText.Split("\r\n")];
         ParseRequest();
 
 
@@ -102,7 +102,7 @@ public class Request
             _protocol = HTTP_PROTOCOL.HTTP1_0;
             _method = HTTP_METHOD.GET;
             body = "";
-            rawBody = Array.Empty<byte>();
+            rawBody = [];
             session = new Session(); //default, invalid session
             Terminal.INFO("Got an empty request, setting default values");
             return;
@@ -118,7 +118,7 @@ public class Request
             //collect parameters
             if (firstLine[1].Replace(_url, "") != "")
             {
-                List<string> prms = firstLine[1].Split("?")[1].Split("&").ToList();
+                List<string> prms = [.. firstLine[1].Split("?")[1].Split("&")];
 
                 foreach (string p in prms)
                 {
@@ -149,9 +149,9 @@ public class Request
 
             //auth data collection
             //basic auth
-            if (headers.ContainsKey("Authorization"))
+            if (headers.TryGetValue("Authorization", out string? value))
             {
-                var _auth = headers["Authorization"];
+                var _auth = value;
                 try
                 {
                     _auth = Encoding.UTF8.GetString(Convert.FromBase64String(_auth));
@@ -166,7 +166,7 @@ public class Request
                 {
                     if (_auth.Contains("Bearer"))
                     {
-                        oAuth2_0Token = headers["Authorization"];
+                        oAuth2_0Token = value;
                     }
                 }
             }
@@ -175,17 +175,17 @@ public class Request
             TryExtractAndSetOAuth1_0();
 
             //oAuth2.0 token 
-            if (parameters.ContainsKey("access_token"))
+            if (parameters.TryGetValue("access_token", out string? tkn))
             {
-                oAuth2_0Token = parameters["access_token"];
+                oAuth2_0Token = tkn;
             }
 
 
             //parse cookies
-            if (headers.ContainsKey("Cookie"))
+            if (headers.TryGetValue("Cookie", out string? val))
             {
-                var cookieString = headers["Cookie"];
-                var strings = cookieString.Split("; ");
+                
+                var strings = val.Split("; ");
                 foreach (var s in strings)
                 {
 
@@ -194,9 +194,9 @@ public class Request
             }
 
             //search for a session token
-            if (cookies.ContainsKey("hsbst") && SessionManager.GetInstance().IsValidSession(cookies["hsbst"].value))
+            if (cookies.TryGetValue("hsbst", out Cookie? cookie) && SessionManager.GetInstance().IsValidSession(cookie.value))
             {
-                session = SessionManager.GetInstance().GetSession(cookies["hsbst"].value);
+                session = SessionManager.GetInstance().GetSession(cookie.value);
             }
             else
             {
@@ -315,8 +315,8 @@ public class Request
     public bool IsWebSocket()
     {
         return
-        headers.ContainsKey("Connection") && headers["Connection"].ToLower() == "upgrade" &&
-        headers.ContainsKey("Upgrade") && headers["Upgrade"].ToLower() == "websocket";
+        headers.ContainsKey("Connection") && headers["Connection"].Equals("upgrade", StringComparison.CurrentCultureIgnoreCase) &&
+        headers.ContainsKey("Upgrade") && headers["Upgrade"].Equals("websocket", StringComparison.CurrentCultureIgnoreCase);
     }
     /// <summary>
     /// Returns true if the request is a file upload

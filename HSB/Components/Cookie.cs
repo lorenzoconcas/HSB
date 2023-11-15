@@ -1,6 +1,5 @@
 ﻿// 
 // lore
-using System;
 using HSB.Exceptions;
 
 namespace HSB;

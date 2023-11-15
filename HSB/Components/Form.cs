@@ -2,7 +2,7 @@ namespace HSB.Components;
 
 public class Form
 {
-    private Dictionary<string, string> parts = new();
+    private readonly Dictionary<string, string> parts = [];
     public Form(string body)
     {
         var values = body.Split("&");

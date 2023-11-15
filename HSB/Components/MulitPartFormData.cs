@@ -2,17 +2,11 @@
 
 namespace HSB.Components;
 
-public class MultiPartFormData
+public class MultiPartFormData(byte[] body, string boundary)
 {
-    private readonly List<FormPart> parts = new();
-    private byte[] body;
-    private readonly string Boundary;
-
-    public MultiPartFormData(byte[] body, string boundary)
-    {
-        Boundary = boundary;
-        this.body = body;
-    }
+    private readonly List<FormPart> parts = [];
+    private byte[] body = body;
+    private readonly string Boundary = boundary;
 
     private void ExtractParts()
     {
@@ -29,7 +23,7 @@ public class MultiPartFormData
             parts.Add(FormPart.Build(part[2..])); //remove \r\n at start
         }
 
-        body = Array.Empty<byte>();
+        body = [];
 
     }
     /// <summary>

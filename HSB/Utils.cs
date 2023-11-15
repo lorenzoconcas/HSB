@@ -25,7 +25,7 @@ public static partial class Utils
     public static void PrintLoadedAssemblies(bool filter = true)
     {
         AppDomain currentDomain = AppDomain.CurrentDomain;
-        List<Assembly> assems = currentDomain.GetAssemblies().ToList();
+        List<Assembly> assems = [.. currentDomain.GetAssemblies()];
         if (filter)
         {
             assems.RemoveAll(a => a.ToString().StartsWith("System"));
@@ -35,7 +35,7 @@ public static partial class Utils
 
         foreach (Assembly assem in assems)
         {
-            List<Type> classes = assem.GetTypes().ToList();
+            List<Type> classes = [.. assem.GetTypes()];
 
             foreach (var c in classes)
                 Terminal.WriteLine(c.FullName, BG_COLOR.WHITE, FG_COLOR.BLUE);
@@ -44,7 +44,7 @@ public static partial class Utils
     public static T Safe<T>(T? o, T safe) => o ?? safe!;
     public static T TryGetValueFromDict<T>(this Dictionary<string, T> dict, string key, T safe)
     {
-        if (dict.ContainsKey(key)) return dict[key];
+        if (dict.TryGetValue(key, out T? value)) return value;
         else return safe;
     }
     public static string DictToString(this Dictionary<string, string> obj)
@@ -207,7 +207,7 @@ public static partial class Utils
     /// <returns></returns>
     public static List<byte[]> Split(this byte[] array, byte[] separator)
     {
-        List<byte[]> result = new();
+        List<byte[]> result = [];
         int offset = 0;
         while (offset < array.Length)
         {
@@ -308,13 +308,13 @@ public static partial class Utils
 
     public static bool[] ToBitArray(this byte[] array)
     {
-        List<bool> bits = new();
+        List<bool> bits = [];
 
         foreach (var b in array)
         {
             bits.AddRange(b.ToBitArray());
         }
-        return bits.ToArray();
+        return [.. bits];
     }
 
     public static byte GetByte(params bool[] bits)
@@ -366,12 +366,12 @@ public static partial class Utils
     {
         if (bits.Length % 8 != 0) throw new ArgumentException("The array must have a length multiple of 8");
 
-        List<byte> bytes = new();
+        List<byte> bytes = [];
         for (int i = 0; i < bits.Length; i += 8)
         {
             bytes.Add(GetByte(bits[i..(i + 8)]));
         }
-        return bytes.ToArray();
+        return [.. bytes];
     }
 
     /// <summary>
@@ -383,23 +383,23 @@ public static partial class Utils
     /// <returns></returns>
     public static T[] ExtendRepeating<T>(this T[] array, int size)
     {
-        List<T> result = new();
+        List<T> result = [];
         for (int i = 0; i < size; i++)
         {
             result.Add(array[i % array.Length]);
         }
-        return result.ToArray();
+        return [.. result];
 
     }
 
     internal static bool IsEmbeddedResource(string url, string prefix = "")
     {
-        if (url.StartsWith("/")) url = url[1..];
-        url = url.Replace("/", ".");
+        if (url.StartsWith('/')) url = url[1..];
+        url = url.Replace('/', '.');
         if (prefix != "")
             url = $"{prefix}.{url}";
         AppDomain currentDomain = AppDomain.CurrentDomain;
-        List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
+        List<Assembly> assemblies = [.. currentDomain.GetAssemblies()];
 
         assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
         assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
@@ -418,12 +418,12 @@ public static partial class Utils
     //Search all the loaded assemblies for the resource, then reads it and returns it as object
     internal static T LoadResource<T>(string resName, string prefix = "")
     {
-        if (resName.StartsWith("/")) resName = resName[1..];
-        resName = resName.Replace("/", ".");
+        if (resName.StartsWith('/')) resName = resName[1..];
+        resName = resName.Replace('/', '.');
         if (prefix != "")
             resName = $"{prefix}.{resName}";
         AppDomain currentDomain = AppDomain.CurrentDomain;
-        List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
+        List<Assembly> assemblies = [.. currentDomain.GetAssemblies()];
 
         assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
         assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));

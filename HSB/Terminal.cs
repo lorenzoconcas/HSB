@@ -27,7 +27,7 @@
 
     public static class Terminal
     {
-        private static string RESET = "\x1b[0m";
+        private static readonly string RESET = "\x1b[0m";
         /* private static string BRIGHT = "\x1b[1m";
          private static string DIM = "\x1b[2m";
          private static string UNDERSCORE = "\x1b[4m";

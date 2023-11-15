@@ -193,61 +193,61 @@ public class WebSocket
             try
             {
 
-
-                socket?.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((IAsyncResult ar) =>
-                {
-                    var socket = (Socket?)ar.AsyncState;
-                    if (socket == null)
+                if (state == WebSocketState.OPEN)
+                    socket?.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((IAsyncResult ar) =>
                     {
-                        Terminal.DEBUG("socket is null??");
-                        errorCount++;
-                        return;
-                    }
-                    int received = 0;
-                    try
-                    {
-                        received = socket.EndReceive(ar);
-                    }
-                    catch (Exception)
-                    {
-
-                        return;
-                    }
-                    if (received < 2)
-                    {
-                        Terminal.DEBUG("wrong data length?? -> " + received);
-                        errorCount++;
-                        return;
-                    }
-                    Frame f = new(buffer[..received]);
-                    Opcode opcode = f.GetOpcode();
-
-                    switch (f.GetOpcode())
-                    {
-                        case Opcode.CLOSE:
-                            this.Close();
-                            state = WebSocketState.CLOSED;
+                        var socket = (Socket?)ar.AsyncState;
+                        if (socket == null)
+                        {
+                            Terminal.DEBUG("socket is null??");
+                            errorCount++;
                             return;
-                        //todo -> check Ping e Pong correctness
-                        case Opcode.PING:
-                            Frame pong = new();
-                            pong.SetOpcode(Opcode.PONG);
-                            socket.Send(pong.Build());
-                            break;
-                        case Opcode.PONG:
-                            Frame ping = new();
-                            ping.SetOpcode(Opcode.PING);
-                            socket.Send(ping.Build());
-                            break;
-                        case Opcode.TEXT:
-                        case Opcode.BINARY:
-                            {
-                                OnMessage(new(f));
-                                break;
-                            }
-                    }
+                        }
+                        int received = 0;
+                        try
+                        {
+                            received = socket.EndReceive(ar);
+                        }
+                        catch (Exception)
+                        {
 
-                }), socket);
+                            return;
+                        }
+                        if (received < 2)
+                        {
+                            Terminal.DEBUG("wrong data length?? -> " + received);
+                            errorCount++;
+                            return;
+                        }
+                        Frame f = new(buffer[..received]);
+                        Opcode opcode = f.GetOpcode();
+
+                        switch (f.GetOpcode())
+                        {
+                            case Opcode.CLOSE:
+                                this.Close();
+                                state = WebSocketState.CLOSED;
+                                return;
+                            //todo -> check Ping e Pong correctness
+                            case Opcode.PING:
+                                Frame pong = new();
+                                pong.SetOpcode(Opcode.PONG);
+                                socket.Send(pong.Build());
+                                break;
+                            case Opcode.PONG:
+                                Frame ping = new();
+                                ping.SetOpcode(Opcode.PING);
+                                socket.Send(ping.Build());
+                                break;
+                            case Opcode.TEXT:
+                            case Opcode.BINARY:
+                                {
+                                    OnMessage(new(f));
+                                    break;
+                                }
+                        }
+
+                    }), socket);
             }
             catch (Exception)
             {

@@ -50,19 +50,19 @@ public class Server
         }
         else //in this case ListeningMode is NOT a valid parameter
         {
-            List<IPAddress> addresses = Dns.GetHostAddresses(config.Address, AddressFamily.InterNetwork).ToList();
+            List<IPAddress> addresses = [.. Dns.GetHostAddresses(config.Address, AddressFamily.InterNetwork)];
 
-            //this fixes an error where user specifies an ipv4 address but want the server to listene to BOTH or ipv6 only
+            //this fixes an error where user specifies an ipv4 address but want the server to listenes to BOTH or ipv6 only
 
-            if (addresses.Any())
+            if (addresses.Count != 0)
             {
                 ipAddress = addresses.First();
                 config.ListeningMode = IPMode.IPV4_ONLY;
             }
             else
             {
-                addresses = Dns.GetHostAddresses(config.Address, AddressFamily.InterNetworkV6).ToList();
-                if (addresses.Any())
+                addresses = [.. Dns.GetHostAddresses(config.Address, AddressFamily.InterNetworkV6)];
+                if (addresses.Count != 0)
                 {
                     ipAddress = addresses.First();
                     config.ListeningMode = IPMode.IPV6_ONLY;
@@ -74,7 +74,7 @@ public class Server
             }
         }
 
-        //initilize the endpoints
+        //initialize the endpoints
         localEndPoint = new(ipAddress, config.Port);
         listener = new(ipAddress.AddressFamily,
             SocketType.Stream, ProtocolType.Tcp);
@@ -160,7 +160,7 @@ public class Server
                 }).Start();
             }
 
-            //since the base port is alwyas listening this is always executed
+            //since the base port is always listening this is always executed
             while (true)
             {
                 //if ssl is enabled and single port is used
@@ -288,18 +288,18 @@ public class Server
     protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
     {
         AppDomain currentDomain = AppDomain.CurrentDomain;
-        List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
+        List<Assembly> assemblies = [.. currentDomain.GetAssemblies()];
 
         assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
         assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
         assemblies.RemoveAll(a => a.ToString().StartsWith("Internal"));
 
-        Dictionary<Tuple<string, bool>, Type> routes = new();
+        Dictionary<Tuple<string, bool>, Type> routes = [];
 
 
         foreach (var assem in assemblies)
         {
-            List<Type> classes = assem.GetTypes().ToList();
+            List<Type> classes = [.. assem.GetTypes()];
 
             foreach (var c in classes)
             {
@@ -332,12 +332,12 @@ public class Server
         return routes;
     }
 
-    protected internal string GetStaticRoutesInfo()
+    protected internal static string GetStaticRoutesInfo()
     {
         string str = "";
         var staticRoutes = CollectStaticRoutes();
 
-        if (staticRoutes.Any())
+        if (staticRoutes.Count != 0)
         {
             str += "\nStatic routes:";
             staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");

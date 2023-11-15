@@ -1,5 +1,7 @@
-using HSB.Constants.TLS;
 using HSB;
+using HSB.Constants.TLS;
+
+namespace HSB.Exceptions;
 
 public class DeprecatedTLSVersionException : Exception
 {
@@ -7,6 +9,5 @@ public class DeprecatedTLSVersionException : Exception
     {
         Terminal.ERROR($"Deprecated TLS version -> {version}");
     }
- 
-}
 
+}

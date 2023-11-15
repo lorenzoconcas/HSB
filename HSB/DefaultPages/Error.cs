@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Reflection.Metadata;
+﻿using System.Reflection;
 
 namespace HSB
 {
@@ -57,7 +55,7 @@ namespace HSB
             }
 
             string footer_div = "";
-            string server_name = "";
+            string server_name;
             if (configuration.CustomServerName != "")
             {
                 server_name = configuration.CustomServerName;

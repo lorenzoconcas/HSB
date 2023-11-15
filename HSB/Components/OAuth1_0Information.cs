@@ -2,28 +2,16 @@
 
 namespace HSB;
 
-public struct OAuth1_0Information
+public readonly struct OAuth1_0Information(Dictionary<string, string> parameters)
 {
-    public readonly string access_token;
-    public readonly string nonce;
-    public readonly string token;
-    public readonly string version;
-    public readonly string signature_method;
-    public readonly string timestamp;
-    public readonly string consumer_key;
-    public readonly string signature;
-
-    public OAuth1_0Information(Dictionary<string, string> parameters)
-    {
-        access_token = parameters.TryGetValueFromDict("access_token", "");
-        nonce = parameters.TryGetValueFromDict("oauth_nonce", "");
-        token = parameters.TryGetValueFromDict("oauth_token", "");
-        version = parameters.TryGetValueFromDict("oauth_version", "");
-        signature_method = parameters.TryGetValueFromDict("oauth_signature_method", "");
-        timestamp = parameters.TryGetValueFromDict("oauth_timestamp", "");
-        consumer_key = parameters.TryGetValueFromDict("oauth_consumer_key", "");
-        signature = parameters.TryGetValueFromDict("oauth_signature", "");
-    }
+    public readonly string access_token = parameters.TryGetValueFromDict("access_token", "");
+    public readonly string nonce = parameters.TryGetValueFromDict("oauth_nonce", "");
+    public readonly string token = parameters.TryGetValueFromDict("oauth_token", "");
+    public readonly string version = parameters.TryGetValueFromDict("oauth_version", "");
+    public readonly string signature_method = parameters.TryGetValueFromDict("oauth_signature_method", "");
+    public readonly string timestamp = parameters.TryGetValueFromDict("oauth_timestamp", "");
+    public readonly string consumer_key = parameters.TryGetValueFromDict("oauth_consumer_key", "");
+    public readonly string signature = parameters.TryGetValueFromDict("oauth_signature", "");
 
     public readonly bool IsValid()
     {
@@ -48,4 +36,13 @@ public struct OAuth1_0Information
         return HashCode.Combine(access_token, nonce, token, version, signature_method, timestamp, consumer_key, signature);
     }
 
+    public static bool operator ==(OAuth1_0Information left, OAuth1_0Information right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(OAuth1_0Information left, OAuth1_0Information right)
+    {
+        return !(left == right);
+    }
 }

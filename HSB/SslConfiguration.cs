@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using HSB.Constants.TLS;
+using HSB.Exceptions;
 namespace HSB;
 
 public class SslConfiguration

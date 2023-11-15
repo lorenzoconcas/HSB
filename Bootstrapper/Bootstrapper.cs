@@ -152,7 +152,7 @@ public class Bootstrapper
 
         if (conf == null)
         {
-            Terminal.ERROR("Something appened building the server configuration, exiting...");
+            Terminal.ERROR("Something happened building the server configuration, exiting...");
             return;
         }
         else

@@ -9,12 +9,8 @@ using System.Threading.Tasks;
 
 namespace HSB.DefaultPages;
 
-public class FileList : Servlet
+public class FileList(Request req, Response res, Configuration config) : Servlet(req, res, config)
 {
-    public FileList(Request req, Response res, Configuration config) : base(req, res, config)
-    {
-    }
-
     public override void ProcessGet()
     {
         //since this mode bypasses normal error handling we must handle them manually
@@ -59,7 +55,7 @@ public class FileList : Servlet
             {
 
                 configuration.Debug.INFO($"{req.METHOD} '{url}' 200");
-                List<string> items = Directory.GetDirectories(cwd).ToList();
+                List<string> items = [.. Directory.GetDirectories(cwd)];
                 items.AddRange(Directory.GetFiles(cwd).ToList());
                 foreach (var i in items)
                 {

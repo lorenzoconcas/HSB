@@ -10,6 +10,11 @@ namespace HSB;
 
 public class Configuration
 {
+
+    //private props
+    private readonly static JsonSerializerOptions jserializerOptions = new() { WriteIndented = true, IncludeFields = true };
+
+
     /// <summary>
     /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address)
     /// </summary>
@@ -53,15 +58,15 @@ public class Configuration
     /// <summary>
     /// Useful to share objects between servlets without using the singleton technique
     /// </summary>
-    protected Dictionary<string, object> sharedObjects = new();
+    protected Dictionary<string, object> sharedObjects = [];
     /// <summary>
     /// headers added to ANY response
     /// </summary>
-    protected Dictionary<string, string> customGlobalHeaders = new();
+    protected Dictionary<string, string> customGlobalHeaders = [];
     /// <summary>
     /// Cookies added to ANY response
     /// </summary>
-    protected Dictionary<string, Cookie> customGlobalCookies = new();
+    protected Dictionary<string, Cookie> customGlobalCookies = [];
     /// <summary>
     /// Sets the expiration time of the session
     /// </summary>
@@ -69,7 +74,7 @@ public class Configuration
     /// <summary>
     /// Expressjs-like routing (es in expressjs you map pages and path like : app.get(path, (req, res){})
     /// </summary>
-    private readonly List<Tuple<string, Tuple<HTTP_METHOD, Delegate>>> expressMapping = new();
+    private readonly List<Tuple<string, Tuple<HTTP_METHOD, Delegate>>> expressMapping = [];
     /// <summary>
     /// When set, the server will use this name instead of the default one (default is: HSB-#/assembly_version (os_version))
     /// </summary>
@@ -85,11 +90,11 @@ public class Configuration
     public BLOCK_MODE BlockMode = BLOCK_MODE.NONE;
     /// <summary>
     /// This list contains all the IP addresses that will be allowed/denied to access the server, it's behavior depends on the blockMode
-    /// If blockmode is set to BlockMode.OKLIST, only the IP addresses in this list will be allowed to access the server
-    /// If blockmode is set to BlockMode.BANLIST, the IP addresses in this list will be banned from accessing the server
+    /// If BlockMode is set to BlockMode.OKLIST, only the IP addresses in this list will be allowed to access the server
+    /// If BlockMode is set to BlockMode.BANLIST, the IP addresses in this list will be banned from accessing the server
     /// </summary>
     /// <remarks>Note that IPv6 and IPv4 are considered different ips!</remarks>
-    public List<string> PermanentIPList = new();
+    public List<string> PermanentIPList = [];
     /// <summary>
     /// If set to true, the server will try to search for the requested resource in the assembly resources
     /// if fails to find it, the usual chain of execution will be followed
@@ -104,7 +109,7 @@ public class Configuration
     /// <summary>
     /// Contains the arguments passed from the command line
     /// </summary>
-    private readonly List<string> rawArguments = Environment.GetCommandLineArgs().ToList();
+    private readonly List<string> rawArguments = [.. Environment.GetCommandLineArgs()];
 
     /// <summary>
     /// Contains the SSL configuration properties
@@ -186,7 +191,7 @@ public class Configuration
     /// <param name="staticPath">Path of the static folder</param>
     /// <param name="debugInfo">Class holding debugging information</param>
     /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
-    public Configuration(string address, ushort port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null, SslConfiguration? sslConfiguration = null, ushort? sslPort = null)
+    public Configuration(string address, ushort port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null, SslConfiguration? sslConfiguration = null)
     {
         Address = address;
         Port = port;
@@ -217,7 +222,8 @@ public class Configuration
     /// <param name="path"></param>
     public void SaveToJson(string path)
     {
-        string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true, IncludeFields = true });
+       
+        string json = JsonSerializer.Serialize(this, jserializerOptions);
         File.WriteAllText(path, json);
     }
     private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)
@@ -364,7 +370,7 @@ public class Configuration
         else
             str += $"\nStatic folder path: {StaticFolderPath}";
 
-        if (expressMapping.Any())
+        if (expressMapping.Count != 0)
         {
             str += "\nExpressJS-Like routing map:";
             expressMapping.ForEach(m => str += $"\nPath : {m.Item1} -> {m.Item2.Item2.Method.Name}");
@@ -372,7 +378,7 @@ public class Configuration
 
         var staticRoutes = Server.CollectStaticRoutes();
 
-        if (staticRoutes.Any())
+        if (staticRoutes.Count != 0)
         {
             str += "\nStatic routes:";
             staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");
@@ -382,7 +388,7 @@ public class Configuration
 
     public List<Tuple<string, string>> GetAllRoutes()
     {
-        List<Tuple<string, string>> routes = new();
+        List<Tuple<string, string>> routes = [];
         expressMapping.ForEach(m => routes.Add(new(m.Item1, m.Item2.Item1.ToString())));
         var staticRoutes = Server.CollectStaticRoutes();
         staticRoutes.ToList().ForEach(m => routes.Add(new(m.Key.Item1, "")));

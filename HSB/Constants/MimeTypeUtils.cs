@@ -14,9 +14,9 @@ public static class MimeTypeUtils
     public static readonly string TEXT_HTML = "text/html";
     public static readonly string APPLICATION_OCTET = "application/octet";
 
-    private static readonly Lazy<IDictionary<string, string>> _mappings = new Lazy<IDictionary<string, string>>(BuildMappings);
+    private static readonly Lazy<IDictionary<string, string>> _mappings = new(BuildMappings);
 
-    private static IDictionary<string, string> BuildMappings()
+    private static Dictionary<string, string> BuildMappings()
     {
         var mappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
 
@@ -765,10 +765,7 @@ public static class MimeTypeUtils
     /// <exception cref="ArgumentNullException" />
     public static bool TryGetMimeType(string str, out string? mimeType)
     {
-        if (str == null)
-        {
-            throw new ArgumentNullException(nameof(str));
-        }
+        ArgumentNullException.ThrowIfNull(str);
 
         var indexQuestionMark = str.IndexOf(QuestionMark, StringComparison.Ordinal);
         if (indexQuestionMark != -1)
@@ -813,10 +810,7 @@ public static class MimeTypeUtils
     public static string GetExtension(string mimeType, bool throwErrorIfNotFound = true)
     {
 
-        if (mimeType == null)
-        {
-            throw new ArgumentNullException(nameof(mimeType));
-        }
+        ArgumentNullException.ThrowIfNull(mimeType);
 
         if (mimeType.StartsWith(Dot))
         {

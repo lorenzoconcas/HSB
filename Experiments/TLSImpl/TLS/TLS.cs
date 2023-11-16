@@ -9,32 +9,18 @@ using HSB.TLS.Messages;
 
 namespace HSB.TLS;
 
-public class CustomTLS
+public class CustomTLS(Socket socket)
 {
-    Socket socket;
+    readonly Socket socket = socket;
     //items of the TLS request
 
     // ProtocolVersion clientVersion;
 
 
-    byte[] clientRandom;
+    byte[] clientRandom = [];
     ushort sessionID_size;
-    byte[] fakeSessionID;
-    List<Ciphers> cipherSuites = new();
-
-
-    public CustomTLS(Socket socket)
-    {
-        this.socket = socket;
-        clientRandom = Array.Empty<byte>();
-        fakeSessionID = Array.Empty<byte>();
-    }
-
-
-    //TODO
-    public void IsTLSPacket(byte data)
-    {
-    }
+    byte[] fakeSessionID = [];
+    readonly List<Ciphers> cipherSuites = [];
 
     public void Parse(byte[] data)
     {
@@ -46,13 +32,13 @@ public class CustomTLS
         Console.WriteLine($"(offset : 0 )\tRequest Type: {data[0]:X2} (16 == Handshake record))");
         Console.WriteLine($"(offset: 1)\tTLS Version (Major): {data[1]:X2} (Minor): {data[2]:X2})");
         //handshake length
-        int handshakeLength = Utils.BytesToUShort(new byte[] {data[3], data[4]});
+        int handshakeLength = Utils.BytesToUShort([data[3], data[4]]);
         Console.WriteLine(
             $"(offset: 3)\tHandshake length (bytes): {data[3]:X2}{data[4]:X2} (int : {handshakeLength}) handshake ends at row {(handshakeLength + 4) / 16} col {(handshakeLength + 4) % 16})");
         //handshake header
         Console.WriteLine($"(offset 5)\tHandshake Type: {data[5]:X2} (1 == Client Hello))");
         Console.WriteLine(
-            $"(offset 6)\tHandshake length (bytes): {data[6]:X2}{data[7]:X2}{data[8]:X2} (int : {Utils.UInt24ToUInt32(new byte[] {data[6], data[7], data[8]})})");
+            $"(offset 6)\tHandshake length (bytes): {data[6]:X2}{data[7]:X2}{data[8]:X2} (int : {Utils.UInt24ToUInt32([data[6], data[7], data[8]])})");
         //Client Version
         Console.WriteLine($"(offset 9)\tClient Version (Major): {data[9]:X2} (Minor): {data[10]:X2})");
 
@@ -155,7 +141,7 @@ public class CustomTLS
         byte[] fakeSessionID = d.ReadBytes(sessionIDSize);
         byte[] cipherSuitesLength = d.ReadBytes(2);
         ushort cipherSuitesLengthInt = Utils.BytesToUShort(cipherSuitesLength);
-        List<Ciphers> ciphers = new();
+        List<Ciphers> ciphers = [];
         for (int i = 0; i < cipherSuitesLengthInt; i += 2)
         {
             ciphers.Add(GetCipher(d.ReadBytes(2)));
@@ -165,7 +151,7 @@ public class CustomTLS
         byte[] extensionsLength = d.ReadBytes(2);
         extensionsLength[0] = 0x0; //testing
         ushort extensionsLengthInt = Utils.BytesToUShort(extensionsLength); //in bytes
-        List<IExtension> extensions = new();
+        List<IExtension> extensions = [];
 
         while (d.DataAvailable() && extensionsLengthInt > 0 && extensionsLengthInt < 512)
         {
@@ -195,7 +181,7 @@ public class CustomTLS
             Console.WriteLine("\t" + e.ToString());
 
 
-        ClientHello clientHello = new(clientRandom, fakeSessionID, ciphers, extensions, new(TLS_Version));
+        ClientHello clientHello = new(clientRandom, fakeSessionID, ciphers, extensions);
         ServerHello serverHello = new(clientHello);
         serverHello.BuildResponse();
 
@@ -242,7 +228,7 @@ public class CustomTLS
         col = offset % 16;
         row = offset / 16;
         ushort cipher_suites_length =
-            Utils.BytesToUShort(new byte[] {data[offset], data[offset + 1]}); //length in bytes
+            Utils.BytesToUShort([data[offset], data[offset + 1]]); //length in bytes
         Console.WriteLine(
             $"(offset {offset} (riga {row}, col {col}))\tCipher Suites Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {cipher_suites_length / 2})");
         offset += 2;
@@ -252,7 +238,7 @@ public class CustomTLS
         {
             Console.Write(
                 $"(offset {offset} (riga {row}, col {col}))\tCipher Suite: 0x{data[offset]:X2}, 0x{data[offset + 1]:X2} -> ");
-            var cS = GetCipher(new byte[] {data[offset], data[offset + 1]});
+            var cS = GetCipher([data[offset], data[offset + 1]]);
             cipherSuites.Add(cS);
             Console.WriteLine(cS);
             offset += 2;
@@ -267,7 +253,7 @@ public class CustomTLS
         //Extensions
         col = offset % 16;
         row = offset / 16;
-        ushort extensions_length = Utils.BytesToUShort(new byte[] {data[offset], data[offset + 1]});
+        ushort extensions_length = Utils.BytesToUShort([data[offset], data[offset + 1]]);
         //same as TLS 1.2
         Console.WriteLine(
             $"(offset {offset} (riga {row}, col {col}))\tExtensions Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {extensions_length}))");
@@ -289,16 +275,16 @@ public class CustomTLS
         Console.WriteLine("Client Hello (TLS version 1.3) parsed!");
     }
 
-    private void ParseTLS_UP_TO_1_2(byte[] data, int handshake_length)
+    private void ParseTLS_UP_TO_1_2(byte[] data)
     {
-        int i = 0;
+        int i;
         //Random
         Console.WriteLine($"(offset 11)\tRandom (32 bytes): {BitConverter.ToString(data, 11, 32).Replace("-", " ")}");
         //Session ID
         Console.WriteLine($"(offset 43 (riga {43 / 16}, col {43 % 16}))\tSession ID: 0x{data[43]:X2}");
         //Cipher Suites 
         //two bytes to int
-        ushort cipher_suites_length = Utils.BytesToUShort(new byte[] {data[44], data[45]});
+        ushort cipher_suites_length = Utils.BytesToUShort([data[44], data[45]]);
         Console.WriteLine(
             $"(offset 44 (riga {44 / 16}, col {44 % 16}))\tCipher Suites Length: {data[44]:X2} {data[45]:X2} (int : {cipher_suites_length / 2})");
         int offset = 46;
@@ -310,7 +296,7 @@ public class CustomTLS
             offset += i;
             Console.Write(
                 $"(offset {offset} (riga {row}, col {col}))\tCipher Suite: 0x{data[46 + i]:X2}, 0x{data[47 + i]:X2} -> ");
-            Console.WriteLine(CipherSuite.GetCipher(new byte[] {data[46 + i], data[47 + i]}));
+            Console.WriteLine(CipherSuite.GetCipher([data[46 + i], data[47 + i]]));
         }
 
         //compression methods
@@ -318,12 +304,12 @@ public class CustomTLS
         col = offset % 16;
         row = offset / 16;
         Console.WriteLine(
-            $"(offset {offset} (riga {row}, col {col}))\tCompression Methods Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {Utils.BytesToUShort(new byte[] {data[offset], data[offset + 1]})})");
+            $"(offset {offset} (riga {row}, col {col}))\tCompression Methods Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {Utils.BytesToUShort([data[offset], data[offset + 1]])})");
         offset += 2;
         col = offset % 16;
         row = offset / 16;
         //Extensions length
-        int extensionsLength = Utils.BytesToUShort(new byte[] {data[offset], data[offset + 1]});
+        int extensionsLength = Utils.BytesToUShort([data[offset], data[offset + 1]]);
         Console.WriteLine(
             $"(offset {offset} (riga {row}, col {col}))\tExtensions Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {extensionsLength}))");
         offset += 2;

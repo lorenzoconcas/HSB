@@ -12,38 +12,38 @@ public class AssociatedFile : Attribute
     public AssociatedFile(string filePath, HTTP_METHOD method = HTTP_METHOD.GET)
     {
         this.filePath = filePath;
-        this.methods = new() { method };
-        customMethods = new();
+        methods = [method];
+        customMethods = [];
     }
 
     public AssociatedFile(string filePath, HTTP_METHOD[] methods)
     {
         this.filePath = filePath;
         this.methods = new(methods);
-        customMethods = new();
+        customMethods = [];
     }
     public AssociatedFile(string filePath, string customMethod)
     {
         this.filePath = filePath;
-        this.methods = new();
-        this.customMethods = new() { customMethod.ToUpper() };
+        methods = [];
+        customMethods = [customMethod.ToUpper()];
     }
     public AssociatedFile(string filePath, string[] customMethod)
     {
         this.filePath = filePath;
-        this.methods = new();
-        this.customMethods = new(customMethod.Select(m => m.ToUpper()));
+        methods = [];
+        customMethods = new(customMethod.Select(m => m.ToUpper()));
     }
 
     public string FilePath => filePath;
 
     public bool MethodMatches(HTTP_METHOD method)
     {
-        return this.methods.Contains(method);
+        return methods.Contains(method);
     }
 
     public bool CustomMethodMatches(string method)
     {
-        return this.customMethods.Contains(method);
+        return customMethods.Contains(method);
     }
 }

@@ -32,6 +32,6 @@ public class ProtocolVersion
     /// <returns></returns>
     public uint[] GetVersion()
     {
-        return new uint[] { (uint)version >> 8, (uint)version & 0xFF };
+        return [(uint)version >> 8, (uint)version & 0xFF];
     }
 }

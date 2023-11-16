@@ -1,13 +1,13 @@
 ﻿namespace HSB;
 public class TLSImpl
 {
-    public static void Main(string[] args)
+    public static void Main()
     {
         var custom = true;
         if(custom){
-            new Custom(args).Run();
+            new Custom().Run();
         }else{
-            new SystemTLS(args).Run();
+            new SystemTLS().Run();
         }
     }
 }

@@ -16,12 +16,12 @@ public class SystemTLS
     readonly IPAddress address = IPAddress.Any;
     readonly IPEndPoint endPoint;
     readonly Socket listener;
-    byte[] buffer = new byte[512];
-    public SystemTLS(string[] args)
+    readonly byte[] buffer = new byte[512];
+    public SystemTLS()
     {
         Console.WriteLine("Hello from HSB (SystemTLS)");
 
-        c.setTLSVersion(TLS.Constants.TLSVersion.TLS_1_2);
+        c.SetTLSVersion(TLS.Constants.TLSVersion.TLS_1_2);
         c.RunAsync(false, 700);
 
 

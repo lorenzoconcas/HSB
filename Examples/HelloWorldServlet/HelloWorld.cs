@@ -1,26 +1,22 @@
 ﻿using HSB;
 
-namespace Example
+namespace HelloWorldExample;
+
+[Binding("/")] //route the root page
+public class HelloWorld(Request req, Response res) : Servlet(req, res)
 {
-    [Binding("/")] //route the root page
-    public class HelloWorld : Servlet
+
+    //we override the function that handle the GET response processing
+    public override void ProcessGet()
     {
-        public HelloWorld(Request req, Response res) : base(req, res)
-        {
-        }
-
-        //we override the function that handle the GET response processing
-        public override void ProcessGet()
-        {
-            //reply to request with an hello world
-            res.SendHTMLContent("<h1>Hello world</h1>");
-        }
+        //reply to request with an hello world
+        res.SendHTMLContent("<h1>Hello world</h1>");
+    }
 
 
-        //same for the post request
-        public override void ProcessPost()
-        {
-            //if no change are made, the server will reply with code 405
-        }
+    //same for the post request
+    public override void ProcessPost()
+    {
+        //if no change are made, the server will reply with code 405
     }
 }

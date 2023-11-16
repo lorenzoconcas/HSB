@@ -5,35 +5,26 @@ using HSB.TLS.Constants;
 using System.Runtime.InteropServices;
 
 namespace HSB.TLS;
-public class Curl
+public class Curl(string url = "localhost", string port = "443")
 {
-    string url;
-    string port;
-
-    string fullUrl;
+    
+    readonly string fullUrl = $"https://{url}:{port}/";
 
     ProtocolVersion protocolVersion = new(TLSVersion.TLS_1_3);
 
     string cipherSuitesString = "";
 
-    public Curl(string url = "localhost", string port = "443")
+    public void SetTLSVersion(TLSVersion tlsVersion)
     {
-        this.url = url;
-        this.port = port;
-        fullUrl = $"https://{url}:{port}/";
+        protocolVersion = new(tlsVersion);
     }
 
-    public void setTLSVersion(TLSVersion tlsVersion)
+    public void SetCipherSuites(string cipherSuites)
     {
-        this.protocolVersion = new(tlsVersion);
+        cipherSuitesString = cipherSuites;
     }
 
-    public void setCipherSuites(string cipherSuites)
-    {
-        this.cipherSuitesString = cipherSuites;
-    }
-
-    private string getCurlCommand()
+    private string GetCurlCommand()
     {
 
         string command = $"curl -k --tlsv{protocolVersion} --tls-max {protocolVersion} ";
@@ -87,8 +78,8 @@ public class Curl
 
     private void Exec()
     {
-        string command = getCurlCommand();
-        ProcessStartInfo startInfo = new ProcessStartInfo();
+        string command = GetCurlCommand();
+        ProcessStartInfo startInfo = new();
         //if windows
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {

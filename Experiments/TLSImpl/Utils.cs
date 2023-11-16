@@ -28,7 +28,7 @@ public static class Utils
 
     public static byte[] UShortToBytes(ushort data)
     {
-        return new byte[] { (byte)(data >> 8), (byte)(data & 0xFF) };
+        return [(byte)(data >> 8), (byte)(data & 0xFF)];
     }
 
 }

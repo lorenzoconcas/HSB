@@ -18,16 +18,16 @@ Please note that this is a work-in-progress project so API can change between si
 
 Repository organization
 
-| Project Name          | Type         | Description                                                                                                                                                    |
-| --------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
-| HSB                   | Library      | Is the core library that contains the entire server                                                                                                            |
-| Runner                | DevExtension | Contains the code used to test HSB in action                                                                                                                   |     |
-| MultiplatformLauncher | Tool         | Standalone, multiplatform launcher for HSB projects                                                                                                            |
-| Standalone            | Extension    | Utility to make the HSB core library directly runnable, provides additional functionaly                                                                        |
-| LaunchableExample     | Example/Test | Provides an example for the Multiplatform launcher, just build it as library then copy the two DLLs to the executable path of the launcher to see it in action |
-| Template              | Template     | Provides a template for Visual Studio                                                                                                                          |
-| Examples              | Folder       | Contains example projects that illustrates the API                                                                                                             |
-| Experiments           | Folder       | This folder contains temporary projects used to create complex new features that will be merged into the main library                                          |
+| Project Name      | Type         | Description                                                                                                                                                    |
+| ----------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| HSB               | Library      | Is the core library that contains the entire server                                                                                                            |
+| Runner            | DevExtension | Contains the code used to test HSB in action                                                                                                                   |
+| Launcher          | Tool         | This project launch any projects that uses the HSB library and have a entry function called HSBMain, without the need of compiling for a specific platform     |
+| Bootstrapper      | Extension    | Utility to make the HSB core library directly runnable, provides additional functionaly and can be used as template for custom projects                        |
+| LaunchableExample | Example/Test | Provides an example for the Multiplatform launcher, just build it as library then copy the two DLLs to the executable path of the launcher to see it in action |
+| Template          | Template     | Provides a template for Visual Studio                                                                                                                          |
+| Examples          | Folder       | Contains example projects that illustrates the API                                                                                                             |
+| Experiments       | Folder       | This folder contains temporary projects used to create complex new features that will be merged into the main library                                          |
 
 More info can be found in the Documentation folder
 [](./Documentation/)

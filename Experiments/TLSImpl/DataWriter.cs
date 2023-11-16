@@ -4,10 +4,10 @@ namespace HSB;
 /// A class to simplify the construction of byte arrays
 /// </summary>
 public class DataWriter{
-    private List<byte> data;
+    private readonly List<byte> data;
 
     public DataWriter(){
-        data = new();
+        data = [];
     }
     /// <summary>
     /// Append a byte to the byte array
@@ -74,7 +74,7 @@ public class DataWriter{
     /// Build the byte array
     /// </summary>
     public byte[] Build(){
-        return data.ToArray();
+        return [.. data];
     }
 
     

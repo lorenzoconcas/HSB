@@ -16,7 +16,7 @@ public class ApplicationLayerProtocolNegotiation : IExtension
     uint IExtension.Length => Length;
 
 
-    List<(ushort size, byte[] data)> Protocols = new();
+    public readonly List<(ushort size, byte[] data)> Protocols = [];
 
 
     public ApplicationLayerProtocolNegotiation(uint length, byte[] extensionData)

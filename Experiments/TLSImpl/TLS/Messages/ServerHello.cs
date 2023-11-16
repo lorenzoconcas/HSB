@@ -2,18 +2,14 @@ using System.Security.Cryptography;
 using HSB.TLS.Constants;
 namespace HSB.TLS.Messages;
 
-public class ServerHello{
+public class ServerHello(ClientHello clientHello)
+{
 
-    private ClientHello clientHello;
+    private readonly ClientHello clientHello = clientHello;
 
     private byte[] _random;
-    private CipherSuite.Ciphers _cipher;
+    private readonly CipherSuite.Ciphers _cipher;
     private byte[] _publicKey;
-  
-    public ServerHello(ClientHello clientHello){
-        this.clientHello = clientHello;
-
-    }
 
     public void BuildResponse(){
         //build the private/public key-pair

@@ -2,18 +2,11 @@ namespace HSB;
 /// <summary>
 /// A class to simplify reading data from a byte array
 /// </summary>
-public class DataReader
+public class DataReader(byte[] data)
 {
-    private readonly byte[] data = Array.Empty<byte>();
+    private readonly byte[] data = data;
     private uint offset = 0;
-    private uint endOffset = 0;
-
-
-    public DataReader(byte[] data)
-    {
-        this.data = data;
-        endOffset = (uint)data.Length;
-    }
+    private uint endOffset = (uint)data.Length;
 
     public void Rewind()
     {
@@ -78,7 +71,7 @@ public class DataReader
     /// <returns></returns>
     public UInt16 ReadSmallUint(){
         byte[] ushrt = ReadBytes(1);
-        return Utils.BytesToUShort(new byte[]{0, ushrt[0]});
+        return Utils.BytesToUShort([0, ushrt[0]]);
     }
 
     //aka uint16

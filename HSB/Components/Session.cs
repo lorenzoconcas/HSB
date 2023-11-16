@@ -2,7 +2,7 @@
 
 public class SessionManager
 {
-    private readonly Dictionary<string, Session> data = new();
+    private readonly Dictionary<string, Session> data = [];
     private static SessionManager? instance = null;
     private SessionManager()
     {
@@ -52,7 +52,7 @@ public class Session
 
     public Session()
     {
-        attributes = new();
+        attributes = [];
         ExpirationTime = -1;
         //  SourceIP = "";
     }
@@ -61,7 +61,7 @@ public class Session
     {
 
         ExpirationTime = expirationTime;
-        attributes = new();
+        attributes = [];
         valid = true;
     }
 
@@ -69,7 +69,7 @@ public class Session
 
     public T? GetAttribute<T>(string name)
     {
-        return (T)attributes[name] ?? default(T);
+        return (T)attributes[name] ?? default;
     }
 
 

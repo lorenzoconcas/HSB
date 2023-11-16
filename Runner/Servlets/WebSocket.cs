@@ -4,13 +4,8 @@ using HSB.Components.WebSockets;
 namespace Runner;
 
 [Binding("/websocket")]
-public class WebSocketHandler : WebSocket
+public class WebSocketHandler(Request req, Response res, Configuration c) : WebSocket(req, res, c)
 {
-    public WebSocketHandler(Request req, Response res, Configuration c) : base(req, res, c)
-    {
-
-    }
-
     public override void OnOpen()
     {
         Terminal.INFO("New websocket connection opened");

@@ -6,6 +6,13 @@ namespace HSB.Components.WebSockets;
 
 public class Message
 {
+
+    private static readonly JsonSerializerOptions jsonSerializerOptions = new()
+    {
+        IncludeFields = true,
+    };
+
+
     public byte[] data;
 
     public string _text;
@@ -43,8 +50,6 @@ public class Message
 
     public object GetJSON()
     {
-        JsonSerializerOptions jsonSerializerOptions = new();
-        jsonSerializerOptions.IncludeFields = true;
         return JsonSerializer.Deserialize<object>(_text, jsonSerializerOptions) ?? new object();
     }
 

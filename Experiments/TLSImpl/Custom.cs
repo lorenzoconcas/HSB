@@ -8,18 +8,18 @@ namespace HSB;
 
 public class Custom
 {
-    Curl c = new();
-    IPAddress address = IPAddress.Any;
-    IPEndPoint endPoint;
-    Socket listener;
+    readonly Curl c = new();
+    readonly IPAddress address = IPAddress.Any;
+    readonly IPEndPoint endPoint;
+    readonly Socket listener;
 
-    byte[] buffer = new byte[512];
+    readonly byte[] buffer = new byte[512];
 
 
-    public Custom(string[] args)
+    public Custom()
     {
         Console.WriteLine("Hello from HSB");
-        c.setTLSVersion(TLSVersion.TLS_1_2);
+        c.SetTLSVersion(TLSVersion.TLS_1_2);
         c.RunAsync(false, 700);
         //c.setCipherSuites("TLS_AES_256_GCM_SHA384 TLS_CHACHA20_POLY1305_SHA256 TLS_AES_128_GCM_SHA256 TLS_AES_128_CCM_8_SHA256 TLS_AES_128_CCM_SHA256");
 

@@ -8,36 +8,32 @@ using HSB.Constants.WebSocket;
 
 namespace HSB.Components.WebSockets;
 
-public class WebSocket
+public class WebSocket(Request req, Response res, Configuration? c = null)
 {
+  
+    private static  JsonSerializerOptions jo = new()
+    {      
+        MaxDepth = 0
+    };
+
     //todo -> add multiframe support
-    protected Response res;
-    protected Request req;
-    private readonly Socket socket;
-    protected Configuration? c;
+    protected Response res = res;
+    protected Request req = req;
+    private readonly Socket socket = req.GetSocket();
+    protected Configuration? c = c;
 
     private WebSocketState state = WebSocketState.CLOSED;
 
     #region Acceptance Requirements
-    Dictionary<string, string> requiredHeaders;
-    Dictionary<string, string> requiredParams;
+    Dictionary<string, string> requiredHeaders = [];
+    Dictionary<string, string> requiredParams = [];
     string bearerToken = "";
     string oAuth2Token = "";
     Tuple<string, string>? basicAuth = null;
     OAuth1_0Information? oAuth1_0Information = null;
     #endregion
-    private byte[] messageSentOnOpen = Array.Empty<byte>();
+    private byte[] messageSentOnOpen = [];
 
-    public WebSocket(Request req, Response res, Configuration? c = null)
-    {
-        this.req = req;
-        this.res = res;
-        this.c = c;
-        socket = req.GetSocket();
-        requiredHeaders = new();
-        requiredParams = new();
-
-    }
     /// <summary>
     /// Returns the Base64 string of the SecWebSocketKey+WS_GUID
     /// </summary>
@@ -75,11 +71,11 @@ public class WebSocket
         }
 
         //check if request contains all the required headers
-        if (requiredHeaders.Any())
+        if (requiredHeaders.Count > 0)
         {
             foreach (var header in requiredHeaders)
             {
-                if (!headers.ContainsKey(header.Key) || headers[header.Key] != header.Value)
+                if (!headers.TryGetValue(header.Key, out string? value) || value != header.Value)
                 {
                     c?.Debug.WARNING($"Missing required header {header.Key} or value is not correct");
                     res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
@@ -88,11 +84,11 @@ public class WebSocket
             }
         }
         //same for parameters
-        if (requiredParams.Any())
+        if (requiredParams.Count > 0)
         {
             foreach (var param in requiredParams)
             {
-                if (!req.Parameters.ContainsKey(param.Key) || req.Parameters[param.Key] != param.Value)
+                if (!req.Parameters.TryGetValue(param.Key, out string? value) || value != param.Value)
                 {
                     c?.Debug.WARNING($"Missing required parameter {param.Key} or value is not correct");
                     res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
@@ -103,7 +99,7 @@ public class WebSocket
         //if an authentication method is set, check if it is correct
         if (bearerToken != "")
         {
-            if (!headers.ContainsKey("Authorization") || headers["Authorization"] != $"Bearer {bearerToken}")
+            if (!headers.TryGetValue("Authorization", out string? value) || value != $"Bearer {bearerToken}")
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
@@ -112,7 +108,7 @@ public class WebSocket
         }
         if (oAuth2Token != "")
         {
-            if (!headers.ContainsKey("Authorization") || headers["Authorization"] != $"OAuth {oAuth2Token}")
+            if (!headers.TryGetValue("Authorization", out string? value) || value != $"OAuth {oAuth2Token}")
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
@@ -147,13 +143,13 @@ public class WebSocket
         var clientVersion = headers["Sec-WebSocket-Version"];
 
         var key = DigestKey(clientKey);
-        List<string> response = new() {
+        List<string> response = [
             "HTTP/1.1 101 Switching Protocols\r\n",
             "Upgrade: websocket\r\n",
             "Connection: Upgrade\r\n",
             "Sec-WebSocket-Accept: " + key + "\r\n",
             "Sec-WebSocket-Version: " + clientVersion + "\r\n",
-        };
+        ];
 
         //to-do add protocol support via decorator
 
@@ -252,6 +248,7 @@ public class WebSocket
             catch (Exception)
             {
                 state = WebSocketState.CLOSED;
+                socket?.Close();
             }
         }
     }
@@ -347,12 +344,7 @@ public class WebSocket
         {
             Frame f = new();
             //serialize object to json, with fields
-            JsonSerializerOptions jo = new()
-            {
-                IncludeFields = includeFields,
-                MaxDepth = 0
-            };
-
+            jo.IncludeFields = includeFields;
             f.SetPayload(JsonSerializer.SerializeToUtf8Bytes(obj, jo));
             socket?.Send(f.Build());
         }

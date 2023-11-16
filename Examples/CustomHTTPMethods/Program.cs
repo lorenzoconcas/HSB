@@ -1,7 +1,8 @@
 ﻿using HSB;
-internal class Program
+namespace CustomHTTPMethods;
+public class Program
 {
-    private static void Main(string[] args)
+    private static void Main()
     {
 
         Configuration c = new()

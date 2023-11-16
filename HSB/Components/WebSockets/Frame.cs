@@ -9,7 +9,7 @@ public class Frame
     private bool RSV1 { get; set; }
     private bool RSV2 { get; set; }
     private bool RSV3 { get; set; }
-    private bool[]? opcode { get; set; }
+    private bool[]? Opcode { get; set; }
     private bool Mask { get; set; }
     private bool[] PayloadLength;
     private byte[]? ExtendedPayloadLength { get; set; } //two bytes (16bit)
@@ -27,7 +27,7 @@ public class Frame
     /// <param name="rsv3"></param>
     /// <param name="opcode"></param>
     /// <param name="mask"></param>
-    public Frame(bool fin = true, bool rsv1 = false, bool rsv2 = false, bool rsv3 = false, Opcode opcode = Opcode.TEXT, bool mask = false)
+    public Frame(bool fin = true, bool rsv1 = false, bool rsv2 = false, bool rsv3 = false, Opcode opcode = Constants.WebSocket.Opcode.TEXT, bool mask = false)
     {
         FIN = fin;
         RSV1 = rsv1;
@@ -35,7 +35,7 @@ public class Frame
         RSV3 = rsv3;
         SetOpcode(opcode);
         Mask = mask;
-        PayloadLength = new bool[] { false, false, false, false, false, false, false };
+        PayloadLength = [false, false, false, false, false, false, false];
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public class Frame
         RSV1 = first8bits[1];
         RSV2 = first8bits[2];
         RSV3 = first8bits[3];
-        opcode = first8bits[4..];
+        Opcode = first8bits[4..];
         var maskAndPayloadLength = data[1].ToBitArray();
         Mask = maskAndPayloadLength[0];
         PayloadLength = maskAndPayloadLength[1..];
@@ -63,14 +63,14 @@ public class Frame
             //ExtendedPayloadLength is present
             if (data.Length < 4)
                 throw new Exception("Frame: data.Length < 4 and Payload length is 126");
-            ExtendedPayloadLength = new byte[] { data[2], data[3] };
+            ExtendedPayloadLength = [data[2], data[3]];
         }
         else if (PayloadLength.ToInt() == 127)
         {
             //ExtendedPayloadLengthContinued is present
             if (data.Length < 10)
                 throw new Exception("Frame: data.Length < 10 and Payload length is 127");
-            ExtendedPayloadLengthContinued = new byte[] { data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9] };
+            ExtendedPayloadLengthContinued = [data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9]];
         }
 
         //masking key
@@ -101,16 +101,16 @@ public class Frame
     /// <returns></returns>
     public byte[] Build()
     {
-        List<byte> bytes = new(){
+        List<byte> bytes = [
             Utils.GetByte(
                 FIN,
                 RSV1,
                 RSV2,
                 RSV3,
-                opcode?[0] ?? false,
-                opcode?[1] ?? false,
-                opcode?[2] ?? false,
-                opcode?[3] ?? false
+                Opcode?[0] ?? false,
+                Opcode?[1] ?? false,
+                Opcode?[2] ?? false,
+                Opcode?[3] ?? false
             ),
             Utils.GetByte(
                 //mask and payload length
@@ -123,7 +123,7 @@ public class Frame
                 PayloadLength[5],
                 PayloadLength[6]
             )
-        };
+        ];
         if (ExtendedPayloadLength != null) //two bytes
         {
             Terminal.INFO("This message has an extended payload length of 2 bytes");
@@ -132,12 +132,12 @@ public class Frame
         if (Mask)
         {
             Terminal.INFO("This message has a mask, is this normal?");
-            bytes.AddRange(MaskingKey ?? Array.Empty<byte>());
+            bytes.AddRange(MaskingKey ?? []);
         }
         if (PayloadData != null) //some frames don't have a payload, like close frame and ping/pong frames
             bytes.AddRange(PayloadData);
 
-        return bytes.ToArray();
+        return [.. bytes];
     }
     /// <summary>
     /// Set the opcode of the frame
@@ -147,23 +147,23 @@ public class Frame
     {
         switch (opcode)
         {
-            case Opcode.CONTINUATION:
-                this.opcode = new bool[] { false, false, false, false };
+            case Constants.WebSocket.Opcode.CONTINUATION:
+                this.Opcode = [false, false, false, false];
                 break;
-            case Opcode.TEXT:
-                this.opcode = new bool[] { false, false, false, true };
+            case Constants.WebSocket.Opcode.TEXT:
+                this.Opcode = [false, false, false, true];
                 break;
-            case Opcode.BINARY:
-                this.opcode = new bool[] { false, false, true, false };
+            case Constants.WebSocket.Opcode.BINARY:
+                this.Opcode = [false, false, true, false];
                 break;
-            case Opcode.CLOSE:
-                this.opcode = new bool[] { true, false, false, false };
+            case Constants.WebSocket.Opcode.CLOSE:
+                this.Opcode = [true, false, false, false];
                 break;
-            case Opcode.PING:
-                this.opcode = new bool[] { true, false, false, true };
+            case Constants.WebSocket.Opcode.PING:
+                this.Opcode = [true, false, false, true];
                 break;
-            case Opcode.PONG:
-                this.opcode = new bool[] { true, false, true, false };
+            case Constants.WebSocket.Opcode.PONG:
+                this.Opcode = [true, false, true, false];
                 break;
         }
     }
@@ -174,20 +174,20 @@ public class Frame
     /// <exception cref="Exception"></exception>
     public Opcode GetOpcode()
     {
-        if (opcode == null)
+        if (Opcode == null)
             throw new Exception("Frame: opcode == null");
-        if (opcode[0] == false && opcode[1] == false && opcode[2] == false && opcode[3] == false)
-            return Opcode.CONTINUATION;
-        if (opcode[0] == false && opcode[1] == false && opcode[2] == false && opcode[3] == true)
-            return Opcode.TEXT;
-        if (opcode[0] == false && opcode[1] == false && opcode[2] == true && opcode[3] == false)
-            return Opcode.BINARY;
-        if (opcode[0] == true && opcode[1] == false && opcode[2] == false && opcode[3] == false)
-            return Opcode.CLOSE;
-        if (opcode[0] == true && opcode[1] == false && opcode[2] == false && opcode[3] == true)
-            return Opcode.PING;
-        if (opcode[0] == true && opcode[1] == false && opcode[2] == true && opcode[3] == false)
-            return Opcode.PONG;
+        if (Opcode[0] == false && Opcode[1] == false && Opcode[2] == false && Opcode[3] == false)
+            return Constants.WebSocket.Opcode.CONTINUATION;
+        if (Opcode[0] == false && Opcode[1] == false && Opcode[2] == false && Opcode[3] == true)
+            return Constants.WebSocket.Opcode.TEXT;
+        if (Opcode[0] == false && Opcode[1] == false && Opcode[2] == true && Opcode[3] == false)
+            return Constants.WebSocket.Opcode.BINARY;
+        if (Opcode[0] == true && Opcode[1] == false && Opcode[2] == false && Opcode[3] == false)
+            return Constants.WebSocket.Opcode.CLOSE;
+        if (Opcode[0] == true && Opcode[1] == false && Opcode[2] == false && Opcode[3] == true)
+            return Constants.WebSocket.Opcode.PING;
+        if (Opcode[0] == true && Opcode[1] == false && Opcode[2] == true && Opcode[3] == false)
+            return Constants.WebSocket.Opcode.PONG;
         throw new Exception("Frame: opcode not recognized");
     }
     public void SetPayload(byte[] payload)
@@ -209,7 +209,7 @@ public class Frame
     }
     public void SetPayload(string payload)
     {
-        SetOpcode(Opcode.TEXT);
+        SetOpcode(Constants.WebSocket.Opcode.TEXT);
         SetPayload(Encoding.UTF8.GetBytes(payload));
     }
 
@@ -220,7 +220,7 @@ public class Frame
         sb += "\tRSV1: " + (RSV1 ? "✅" : "❌ (Good)") + "\n";
         sb += "\tRSV2: " + (RSV2 ? "✅" : "❌ (Good)") + "\n";
         sb += "\tRSV3: " + (RSV3 ? "✅" : "❌ (Good)") + "\n";
-        sb += "\tOpcode: " + (opcode == null ? "Not set??" : GetOpcode().ToString()) + "\n";
+        sb += "\tOpcode: " + (Opcode == null ? "Not set??" : GetOpcode().ToString()) + "\n";
         sb += "\tMask: " + (Mask ? "YES" : "NO") + "\n";
         sb += "\tPayloadLength: " + (PayloadLength == null ? "not set" : PayloadLength.ToInt()) + " bytes\n";
         sb += "\tExtendedPayloadLength: " + (ExtendedPayloadLength == null ? "not set" : BitConverter.ToInt16(ExtendedPayloadLength)) + "\n";
@@ -236,7 +236,7 @@ public class Frame
     }
     public byte[] GetPayload()
     {
-        if (PayloadData == null) return Array.Empty<byte>();
+        if (PayloadData == null) return [];
 
         //if the frame is masked, unmask the payload
         if (Mask && MaskingKey != null)
@@ -281,7 +281,7 @@ public class Frame
             equal = equal && o[1] == RSV1;
             equal = equal && o[2] == RSV2;
             equal = equal && o[3] == RSV3;
-            equal = equal && o[4] == opcode?[0] && o[5] == opcode?[1] && o[6] == opcode?[2] && o[7] == opcode?[3];
+            equal = equal && o[4] == Opcode?[0] && o[5] == Opcode?[1] && o[6] == Opcode?[2] && o[7] == Opcode?[3];
             equal = equal && o[8] == Mask;
             //todo add missing checks
             return equal;

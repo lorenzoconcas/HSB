@@ -2,6 +2,8 @@
 * This class contains all parameters needed to configure a SSL connection.
 * */
 
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
@@ -13,13 +15,27 @@ namespace HSB;
 public class SslConfiguration
 {
 
+    private static readonly string DEBUG_CERT_FOLDER_PATH =
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HSB");
+    private static readonly string DEBUG_CERT_PASSWORD = "HSB_DEV_CERT_PASSWORD";
+    private static readonly string DEBUG_CERT_P12_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.p12");
+    private static readonly string DEBUG_CERT_CRT_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.crt");
+    private static readonly string DEBUG_CERT_KEY_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.key");
+
+
+
     //TODO -> add support for loading certificates from store
 
     public ushort SslPort = 8443;
     public SSL_PORT_MODE PortMode = SSL_PORT_MODE.DUAL_PORT; //by default we use two ports, one for HTTP and one for HTTPS
     public bool UpgradeUnsecureRequests = true;
     public string? CertificatePath;
-    
+
+    /// <summary>
+    /// When set, a developer certificate valid only for 1 month and for localhost will be created (if doesn't exist or is expired) and used.
+    /// OpenSSL is required to use this feature.
+    /// </summary>
+    public bool UseDebugCertificate = false;
     [JsonIgnore]
     public byte[]? CertificateBytes;
     public string? CertificatePassword;
@@ -61,7 +77,7 @@ public class SslConfiguration
         ClientCertificateRequired = clientCertificateRequired;
     }
 
-    public bool IsEnabled() => (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath);
+    public bool IsEnabled() => (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath) || UseDebugCertificate;
 
 
     /// <summary>
@@ -169,4 +185,87 @@ public class SslConfiguration
 
     }
 
+    /// <summary>
+    /// Creates a developer certificate valid only for 1 month and for localhost.
+    /// OpenSSL is required to use this feature.
+    /// </summary>
+    public static void CreateDebugCertificate()
+    {
+        if (!Directory.Exists(DEBUG_CERT_FOLDER_PATH))
+        {
+            Directory.CreateDirectory(DEBUG_CERT_FOLDER_PATH);
+        }
+
+
+        var command =
+        $"openssl " +
+        $"req -x509 -newkey rsa:4096 -sha256 -days 30 -nodes " +
+        $"-keyout '{DEBUG_CERT_KEY_PATH}' " +
+        $"-out '{DEBUG_CERT_CRT_PATH}' " +
+        $"-subj \"/CN=localhost\" && " +
+        $"openssl pkcs12 -export " +
+        $"-out '{DEBUG_CERT_P12_PATH}' " +
+        $"-inkey '{DEBUG_CERT_KEY_PATH}' " +
+        $"-in '{DEBUG_CERT_CRT_PATH}' " +
+        $"-passout pass:'{DEBUG_CERT_PASSWORD}'";
+
+      
+        ProcessStartInfo startInfo = new();
+        //if windows
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = $"/C \"{command}\"";
+
+        }
+        else
+        {
+            startInfo.FileName = "/bin/bash";
+            startInfo.Arguments = $"-c \"{command}\"";
+        }
+        startInfo.RedirectStandardOutput = true;
+        startInfo.RedirectStandardError = true;
+        startInfo.UseShellExecute = false;
+        startInfo.CreateNoWindow = true;
+        Process process = new()
+        {
+            StartInfo = startInfo
+        };
+        process.Start();
+
+    }
+
+    public static X509Certificate2? TryLoadDebugCertificate(bool create = true, Configuration? c = null)
+    {
+
+        X509Certificate2 cert;
+
+        if (!File.Exists(DEBUG_CERT_P12_PATH))
+        {
+            if (create)
+            {
+                CreateDebugCertificate();
+            }
+            else
+            {
+                c?.Debug.DEBUG("Cannot load debug certificate, file not found");
+                //Terminal.DEBUG("Cannot load debug certificate, file not found");
+                return null;
+            }
+        }
+        //workaround  to avoid error if path contains spaces
+        var bytes = File.ReadAllBytes(DEBUG_CERT_P12_PATH);
+        cert = new X509Certificate2(bytes, DEBUG_CERT_PASSWORD);
+
+        //if expired, delete and create again
+        if (cert.NotAfter < DateTime.Now)
+        {
+            File.Delete(DEBUG_CERT_P12_PATH);
+            CreateDebugCertificate();
+            cert = new X509Certificate2(DEBUG_CERT_P12_PATH, DEBUG_CERT_PASSWORD);
+        }
+
+        c?.Debug.DEBUG("Debug certificate loaded, remeber to trust it in your system");
+        return cert;
+    }
 }

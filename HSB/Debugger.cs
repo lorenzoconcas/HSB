@@ -11,6 +11,8 @@ public class Debugger
     public string address;
     public string logPath;
     public LOG_LEVEL logLevel;
+    
+    public bool UseDebugCertificate;
 
     //Todo : add an authentication method to access the socket of the debugger
     //Todo : establish communication rules between debugger and client

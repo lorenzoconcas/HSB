@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace HSB;
 
@@ -19,6 +20,7 @@ public class Server
     private readonly Configuration config;
     private readonly Socket listener;
     private readonly Socket? sslListener;
+    private readonly X509Certificate2? sslCertificate = null;
 
     public static void Main()
     {
@@ -38,6 +40,7 @@ public class Server
         }
 
         this.config = config;
+        config.Debug.INFO("Starting logging...");
 
         if (config.Address == "")
         {
@@ -96,6 +99,10 @@ public class Server
             {
                 throw new Exception("Cannot create SSL listener");
             }
+            if (sslConf.UseDebugCertificate)
+                sslCertificate = SslConfiguration.TryLoadDebugCertificate(c: config);
+
+            sslCertificate ??= sslConf.GetCertificate();
         }
 
         if (config.ListeningMode == IPMode.ANY)
@@ -105,7 +112,6 @@ public class Server
                 sslListener!.DualMode = true;
         }
 
-        config.Debug.INFO("Starting logging...");
 
         if (sslConf.IsEnabled())
         {
@@ -122,7 +128,7 @@ public class Server
 
         else if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
             prefix += "s";
-            
+
         if (config.PublicURL == "")
             config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
         else config.Debug.INFO($"Listening at {prefix}://{config.PublicURL}:{config.Port}/");
@@ -202,7 +208,7 @@ public class Server
             try
             {
                 sslStream.AuthenticateAsServer(
-                    config.SslSettings.GetCertificate(),
+                    sslCertificate!,
                     config.SslSettings.ClientCertificateRequired,
                     config.SslSettings.GetProtocols(),
                     config.SslSettings.CheckCertificateRevocation

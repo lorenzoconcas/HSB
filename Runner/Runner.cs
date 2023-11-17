@@ -8,6 +8,13 @@ public class HSBRunner
     private static void Main()
     {
 
+        SslConfiguration ssl = new()
+        {
+            PortMode = HSB.Constants.TLS.SSL_PORT_MODE.DUAL_PORT,
+            SslPort = 8081,
+            UseDebugCertificate = true,
+            UpgradeUnsecureRequests = false
+        };
 
         Configuration c = new()
         {
@@ -16,7 +23,8 @@ public class HSBRunner
             RequestMaxSize = Configuration.MEGABYTE * 2,
             CustomServerName = "Runner powered by HSB",
             ListeningMode = HSB.Constants.IPMode.ANY, //valid only if address == "",
-            StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static")
+            StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static"),
+            SslSettings = ssl,
         };
 
         //test expressjs-like routing

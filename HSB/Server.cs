@@ -30,6 +30,7 @@ public class Server
     }
     public Server(Configuration config)
     {
+        int errorCode = 0;
         if (!config.HideBranding)
             Utils.PrintLogo();
 
@@ -42,97 +43,118 @@ public class Server
         this.config = config;
         config.Debug.INFO("Starting logging...");
 
-        if (config.Address == "")
+        try
         {
-            //address must be ANY
-            ipAddress = config.ListeningMode switch
-            {
-                IPMode.IPV4_ONLY => IPAddress.Any,
-                _ => IPAddress.IPv6Any,
-            };
-        }
-        else //in this case ListeningMode is NOT a valid parameter
-        {
-            List<IPAddress> addresses = [.. Dns.GetHostAddresses(config.Address, AddressFamily.InterNetwork)];
 
-            //this fixes an error where user specifies an ipv4 address but want the server to listenes to BOTH or ipv6 only
 
-            if (addresses.Count != 0)
+            if (config.Address == "")
             {
-                ipAddress = addresses.First();
-                config.ListeningMode = IPMode.IPV4_ONLY;
+                //address must be ANY
+                ipAddress = config.ListeningMode switch
+                {
+                    IPMode.IPV4_ONLY => IPAddress.Any,
+                    _ => IPAddress.IPv6Any,
+                };
             }
-            else
+            else //note that in this case ListeningMode is NOT a valid parameter as it depends on the address
             {
-                addresses = [.. Dns.GetHostAddresses(config.Address, AddressFamily.InterNetworkV6)];
+                List<IPAddress> addresses = [.. Dns.GetHostAddresses(config.Address, AddressFamily.InterNetwork)];
+
+                //this fixes an error where user specifies an ipv4 address but want the server to listenes to BOTH or ipv6 only
+
                 if (addresses.Count != 0)
                 {
                     ipAddress = addresses.First();
-                    config.ListeningMode = IPMode.IPV6_ONLY;
+                    config.ListeningMode = IPMode.IPV4_ONLY;
                 }
                 else
                 {
-                    throw new Exception("Cannot found address to listen to");
+                    addresses = [.. Dns.GetHostAddresses(config.Address, AddressFamily.InterNetworkV6)];
+                    if (addresses.Count != 0)
+                    {
+                        ipAddress = addresses.First();
+                        config.ListeningMode = IPMode.IPV6_ONLY;
+                    }
+                    else
+                    {
+                        errorCode = (int)SERVER_ERRORS.ADDRESS_NOT_FOUND;
+                        throw new Exception("Cannot found address to listen to");
+                    }
                 }
             }
-        }
 
-        //initialize the endpoints
-        localEndPoint = new(ipAddress, config.Port);
-        listener = new(ipAddress.AddressFamily,
-            SocketType.Stream, ProtocolType.Tcp);
-
-        SslConfiguration sslConf = config.SslSettings;
-
-
-        //if ssl is set and configuration is set to use two ports we start the sslListener
-        if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
-        {
-            sslLocalEndPoint = new(ipAddress, config.SslSettings.SslPort);
-            if (sslLocalEndPoint == null)
-            {
-                throw new Exception("Cannot create SSL endpoint");
-            }
-            sslListener = new(ipAddress.AddressFamily,
+            //initialize the endpoints
+            localEndPoint = new(ipAddress, config.Port);
+            listener = new(ipAddress.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
-            if (sslListener == null)
+
+            SslConfiguration sslConf = config.SslSettings;
+
+
+            //if ssl is set and configuration is set to use two ports we start the sslListener
+            if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
             {
-                throw new Exception("Cannot create SSL listener");
+                sslLocalEndPoint = new(ipAddress, config.SslSettings.SslPort);
+                if (sslLocalEndPoint == null)
+                {
+                    errorCode = (int)SERVER_ERRORS.CANNOT_CREATE_SSL_ENDPOINT;
+                    throw new Exception("Cannot create SSL endpoint");
+                }
+                sslListener = new(ipAddress.AddressFamily,
+                    SocketType.Stream, ProtocolType.Tcp);
+                if (sslListener == null)
+                {
+                    errorCode = (int)SERVER_ERRORS.CANNOT_CREATE_SSL_LISTENER;
+                    throw new Exception("Cannot create SSL listener");
+                }
+                if (sslConf.UseDebugCertificate)
+                {
+                    sslCertificate = SslConfiguration.TryLoadDebugCertificate(c: config);
+                    if (sslCertificate == null)
+                    {
+                        errorCode = (int)SERVER_ERRORS.CANNOT_LOAD_DEBUG_CERTIFICATE;
+                        throw new Exception("Cannot load debug certificate, server cannot start with this configuration! Make sure openssl is installed");
+                    }
+                }
+                else if (sslConf.IsEnabled())
+                    sslCertificate = sslConf.GetCertificate();
             }
-            if (sslConf.UseDebugCertificate)
-                sslCertificate = SslConfiguration.TryLoadDebugCertificate(c: config);
 
-            sslCertificate ??= sslConf.GetCertificate();
-        }
-
-        if (config.ListeningMode == IPMode.ANY)
-        {
-            listener.DualMode = true;
-            if (config.SslSettings.IsEnabled())
-                sslListener!.DualMode = true;
-        }
+            if (config.ListeningMode == IPMode.ANY)
+            {
+                listener.DualMode = true;
+                if (config.SslSettings.IsEnabled())
+                    sslListener!.DualMode = true;
+            }
 
 
-        if (sslConf.IsEnabled())
-        {
-            config.Debug.INFO("Server is running in SSL mode");
+            if (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled())
+            {
+                config.Debug.INFO("Server is running in SSL mode");
 
-        }
-        var prefix = "http";
-        if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
-        {
+            }
+            var prefix = "http";
+            if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+            {
+                if (config.PublicURL == "")
+                    config.Debug.INFO($"Listening at https://{sslLocalEndPoint}/");
+                else config.Debug.INFO($"Listening at https://{config.PublicURL}:{sslConf.SslPort}/");
+            }
+
+            else if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled())&& sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
+                prefix += "s";
+
             if (config.PublicURL == "")
-                config.Debug.INFO($"Listening at https://{sslLocalEndPoint}/");
-            else config.Debug.INFO($"Listening at https://{config.PublicURL}:{sslConf.SslPort}/");
+                config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
+            else config.Debug.INFO($"Listening at {prefix}://{config.PublicURL}:{config.Port}/");
+
         }
-
-        else if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
-            prefix += "s";
-
-        if (config.PublicURL == "")
-            config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
-        else config.Debug.INFO($"Listening at {prefix}://{config.PublicURL}:{config.Port}/");
-
+        catch (Exception e)
+        {
+            config.Debug.ERROR("An exception occurred while initializing the server ->\n" + e);
+            config.Debug.INFO("Server will now exit...");
+            Environment.Exit(-errorCode);
+        }
         //end of the server initialization
     }
 
@@ -146,7 +168,7 @@ public class Server
 
             var sslConf = config.SslSettings;
 
-            if (sslConf.IsEnabled())
+            if (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled())
             { //sslListener and sslLocalEndPoint are not null because we checked in the constructor
                 sslListener!.Bind(sslLocalEndPoint!);
                 sslListener.Listen(100);
@@ -155,7 +177,7 @@ public class Server
             OpenInBrowserIfSet(openInBrowser, sslConf.IsEnabled(), sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint);
 
             //this makes the second port listen to SSL requests
-            if (sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
+            if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
             {
                 new Task(() =>
                 {
@@ -170,7 +192,7 @@ public class Server
             while (true)
             {
                 //if ssl is enabled and single port is used
-                var sslMode = sslConf.IsEnabled() && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
+                var sslMode = (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
 
                 Step(listener, sslMode);
             }
@@ -201,6 +223,7 @@ public class Server
         byte[] bytes = new byte[config.RequestMaxSize];
         int bytesRec = 0;
         SslStream? sslStream = null;
+        bool sslOK = false;
         if (sslMode)
         {
             var netstream = new NetworkStream(socket);
@@ -214,6 +237,7 @@ public class Server
                     config.SslSettings.CheckCertificateRevocation
                 );
                 bytesRec = sslStream.Read(bytes);
+                sslOK = true;
             }
             catch (Exception)
             {
@@ -223,7 +247,7 @@ public class Server
                 {
                     config.Debug.WARNING("SSL authentication failed, redirecting to SSL");
                     //attempt redirect
-                    Request _req = new(bytes, socket, config);
+                    Request _req = new(bytes, socket, config, false);
                     Response res = new(socket, _req, config, null);
 
                     //the endpoint varies if by the port mode
@@ -247,7 +271,7 @@ public class Server
             {
                 config.Debug.WARNING("Unsecure request received, redirecting to SSL");
                 //attempt redirect
-                Request _req = new(bytes, socket, config);
+                Request _req = new(bytes, socket, config, sslOK);
                 Response res = new(socket, _req, config, null);
 
                 //the endpoint varies if by the port mode
@@ -262,7 +286,7 @@ public class Server
         bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
 
         //parse the request
-        Request req = new(bytes, socket, config);
+        Request req = new(bytes, socket, config, sslOK);
         //if is valid we process it
         if (req.IsValidRequest)
         {

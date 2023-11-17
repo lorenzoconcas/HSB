@@ -77,7 +77,8 @@ public class SslConfiguration
         ClientCertificateRequired = clientCertificateRequired;
     }
 
-    public bool IsEnabled() => (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath) || UseDebugCertificate;
+    public bool IsEnabled() => (CertificatePath != null || CertificateBytes != null) && CertificatePassword != null && File.Exists(CertificatePath);
+    public bool IsDebugModeEnabled() => UseDebugCertificate;
 
 
     /// <summary>
@@ -189,8 +190,41 @@ public class SslConfiguration
     /// Creates a developer certificate valid only for 1 month and for localhost.
     /// OpenSSL is required to use this feature.
     /// </summary>
-    public static void CreateDebugCertificate()
+    public static bool CreateDebugCertificate()
     {
+        //check if openssl is installed
+        var startInfo = new ProcessStartInfo
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = $"/C openssl version";
+
+        }
+        else
+        {
+            startInfo.FileName = "/bin/bash";
+            startInfo.Arguments = $"-c openssl version";
+        }
+        var process = new Process
+        {
+            StartInfo = startInfo
+        };
+        process.Start();
+        process.WaitForExit();
+        if (process.ExitCode != 0)
+        {
+            Terminal.ERROR($"Openssl is not installed, cannot continue ({process.ExitCode})", true);
+            return false;
+        }
+
+
         if (!Directory.Exists(DEBUG_CERT_FOLDER_PATH))
         {
             Directory.CreateDirectory(DEBUG_CERT_FOLDER_PATH);
@@ -200,17 +234,17 @@ public class SslConfiguration
         var command =
         $"openssl " +
         $"req -x509 -newkey rsa:4096 -sha256 -days 30 -nodes " +
-        $"-keyout '{DEBUG_CERT_KEY_PATH}' " +
-        $"-out '{DEBUG_CERT_CRT_PATH}' " +
+        $"-keyout \"{DEBUG_CERT_KEY_PATH}\" " +
+        $"-out \"{DEBUG_CERT_CRT_PATH}\" " +
         $"-subj \"/CN=localhost\" && " +
         $"openssl pkcs12 -export " +
-        $"-out '{DEBUG_CERT_P12_PATH}' " +
-        $"-inkey '{DEBUG_CERT_KEY_PATH}' " +
-        $"-in '{DEBUG_CERT_CRT_PATH}' " +
-        $"-passout pass:'{DEBUG_CERT_PASSWORD}'";
+        $"-out \"{DEBUG_CERT_P12_PATH}\" " +
+        $"-inkey \"{DEBUG_CERT_KEY_PATH}\" " +
+        $"-in \"{DEBUG_CERT_CRT_PATH}\" " +
+        $"-passout pass:\"{DEBUG_CERT_PASSWORD}\"";
 
-      
-        ProcessStartInfo startInfo = new();
+
+        startInfo = new();
         //if windows
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -227,12 +261,18 @@ public class SslConfiguration
         startInfo.RedirectStandardError = true;
         startInfo.UseShellExecute = false;
         startInfo.CreateNoWindow = true;
-        Process process = new()
+        process = new()
         {
             StartInfo = startInfo
         };
         process.Start();
-
+        process.WaitForExit();
+        if (process.ExitCode != 0)
+        {
+            Terminal.WARNING($"Openssl error, certificate has not been created\nCommand used is : {command}", true);
+            return false;
+        }
+        return true;
     }
 
     public static X509Certificate2? TryLoadDebugCertificate(bool create = true, Configuration? c = null)
@@ -244,11 +284,16 @@ public class SslConfiguration
         {
             if (create)
             {
-                CreateDebugCertificate();
+                if (!CreateDebugCertificate())
+                {
+                    c?.Debug.WARNING("Cannot load debug certificate, file not found");
+                    return null;
+                }
+
             }
             else
             {
-                c?.Debug.DEBUG("Cannot load debug certificate, file not found");
+                c?.Debug.WARNING("Cannot load debug certificate, file not found");
                 //Terminal.DEBUG("Cannot load debug certificate, file not found");
                 return null;
             }
@@ -261,7 +306,12 @@ public class SslConfiguration
         if (cert.NotAfter < DateTime.Now)
         {
             File.Delete(DEBUG_CERT_P12_PATH);
-            CreateDebugCertificate();
+            if (!CreateDebugCertificate())
+            {
+                c?.Debug.DEBUG("Cannot load debug certificate, file not found");
+                return null;
+            }
+
             cert = new X509Certificate2(DEBUG_CERT_P12_PATH, DEBUG_CERT_PASSWORD);
         }
 

@@ -416,7 +416,7 @@ public static partial class Utils
     }
 
     //Search all the loaded assemblies for the resource, then reads it and returns it as object
-    internal static T LoadResource<T>(string resName, string prefix = "")
+    public static T LoadResource<T>(string resName, string prefix = "")
     {
         if (resName.StartsWith('/')) resName = resName[1..];
         resName = resName.Replace('/', '.');
@@ -436,9 +436,26 @@ public static partial class Utils
             string resourceName = assembly.GetManifestResourceNames().First(str => str.EndsWith(resName));
             if (resourceName != null)
             {
-                using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
-                using StreamReader reader = new(stream);
-                return (T)Convert.ChangeType(reader.ReadToEnd(), typeof(T));
+                try
+                {
+
+                    using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
+                    if (typeof(T) == typeof(byte[]))
+                    {
+                        var ms = new MemoryStream();
+                        stream.CopyTo(ms);
+                        return (T)Convert.ChangeType(ms.ToArray(), typeof(T));
+                    }
+                    else
+                    {
+                        using StreamReader r = new(stream);
+                        return (T)Convert.ChangeType(r.ReadToEnd(), typeof(T));
+                    }
+                }
+                catch (Exception)
+                {
+                    return default!;
+                }
             }
         }
         return default!;

@@ -31,6 +31,8 @@ public class Request
     readonly Dictionary<string, string> parameters = [];
     readonly List<string> rawHeaders = [];
     readonly Dictionary<string, Cookie> cookies = [];
+    public readonly bool IsTLS = false;
+
     //Auth structs
     private Tuple<string, string>? basicAuth;
     private OAuth1_0Information? oAuth1_0Information;
@@ -40,13 +42,14 @@ public class Request
     private Form? form;
 
     public bool IsValidRequest = true;
-    public Request(byte[] data, Socket socket, Configuration config)
+    public Request(byte[] data, Socket socket, Configuration config, bool isTLS = false)
     {
         connectionSocket = socket;
         rawData = data;
         rawBody = [];
         this.config = config;
         requestContent = [];
+        IsTLS = isTLS;
 
         if (data == null || data.Length == 0)
         {
@@ -184,7 +187,7 @@ public class Request
             //parse cookies
             if (headers.TryGetValue("Cookie", out string? val))
             {
-                
+
                 var strings = val.Split("; ");
                 foreach (var s in strings)
                 {

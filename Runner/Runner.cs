@@ -1,4 +1,7 @@
-﻿using HSB;
+﻿using System.Reflection;
+using System.Security.Cryptography;
+using HSB;
+using HSB.Constants;
 
 namespace Runner;
 
@@ -102,7 +105,7 @@ public class HSBRunner
             {
                 //return an html page with all the routes and a link
 
-                string html = "<html><head></head><body><h1>Runner HomePage</h1><h3>Available routes:</h3>";
+                string html = "</head><body><h1>Runner HomePage</h1><h3>Available routes:</h3>";
                 var routes = c.GetAllRoutes();
                 routes.Remove(new Tuple<string, string>("/", "GET"));
 
@@ -128,11 +131,75 @@ public class HSBRunner
                     }
                 }
                 html += "</tbody></table>";
+                string favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.ico\" />";
+
+                if ((c.SslSettings.IsEnabled() || c.SslSettings.IsDebugModeEnabled()) && !c.SslSettings.UpgradeUnsecureRequests)
+                {
+                    html += "<hr/>";
+                    int port;
+                    if (req.IsTLS)
+                    {
+                        if (c.SslSettings.PortMode == HSB.Constants.TLS.SSL_PORT_MODE.SINGLE_PORT)
+                        {
+                            port = c.Port;
+                        }
+                        else
+                        {
+                            port = c.SslSettings.SslPort;
+                        }
+
+                        html += "<script>function ssl(){ return window.location.href.replace('https', 'http').replace('" + port + "', '" + c.Port + "');}</script>";
+                        html += "<a href='javascript:document.location.href=ssl()'>🔓Also available in non-SSL (plain) version </a>";
+                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_non_ssl.ico\" />";
+                    }
+                    else
+                    {
+                        if (c.SslSettings.PortMode == HSB.Constants.TLS.SSL_PORT_MODE.SINGLE_PORT)
+                        {
+                            port = c.Port;
+                        }
+                        else
+                        {
+                            port = c.SslSettings.SslPort;
+                        }
+
+                        html += "<script>function ssl(){ return window.location.href.replace('http', 'https').replace('" + c.Port + "', '" + port + "');}</script>";
+                        html += "<a href='javascript:document.location.href=ssl()'>🔐Also available in SSL version </a>";
+                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_ssl.ico\" />";
+                    }
+                }
                 html += "<br/><hr><footer>HSB-# Runner &copy; 2021-2023</footer>";
+                html += "<script> console.log(window.location.href)</script>";
                 html += "</body></html>";
+                html = "<html><head>" + favicon + html;
                 res.SendHTMLContent(html);
             });
 
+
+        c.GET("/favicon.ico", (Request req, Response res) =>
+        {
+            Terminal.INFO("hello");
+            var resource = HSB.Utils.LoadResource<byte[]?>("favicon.png");
+
+            if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
+
+            res.SendFile(resource, "image/x-icon");
+        });
+        c.GET("/favicon_ssl.ico", (Request req, Response res) =>
+        {
+
+            var resource = HSB.Utils.LoadResource<byte[]?>("favicon_ssl.ico");
+
+            if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
+
+            res.SendFile(resource, "image/x-icon");
+        });
+        c.GET("/favicon_non_ssl.ico", (Request req, Response res) =>
+        {
+            var resource = HSB.Utils.LoadResource<byte[]?>("favicon_nonssl.ico");
+            if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
+            res.SendFile(resource, "image/x-icon");
+        });
         new Server(c).Start();
     }
 

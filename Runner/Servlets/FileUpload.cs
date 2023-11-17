@@ -7,13 +7,9 @@ namespace Runner;
 [Binding("/fileupload.html")]
 [Binding("/fileuploadmulti.html")]
 [Binding("/fileupload")]
-public class FileUpload : Servlet
+public class FileUpload(Request req, Response res) : Servlet(req, res)
 {
     private const string savePath = "./uploaded";
-    public FileUpload(Request req, Response res) : base(req, res)
-    {
-
-    }
 
     public override void ProcessGet()
     {

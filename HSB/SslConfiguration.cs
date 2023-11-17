@@ -315,7 +315,7 @@ public class SslConfiguration
             cert = new X509Certificate2(DEBUG_CERT_P12_PATH, DEBUG_CERT_PASSWORD);
         }
 
-        c?.Debug.DEBUG("Debug certificate loaded, remeber to trust it in your system");
+        c?.Debug.DEBUG("Debug certificate loaded. Remember to trust it in your system!");
         return cert;
     }
 }

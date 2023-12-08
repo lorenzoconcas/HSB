@@ -44,15 +44,15 @@ public class Response
             if (sslStream != null)
             {
                 sslStream.Write(data);
-                if(disconnect)
+                if (disconnect)
                     sslStream.Close();
             }
             else
             {
-
                 int totalBytes = socket.Send(data);
                 socket.Disconnect(disconnect);
             }
+            data = [];
         }
         catch (Exception e)
         {
@@ -71,6 +71,7 @@ public class Response
         string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
 
         Send(Encoding.UTF8.GetBytes(resp));
+
     }
     /// <summary>
     /// Loads and HTML file from path and sends it as HTTP Response with mimeType = text/html
@@ -88,6 +89,8 @@ public class Response
             Encoding encoding = Utils.GetEncoding(path);
 
             Send(content, MimeTypeUtils.TEXT_HTML + $"; charset={encoding.BodyName}", customHeaders: customHeaders);
+
+            content = "";
         }
         catch (Exception)
         {
@@ -129,6 +132,11 @@ public class Response
         data.CopyTo(responseBytes, headersBytes.Length);
 
         Send(responseBytes);
+
+        //clear memory after sending
+        data = [];
+        headersBytes = [];
+        responseBytes = [];
     }
     /// <summary>
     /// Sends data to the client
@@ -147,6 +155,10 @@ public class Response
         data.CopyTo(responseBytes, headersBytes.Length);
 
         Send(responseBytes);
+        //clear memory after sending
+        data = [];
+        headersBytes = [];
+        responseBytes = [];
     }
     /// <summary>
     /// Sends a generic object to the client, with possible optimization (string, byte[], FilePart, generic object)

@@ -16,11 +16,20 @@ namespace HSB
         }
         public override void ProcessGet()
         {
+            var debugMode = false;
+#if DEBUG
+            debugMode = true;
+#endif
+
             string title = $"Error {errorCode}";
             string content = "";
-            if (errorCode >= 500)
+            if (errorCode >= 500 && errorCode <= 599)
+            {
 
-                content = GetStacktracePage();
+                if (debugMode)
+                    content = GetStacktracePage();
+                else content = Get5XXPage();
+            }
 
             else if (errorCode >= 400 && errorCode <= 499)
                 content = Get4XXPage();
@@ -28,21 +37,9 @@ namespace HSB
             Send(title, content, errorCode);
         }
 
-        private string GetStacktracePage()
-        {
-            string content = "";// = $"<h2>Error {errorCode}</h2><hr>";
-            content += "Stacktrace:<br>";
-            content += errorMsg.Replace("\n", "<br>");
-
-            return content;
-        }
-
-        private static string Get4XXPage()
-        {
-
-            string content = $"<h3>The searched resource was not found on this server</h3>";
-            return content;
-        }
+        private string GetStacktracePage() => "Stacktrace:<br>" + errorMsg.Replace("\n", "<br>");
+        private static string Get4XXPage() => $"<h3>The requested resource was not found on this server</h3>";
+        private static string Get5XXPage() => $"<h3>An internal error occurred while elaborating the request</h3>";
 
         private void Send(string title, string msg, int statusCode)
         {

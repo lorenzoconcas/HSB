@@ -25,7 +25,7 @@ public class HSBRunner
             Port = 8080,
             RequestMaxSize = Configuration.MEGABYTE * 2,
             CustomServerName = "Runner powered by HSB",
-            ListeningMode = HSB.Constants.IPMode.ANY, //valid only if address == "",
+            ListeningMode = HSB.Constants.IPMode.IPV4_ONLY, //valid only if address == "",
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static"),
             SslSettings = ssl,
         };
@@ -41,6 +41,11 @@ public class HSBRunner
         c.GET("/printheaders", PrintHeaders);
         c.GET("/echo", Echo);
         c.POST("/echo", Echo);
+
+        c.GET("/500", (Request req, Response res) =>
+        {
+            throw new Exception("\nThis is a test exception, should only be visible when compiled in debug mode\n");
+        });
 
         c.AddSharedObject("test", 1996); //this object is available to all servlets, and accessed by "Servlets/SharedObjects.cs" 
 
@@ -150,7 +155,7 @@ public class HSBRunner
 
                         html += "<script>function ssl(){ return window.location.href.replace('https', 'http').replace('" + port + "', '" + c.Port + "');}</script>";
                         html += "<a href='javascript:document.location.href=ssl()'>🔓Also available in non-SSL (plain) version </a>";
-                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_non_ssl.ico\" />";
+                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_ssl.ico\" />";
                     }
                     else
                     {
@@ -165,7 +170,7 @@ public class HSBRunner
 
                         html += "<script>function ssl(){ return window.location.href.replace('http', 'https').replace('" + c.Port + "', '" + port + "');}</script>";
                         html += "<a href='javascript:document.location.href=ssl()'>🔐Also available in SSL version </a>";
-                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_ssl.ico\" />";
+                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_non_ssl.ico\" />";
                     }
                 }
                 html += "<br/><hr><footer>HSB-# Runner &copy; 2021-2023</footer>";

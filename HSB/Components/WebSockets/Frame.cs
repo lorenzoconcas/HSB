@@ -90,10 +90,10 @@ public class Frame
                 throw new Exception($"Frame: data.Length < {offset} + 4 and a mask is present");
 
             MaskingKey = data[offset..(offset + 4)];
-            offset += 4;            
+            offset += 4;
         }
 
-        PayloadData = data[offset..];      
+        PayloadData = data[offset..];
     }
     /// <summary>
     /// Build the frame
@@ -126,12 +126,12 @@ public class Frame
         ];
         if (ExtendedPayloadLength != null) //two bytes
         {
-            Terminal.INFO("This message has an extended payload length of 2 bytes");
+            //  Terminal.INFO("This message has an extended payload length of 2 bytes");
             bytes.AddRange(ExtendedPayloadLength);
         }
         if (Mask)
         {
-            Terminal.INFO("This message has a mask, is this normal?");
+            //Terminal.INFO("This message has a mask, is this normal?");
             bytes.AddRange(MaskingKey ?? []);
         }
         if (PayloadData != null) //some frames don't have a payload, like close frame and ping/pong frames
@@ -254,9 +254,9 @@ public class Frame
             //this operation must be done bit level and not byte level
 
             var payloadBits = new BitArray(PayloadData);
-            BitArray maskBits = MaskingKey.Length != PayloadData.Length ? 
-                new BitArray(MaskingKey.ExtendRepeating(PayloadData.Length)):
-                new BitArray(MaskingKey) ;
+            BitArray maskBits = MaskingKey.Length != PayloadData.Length ?
+                new BitArray(MaskingKey.ExtendRepeating(PayloadData.Length)) :
+                new BitArray(MaskingKey);
 
 
             payloadBits = payloadBits.Xor(maskBits);
@@ -273,7 +273,7 @@ public class Frame
     public override bool Equals(object? obj)
     {
         if (obj == null) return false;
-        
+
 
         if (obj is bool[] o)
         {

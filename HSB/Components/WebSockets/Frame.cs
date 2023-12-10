@@ -318,4 +318,21 @@ public class Frame
     {
         return base.GetHashCode();
     }
+
+ //implement the dispose method
+    public void Dispose()
+    {
+        FIN = false;
+        RSV1 = false;
+        RSV2 = false;
+        RSV3 = false;
+        Opcode = null;
+        Mask = false;
+        PayloadLength = [false, false, false, false, false, false, false];
+        ExtendedPayloadLength = null;
+        ExtendedPayloadLengthContinued = null;
+        MaskingKey = null;
+        MaskingKeyContinued = null;
+        PayloadData = null;
+    }
 }

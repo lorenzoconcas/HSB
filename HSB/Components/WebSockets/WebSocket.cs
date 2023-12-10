@@ -10,9 +10,9 @@ namespace HSB.Components.WebSockets;
 
 public class WebSocket(Request req, Response res, Configuration? c = null)
 {
-  
-    private static  JsonSerializerOptions jo = new()
-    {      
+
+    private static JsonSerializerOptions jo = new()
+    {
         MaxDepth = 0
     };
 
@@ -178,7 +178,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
 
         return true;
     }
-    private void MessageLoop()
+    private void MessageLoop3()
     {
         //todo add error loop detection
         int errorCount = 0;
@@ -188,7 +188,6 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
         {
             try
             {
-
                 if (state == WebSocketState.OPEN)
                     socket?.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((IAsyncResult ar) =>
                     {
@@ -204,14 +203,14 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                         {
                             received = socket.EndReceive(ar);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-
+                            Terminal.DEBUG("WS Exception " + e.Message);
                             return;
                         }
                         if (received < 2)
                         {
-                            Terminal.DEBUG("wrong data length?? -> " + received);
+                            //Terminal.DEBUG("wrong data length?? -> " + received);
                             errorCount++;
                             return;
                         }
@@ -242,7 +241,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                                     break;
                                 }
                         }
-
+                        // MessageLoop(); //speriamo che lo stack regga
                     }), socket);
             }
             catch (Exception)
@@ -251,6 +250,80 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 socket?.Close();
             }
         }
+    }
+
+    private void MessageLoop()
+    {
+        //todo add error loop detection
+        int errorCount = 0;
+        var buffer = new byte[Configuration.KILOBYTE * 32];
+
+        //  while (state == WebSocketState.OPEN && errorCount < 10)
+        // {
+        try
+        {
+            if (state == WebSocketState.OPEN)
+                socket?.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((IAsyncResult ar) =>
+                {
+                    var socket = (Socket?)ar.AsyncState;
+                    if (socket == null)
+                    {
+                        Terminal.DEBUG("socket is null??");
+                        errorCount++;
+                        return;
+                    }
+                    int received = 0;
+                    try
+                    {
+                        received = socket.EndReceive(ar);
+                    }
+                    catch (Exception e)
+                    {
+                        Terminal.DEBUG("WS Exception " + e.Message);
+                        return;
+                    }
+                    if (received < 2)
+                    {
+                        //Terminal.DEBUG("wrong data length?? -> " + received);
+                        errorCount++;
+                        return;
+                    }
+                    Frame f = new(buffer[..received]);
+                    Opcode opcode = f.GetOpcode();
+
+                    switch (f.GetOpcode())
+                    {
+                        case Opcode.CLOSE:
+                            this.Close();
+                            state = WebSocketState.CLOSED;
+                            return;
+                        //todo -> check Ping e Pong correctness
+                        case Opcode.PING:
+                            Frame pong = new();
+                            pong.SetOpcode(Opcode.PONG);
+                            socket.Send(pong.Build());
+                            break;
+                        case Opcode.PONG:
+                            Frame ping = new();
+                            ping.SetOpcode(Opcode.PING);
+                            socket.Send(ping.Build());
+                            break;
+                        case Opcode.TEXT:
+                        case Opcode.BINARY:
+                            {
+                                OnMessage(new(f));
+                                break;
+                            }
+                    }
+                    MessageLoop(); //speriamo che lo stack regga
+                }), socket);
+        }
+        catch (Exception)
+        {
+            state = WebSocketState.CLOSED;
+            socket?.Close();
+        }
+        //  }
     }
 
 
@@ -310,6 +383,8 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             Frame f = new();
             f.SetPayload(message);
             socket?.Send(f.Build());
+            //destroy frame
+            f.Dispose();
         }
         else
         {
@@ -326,6 +401,9 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             else if (msg.GetMessageBytes() != "")
                 f.SetPayload(msg.GetMessageBytes());
             socket?.Send(f.Build());
+            //destroy frame
+            f.Dispose();
+
         }
         else
         {
@@ -347,6 +425,8 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             jo.IncludeFields = includeFields;
             f.SetPayload(JsonSerializer.SerializeToUtf8Bytes(obj, jo));
             socket?.Send(f.Build());
+            //destroy frame
+            f.Dispose();
         }
         else
         {
@@ -365,7 +445,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             f.SetOpcode(Opcode.CLOSE);
             socket?.Send(f.Build());
             socket?.Close();
-
+            f.Dispose();
             OnClose();
         }
         else

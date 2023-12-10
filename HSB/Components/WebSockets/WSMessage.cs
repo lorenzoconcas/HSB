@@ -53,4 +53,11 @@ public class Message
         return JsonSerializer.Deserialize<object>(_text, jsonSerializerOptions) ?? new object();
     }
 
+
+    public void Dispose()
+    {
+        data = [];
+        _text = "";
+    }
+
 }

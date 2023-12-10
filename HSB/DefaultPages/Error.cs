@@ -26,7 +26,7 @@ namespace HSB
             if (errorCode >= 500 && errorCode <= 599)
             {
 
-                if (debugMode)
+                if (debugMode || configuration.Debug.enabled)
                     content = GetStacktracePage();
                 else content = Get5XXPage();
             }

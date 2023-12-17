@@ -7,6 +7,7 @@ namespace HSB
         private readonly string errorMsg;
         //http error code
         private readonly int errorCode;
+        private string errID = "genericError";
         public Error(Request req, Response res, Configuration config, string errorMessage, int errorCode) : base(req, res, config)
         {
             this.errorCode = errorCode;
@@ -23,16 +24,21 @@ namespace HSB
 
             string title = $"Error {errorCode}";
             string content = "";
+
             if (errorCode >= 500 && errorCode <= 599)
             {
 
                 if (debugMode || configuration.Debug.enabled)
                     content = GetStacktracePage();
                 else content = Get5XXPage();
+
+                errID = "stacktrace";
             }
 
             else if (errorCode >= 400 && errorCode <= 499)
                 content = Get4XXPage();
+
+
 
             Send(title, content, errorCode);
         }
@@ -68,6 +74,7 @@ namespace HSB
             res.AddAttribute("hsbVersion", version);
             res.AddAttribute("title", title);
             res.AddAttribute("errorMsg", msg);
+            res.AddAttribute("errID", errID);
             res.SendHTMLContent(page, true, statusCode: statusCode);
 
         }

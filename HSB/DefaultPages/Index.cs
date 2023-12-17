@@ -20,7 +20,7 @@ public class Index(Request req, Response res, Configuration config) : Servlet(re
         string footer_div = "";
         string server_name;
         string logo = "";
-        string title = "";
+        //string title = "";
         if (configuration.CustomServerName != "")
         {
             server_name = configuration.CustomServerName;
@@ -31,12 +31,12 @@ public class Index(Request req, Response res, Configuration config) : Servlet(re
             footer_div = "<div class=\"footer\">Copyright &copy; 2021-2023 Lorenzo L. Concas</div>";
             string logo_b64 = ReadFromResources("logo_b64");
             logo = $"<img width=\"32px\" src=\"{logo_b64}\" />";
-            title = "Http Server Boxed <sup>#</sup>";
+            // title = "Http Server Boxed <sup>#</sup>";
         }
 
         //set attributes
         res.AddAttribute("logo", logo); //this break some configurations, logo must be replaced with a smaller image
-        res.AddAttribute("title", title);
+                                        //  res.AddAttribute("title", title);
         res.AddAttribute("serverName", server_name);
         res.AddAttribute("footer_div", footer_div);
         res.AddAttribute("hsbVersion", version);

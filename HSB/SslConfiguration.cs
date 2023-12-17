@@ -224,8 +224,23 @@ public class SslConfiguration
             return false;
         }
 
-
-        if (!Directory.Exists(DEBUG_CERT_FOLDER_PATH))
+        //if old certificate exists, delete it
+        if (Directory.Exists(DEBUG_CERT_FOLDER_PATH))
+        {
+            if (File.Exists(DEBUG_CERT_P12_PATH))
+            {
+                File.Delete(DEBUG_CERT_P12_PATH);
+            }
+            if (File.Exists(DEBUG_CERT_CRT_PATH))
+            {
+                File.Delete(DEBUG_CERT_CRT_PATH);
+            }
+            if (File.Exists(DEBUG_CERT_KEY_PATH))
+            {
+                File.Delete(DEBUG_CERT_KEY_PATH);
+            }
+        }
+        else //create folder if not exists
         {
             Directory.CreateDirectory(DEBUG_CERT_FOLDER_PATH);
         }
@@ -244,7 +259,7 @@ public class SslConfiguration
         $"-passout pass:\"{DEBUG_CERT_PASSWORD}\"";
 
 
-        startInfo = new();
+
         //if windows
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -257,20 +272,23 @@ public class SslConfiguration
             startInfo.FileName = "/bin/bash";
             startInfo.Arguments = $"-c \"{command}\"";
         }
-        startInfo.RedirectStandardOutput = true;
-        startInfo.RedirectStandardError = true;
-        startInfo.UseShellExecute = false;
-        startInfo.CreateNoWindow = true;
+
         process = new()
         {
             StartInfo = startInfo
         };
+
         process.Start();
         process.WaitForExit();
+
         if (process.ExitCode != 0)
         {
             Terminal.WARNING($"Openssl error, certificate has not been created\nCommand used is : {command}", true);
             return false;
+        }
+        else
+        {
+            Terminal.DEBUG($"Debug certificate (valid only for localhost) created successfully");
         }
         return true;
     }

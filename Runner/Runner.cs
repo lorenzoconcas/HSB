@@ -30,6 +30,7 @@ public class HSBRunner
             SslSettings = ssl,
         };
 
+       
         //test expressjs-like routing
         //note that these are controlled first, so eventual servlet
         //with same routing will be ignored if they respond to that http method
@@ -41,6 +42,11 @@ public class HSBRunner
         c.GET("/printheaders", PrintHeaders);
         c.GET("/echo", Echo);
         c.POST("/echo", Echo);
+
+        c.GET("/embeddedindex", (Request req, Response res) =>
+        {
+            new HSB.Index(req, res, c).ProcessGet();
+        });
 
         c.GET("/500", (Request req, Response res) =>
         {

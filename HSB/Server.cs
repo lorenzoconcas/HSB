@@ -148,6 +148,7 @@ public class Server
                 config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
             else config.Debug.INFO($"Listening at {prefix}://{config.PublicURL}:{config.Port}/");
 
+            config.Debug.INFO("Server started");
         }
         catch (Exception e)
         {

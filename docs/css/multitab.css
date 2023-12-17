@@ -35,8 +35,8 @@ multitab-header-title {
     margin: 0px;
     font-size: 16px;
     position: relative;
-    padding: 16px;
-    width: calc(100% - 32px);
+    padding: 8px 12px;
+    width: calc(100% - 24px);
     background: #1f3859;
     border-radius: 8px 8px 0 0;
 }

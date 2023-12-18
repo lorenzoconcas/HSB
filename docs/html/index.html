@@ -95,8 +95,10 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
   <div class="headertitle"><div class="title">HttpServerBoxed </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md__readme"></a> <img src="banner.png" alt="" class="inline" title="alt text"/>     </p>
-<h2><a class="anchor" id="autotoc_md-description-1"></a>
+<div class="textblock"><p><a class="anchor" id="md__readme"></a> </p><div class="image">
+<img src="banner.png" alt=""/>
+</div>
+    <h2><a class="anchor" id="autotoc_md-description-1"></a>
 🇬🇧🇺🇸 Description</h2>
 <p>This is a project written to study how a web server works</p>
 <p>It is written in C-Sharp, compiles and runs on any platform where the dotnet tool is available</p>
@@ -113,18 +115,16 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="el" href="namespace_runner.html">Runner</a>   </td><td class="markdownTableBodyNone">DevExtension   </td><td class="markdownTableBodyNone">Contains the code used to test <a class="el" href="namespace_h_s_b.html">HSB</a> in action    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Manager   </td><td class="markdownTableBodyNone">Tool   </td><td class="markdownTableBodyNone">(WIP) Project that aims to create a instances manager    </td></tr>
+<td class="markdownTableBodyNone">Launcher   </td><td class="markdownTableBodyNone">Tool   </td><td class="markdownTableBodyNone">This project launch any projects that uses the <a class="el" href="namespace_h_s_b.html">HSB</a> library and have a entry function called HSBMain, without the need of compiling for a specific platform    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">MultiplatformLauncher   </td><td class="markdownTableBodyNone">Tool   </td><td class="markdownTableBodyNone">Standalone, multiplatform launcher for <a class="el" href="namespace_h_s_b.html">HSB</a> projects    </td></tr>
+<td class="markdownTableBodyNone">Bootstrapper   </td><td class="markdownTableBodyNone">Extension   </td><td class="markdownTableBodyNone">Utility to make the <a class="el" href="namespace_h_s_b.html">HSB</a> core library directly runnable, provides additional functionaly and can be used as template for custom projects    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Standalone   </td><td class="markdownTableBodyNone">Extension   </td><td class="markdownTableBodyNone">Utility to make the <a class="el" href="namespace_h_s_b.html">HSB</a> core library directly runnable, provides additional functionaly    </td></tr>
-<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">LaunchableExample   </td><td class="markdownTableBodyNone">Example/Test   </td><td class="markdownTableBodyNone">Provides an example for the Multiplatform launcher, just build it as library then copy the two DLLs to the executable path of the launcher to see it in action    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="namespace_template.html">Template</a>   </td><td class="markdownTableBodyNone"><a class="el" href="namespace_template.html">Template</a>   </td><td class="markdownTableBodyNone">Provides a template for Visual Studio    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Examples   </td><td class="markdownTableBodyNone">Folder   </td><td class="markdownTableBodyNone">Contains example projects that illustrates the API    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="namespace_template.html">Template</a>   </td><td class="markdownTableBodyNone"><a class="el" href="namespace_template.html">Template</a>   </td><td class="markdownTableBodyNone">Provides a template for Visual Studio    </td></tr>
 <tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Examples   </td><td class="markdownTableBodyNone">Folder   </td><td class="markdownTableBodyNone">Contains example projects that illustrates the API    </td></tr>
+<tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Experiments   </td><td class="markdownTableBodyNone">Folder   </td><td class="markdownTableBodyNone">This folder contains temporary projects used to create complex new features that will be merged into the main library   </td></tr>
 </table>
 <p>More info can be found in the Documentation folder [](./Documentation/)</p>

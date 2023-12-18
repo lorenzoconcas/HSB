@@ -130,7 +130,7 @@ $(document).ready(function(){initNavTree('_protocol_version_8cs_source.html','')
 <div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="class_h_s_b_1_1_t_l_s_1_1_protocol_version.html#a2133e86e71210406fd5e49f2c04d5d05">   33</a></span>    <span class="keyword">public</span> uint[] <a class="code hl_function" href="class_h_s_b_1_1_t_l_s_1_1_protocol_version.html#a2133e86e71210406fd5e49f2c04d5d05">GetVersion</a>()</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> uint[] { (uint)version &gt;&gt; 8, (uint)version &amp; 0xFF };</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="keywordflow">return</span> [(uint)version &gt;&gt; 8, (uint)version &amp; 0xFF];</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    }</div>
 </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>

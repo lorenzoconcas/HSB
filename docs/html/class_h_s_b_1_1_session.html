@@ -141,7 +141,7 @@ Properties</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_session_8cs_source.html#l00053">53</a> of file <a class="el" href="_session_8cs_source.html">Session.cs</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   54</span>    {</div>
-<div class="line"><span class="lineno">   55</span>        attributes = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   55</span>        attributes = [];</div>
 <div class="line"><span class="lineno">   56</span>        ExpirationTime = -1;</div>
 <div class="line"><span class="lineno">   57</span>        <span class="comment">//  SourceIP = &quot;&quot;;</span></div>
 <div class="line"><span class="lineno">   58</span>    }</div>
@@ -168,7 +168,7 @@ Properties</h2></td></tr>
 <div class="fragment"><div class="line"><span class="lineno">   61</span>    {</div>
 <div class="line"><span class="lineno">   62</span> </div>
 <div class="line"><span class="lineno">   63</span>        ExpirationTime = expirationTime;</div>
-<div class="line"><span class="lineno">   64</span>        attributes = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   64</span>        attributes = [];</div>
 <div class="line"><span class="lineno">   65</span>        valid = <span class="keyword">true</span>;</div>
 <div class="line"><span class="lineno">   66</span>    }</div>
 </div><!-- fragment -->
@@ -193,7 +193,7 @@ Properties</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_session_8cs_source.html#l00070">70</a> of file <a class="el" href="_session_8cs_source.html">Session.cs</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   71</span>    {</div>
-<div class="line"><span class="lineno">   72</span>        <span class="keywordflow">return</span> (T)attributes[name] ?? <span class="keywordflow">default</span>(T);</div>
+<div class="line"><span class="lineno">   72</span>        <span class="keywordflow">return</span> (T)attributes[name] ?? <span class="keywordflow">default</span>;</div>
 <div class="line"><span class="lineno">   73</span>    }</div>
 </div><!-- fragment -->
 </div>

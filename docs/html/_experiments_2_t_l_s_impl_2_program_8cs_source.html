@@ -104,17 +104,16 @@ $(document).ready(function(){initNavTree('_experiments_2_t_l_s_impl_2_program_8c
 <div class="foldopen" id="foldopen00002" data-start="{" data-end="};">
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno"><a class="line" href="class_h_s_b_1_1_t_l_s_impl.html">    2</a></span><span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_h_s_b_1_1_t_l_s_impl.html">TLSImpl</a></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span>{</div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">void</span> Main(<span class="keywordtype">string</span>[] args)</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>    {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>        var custom = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>        <span class="keywordflow">if</span>(custom){</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>            <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_custom.html">Custom</a>(args).Run();</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>        }<span class="keywordflow">else</span>{</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>            <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_system_t_l_s.html">SystemTLS</a>(args).Run();</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        }</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    }</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>}</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">void</span> Main()</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>    {</div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>        var custom = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>        <span class="keywordflow">if</span>(custom){</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>            <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_custom.html">Custom</a>().Run();</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>        }<span class="keywordflow">else</span>{</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>            <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_system_t_l_s.html">SystemTLS</a>().Run();</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        }</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    }</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>}</div>
 </div>
 <div class="ttc" id="aclass_h_s_b_1_1_custom_html"><div class="ttname"><a href="class_h_s_b_1_1_custom.html">HSB.Custom</a></div><div class="ttdef"><b>Definition</b> <a href="_custom_8cs_source.html#l00009">Custom.cs:10</a></div></div>
 <div class="ttc" id="aclass_h_s_b_1_1_system_t_l_s_html"><div class="ttname"><a href="class_h_s_b_1_1_system_t_l_s.html">HSB.SystemTLS</a></div><div class="ttdef"><b>Definition</b> <a href="_system_t_l_s_8cs_source.html#l00010">SystemTLS.cs:11</a></div></div>

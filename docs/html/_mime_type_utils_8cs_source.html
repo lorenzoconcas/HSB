@@ -113,9 +113,9 @@ $(document).ready(function(){initNavTree('_mime_type_utils_8cs_source.html','');
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keyword">public</span> <span class="keyword">static</span> readonly <span class="keywordtype">string</span> TEXT_HTML = <span class="stringliteral">&quot;text/html&quot;</span>;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keyword">public</span> <span class="keyword">static</span> readonly <span class="keywordtype">string</span> APPLICATION_OCTET = <span class="stringliteral">&quot;application/octet&quot;</span>;</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">private</span> <span class="keyword">static</span> readonly Lazy&lt;IDictionary&lt;string, string&gt;&gt; _mappings = <span class="keyword">new</span> Lazy&lt;IDictionary&lt;string, string&gt;&gt;(BuildMappings);</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">private</span> <span class="keyword">static</span> readonly Lazy&lt;IDictionary&lt;string, string&gt;&gt; _mappings = <span class="keyword">new</span>(BuildMappings);</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">private</span> <span class="keyword">static</span> IDictionary&lt;string, string&gt; BuildMappings()</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">private</span> <span class="keyword">static</span> Dictionary&lt;string, string&gt; BuildMappings()</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    {</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        var mappings = <span class="keyword">new</span> Dictionary&lt;string, string&gt;(StringComparer.OrdinalIgnoreCase) {</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
@@ -857,63 +857,57 @@ $(document).ready(function(){initNavTree('_mime_type_utils_8cs_source.html','');
 <div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span> </div>
 <div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">bool</span> TryGetMimeType(<span class="keywordtype">string</span> str, out <span class="keywordtype">string</span>? mimeType)</div>
 <div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    {</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        <span class="keywordflow">if</span> (str == <span class="keyword">null</span>)</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>        {</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(str));</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>        }</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span> </div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>        var indexQuestionMark = str.IndexOf(QuestionMark, StringComparison.Ordinal);</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>        <span class="keywordflow">if</span> (indexQuestionMark != -1)</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>        {</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>            str = str.Remove(indexQuestionMark);</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>        }</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span> </div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span> </div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        <span class="keywordflow">if</span> (!str.StartsWith(Dot))</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>        {</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>            var index = str.LastIndexOf(Dot);</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>            <span class="keywordflow">if</span> (index != -1 &amp;&amp; str.Length &gt; index + 1)</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>            {</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>                str = str[(index + 1)..];</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>            }</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        ArgumentNullException.ThrowIfNull(str);</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span> </div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>        var indexQuestionMark = str.IndexOf(QuestionMark, StringComparison.Ordinal);</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>        <span class="keywordflow">if</span> (indexQuestionMark != -1)</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>        {</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>            str = str.Remove(indexQuestionMark);</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>        }</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span> </div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span> </div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>        <span class="keywordflow">if</span> (!str.StartsWith(Dot))</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>        {</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>            var index = str.LastIndexOf(Dot);</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>            <span class="keywordflow">if</span> (index != -1 &amp;&amp; str.Length &gt; index + 1)</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>            {</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>                str = str[(index + 1)..];</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>            }</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            str = Dot + str;</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        }</div>
 <div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span> </div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>            str = Dot + str;</div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        }</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        <span class="keywordflow">return</span> _mappings.Value.TryGetValue(str, out mimeType);</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>    }</div>
 <div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span> </div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>        <span class="keywordflow">return</span> _mappings.Value.TryGetValue(str, out mimeType);</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>    }</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span> </div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">string</span>? GetMimeType(<span class="keywordtype">string</span> str)</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>    {</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>        <span class="keywordflow">return</span> TryGetMimeType(str, out var result) ? result : DefaultMimeType;</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>    }</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span> </div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">string</span> GetExtension(<span class="keywordtype">string</span> mimeType, <span class="keywordtype">bool</span> throwErrorIfNotFound = <span class="keyword">true</span>)</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>    {</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span> </div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>        <span class="keywordflow">if</span> (mimeType == <span class="keyword">null</span>)</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        {</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(mimeType));</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>        }</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span> </div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        <span class="keywordflow">if</span> (mimeType.StartsWith(Dot))</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>        {</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentException(<span class="stringliteral">&quot;Requested mime type is not valid: &quot;</span> + mimeType);</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>        }</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span> </div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>        <span class="keywordflow">if</span> (_mappings.Value.TryGetValue(mimeType, out <span class="keywordtype">string</span>? extension))</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>        {</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>            <span class="keywordflow">return</span> extension ?? <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>        }</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>        <span class="keywordflow">if</span> (throwErrorIfNotFound)</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        {</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentException(<span class="stringliteral">&quot;Requested mime type is not registered: &quot;</span> + mimeType);</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        }</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span> </div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>        <span class="keywordflow">return</span> <span class="keywordtype">string</span>.Empty;</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>    }</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>}</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">string</span>? GetMimeType(<span class="keywordtype">string</span> str)</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>    {</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>        <span class="keywordflow">return</span> TryGetMimeType(str, out var result) ? result : DefaultMimeType;</div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>    }</div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span> </div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">string</span> GetExtension(<span class="keywordtype">string</span> mimeType, <span class="keywordtype">bool</span> throwErrorIfNotFound = <span class="keyword">true</span>)</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>    {</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span> </div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>        ArgumentNullException.ThrowIfNull(mimeType);</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span> </div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>        <span class="keywordflow">if</span> (mimeType.StartsWith(Dot))</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>        {</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentException(<span class="stringliteral">&quot;Requested mime type is not valid: &quot;</span> + mimeType);</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>        }</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span> </div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>        <span class="keywordflow">if</span> (_mappings.Value.TryGetValue(mimeType, out <span class="keywordtype">string</span>? extension))</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        {</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>            <span class="keywordflow">return</span> extension ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>        }</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span> </div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>        <span class="keywordflow">if</span> (throwErrorIfNotFound)</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>        {</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentException(<span class="stringliteral">&quot;Requested mime type is not registered: &quot;</span> + mimeType);</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        }</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span> </div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>        <span class="keywordflow">return</span> <span class="keywordtype">string</span>.Empty;</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>    }</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>}</div>
 <div class="ttc" id="anamespace_h_s_b_1_1_constants_html"><div class="ttname"><a href="namespace_h_s_b_1_1_constants.html">HSB.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_block_mode_8cs_source.html#l00001">BlockMode.cs:1</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

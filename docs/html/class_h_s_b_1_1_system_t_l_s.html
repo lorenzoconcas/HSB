@@ -101,8 +101,6 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_system_t_l_s.html','')
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a73c9d8d64d8cd02a7ffc6bfa229760fa" id="r_a73c9d8d64d8cd02a7ffc6bfa229760fa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_system_t_l_s.html#a73c9d8d64d8cd02a7ffc6bfa229760fa">SystemTLS</a> (string[] args)</td></tr>
-<tr class="separator:a73c9d8d64d8cd02a7ffc6bfa229760fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cb28414a4f3ab6f3cc84258fd66bff5" id="r_a1cb28414a4f3ab6f3cc84258fd66bff5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_system_t_l_s.html#a1cb28414a4f3ab6f3cc84258fd66bff5">Run</a> ()</td></tr>
 <tr class="separator:a1cb28414a4f3ab6f3cc84258fd66bff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -110,8 +108,8 @@ Public Member Functions</h2></td></tr>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="_system_t_l_s_8cs_source.html#l00010">10</a> of file <a class="el" href="_system_t_l_s_8cs_source.html">SystemTLS.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a73c9d8d64d8cd02a7ffc6bfa229760fa" name="a73c9d8d64d8cd02a7ffc6bfa229760fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a73c9d8d64d8cd02a7ffc6bfa229760fa">&#9670;&#160;</a></span>SystemTLS()</h2>
+<a id="a763b8fb91b47ba14de1c73afc93f19ad" name="a763b8fb91b47ba14de1c73afc93f19ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a763b8fb91b47ba14de1c73afc93f19ad">&#9670;&#160;</a></span>SystemTLS()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -119,8 +117,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">HSB.SystemTLS.SystemTLS </td>
           <td>(</td>
-          <td class="paramtype">string[]&#160;</td>
-          <td class="paramname"><em>args</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -130,8 +127,8 @@ Public Member Functions</h2></td></tr>
 <div class="fragment"><div class="line"><span class="lineno">   21</span>    {</div>
 <div class="line"><span class="lineno">   22</span>        Console.WriteLine(<span class="stringliteral">&quot;Hello from HSB (SystemTLS)&quot;</span>);</div>
 <div class="line"><span class="lineno">   23</span> </div>
-<div class="line"><span class="lineno">   24</span>        c.setTLSVersion(TLS.Constants.TLSVersion.TLS_1_2);</div>
-<div class="line"><span class="lineno">   25</span>        c.<a class="code hl_function" href="class_h_s_b_1_1_t_l_s_1_1_curl.html#a50bc8a83ece8d3464fccd74aa012a2f6">RunAsync</a>(<span class="keyword">false</span>, 700);</div>
+<div class="line"><span class="lineno">   24</span>        c.SetTLSVersion(TLS.Constants.TLSVersion.TLS_1_2);</div>
+<div class="line"><span class="lineno">   25</span>        c.RunAsync(<span class="keyword">false</span>, 700);</div>
 <div class="line"><span class="lineno">   26</span> </div>
 <div class="line"><span class="lineno">   27</span> </div>
 <div class="line"><span class="lineno">   28</span>        endPoint = <span class="keyword">new</span>(address, 443);</div>
@@ -146,7 +143,6 @@ Public Member Functions</h2></td></tr>
 <div class="line"><span class="lineno">   37</span>        listener.Bind(endPoint);</div>
 <div class="line"><span class="lineno">   38</span>        listener.Listen(100);</div>
 <div class="line"><span class="lineno">   39</span>    }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_curl_html_a50bc8a83ece8d3464fccd74aa012a2f6"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_curl.html#a50bc8a83ece8d3464fccd74aa012a2f6">HSB.TLS.Curl.RunAsync</a></div><div class="ttdeci">void RunAsync(bool loop=true, int delay=250, int times=-1)</div><div class="ttdoc">Runs the curl command.</div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00056">Curl.cs:56</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

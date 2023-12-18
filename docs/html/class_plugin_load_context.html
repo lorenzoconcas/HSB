@@ -124,7 +124,7 @@ Protected Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>https://learn.microsoft.com/en-us/dotnet/core/tutorials/creating-app-with-plugin-support </p>
 
-<p class="definition">Definition at line <a class="el" href="_launcher_main_8cs_source.html#l00191">191</a> of file <a class="el" href="_launcher_main_8cs_source.html">LauncherMain.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_launcher_8cs_source.html#l00192">192</a> of file <a class="el" href="_launcher_8cs_source.html">Launcher.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a40ce1576a4e30736fab0f6bd6ce40277" name="a40ce1576a4e30736fab0f6bd6ce40277"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a40ce1576a4e30736fab0f6bd6ce40277">&#9670;&#160;</a></span>PluginLoadContext()</h2>
@@ -142,10 +142,10 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_launcher_main_8cs_source.html#l00195">195</a> of file <a class="el" href="_launcher_main_8cs_source.html">LauncherMain.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  196</span>    {</div>
-<div class="line"><span class="lineno">  197</span>        _resolver = <span class="keyword">new</span> AssemblyDependencyResolver(pluginPath);</div>
-<div class="line"><span class="lineno">  198</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_launcher_8cs_source.html#l00196">196</a> of file <a class="el" href="_launcher_8cs_source.html">Launcher.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  197</span>    {</div>
+<div class="line"><span class="lineno">  198</span>        _resolver = <span class="keyword">new</span> AssemblyDependencyResolver(pluginPath);</div>
+<div class="line"><span class="lineno">  199</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -174,17 +174,17 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_launcher_main_8cs_source.html#l00200">200</a> of file <a class="el" href="_launcher_main_8cs_source.html">LauncherMain.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  201</span>    {</div>
-<div class="line"><span class="lineno">  202</span>        <span class="keywordtype">string</span>? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);</div>
-<div class="line"><span class="lineno">  203</span>        </div>
-<div class="line"><span class="lineno">  204</span>        <span class="keywordflow">if</span> (assemblyPath != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">  205</span>        {</div>
-<div class="line"><span class="lineno">  206</span>            <span class="keywordflow">return</span> LoadFromAssemblyPath(assemblyPath);</div>
-<div class="line"><span class="lineno">  207</span>        }</div>
-<div class="line"><span class="lineno">  208</span> </div>
-<div class="line"><span class="lineno">  209</span>        <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
-<div class="line"><span class="lineno">  210</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_launcher_8cs_source.html#l00201">201</a> of file <a class="el" href="_launcher_8cs_source.html">Launcher.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  202</span>    {</div>
+<div class="line"><span class="lineno">  203</span>        <span class="keywordtype">string</span>? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);</div>
+<div class="line"><span class="lineno">  204</span>        </div>
+<div class="line"><span class="lineno">  205</span>        <span class="keywordflow">if</span> (assemblyPath != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  206</span>        {</div>
+<div class="line"><span class="lineno">  207</span>            <span class="keywordflow">return</span> LoadFromAssemblyPath(assemblyPath);</div>
+<div class="line"><span class="lineno">  208</span>        }</div>
+<div class="line"><span class="lineno">  209</span> </div>
+<div class="line"><span class="lineno">  210</span>        <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><span class="lineno">  211</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -212,21 +212,21 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_launcher_main_8cs_source.html#l00212">212</a> of file <a class="el" href="_launcher_main_8cs_source.html">LauncherMain.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">  213</span>    {</div>
-<div class="line"><span class="lineno">  214</span>        <span class="keywordtype">string</span>? libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);</div>
-<div class="line"><span class="lineno">  215</span>        <span class="keywordflow">if</span> (libraryPath != <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">  216</span>        {</div>
-<div class="line"><span class="lineno">  217</span>            <span class="keywordflow">return</span> LoadUnmanagedDllFromPath(libraryPath);</div>
-<div class="line"><span class="lineno">  218</span>        }</div>
-<div class="line"><span class="lineno">  219</span> </div>
-<div class="line"><span class="lineno">  220</span>        <span class="keywordflow">return</span> IntPtr.Zero;</div>
-<div class="line"><span class="lineno">  221</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_launcher_8cs_source.html#l00213">213</a> of file <a class="el" href="_launcher_8cs_source.html">Launcher.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">  214</span>    {</div>
+<div class="line"><span class="lineno">  215</span>        <span class="keywordtype">string</span>? libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);</div>
+<div class="line"><span class="lineno">  216</span>        <span class="keywordflow">if</span> (libraryPath != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  217</span>        {</div>
+<div class="line"><span class="lineno">  218</span>            <span class="keywordflow">return</span> LoadUnmanagedDllFromPath(libraryPath);</div>
+<div class="line"><span class="lineno">  219</span>        }</div>
+<div class="line"><span class="lineno">  220</span> </div>
+<div class="line"><span class="lineno">  221</span>        <span class="keywordflow">return</span> IntPtr.Zero;</div>
+<div class="line"><span class="lineno">  222</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>MultiplatformLauncher/<a class="el" href="_launcher_main_8cs_source.html">LauncherMain.cs</a></li>
+<li>Launcher/<a class="el" href="_launcher_8cs_source.html">Launcher.cs</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

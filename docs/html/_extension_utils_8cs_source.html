@@ -106,12 +106,12 @@ $(document).ready(function(){initNavTree('_extension_utils_8cs_source.html','');
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class </span>ExtensionUtils</div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>{</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    <span class="keyword">public</span> <span class="keyword">static</span> IExtension ReadExtension(<a class="code hl_class" href="class_h_s_b_1_1_data_reader.html">DataReader</a> dr)</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    <span class="keyword">public</span> <span class="keyword">static</span> IExtension ReadExtension(<a class="code hl_function" href="namespace_h_s_b.html#a3990ef88d0f4cc432d134fa5893b453f">DataReader</a> dr)</div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    {</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>        <span class="keywordtype">byte</span>[] extName = dr.ReadBytes(2);</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        ExtensionName extensionName = ExtensionsSuites.GetExtensionName(extName);</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        ushort length = dr.<a class="code hl_function" href="class_h_s_b_1_1_data_reader.html#a793a12a5eab8bf1cea7c0e376e4eb3dd">ReadUShort</a>();</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        ushort length = dr.ReadUShort();</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>        uint totalBytes = (uint)(length + 2);</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        <span class="keywordtype">byte</span>[] extensionData = dr.ReadBytes(length);</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>        <span class="keywordflow">try</span></div>
@@ -140,10 +140,9 @@ $(document).ready(function(){initNavTree('_extension_utils_8cs_source.html','');
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>}</div>
-<div class="ttc" id="aclass_h_s_b_1_1_data_reader_html"><div class="ttname"><a href="class_h_s_b_1_1_data_reader.html">HSB.DataReader</a></div><div class="ttdoc">A class to simplify reading data from a byte array.</div><div class="ttdef"><b>Definition</b> <a href="_data_reader_8cs_source.html#l00005">DataReader.cs:6</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_data_reader_html_a793a12a5eab8bf1cea7c0e376e4eb3dd"><div class="ttname"><a href="class_h_s_b_1_1_data_reader.html#a793a12a5eab8bf1cea7c0e376e4eb3dd">HSB.DataReader.ReadUShort</a></div><div class="ttdeci">ushort ReadUShort()</div><div class="ttdoc">Reads 2 bytes from the data and returns them as a ushort.</div><div class="ttdef"><b>Definition</b> <a href="_data_reader_8cs_source.html#l00089">DataReader.cs:89</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_1_1_t_l_s_1_1_constants_html"><div class="ttname"><a href="namespace_h_s_b_1_1_t_l_s_1_1_constants.html">HSB.TLS.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_cipher_suite_8cs_source.html#l00004">CipherSuite.cs:4</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_1_1_t_l_s_1_1_extensions_html"><div class="ttname"><a href="namespace_h_s_b_1_1_t_l_s_1_1_extensions.html">HSB.TLS.Extensions</a></div><div class="ttdef"><b>Definition</b> <a href="_application_layer_protocol_negotiation_8cs_source.html#l00004">ApplicationLayerProtocolNegotiation.cs:4</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_html_a3990ef88d0f4cc432d134fa5893b453f"><div class="ttname"><a href="namespace_h_s_b.html#a3990ef88d0f4cc432d134fa5893b453f">HSB.DataReader</a></div><div class="ttdeci">class DataReader(byte[] data)</div><div class="ttdoc">A class to simplify reading data from a byte array.</div><div class="ttdef"><b>Definition</b> <a href="_data_reader_8cs_source.html#l00005">DataReader.cs:5</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

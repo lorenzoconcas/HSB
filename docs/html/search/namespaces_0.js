@@ -13,5 +13,5 @@ var searchData=
   ['hsb_3a_3atls_3a_3aextensions_10',['Extensions',['../namespace_h_s_b_1_1_t_l_s_1_1_extensions.html',1,'HSB::TLS']]],
   ['hsb_3a_3atls_3a_3amessages_11',['Messages',['../namespace_h_s_b_1_1_t_l_s_1_1_messages.html',1,'HSB::TLS']]],
   ['hsb_3a_3awebsockets_12',['WebSockets',['../namespace_h_s_b_1_1_web_sockets.html',1,'HSB']]],
-  ['hsbstandalone_13',['HSBStandalone',['../namespace_h_s_b_standalone.html',1,'']]]
+  ['hsbbootstrapper_13',['HSBBootstrapper',['../namespace_h_s_b_bootstrapper.html',1,'']]]
 ];

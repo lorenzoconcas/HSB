@@ -112,6 +112,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0d8559e8b7837c44d47b54ca49243e25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a2256c099cda4d3263c7f12f040b4b5" id="r_a5a2256c099cda4d3263c7f12f040b4b5"><td class="memItemLeft" align="right" valign="top">object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_components_1_1_web_sockets_1_1_message.html#a5a2256c099cda4d3263c7f12f040b4b5">GetJSON</a> ()</td></tr>
 <tr class="separator:a5a2256c099cda4d3263c7f12f040b4b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af34214ac7374db1f538fe8315e6356ba" id="r_af34214ac7374db1f538fe8315e6356ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_components_1_1_web_sockets_1_1_message.html#af34214ac7374db1f538fe8315e6356ba">Dispose</a> ()</td></tr>
+<tr class="separator:af34214ac7374db1f538fe8315e6356ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -150,18 +152,18 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00013">13</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   14</span>    {</div>
-<div class="line"><span class="lineno">   15</span>        <span class="keywordflow">if</span> (data == <span class="keyword">null</span>)</div>
-<div class="line"><span class="lineno">   16</span>        {</div>
-<div class="line"><span class="lineno">   17</span>            this.data = Encoding.UTF8.GetBytes(str);</div>
-<div class="line"><span class="lineno">   18</span>        }</div>
-<div class="line"><span class="lineno">   19</span>        <span class="keywordflow">else</span></div>
-<div class="line"><span class="lineno">   20</span>        {</div>
-<div class="line"><span class="lineno">   21</span>            this.data = data;</div>
-<div class="line"><span class="lineno">   22</span>        }</div>
-<div class="line"><span class="lineno">   23</span>        _text = str;</div>
-<div class="line"><span class="lineno">   24</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00020">20</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   21</span>    {</div>
+<div class="line"><span class="lineno">   22</span>        <span class="keywordflow">if</span> (data == <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">   23</span>        {</div>
+<div class="line"><span class="lineno">   24</span>            this.data = Encoding.UTF8.GetBytes(str);</div>
+<div class="line"><span class="lineno">   25</span>        }</div>
+<div class="line"><span class="lineno">   26</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   27</span>        {</div>
+<div class="line"><span class="lineno">   28</span>            this.data = data;</div>
+<div class="line"><span class="lineno">   29</span>        }</div>
+<div class="line"><span class="lineno">   30</span>        _text = str;</div>
+<div class="line"><span class="lineno">   31</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -181,18 +183,41 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00026">26</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   27</span>    {</div>
-<div class="line"><span class="lineno">   28</span>        data = f.GetPayload();</div>
-<div class="line"><span class="lineno">   29</span>        <span class="keywordflow">if</span> (f.GetOpcode() == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.TEXT)</div>
-<div class="line"><span class="lineno">   30</span>            _text = Encoding.UTF8.GetString(f.GetPayload());</div>
-<div class="line"><span class="lineno">   31</span>        <span class="keywordflow">else</span> _text = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><span class="lineno">   32</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00033">33</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   34</span>    {</div>
+<div class="line"><span class="lineno">   35</span>        data = f.GetPayload();</div>
+<div class="line"><span class="lineno">   36</span>        <span class="keywordflow">if</span> (f.GetOpcode() == <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.TEXT)</div>
+<div class="line"><span class="lineno">   37</span>            _text = Encoding.UTF8.GetString(f.GetPayload());</div>
+<div class="line"><span class="lineno">   38</span>        <span class="keywordflow">else</span> _text = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   39</span>    }</div>
 <div class="ttc" id="anamespace_h_s_b_1_1_constants_1_1_web_socket_html_ab59b2901889f241bdc1c4486cc0b9ac6"><div class="ttname"><a href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">HSB.Constants.WebSocket.Opcode</a></div><div class="ttdeci">Opcode</div><div class="ttdoc">The opcodes for the WebSocket protocol.</div><div class="ttdef"><b>Definition</b> <a href="_w_s_opcodes_8cs_source.html#l00007">WSOpcodes.cs:8</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="af34214ac7374db1f538fe8315e6356ba" name="af34214ac7374db1f538fe8315e6356ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af34214ac7374db1f538fe8315e6356ba">&#9670;&#160;</a></span>Dispose()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void HSB.Components.WebSockets.Message.Dispose </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00057">57</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   58</span>    {</div>
+<div class="line"><span class="lineno">   59</span>        data = [];</div>
+<div class="line"><span class="lineno">   60</span>        _text = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   61</span>    }</div>
+</div><!-- fragment -->
+</div>
+</div>
 <a id="a5a2256c099cda4d3263c7f12f040b4b5" name="a5a2256c099cda4d3263c7f12f040b4b5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5a2256c099cda4d3263c7f12f040b4b5">&#9670;&#160;</a></span>GetJSON()</h2>
 
@@ -208,12 +233,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00044">44</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   45</span>    {</div>
-<div class="line"><span class="lineno">   46</span>        JsonSerializerOptions jsonSerializerOptions = <span class="keyword">new</span>();</div>
-<div class="line"><span class="lineno">   47</span>        jsonSerializerOptions.IncludeFields = <span class="keyword">true</span>;</div>
-<div class="line"><span class="lineno">   48</span>        <span class="keywordflow">return</span> JsonSerializer.Deserialize&lt;<span class="keywordtype">object</span>&gt;(_text, jsonSerializerOptions) ?? <span class="keyword">new</span> <span class="keywordtype">object</span>();</div>
-<div class="line"><span class="lineno">   49</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00051">51</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   52</span>    {</div>
+<div class="line"><span class="lineno">   53</span>        <span class="keywordflow">return</span> JsonSerializer.Deserialize&lt;<span class="keywordtype">object</span>&gt;(_text, jsonSerializerOptions) ?? <span class="keyword">new</span> <span class="keywordtype">object</span>();</div>
+<div class="line"><span class="lineno">   54</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -232,10 +255,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00034">34</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   35</span>    {</div>
-<div class="line"><span class="lineno">   36</span>        <span class="keywordflow">return</span> _text;</div>
-<div class="line"><span class="lineno">   37</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00041">41</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   42</span>    {</div>
+<div class="line"><span class="lineno">   43</span>        <span class="keywordflow">return</span> _text;</div>
+<div class="line"><span class="lineno">   44</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -254,10 +277,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00039">39</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   40</span>    {</div>
-<div class="line"><span class="lineno">   41</span>        <span class="keywordflow">return</span> Encoding.UTF8.GetString(data);</div>
-<div class="line"><span class="lineno">   42</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00046">46</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   47</span>    {</div>
+<div class="line"><span class="lineno">   48</span>        <span class="keywordflow">return</span> Encoding.UTF8.GetString(data);</div>
+<div class="line"><span class="lineno">   49</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -274,7 +297,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00011">11</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00018">18</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
 
 </div>
 </div>
@@ -290,7 +313,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00009">9</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_w_s_message_8cs_source.html#l00016">16</a> of file <a class="el" href="_w_s_message_8cs_source.html">WSMessage.cs</a>.</p>
 
 </div>
 </div>

@@ -101,8 +101,6 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_custom.html',''); init
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a18c8163c7be0028a73ef3223ec7394da" id="r_a18c8163c7be0028a73ef3223ec7394da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_custom.html#a18c8163c7be0028a73ef3223ec7394da">Custom</a> (string[] args)</td></tr>
-<tr class="separator:a18c8163c7be0028a73ef3223ec7394da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53168f0a78e62be97903453e306fc16e" id="r_a53168f0a78e62be97903453e306fc16e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_custom.html#a53168f0a78e62be97903453e306fc16e">Run</a> ()</td></tr>
 <tr class="separator:a53168f0a78e62be97903453e306fc16e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -110,8 +108,8 @@ Public Member Functions</h2></td></tr>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="_custom_8cs_source.html#l00009">9</a> of file <a class="el" href="_custom_8cs_source.html">Custom.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a18c8163c7be0028a73ef3223ec7394da" name="a18c8163c7be0028a73ef3223ec7394da"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18c8163c7be0028a73ef3223ec7394da">&#9670;&#160;</a></span>Custom()</h2>
+<a id="ae85406c0f697ebf7e5c3d931f43926cb" name="ae85406c0f697ebf7e5c3d931f43926cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae85406c0f697ebf7e5c3d931f43926cb">&#9670;&#160;</a></span>Custom()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -119,8 +117,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">HSB.Custom.Custom </td>
           <td>(</td>
-          <td class="paramtype">string[]&#160;</td>
-          <td class="paramname"><em>args</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -129,11 +126,11 @@ Public Member Functions</h2></td></tr>
 <p class="definition">Definition at line <a class="el" href="_custom_8cs_source.html#l00019">19</a> of file <a class="el" href="_custom_8cs_source.html">Custom.cs</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   20</span>    {</div>
 <div class="line"><span class="lineno">   21</span>        Console.WriteLine(<span class="stringliteral">&quot;Hello from HSB&quot;</span>);</div>
-<div class="line"><span class="lineno">   22</span>        c.setTLSVersion(TLSVersion.TLS_1_2);</div>
-<div class="line"><span class="lineno">   23</span>        <span class="comment">//c.RunAsync(false, 700);</span></div>
+<div class="line"><span class="lineno">   22</span>        c.SetTLSVersion(TLSVersion.TLS_1_2);</div>
+<div class="line"><span class="lineno">   23</span>        c.RunAsync(<span class="keyword">false</span>, 700);</div>
 <div class="line"><span class="lineno">   24</span>        <span class="comment">//c.setCipherSuites(&quot;TLS_AES_256_GCM_SHA384 TLS_CHACHA20_POLY1305_SHA256 TLS_AES_128_GCM_SHA256 TLS_AES_128_CCM_8_SHA256 TLS_AES_128_CCM_SHA256&quot;);</span></div>
 <div class="line"><span class="lineno">   25</span> </div>
-<div class="line"><span class="lineno">   26</span>        endPoint = <span class="keyword">new</span>(address, 8080);</div>
+<div class="line"><span class="lineno">   26</span>        endPoint = <span class="keyword">new</span>(address, 443);</div>
 <div class="line"><span class="lineno">   27</span> </div>
 <div class="line"><span class="lineno">   28</span> </div>
 <div class="line"><span class="lineno">   29</span>        listener = <span class="keyword">new</span>(</div>
@@ -172,7 +169,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><span class="lineno">   44</span>            <span class="keywordtype">int</span> received = newSocket.Receive(buffer);</div>
 <div class="line"><span class="lineno">   45</span>            <span class="keywordflow">if</span> (received &gt; 0 &amp;&amp; buffer[0] == 0x16) <span class="comment">//parse client hello</span></div>
 <div class="line"><span class="lineno">   46</span>            {</div>
-<div class="line"><span class="lineno">   47</span>                <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">CustomTLS</a>(newSocket).Parse(buffer);</div>
+<div class="line"><span class="lineno">   47</span>                <span class="keyword">new</span> CustomTLS(newSocket).Parse(buffer);</div>
 <div class="line"><span class="lineno">   48</span>            }</div>
 <div class="line"><span class="lineno">   49</span>            <span class="keywordflow">else</span></div>
 <div class="line"><span class="lineno">   50</span>            {</div>
@@ -191,7 +188,6 @@ Public Member Functions</h2></td></tr>
 <div class="line"><span class="lineno">   63</span>        }</div>
 <div class="line"><span class="lineno">   64</span> </div>
 <div class="line"><span class="lineno">   65</span>    }</div>
-<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_custom_t_l_s_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">HSB.TLS.CustomTLS</a></div><div class="ttdef"><b>Definition</b> <a href="_t_l_s_8cs_source.html#l00012">TLS.cs:13</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -18,9 +18,9 @@ var searchData=
   ['hsb_3a_3atls_3a_3aextensions_15',['Extensions',['../namespace_h_s_b_1_1_t_l_s_1_1_extensions.html',1,'HSB::TLS']]],
   ['hsb_3a_3atls_3a_3amessages_16',['Messages',['../namespace_h_s_b_1_1_t_l_s_1_1_messages.html',1,'HSB::TLS']]],
   ['hsb_3a_3awebsockets_17',['WebSockets',['../namespace_h_s_b_1_1_web_sockets.html',1,'HSB']]],
-  ['hsbrunner_18',['HSBRunner',['../class_runner_1_1_h_s_b_runner.html',1,'Runner']]],
-  ['hsbstandalone_19',['hsbstandalone',['../namespace_h_s_b_standalone.html',1,'HSBStandalone'],['../class_h_s_b_standalone_1_1_h_s_b_standalone.html',1,'HSBStandalone.HSBStandalone']]],
+  ['hsbbootstrapper_18',['HSBBootstrapper',['../namespace_h_s_b_bootstrapper.html',1,'']]],
+  ['hsbrunner_19',['HSBRunner',['../class_runner_1_1_h_s_b_runner.html',1,'Runner']]],
   ['html_20processing_20related_20response_20methods_20',['HTML-processing related response methods',['../md__documentation_2_response.html#html-processing-related-response-methods',1,'']]],
   ['http_20status_20response_20codes_21',['Shorts and for common HTTP Status response codes',['../md__documentation_2_response.html#shorts-and-for-common-http-status-response-codes',1,'']]],
-  ['httpserverboxed_22',['httpserverboxed',['../index.html',1,'HttpServerBoxed'],['../md__h_s_b_2_readme.html',1,'HttpServerBoxed']]]
+  ['httpserverboxed_22',['httpserverboxed',['../md__h_s_b_2_readme.html',1,'HttpServerBoxed'],['../index.html',1,'HttpServerBoxed']]]
 ];

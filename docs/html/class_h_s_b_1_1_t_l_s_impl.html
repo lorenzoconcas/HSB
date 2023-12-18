@@ -101,15 +101,15 @@ $(document).ready(function(){initNavTree('class_h_s_b_1_1_t_l_s_impl.html',''); 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:abf9a89b98e9a4d395353c69ed806fbdc" id="r_abf9a89b98e9a4d395353c69ed806fbdc"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_t_l_s_impl.html#abf9a89b98e9a4d395353c69ed806fbdc">Main</a> (string[] args)</td></tr>
-<tr class="separator:abf9a89b98e9a4d395353c69ed806fbdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a1220fb8de5aeacabb997632c6a0f36" id="r_a2a1220fb8de5aeacabb997632c6a0f36"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_t_l_s_impl.html#a2a1220fb8de5aeacabb997632c6a0f36">Main</a> ()</td></tr>
+<tr class="separator:a2a1220fb8de5aeacabb997632c6a0f36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="_experiments_2_t_l_s_impl_2_program_8cs_source.html#l00002">2</a> of file <a class="el" href="_experiments_2_t_l_s_impl_2_program_8cs_source.html">Program.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="abf9a89b98e9a4d395353c69ed806fbdc" name="abf9a89b98e9a4d395353c69ed806fbdc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf9a89b98e9a4d395353c69ed806fbdc">&#9670;&#160;</a></span>Main()</h2>
+<a id="a2a1220fb8de5aeacabb997632c6a0f36" name="a2a1220fb8de5aeacabb997632c6a0f36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a1220fb8de5aeacabb997632c6a0f36">&#9670;&#160;</a></span>Main()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -120,8 +120,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">static void HSB.TLSImpl.Main </td>
           <td>(</td>
-          <td class="paramtype">string[]&#160;</td>
-          <td class="paramname"><em>args</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -132,15 +131,15 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_experiments_2_t_l_s_impl_2_program_8cs_source.html#l00005">5</a> of file <a class="el" href="_experiments_2_t_l_s_impl_2_program_8cs_source.html">Program.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">    6</span>    {</div>
-<div class="line"><span class="lineno">    7</span>        var custom = <span class="keyword">false</span>;</div>
-<div class="line"><span class="lineno">    8</span>        <span class="keywordflow">if</span>(custom){</div>
-<div class="line"><span class="lineno">    9</span>            <span class="keyword">new</span> Custom(args).Run();</div>
-<div class="line"><span class="lineno">   10</span>        }<span class="keywordflow">else</span>{</div>
-<div class="line"><span class="lineno">   11</span>            <span class="keyword">new</span> SystemTLS(args).Run();</div>
-<div class="line"><span class="lineno">   12</span>        }</div>
-<div class="line"><span class="lineno">   13</span>    }</div>
+<p class="definition">Definition at line <a class="el" href="_experiments_2_t_l_s_impl_2_program_8cs_source.html#l00004">4</a> of file <a class="el" href="_experiments_2_t_l_s_impl_2_program_8cs_source.html">Program.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">    5</span>    {</div>
+<div class="line"><span class="lineno">    6</span>        var custom = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">    7</span>        <span class="keywordflow">if</span>(custom){</div>
+<div class="line"><span class="lineno">    8</span>            <span class="keyword">new</span> Custom().Run();</div>
+<div class="line"><span class="lineno">    9</span>        }<span class="keywordflow">else</span>{</div>
+<div class="line"><span class="lineno">   10</span>            <span class="keyword">new</span> SystemTLS().Run();</div>
+<div class="line"><span class="lineno">   11</span>        }</div>
+<div class="line"><span class="lineno">   12</span>    }</div>
 </div><!-- fragment -->
 </div>
 </div>

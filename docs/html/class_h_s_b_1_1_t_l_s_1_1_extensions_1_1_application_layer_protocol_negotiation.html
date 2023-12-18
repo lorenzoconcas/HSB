@@ -124,6 +124,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:acb3ebca51ed54f8d330ac9b18dd659b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4938c3e06c8587247ddfcaf63b35156d" id="r_a4938c3e06c8587247ddfcaf63b35156d"><td class="memItemLeft" align="right" valign="top">uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_application_layer_protocol_negotiation.html#a4938c3e06c8587247ddfcaf63b35156d">Length</a></td></tr>
 <tr class="separator:a4938c3e06c8587247ddfcaf63b35156d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d7f6bb93750510e34c367934149cd29" id="r_a7d7f6bb93750510e34c367934149cd29"><td class="memItemLeft" align="right" valign="top">readonly List&lt;(ushort size, byte[] data)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_application_layer_protocol_negotiation.html#a7d7f6bb93750510e34c367934149cd29">Protocols</a> = []</td></tr>
+<tr class="separator:a7d7f6bb93750510e34c367934149cd29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -163,7 +165,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="fragment"><div class="line"><span class="lineno">   23</span>    {</div>
 <div class="line"><span class="lineno">   24</span>        Length = length;</div>
 <div class="line"><span class="lineno">   25</span>        ExtensionData = extensionData;</div>
-<div class="line"><span class="lineno">   26</span>        DataReader dr = <span class="keyword">new</span>(extensionData);</div>
+<div class="line"><span class="lineno">   26</span>        <a class="code hl_function" href="namespace_h_s_b.html#a3990ef88d0f4cc432d134fa5893b453f">DataReader</a> dr = <span class="keyword">new</span>(extensionData);</div>
 <div class="line"><span class="lineno">   27</span>        var protocolSize = dr.ReadUShort(); <span class="comment">//in bytes</span></div>
 <div class="line"><span class="lineno">   28</span> </div>
 <div class="line"><span class="lineno">   29</span>        <span class="keywordflow">while</span> (dr.DataAvailable())</div>
@@ -175,6 +177,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><span class="lineno">   35</span>        }</div>
 <div class="line"><span class="lineno">   36</span> </div>
 <div class="line"><span class="lineno">   37</span>    }</div>
+<div class="ttc" id="anamespace_h_s_b_html_a3990ef88d0f4cc432d134fa5893b453f"><div class="ttname"><a href="namespace_h_s_b.html#a3990ef88d0f4cc432d134fa5893b453f">HSB.DataReader</a></div><div class="ttdeci">class DataReader(byte[] data)</div><div class="ttdoc">A class to simplify reading data from a byte array.</div><div class="ttdef"><b>Definition</b> <a href="_data_reader_8cs_source.html#l00005">DataReader.cs:5</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -263,6 +266,22 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="_application_layer_protocol_negotiation_8cs_source.html#l00010">10</a> of file <a class="el" href="_application_layer_protocol_negotiation_8cs_source.html">ApplicationLayerProtocolNegotiation.cs</a>.</p>
+
+</div>
+</div>
+<a id="a7d7f6bb93750510e34c367934149cd29" name="a7d7f6bb93750510e34c367934149cd29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d7f6bb93750510e34c367934149cd29">&#9670;&#160;</a></span>Protocols</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly List&lt;(ushort size, byte[] data)&gt; HSB.TLS.Extensions.ApplicationLayerProtocolNegotiation.Protocols = []</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_application_layer_protocol_negotiation_8cs_source.html#l00019">19</a> of file <a class="el" href="_application_layer_protocol_negotiation_8cs_source.html">ApplicationLayerProtocolNegotiation.cs</a>.</p>
 
 </div>
 </div>

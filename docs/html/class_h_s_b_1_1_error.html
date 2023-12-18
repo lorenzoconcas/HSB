@@ -162,7 +162,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_error_8cs_source.html#l00007">7</a> of file <a class="el" href="_error_8cs_source.html">Error.cs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_error_8cs_source.html#l00005">5</a> of file <a class="el" href="_error_8cs_source.html">Error.cs</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0aca2b8660586c6bae38e7147ca0ef56" name="a0aca2b8660586c6bae38e7147ca0ef56"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0aca2b8660586c6bae38e7147ca0ef56">&#9670;&#160;</a></span>Error()</h2>
@@ -208,14 +208,14 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="_error_8cs_source.html#l00012">12</a> of file <a class="el" href="_error_8cs_source.html">Error.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   12</span>                                                                                                          : base(req, res, config)</div>
-<div class="line"><span class="lineno">   13</span>        {</div>
-<div class="line"><span class="lineno">   14</span>            this.errorCode = errorCode;</div>
-<div class="line"><span class="lineno">   15</span>            errorMsg = errorMessage;</div>
-<div class="line"><span class="lineno">   16</span> </div>
-<div class="line"><span class="lineno">   17</span>            handlerFallback = ProcessGet;</div>
-<div class="line"><span class="lineno">   18</span>        }</div>
+<p class="definition">Definition at line <a class="el" href="_error_8cs_source.html#l00011">11</a> of file <a class="el" href="_error_8cs_source.html">Error.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   11</span>                                                                                                          : base(req, res, config)</div>
+<div class="line"><span class="lineno">   12</span>        {</div>
+<div class="line"><span class="lineno">   13</span>            this.errorCode = errorCode;</div>
+<div class="line"><span class="lineno">   14</span>            errorMsg = errorMessage;</div>
+<div class="line"><span class="lineno">   15</span> </div>
+<div class="line"><span class="lineno">   16</span>            handlerFallback = ProcessGet;</div>
+<div class="line"><span class="lineno">   17</span>        }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -245,19 +245,34 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="class_h_s_b_1_1_servlet.html">HSB.Servlet</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="_error_8cs_source.html#l00019">19</a> of file <a class="el" href="_error_8cs_source.html">Error.cs</a>.</p>
-<div class="fragment"><div class="line"><span class="lineno">   20</span>        {</div>
-<div class="line"><span class="lineno">   21</span>            <span class="keywordtype">string</span> title = $<span class="stringliteral">&quot;Error {errorCode}&quot;</span>;</div>
-<div class="line"><span class="lineno">   22</span>            <span class="keywordtype">string</span> content = <span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><span class="lineno">   23</span>            <span class="keywordflow">if</span> (errorCode &gt;= 500)</div>
+<p class="definition">Definition at line <a class="el" href="_error_8cs_source.html#l00018">18</a> of file <a class="el" href="_error_8cs_source.html">Error.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   19</span>        {</div>
+<div class="line"><span class="lineno">   20</span>            var debugMode = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   21</span><span class="preprocessor">#if DEBUG</span></div>
+<div class="line"><span class="lineno">   22</span>            debugMode = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   23</span><span class="preprocessor">#endif</span></div>
 <div class="line"><span class="lineno">   24</span> </div>
-<div class="line"><span class="lineno">   25</span>                content = GetStacktracePage();</div>
-<div class="line"><span class="lineno">   26</span> </div>
-<div class="line"><span class="lineno">   27</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (errorCode &gt;= 400 &amp;&amp; errorCode &lt;= 499)</div>
-<div class="line"><span class="lineno">   28</span>                content = Get4XXPage();</div>
-<div class="line"><span class="lineno">   29</span> </div>
-<div class="line"><span class="lineno">   30</span>            Send(title, content, errorCode);</div>
-<div class="line"><span class="lineno">   31</span>        }</div>
+<div class="line"><span class="lineno">   25</span>            <span class="keywordtype">string</span> title = $<span class="stringliteral">&quot;Error {errorCode}&quot;</span>;</div>
+<div class="line"><span class="lineno">   26</span>            <span class="keywordtype">string</span> content = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   27</span> </div>
+<div class="line"><span class="lineno">   28</span>            <span class="keywordflow">if</span> (errorCode &gt;= 500 &amp;&amp; errorCode &lt;= 599)</div>
+<div class="line"><span class="lineno">   29</span>            {</div>
+<div class="line"><span class="lineno">   30</span> </div>
+<div class="line"><span class="lineno">   31</span>                <span class="keywordflow">if</span> (debugMode || configuration.<a class="code hl_variable" href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">Debug</a>.enabled)</div>
+<div class="line"><span class="lineno">   32</span>                    content = GetStacktracePage();</div>
+<div class="line"><span class="lineno">   33</span>                <span class="keywordflow">else</span> content = Get5XXPage();</div>
+<div class="line"><span class="lineno">   34</span> </div>
+<div class="line"><span class="lineno">   35</span>                errID = <span class="stringliteral">&quot;stacktrace&quot;</span>;</div>
+<div class="line"><span class="lineno">   36</span>            }</div>
+<div class="line"><span class="lineno">   37</span> </div>
+<div class="line"><span class="lineno">   38</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (errorCode &gt;= 400 &amp;&amp; errorCode &lt;= 499)</div>
+<div class="line"><span class="lineno">   39</span>                content = Get4XXPage();</div>
+<div class="line"><span class="lineno">   40</span> </div>
+<div class="line"><span class="lineno">   41</span> </div>
+<div class="line"><span class="lineno">   42</span> </div>
+<div class="line"><span class="lineno">   43</span>            Send(title, content, errorCode);</div>
+<div class="line"><span class="lineno">   44</span>        }</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html_a7b3a0ba00cf393dfa8eb89d2a9b3a805"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html#a7b3a0ba00cf393dfa8eb89d2a9b3a805">HSB.Configuration.Debug</a></div><div class="ttdeci">Debugger Debug</div><div class="ttdoc">Holds all debug information and routines.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00041">Configuration.cs:41</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

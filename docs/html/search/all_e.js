@@ -7,9 +7,9 @@ var searchData=
   ['port_4',['Port',['../class_h_s_b_1_1_configuration.html#a85d8ec8abb5266cba795eb2783db950d',1,'HSB::Configuration']]],
   ['post_5',['POST',['../class_h_s_b_1_1_configuration.html#a4e9b25e20a2761d9e4233160f0cbbfd8',1,'HSB::Configuration']]],
   ['postwithauth_6',['PostWithAuth',['../class_runner_1_1_test_runner_classes_1_1_post_with_auth.html',1,'Runner::TestRunnerClasses']]],
-  ['processget_7',['ProcessGet',['../class_h_s_b_1_1_default_pages_1_1_file_list.html#a67c731c8e3376f705d196badfce07c73',1,'HSB::DefaultPages::FileList']]],
-  ['processing_20related_20response_20methods_8',['HTML-processing related response methods',['../md__documentation_2_response.html#html-processing-related-response-methods',1,'']]],
-  ['protocol_9',['PROTOCOL',['../class_h_s_b_1_1_request.html#aacf0eeeb39eb622f5bf45bb152e571da',1,'HSB::Request']]],
-  ['protocolversion_10',['ProtocolVersion',['../class_h_s_b_1_1_t_l_s_1_1_protocol_version.html',1,'HSB::TLS']]],
+  ['processing_20related_20response_20methods_7',['HTML-processing related response methods',['../md__documentation_2_response.html#html-processing-related-response-methods',1,'']]],
+  ['protocol_8',['PROTOCOL',['../class_h_s_b_1_1_request.html#aacf0eeeb39eb622f5bf45bb152e571da',1,'HSB::Request']]],
+  ['protocolversion_9',['ProtocolVersion',['../class_h_s_b_1_1_t_l_s_1_1_protocol_version.html',1,'HSB::TLS']]],
+  ['publicurl_10',['PublicURL',['../class_h_s_b_1_1_configuration.html#aa4086855b52a92d9bdef7ecfc8394926',1,'HSB::Configuration']]],
   ['put_11',['PUT',['../class_h_s_b_1_1_configuration.html#ab769fd55527d59779af78c214331a9fd',1,'HSB::Configuration']]]
 ];

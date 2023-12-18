@@ -147,6 +147,26 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ae676eaf623ca920f8fe00170a5658235"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the listening mode of the server.  <a href="namespace_h_s_b_1_1_constants.html#ae676eaf623ca920f8fe00170a5658235">More...</a><br /></td></tr>
 <tr class="separator:ae676eaf623ca920f8fe00170a5658235"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4af3b622957990af4c677379015ebc91" id="r_a4af3b622957990af4c677379015ebc91"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>LOG_LEVEL</b> { <br />
+&#160;&#160;<b>NONE</b>
+, <b>ERROR</b>
+, <b>WARNING</b>
+, <b>INFO</b>
+, <br />
+&#160;&#160;<b>ALL</b>
+<br />
+ }</td></tr>
+<tr class="separator:a4af3b622957990af4c677379015ebc91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f4106ffcea99f3a335482ff81447c8f" id="r_a9f4106ffcea99f3a335482ff81447c8f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>SERVER_ERRORS</b> { <br />
+&#160;&#160;<b>ADDRESS_NOT_FOUND</b> = 100
+, <b>ADDRESS_ALREADY_IN_USE</b> = 101
+, <b>CANNOT_CREATE_SSL_ENDPOINT</b> = 200
+, <b>CANNOT_CREATE_SSL_LISTENER</b> = 201
+, <br />
+&#160;&#160;<b>CANNOT_LOAD_DEBUG_CERTIFICATE</b> = 202
+<br />
+ }</td></tr>
+<tr class="separator:a9f4106ffcea99f3a335482ff81447c8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a2251796566c9606a1c146d792c4902a4" name="a2251796566c9606a1c146d792c4902a4"></a>
@@ -226,6 +246,54 @@ Enumerations</h2></td></tr>
 <div class="line"><span class="lineno">   10</span>    IPV4_ONLY,</div>
 <div class="line"><span class="lineno">   11</span>    IPV6_ONLY</div>
 <div class="line"><span class="lineno">   12</span>}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a4af3b622957990af4c677379015ebc91" name="a4af3b622957990af4c677379015ebc91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4af3b622957990af4c677379015ebc91">&#9670;&#160;</a></span>LOG_LEVEL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum HSB.Constants.LOG_LEVEL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_log_level_8cs_source.html#l00004">4</a> of file <a class="el" href="_log_level_8cs_source.html">LogLevel.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">    5</span>{</div>
+<div class="line"><span class="lineno">    6</span>    NONE,</div>
+<div class="line"><span class="lineno">    7</span>    ERROR,</div>
+<div class="line"><span class="lineno">    8</span>    WARNING,</div>
+<div class="line"><span class="lineno">    9</span>    INFO,</div>
+<div class="line"><span class="lineno">   10</span>    ALL</div>
+<div class="line"><span class="lineno">   11</span>}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a9f4106ffcea99f3a335482ff81447c8f" name="a9f4106ffcea99f3a335482ff81447c8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f4106ffcea99f3a335482ff81447c8f">&#9670;&#160;</a></span>SERVER_ERRORS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum HSB.Constants.SERVER_ERRORS</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_server_errors_8cs_source.html#l00003">3</a> of file <a class="el" href="_server_errors_8cs_source.html">ServerErrors.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">    3</span>                         {</div>
+<div class="line"><span class="lineno">    4</span>    ADDRESS_NOT_FOUND = 100,</div>
+<div class="line"><span class="lineno">    5</span>    ADDRESS_ALREADY_IN_USE = 101,</div>
+<div class="line"><span class="lineno">    6</span> </div>
+<div class="line"><span class="lineno">    7</span>    CANNOT_CREATE_SSL_ENDPOINT = 200,</div>
+<div class="line"><span class="lineno">    8</span>    CANNOT_CREATE_SSL_LISTENER = 201,</div>
+<div class="line"><span class="lineno">    9</span>    CANNOT_LOAD_DEBUG_CERTIFICATE = 202,</div>
+<div class="line"><span class="lineno">   10</span> </div>
+<div class="line"><span class="lineno">   11</span>}</div>
 </div><!-- fragment -->
 </div>
 </div>

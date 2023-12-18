@@ -59,6 +59,7 @@ var NAVTREE =
       [ "Package List", "namespaces.html", "namespaces_dup" ],
       [ "Package Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
         [ "Enumerations", "namespacemembers_enum.html", null ]
       ] ]
     ] ],
@@ -81,9 +82,9 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_application_layer_protocol_negotiation_8cs_source.html",
-"class_h_s_b_1_1_configuration.html#a2b5fd3027ef77e20707b0f58607a1c2a",
-"class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_generic_extension.html"
+"_8_n_e_t_core_app_00_version_0av9_80_8_assembly_attributes_8cs_source.html",
+"class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html#ac170b7195bd03926b3e6c17dcc6e4abe",
+"class_h_s_b_1_1_ssl_configuration.html#ac4ade639cf23138d4b128daee5357bf8"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

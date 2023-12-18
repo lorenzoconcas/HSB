@@ -93,20 +93,519 @@ $(document).ready(function(){initNavTree('namespace_h_s_b_1_1_t_l_s.html',''); i
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">HSB.TLS Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_t_l_s_1_1_curl.html">Curl</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">CustomTLS</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_t_l_s_1_1_protocol_version.html">ProtocolVersion</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a701975eea2d1041adf5fbe89ce232395" id="r_a701975eea2d1041adf5fbe89ce232395"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_h_s_b_1_1_t_l_s.html#a701975eea2d1041adf5fbe89ce232395">Curl</a> (string url=&quot;localhost&quot;, string port=&quot;443&quot;)</td></tr>
+<tr class="separator:a701975eea2d1041adf5fbe89ce232395"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c931ebbd5b6871f9e4f9a3d3f4ec7f6" id="r_a8c931ebbd5b6871f9e4f9a3d3f4ec7f6"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_h_s_b_1_1_t_l_s.html#a8c931ebbd5b6871f9e4f9a3d3f4ec7f6">CustomTLS</a> (Socket socket)</td></tr>
+<tr class="separator:a8c931ebbd5b6871f9e4f9a3d3f4ec7f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a701975eea2d1041adf5fbe89ce232395" name="a701975eea2d1041adf5fbe89ce232395"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a701975eea2d1041adf5fbe89ce232395">&#9670;&#160;</a></span>Curl()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">class HSB.TLS.Curl </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>url</em> = <code>&quot;localhost&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>port</em> = <code>&quot;443&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Runs the curl command</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">loop</td><td>Wether or not repeat the command</td></tr>
+    <tr><td class="paramname">delay</td><td>Delay between each request</td></tr>
+    <tr><td class="paramname">times</td><td>If loop is true, specifies how many times the command must be repeated (-1 means forever)</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_curl_8cs_source.html#l00008">8</a> of file <a class="el" href="_curl_8cs_source.html">Curl.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">    9</span>{</div>
+<div class="line"><span class="lineno">   10</span>    </div>
+<div class="line"><span class="lineno">   11</span>    readonly <span class="keywordtype">string</span> fullUrl = $<span class="stringliteral">&quot;https://{url}:{port}/&quot;</span>;</div>
+<div class="line"><span class="lineno">   12</span> </div>
+<div class="line"><span class="lineno">   13</span>    <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_protocol_version.html">ProtocolVersion</a> protocolVersion = <span class="keyword">new</span>(TLSVersion.TLS_1_3);</div>
+<div class="line"><span class="lineno">   14</span> </div>
+<div class="line"><span class="lineno">   15</span>    <span class="keywordtype">string</span> cipherSuitesString = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   16</span> </div>
+<div class="line"><span class="lineno">   17</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> SetTLSVersion(TLSVersion tlsVersion)</div>
+<div class="line"><span class="lineno">   18</span>    {</div>
+<div class="line"><span class="lineno">   19</span>        protocolVersion = <span class="keyword">new</span>(tlsVersion);</div>
+<div class="line"><span class="lineno">   20</span>    }</div>
+<div class="line"><span class="lineno">   21</span> </div>
+<div class="line"><span class="lineno">   22</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> SetCipherSuites(<span class="keywordtype">string</span> cipherSuites)</div>
+<div class="line"><span class="lineno">   23</span>    {</div>
+<div class="line"><span class="lineno">   24</span>        cipherSuitesString = cipherSuites;</div>
+<div class="line"><span class="lineno">   25</span>    }</div>
+<div class="line"><span class="lineno">   26</span> </div>
+<div class="line"><span class="lineno">   27</span>    <span class="keyword">private</span> <span class="keywordtype">string</span> GetCurlCommand()</div>
+<div class="line"><span class="lineno">   28</span>    {</div>
+<div class="line"><span class="lineno">   29</span> </div>
+<div class="line"><span class="lineno">   30</span>        <span class="keywordtype">string</span> command = $<span class="stringliteral">&quot;curl -k --tlsv{protocolVersion} --tls-max {protocolVersion} &quot;</span>;</div>
+<div class="line"><span class="lineno">   31</span>        <span class="keywordflow">if</span> (cipherSuitesString != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">   32</span>        {</div>
+<div class="line"><span class="lineno">   33</span>            command += $<span class="stringliteral">&quot;--ciphers {cipherSuitesString} &quot;</span>;</div>
+<div class="line"><span class="lineno">   34</span>        }</div>
+<div class="line"><span class="lineno">   35</span>        command = command[..^1];</div>
+<div class="line"><span class="lineno">   36</span>        command += $<span class="stringliteral">&quot; {fullUrl}&quot;</span>;</div>
+<div class="line"><span class="lineno">   37</span>        <span class="keywordflow">return</span> command;</div>
+<div class="line"><span class="lineno">   38</span>    }</div>
+<div class="line"><span class="lineno">   39</span> </div>
+<div class="line"><span class="lineno">   40</span> </div>
+<div class="line"><span class="lineno">   47</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> RunAsync(<span class="keywordtype">bool</span> loop = <span class="keyword">true</span>, <span class="keywordtype">int</span> delay = 250, <span class="keywordtype">int</span> times = -1)</div>
+<div class="line"><span class="lineno">   48</span>    {</div>
+<div class="line"><span class="lineno">   49</span> </div>
+<div class="line"><span class="lineno">   50</span>        Task.Run(() =&gt;</div>
+<div class="line"><span class="lineno">   51</span>        {</div>
+<div class="line"><span class="lineno">   52</span>            <span class="keywordflow">if</span> (loop)</div>
+<div class="line"><span class="lineno">   53</span>            {</div>
+<div class="line"><span class="lineno">   54</span> </div>
+<div class="line"><span class="lineno">   55</span>                <span class="keywordtype">bool</span> _loop = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   56</span>                <span class="keywordflow">while</span> (_loop)</div>
+<div class="line"><span class="lineno">   57</span>                {</div>
+<div class="line"><span class="lineno">   58</span>                    Thread.Sleep(delay);</div>
+<div class="line"><span class="lineno">   59</span>                    <span class="keywordflow">if</span> (times != -1)</div>
+<div class="line"><span class="lineno">   60</span>                    {</div>
+<div class="line"><span class="lineno">   61</span>                        times--;</div>
+<div class="line"><span class="lineno">   62</span>                        <span class="keywordflow">if</span> (times == 0)</div>
+<div class="line"><span class="lineno">   63</span>                        {</div>
+<div class="line"><span class="lineno">   64</span>                            _loop = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   65</span>                        }</div>
+<div class="line"><span class="lineno">   66</span>                    }</div>
+<div class="line"><span class="lineno">   67</span>                    Exec();</div>
+<div class="line"><span class="lineno">   68</span> </div>
+<div class="line"><span class="lineno">   69</span>                }</div>
+<div class="line"><span class="lineno">   70</span>            }</div>
+<div class="line"><span class="lineno">   71</span>            <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   72</span>            {</div>
+<div class="line"><span class="lineno">   73</span>                Thread.Sleep(delay);</div>
+<div class="line"><span class="lineno">   74</span>                Exec();</div>
+<div class="line"><span class="lineno">   75</span>            }</div>
+<div class="line"><span class="lineno">   76</span>        });</div>
+<div class="line"><span class="lineno">   77</span>    }</div>
+<div class="line"><span class="lineno">   78</span> </div>
+<div class="line"><span class="lineno">   79</span>    <span class="keyword">private</span> <span class="keywordtype">void</span> Exec()</div>
+<div class="line"><span class="lineno">   80</span>    {</div>
+<div class="line"><span class="lineno">   81</span>        <span class="keywordtype">string</span> command = GetCurlCommand();</div>
+<div class="line"><span class="lineno">   82</span>        ProcessStartInfo startInfo = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">   83</span>        <span class="comment">//if windows</span></div>
+<div class="line"><span class="lineno">   84</span>        <span class="keywordflow">if</span> (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))</div>
+<div class="line"><span class="lineno">   85</span>        {</div>
+<div class="line"><span class="lineno">   86</span>            startInfo.FileName = <span class="stringliteral">&quot;cmd.exe&quot;</span>;</div>
+<div class="line"><span class="lineno">   87</span>            startInfo.Arguments = $<span class="stringliteral">&quot;/C \&quot;{command}\&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   88</span> </div>
+<div class="line"><span class="lineno">   89</span>        }</div>
+<div class="line"><span class="lineno">   90</span>        <span class="keywordflow">else</span> </div>
+<div class="line"><span class="lineno">   91</span>        {</div>
+<div class="line"><span class="lineno">   92</span>            startInfo.FileName = <span class="stringliteral">&quot;/bin/zsh&quot;</span>;</div>
+<div class="line"><span class="lineno">   93</span>            startInfo.Arguments = $<span class="stringliteral">&quot;-c \&quot;{command}\&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   94</span>        }</div>
+<div class="line"><span class="lineno">   95</span>        startInfo.RedirectStandardOutput = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   96</span>        startInfo.RedirectStandardError = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   97</span>        startInfo.UseShellExecute = <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   98</span>        startInfo.CreateNoWindow = <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">   99</span>        Process process = <span class="keyword">new</span>()</div>
+<div class="line"><span class="lineno">  100</span>        {</div>
+<div class="line"><span class="lineno">  101</span>            StartInfo = startInfo</div>
+<div class="line"><span class="lineno">  102</span>        };</div>
+<div class="line"><span class="lineno">  103</span>        Console.WriteLine($<span class="stringliteral">&quot;Starting curl... \n{command}&quot;</span>);</div>
+<div class="line"><span class="lineno">  104</span>        process.Start();</div>
+<div class="line"><span class="lineno">  105</span>    }</div>
+<div class="line"><span class="lineno">  106</span> </div>
+<div class="line"><span class="lineno">  107</span> </div>
+<div class="line"><span class="lineno">  108</span>}</div>
+<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_protocol_version_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_protocol_version.html">HSB.TLS.ProtocolVersion</a></div><div class="ttdef"><b>Definition</b> <a href="_protocol_version_8cs_source.html#l00003">ProtocolVersion.cs:4</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a8c931ebbd5b6871f9e4f9a3d3f4ec7f6" name="a8c931ebbd5b6871f9e4f9a3d3f4ec7f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c931ebbd5b6871f9e4f9a3d3f4ec7f6">&#9670;&#160;</a></span>CustomTLS()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">class HSB.TLS.CustomTLS </td>
+          <td>(</td>
+          <td class="paramtype">Socket&#160;</td>
+          <td class="paramname"><em>socket</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="_t_l_s_8cs_source.html#l00012">12</a> of file <a class="el" href="_t_l_s_8cs_source.html">TLS.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   13</span>{</div>
+<div class="line"><span class="lineno">   14</span>    readonly Socket socket = socket;</div>
+<div class="line"><span class="lineno">   15</span>    <span class="comment">//items of the TLS request</span></div>
+<div class="line"><span class="lineno">   16</span> </div>
+<div class="line"><span class="lineno">   17</span>    <span class="comment">// ProtocolVersion clientVersion;</span></div>
+<div class="line"><span class="lineno">   18</span> </div>
+<div class="line"><span class="lineno">   19</span> </div>
+<div class="line"><span class="lineno">   20</span>    <span class="keywordtype">byte</span>[] clientRandom = [];</div>
+<div class="line"><span class="lineno">   21</span>    ushort sessionID_size;</div>
+<div class="line"><span class="lineno">   22</span>    <span class="keywordtype">byte</span>[] fakeSessionID = [];</div>
+<div class="line"><span class="lineno">   23</span>    readonly List&lt;Ciphers&gt; cipherSuites = [];</div>
+<div class="line"><span class="lineno">   24</span> </div>
+<div class="line"><span class="lineno">   25</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> Parse(<span class="keywordtype">byte</span>[] data)</div>
+<div class="line"><span class="lineno">   26</span>    {</div>
+<div class="line"><span class="lineno">   27</span>        Console.Clear();</div>
+<div class="line"><span class="lineno">   28</span>        PrintDatatable(data);</div>
+<div class="line"><span class="lineno">   29</span>        PrintDatatableASCII(data);</div>
+<div class="line"><span class="lineno">   30</span>        <span class="comment">//print each byte explaning what is</span></div>
+<div class="line"><span class="lineno">   31</span>        <span class="comment">//Record Header</span></div>
+<div class="line"><span class="lineno">   32</span>        Console.WriteLine($<span class="stringliteral">&quot;(offset : 0 )\tRequest Type: {data[0]:X2} (16 == Handshake record))&quot;</span>);</div>
+<div class="line"><span class="lineno">   33</span>        Console.WriteLine($<span class="stringliteral">&quot;(offset: 1)\tTLS Version (Major): {data[1]:X2} (Minor): {data[2]:X2})&quot;</span>);</div>
+<div class="line"><span class="lineno">   34</span>        <span class="comment">//handshake length</span></div>
+<div class="line"><span class="lineno">   35</span>        <span class="keywordtype">int</span> handshakeLength = Utils.BytesToUShort([data[3], data[4]]);</div>
+<div class="line"><span class="lineno">   36</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">   37</span>            $<span class="stringliteral">&quot;(offset: 3)\tHandshake length (bytes): {data[3]:X2}{data[4]:X2} (int : {handshakeLength}) handshake ends at row {(handshakeLength + 4) / 16} col {(handshakeLength + 4) % 16})&quot;</span>);</div>
+<div class="line"><span class="lineno">   38</span>        <span class="comment">//handshake header</span></div>
+<div class="line"><span class="lineno">   39</span>        Console.WriteLine($<span class="stringliteral">&quot;(offset 5)\tHandshake Type: {data[5]:X2} (1 == Client Hello))&quot;</span>);</div>
+<div class="line"><span class="lineno">   40</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">   41</span>            $<span class="stringliteral">&quot;(offset 6)\tHandshake length (bytes): {data[6]:X2}{data[7]:X2}{data[8]:X2} (int : {Utils.UInt24ToUInt32([data[6], data[7], data[8]])})&quot;</span>);</div>
+<div class="line"><span class="lineno">   42</span>        <span class="comment">//Client Version</span></div>
+<div class="line"><span class="lineno">   43</span>        Console.WriteLine($<span class="stringliteral">&quot;(offset 9)\tClient Version (Major): {data[9]:X2} (Minor): {data[10]:X2})&quot;</span>);</div>
+<div class="line"><span class="lineno">   44</span> </div>
+<div class="line"><span class="lineno">   45</span>        <span class="keywordflow">if</span> (data[9] == 0x03 &amp;&amp; data[10] == 0x03)</div>
+<div class="line"><span class="lineno">   46</span>        {</div>
+<div class="line"><span class="lineno">   47</span>            <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html">ClientHello</a> c = <span class="keyword">new</span> (data[9..]);</div>
+<div class="line"><span class="lineno">   48</span>            Console.WriteLine(c);</div>
+<div class="line"><span class="lineno">   49</span>            <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">   50</span> </div>
+<div class="line"><span class="lineno">   51</span>            Console.WriteLine(<span class="stringliteral">&quot;Detected client TLS v1.3&quot;</span>);</div>
+<div class="line"><span class="lineno">   52</span>            ParseTLS_1_3(data, handshakeLength);</div>
+<div class="line"><span class="lineno">   53</span>            ParseTLSv1_3(data);</div>
+<div class="line"><span class="lineno">   54</span>        }</div>
+<div class="line"><span class="lineno">   55</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">   56</span>        {</div>
+<div class="line"><span class="lineno">   57</span>            Console.WriteLine(<span class="stringliteral">&quot;Detected client TLS up to v1.2&quot;</span>);</div>
+<div class="line"><span class="lineno">   58</span>            <span class="comment">//ParseTLS_UP_TO_1_2(data, handshake_length);</span></div>
+<div class="line"><span class="lineno">   59</span>        }</div>
+<div class="line"><span class="lineno">   60</span>    }</div>
+<div class="line"><span class="lineno">   61</span> </div>
+<div class="line"><span class="lineno">   62</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> PrintDatatable(<span class="keywordtype">byte</span>[] data)</div>
+<div class="line"><span class="lineno">   63</span>    {</div>
+<div class="line"><span class="lineno">   64</span>        Console.WriteLine(<span class="stringliteral">&quot;Printing raw request preview\n============================================&quot;</span>);</div>
+<div class="line"><span class="lineno">   65</span>        <span class="comment">//print table header (0 -&gt; 15)</span></div>
+<div class="line"><span class="lineno">   66</span>        Console.WriteLine(<span class="stringliteral">&quot;\t 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15&quot;</span>);</div>
+<div class="line"><span class="lineno">   67</span>        <span class="keywordtype">int</span> i = 0;</div>
+<div class="line"><span class="lineno">   68</span>        <span class="keywordtype">int</span> j = 0;</div>
+<div class="line"><span class="lineno">   69</span>        Console.Write($<span class="stringliteral">&quot;{0}\t&quot;</span>);</div>
+<div class="line"><span class="lineno">   70</span>        <span class="keywordflow">foreach</span> (<span class="keywordtype">byte</span> b <span class="keywordflow">in</span> data)</div>
+<div class="line"><span class="lineno">   71</span>        {</div>
+<div class="line"><span class="lineno">   72</span>            Console.Write($<span class="stringliteral">&quot;{b:X2} &quot;</span>);</div>
+<div class="line"><span class="lineno">   73</span>            i++;</div>
+<div class="line"><span class="lineno">   74</span>            <span class="keywordflow">if</span> (i == 16)</div>
+<div class="line"><span class="lineno">   75</span>            {</div>
+<div class="line"><span class="lineno">   76</span>                j++;</div>
+<div class="line"><span class="lineno">   77</span>                Console.WriteLine(<span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">   78</span>                Console.Write($<span class="stringliteral">&quot;{j}\t&quot;</span>);</div>
+<div class="line"><span class="lineno">   79</span>                i = 0;</div>
+<div class="line"><span class="lineno">   80</span>            }</div>
+<div class="line"><span class="lineno">   81</span>        }</div>
+<div class="line"><span class="lineno">   82</span> </div>
+<div class="line"><span class="lineno">   83</span>        Console.WriteLine(<span class="stringliteral">&quot;\n====================================&quot;</span>);</div>
+<div class="line"><span class="lineno">   84</span>    }</div>
+<div class="line"><span class="lineno">   85</span> </div>
+<div class="line"><span class="lineno">   86</span>    <span class="keyword">static</span> <span class="keywordtype">void</span> PrintDatatableASCII(<span class="keywordtype">byte</span>[] data)</div>
+<div class="line"><span class="lineno">   87</span>    {</div>
+<div class="line"><span class="lineno">   88</span>        Console.WriteLine(<span class="stringliteral">&quot;Printing raw request preview\n============================================&quot;</span>);</div>
+<div class="line"><span class="lineno">   89</span>        <span class="comment">//print table header (0 -&gt; 15)</span></div>
+<div class="line"><span class="lineno">   90</span>        Console.WriteLine(<span class="stringliteral">&quot;\t 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15&quot;</span>);</div>
+<div class="line"><span class="lineno">   91</span>        <span class="keywordtype">int</span> i = 0;</div>
+<div class="line"><span class="lineno">   92</span>        <span class="keywordtype">int</span> j = 0;</div>
+<div class="line"><span class="lineno">   93</span>        Console.Write($<span class="stringliteral">&quot;{0}\t&quot;</span>);</div>
+<div class="line"><span class="lineno">   94</span>        var str = Encoding.ASCII.GetString(data).ToCharArray();</div>
+<div class="line"><span class="lineno">   95</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> k = 0; k &lt; data.Length; k++)</div>
+<div class="line"><span class="lineno">   96</span>        {</div>
+<div class="line"><span class="lineno">   97</span>            Console.Write($<span class="stringliteral">&quot;{str[k]} &quot;</span>);</div>
+<div class="line"><span class="lineno">   98</span>            i++;</div>
+<div class="line"><span class="lineno">   99</span>            <span class="keywordflow">if</span> (i == 16)</div>
+<div class="line"><span class="lineno">  100</span>            {</div>
+<div class="line"><span class="lineno">  101</span>                j++;</div>
+<div class="line"><span class="lineno">  102</span>                Console.WriteLine(<span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">  103</span>                Console.Write($<span class="stringliteral">&quot;{j}\t&quot;</span>);</div>
+<div class="line"><span class="lineno">  104</span>                i = 0;</div>
+<div class="line"><span class="lineno">  105</span>            }</div>
+<div class="line"><span class="lineno">  106</span>        }</div>
+<div class="line"><span class="lineno">  107</span> </div>
+<div class="line"><span class="lineno">  108</span>        Console.WriteLine(<span class="stringliteral">&quot;\n====================================&quot;</span>);</div>
+<div class="line"><span class="lineno">  109</span>    }</div>
+<div class="line"><span class="lineno">  110</span> </div>
+<div class="line"><span class="lineno">  111</span> </div>
+<div class="line"><span class="lineno">  112</span>    <span class="comment">/*ProtocolVersion version = new(data);</span></div>
+<div class="line"><span class="lineno">  113</span><span class="comment">    Console.WriteLine(&quot;Client hello with TLS version: &quot; + version.ToString());*/</span></div>
+<div class="line"><span class="lineno">  114</span> </div>
+<div class="line"><span class="lineno">  115</span> </div>
+<div class="line"><span class="lineno">  116</span>    <span class="keyword">private</span> <span class="keywordtype">void</span> ParseTLSv1_3(<span class="keywordtype">byte</span>[] data)</div>
+<div class="line"><span class="lineno">  117</span>    {</div>
+<div class="line"><span class="lineno">  118</span>        Console.WriteLine(<span class="stringliteral">&quot;=============================\nNew parser result:&quot;</span>);</div>
+<div class="line"><span class="lineno">  119</span>        <a class="code hl_function" href="namespace_h_s_b.html#a3990ef88d0f4cc432d134fa5893b453f">DataReader</a> d = <span class="keyword">new</span>(data);</div>
+<div class="line"><span class="lineno">  120</span> </div>
+<div class="line"><span class="lineno">  121</span>        <span class="keywordtype">byte</span> requestType = d.ReadByte();</div>
+<div class="line"><span class="lineno">  122</span>        <span class="keywordtype">byte</span>[] TLS_Version = d.ReadBytes(DataOffsets.TLS_VERSION.size);</div>
+<div class="line"><span class="lineno">  123</span>        <span class="keywordtype">byte</span>[] msgLength = d.ReadBytes(DataOffsets.MESSAGE_LENGTH.size);</div>
+<div class="line"><span class="lineno">  124</span>        <span class="keywordtype">byte</span> handshakeType = d.ReadByte();</div>
+<div class="line"><span class="lineno">  125</span>        <span class="keywordtype">byte</span>[] handshakeLenght = d.ReadBytes(DataOffsets.HANDSHAKE_DATA_LENGHT.size); <span class="comment">//in bytes</span></div>
+<div class="line"><span class="lineno">  126</span>        uint handshakeLenghtInt = Utils.UInt24ToUInt32(handshakeLenght);</div>
+<div class="line"><span class="lineno">  127</span> </div>
+<div class="line"><span class="lineno">  128</span> </div>
+<div class="line"><span class="lineno">  129</span>        uint endPosition =</div>
+<div class="line"><span class="lineno">  130</span>            handshakeLenghtInt +</div>
+<div class="line"><span class="lineno">  131</span>            1 +</div>
+<div class="line"><span class="lineno">  132</span>            DataOffsets.TLS_VERSION.size +</div>
+<div class="line"><span class="lineno">  133</span>            DataOffsets.MESSAGE_LENGTH.size +</div>
+<div class="line"><span class="lineno">  134</span>            1 +</div>
+<div class="line"><span class="lineno">  135</span>            DataOffsets.HANDSHAKE_DATA_LENGHT.size;</div>
+<div class="line"><span class="lineno">  136</span>        d.SetEndPosition(Math.Min(endPosition, 512));</div>
+<div class="line"><span class="lineno">  137</span> </div>
+<div class="line"><span class="lineno">  138</span>        <span class="keywordtype">byte</span>[] clientVersion = d.ReadBytes(DataOffsets.CLIENT_VERSION.size);</div>
+<div class="line"><span class="lineno">  139</span>        <span class="keywordtype">byte</span>[] clientRandom = d.ReadBytes(32);</div>
+<div class="line"><span class="lineno">  140</span>        <span class="keywordtype">byte</span> sessionIDSize = d.ReadByte(); <span class="comment">//should always be 0 in TLS1.3</span></div>
+<div class="line"><span class="lineno">  141</span>        <span class="keywordtype">byte</span>[] fakeSessionID = d.ReadBytes(sessionIDSize);</div>
+<div class="line"><span class="lineno">  142</span>        <span class="keywordtype">byte</span>[] cipherSuitesLength = d.ReadBytes(2);</div>
+<div class="line"><span class="lineno">  143</span>        ushort cipherSuitesLengthInt = Utils.BytesToUShort(cipherSuitesLength);</div>
+<div class="line"><span class="lineno">  144</span>        List&lt;Ciphers&gt; ciphers = [];</div>
+<div class="line"><span class="lineno">  145</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; cipherSuitesLengthInt; i += 2)</div>
+<div class="line"><span class="lineno">  146</span>        {</div>
+<div class="line"><span class="lineno">  147</span>            ciphers.Add(GetCipher(d.ReadBytes(2)));</div>
+<div class="line"><span class="lineno">  148</span>        }</div>
+<div class="line"><span class="lineno">  149</span> </div>
+<div class="line"><span class="lineno">  150</span>        <span class="keywordtype">byte</span>[] compressionData = d.ReadBytes(2);</div>
+<div class="line"><span class="lineno">  151</span>        <span class="keywordtype">byte</span>[] extensionsLength = d.ReadBytes(2);</div>
+<div class="line"><span class="lineno">  152</span>        extensionsLength[0] = 0x0; <span class="comment">//testing</span></div>
+<div class="line"><span class="lineno">  153</span>        ushort extensionsLengthInt = Utils.BytesToUShort(extensionsLength); <span class="comment">//in bytes</span></div>
+<div class="line"><span class="lineno">  154</span>        List&lt;IExtension&gt; extensions = [];</div>
+<div class="line"><span class="lineno">  155</span> </div>
+<div class="line"><span class="lineno">  156</span>        <span class="keywordflow">while</span> (d.DataAvailable() &amp;&amp; extensionsLengthInt &gt; 0 &amp;&amp; extensionsLengthInt &lt; 512)</div>
+<div class="line"><span class="lineno">  157</span>        {</div>
+<div class="line"><span class="lineno">  158</span>            <a class="code hl_interface" href="interface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension.html">IExtension</a> e = ExtensionUtils.ReadExtension(d);</div>
+<div class="line"><span class="lineno">  159</span>            extensions.Add(e);</div>
+<div class="line"><span class="lineno">  160</span>            <span class="comment">// Console.WriteLine(d.RemainingData);</span></div>
+<div class="line"><span class="lineno">  161</span>        }</div>
+<div class="line"><span class="lineno">  162</span> </div>
+<div class="line"><span class="lineno">  163</span> </div>
+<div class="line"><span class="lineno">  164</span>        Console.Write(</div>
+<div class="line"><span class="lineno">  165</span>            $<span class="stringliteral">&quot;Request Type: 0x{requestType:X2}&quot;</span> +</div>
+<div class="line"><span class="lineno">  166</span>            $<span class="stringliteral">&quot;\nTLS Version: 0x{BitConverter.ToString(TLS_Version).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)}&quot;</span> +</div>
+<div class="line"><span class="lineno">  167</span>            $<span class="stringliteral">&quot;\nMessage Length: 0x{BitConverter.ToString(msgLength).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)} ({Utils.BytesToUShort(msgLength)})&quot;</span> +</div>
+<div class="line"><span class="lineno">  168</span>            $<span class="stringliteral">&quot;\nHandshake Type: 0x{handshakeType:X2}&quot;</span> +</div>
+<div class="line"><span class="lineno">  169</span>            $<span class="stringliteral">&quot;\nHandshake Length: 0x{BitConverter.ToString(handshakeLenght).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)} ({Utils.UInt24ToUInt32(handshakeLenght)})&quot;</span> +</div>
+<div class="line"><span class="lineno">  170</span>            $<span class="stringliteral">&quot;\nClient Version: 0x{BitConverter.ToString(clientVersion).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)}&quot;</span> +</div>
+<div class="line"><span class="lineno">  171</span>            $<span class="stringliteral">&quot;\nClient Random: 0x{BitConverter.ToString(clientRandom).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)}&quot;</span> +</div>
+<div class="line"><span class="lineno">  172</span>            $<span class="stringliteral">&quot;\nSession ID: 0x{sessionIDSize:X2}&quot;</span> +</div>
+<div class="line"><span class="lineno">  173</span>            $<span class="stringliteral">&quot;\nFake Session ID: 0x{BitConverter.ToString(fakeSessionID).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)}0&quot;</span> +</div>
+<div class="line"><span class="lineno">  174</span>            $<span class="stringliteral">&quot;\nCipher Suites Length: 0x{BitConverter.ToString(cipherSuitesLength).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)} ({cipherSuitesLengthInt} bytes, {cipherSuitesLengthInt / 2} ciphers)&quot;</span> +</div>
+<div class="line"><span class="lineno">  175</span>            $<span class="stringliteral">&quot;\nCipher Suites: \n\t{string.Join(&quot;</span>,\n\t<span class="stringliteral">&quot;, ciphers)}&quot;</span> +</div>
+<div class="line"><span class="lineno">  176</span>            $<span class="stringliteral">&quot;\nCompression Data: 0x{BitConverter.ToString(compressionData).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)}&quot;</span> +</div>
+<div class="line"><span class="lineno">  177</span>            $<span class="stringliteral">&quot;\nExtensions Length: 0x{BitConverter.ToString(extensionsLength).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)} ({extensionsLengthInt} bytes)\n&quot;</span></div>
+<div class="line"><span class="lineno">  178</span>        );</div>
+<div class="line"><span class="lineno">  179</span>        <span class="comment">//print extensions</span></div>
+<div class="line"><span class="lineno">  180</span>        <span class="keywordflow">foreach</span> (<a class="code hl_interface" href="interface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension.html">IExtension</a> e <span class="keywordflow">in</span> extensions)</div>
+<div class="line"><span class="lineno">  181</span>            Console.WriteLine(<span class="stringliteral">&quot;\t&quot;</span> + e.ToString());</div>
+<div class="line"><span class="lineno">  182</span> </div>
+<div class="line"><span class="lineno">  183</span> </div>
+<div class="line"><span class="lineno">  184</span>        <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html">ClientHello</a> clientHello = <span class="keyword">new</span>(clientRandom, fakeSessionID, ciphers, extensions);</div>
+<div class="line"><span class="lineno">  185</span>        ServerHello serverHello = <span class="keyword">new</span>(clientHello);</div>
+<div class="line"><span class="lineno">  186</span>        serverHello.BuildResponse();</div>
+<div class="line"><span class="lineno">  187</span> </div>
+<div class="line"><span class="lineno">  188</span>        <span class="comment">//Generate a private key with the X25519 curve</span></div>
+<div class="line"><span class="lineno">  189</span>        <span class="comment">/* using ECDiffieHellmanCng ecdh = new(ECCurve.NamedCurves.);</span></div>
+<div class="line"><span class="lineno">  190</span><span class="comment">         ecdh.KeyDerivationFunction = ECDiffieHellmanKeyDerivationFunction.Hash;</span></div>
+<div class="line"><span class="lineno">  191</span><span class="comment">         ecdh.HashAlgorithm = CngAlgorithm.Sha256;</span></div>
+<div class="line"><span class="lineno">  192</span><span class="comment">         byte[] publicKey = ecdh.PublicKey.ToByteArray();</span></div>
+<div class="line"><span class="lineno">  193</span><span class="comment">         Console.WriteLine($&quot;Generate public key: 0x{BitConverter.ToString(publicKey).Replace(&quot;-&quot;, &quot; 0x&quot;)}&quot;);*/</span></div>
+<div class="line"><span class="lineno">  194</span> </div>
+<div class="line"><span class="lineno">  195</span> </div>
+<div class="line"><span class="lineno">  196</span>        Console.WriteLine(<span class="stringliteral">&quot;Done&quot;</span>);</div>
+<div class="line"><span class="lineno">  197</span>    }</div>
+<div class="line"><span class="lineno">  198</span> </div>
+<div class="line"><span class="lineno">  199</span>    <span class="keyword">private</span> <span class="keywordtype">void</span> ParseTLS_1_3(<span class="keywordtype">byte</span>[] data, <span class="keywordtype">int</span> handshake_length)</div>
+<div class="line"><span class="lineno">  200</span>    {</div>
+<div class="line"><span class="lineno">  201</span>        <span class="comment">//in TLS 1.3+ session id is differente and have a size</span></div>
+<div class="line"><span class="lineno">  202</span> </div>
+<div class="line"><span class="lineno">  203</span>        <span class="keywordtype">int</span> offset = 11;</div>
+<div class="line"><span class="lineno">  204</span>        <span class="keywordtype">int</span> col = offset % 16;</div>
+<div class="line"><span class="lineno">  205</span>        <span class="keywordtype">int</span> row = offset / 16;</div>
+<div class="line"><span class="lineno">  206</span> </div>
+<div class="line"><span class="lineno">  207</span> </div>
+<div class="line"><span class="lineno">  208</span>        <span class="comment">//client random -&gt; 32 bytes</span></div>
+<div class="line"><span class="lineno">  209</span>        clientRandom = <span class="keyword">new</span> <span class="keywordtype">byte</span>[32];</div>
+<div class="line"><span class="lineno">  210</span>        Array.Copy(data, offset, clientRandom, 0, 32);</div>
+<div class="line"><span class="lineno">  211</span>        uint clientRandomInt = BitConverter.ToUInt32(clientRandom);</div>
+<div class="line"><span class="lineno">  212</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  213</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tRandom (32 bytes): 0x{BitConverter.ToString(clientRandom).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> 0x<span class="stringliteral">&quot;)}&quot;</span>);</div>
+<div class="line"><span class="lineno">  214</span>        Console.WriteLine($<span class="stringliteral">&quot;The 32bit random number is : {clientRandomInt}&quot;</span>);</div>
+<div class="line"><span class="lineno">  215</span>        offset += 32;</div>
+<div class="line"><span class="lineno">  216</span>        col = offset % 16;</div>
+<div class="line"><span class="lineno">  217</span>        row = offset / 16;</div>
+<div class="line"><span class="lineno">  218</span>        <span class="comment">//Session ID</span></div>
+<div class="line"><span class="lineno">  219</span>        sessionID_size = data[offset];</div>
+<div class="line"><span class="lineno">  220</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  221</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tSession ID size: {data[offset]:X2} (int : {sessionID_size})&quot;</span>);</div>
+<div class="line"><span class="lineno">  222</span>        fakeSessionID = <span class="keyword">new</span> <span class="keywordtype">byte</span>[sessionID_size];</div>
+<div class="line"><span class="lineno">  223</span>        Array.Copy(data, offset + 1, fakeSessionID, 0, sessionID_size);</div>
+<div class="line"><span class="lineno">  224</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  225</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tSession ID: {BitConverter.ToString(fakeSessionID).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> <span class="stringliteral">&quot;)}&quot;</span>);</div>
+<div class="line"><span class="lineno">  226</span>        offset += 1 + sessionID_size;</div>
+<div class="line"><span class="lineno">  227</span>        <span class="comment">//Cipher Suites</span></div>
+<div class="line"><span class="lineno">  228</span>        col = offset % 16;</div>
+<div class="line"><span class="lineno">  229</span>        row = offset / 16;</div>
+<div class="line"><span class="lineno">  230</span>        ushort cipher_suites_length =</div>
+<div class="line"><span class="lineno">  231</span>            Utils.BytesToUShort([data[offset], data[offset + 1]]); <span class="comment">//length in bytes</span></div>
+<div class="line"><span class="lineno">  232</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  233</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tCipher Suites Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {cipher_suites_length / 2})&quot;</span>);</div>
+<div class="line"><span class="lineno">  234</span>        offset += 2;</div>
+<div class="line"><span class="lineno">  235</span>        col = offset % 16;</div>
+<div class="line"><span class="lineno">  236</span>        row = offset / 16;</div>
+<div class="line"><span class="lineno">  237</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; cipher_suites_length; i += 2)</div>
+<div class="line"><span class="lineno">  238</span>        {</div>
+<div class="line"><span class="lineno">  239</span>            Console.Write(</div>
+<div class="line"><span class="lineno">  240</span>                $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tCipher Suite: 0x{data[offset]:X2}, 0x{data[offset + 1]:X2} -&gt; &quot;</span>);</div>
+<div class="line"><span class="lineno">  241</span>            var cS = GetCipher([data[offset], data[offset + 1]]);</div>
+<div class="line"><span class="lineno">  242</span>            cipherSuites.Add(cS);</div>
+<div class="line"><span class="lineno">  243</span>            Console.WriteLine(cS);</div>
+<div class="line"><span class="lineno">  244</span>            offset += 2;</div>
+<div class="line"><span class="lineno">  245</span>            col = offset % 16;</div>
+<div class="line"><span class="lineno">  246</span>            row = offset / 16;</div>
+<div class="line"><span class="lineno">  247</span>        }</div>
+<div class="line"><span class="lineno">  248</span> </div>
+<div class="line"><span class="lineno">  249</span>        <span class="comment">//Compression data -&gt; not available in TLS 1.3+ so two bytes const 0x01 0x00</span></div>
+<div class="line"><span class="lineno">  250</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  251</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tCompression Data: {data[offset]:X2} {data[offset + 1]:X2}&quot;</span>);</div>
+<div class="line"><span class="lineno">  252</span>        offset += 2;</div>
+<div class="line"><span class="lineno">  253</span>        <span class="comment">//Extensions</span></div>
+<div class="line"><span class="lineno">  254</span>        col = offset % 16;</div>
+<div class="line"><span class="lineno">  255</span>        row = offset / 16;</div>
+<div class="line"><span class="lineno">  256</span>        ushort extensions_length = Utils.BytesToUShort([data[offset], data[offset + 1]]);</div>
+<div class="line"><span class="lineno">  257</span>        <span class="comment">//same as TLS 1.2</span></div>
+<div class="line"><span class="lineno">  258</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  259</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tExtensions Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {extensions_length}))&quot;</span>);</div>
+<div class="line"><span class="lineno">  260</span>        offset += 2;</div>
+<div class="line"><span class="lineno">  261</span> </div>
+<div class="line"><span class="lineno">  262</span>        <span class="comment">/*    List&lt;Extension&gt; extensions = new();</span></div>
+<div class="line"><span class="lineno">  263</span><span class="comment"></span> </div>
+<div class="line"><span class="lineno">  264</span><span class="comment">            while (offset &lt; handshake_length)</span></div>
+<div class="line"><span class="lineno">  265</span><span class="comment">            {</span></div>
+<div class="line"><span class="lineno">  266</span><span class="comment">                //extension range from current two bytes to current two bytes + 4 + extension length</span></div>
+<div class="line"><span class="lineno">  267</span><span class="comment">                Extension e;</span></div>
+<div class="line"><span class="lineno">  268</span><span class="comment">                offset = ExtensionUtils.ExtensionReaderExtended(data, offset, out e);</span></div>
+<div class="line"><span class="lineno">  269</span><span class="comment">                extensions.Add(e);</span></div>
+<div class="line"><span class="lineno">  270</span><span class="comment">                Console.WriteLine(e.ToString());</span></div>
+<div class="line"><span class="lineno">  271</span><span class="comment"></span> </div>
+<div class="line"><span class="lineno">  272</span><span class="comment">            }*/</span></div>
+<div class="line"><span class="lineno">  273</span> </div>
+<div class="line"><span class="lineno">  274</span> </div>
+<div class="line"><span class="lineno">  275</span>        Console.WriteLine(<span class="stringliteral">&quot;Client Hello (TLS version 1.3) parsed!&quot;</span>);</div>
+<div class="line"><span class="lineno">  276</span>    }</div>
+<div class="line"><span class="lineno">  277</span> </div>
+<div class="line"><span class="lineno">  278</span>    <span class="keyword">private</span> <span class="keywordtype">void</span> ParseTLS_UP_TO_1_2(<span class="keywordtype">byte</span>[] data)</div>
+<div class="line"><span class="lineno">  279</span>    {</div>
+<div class="line"><span class="lineno">  280</span>        <span class="keywordtype">int</span> i;</div>
+<div class="line"><span class="lineno">  281</span>        <span class="comment">//Random</span></div>
+<div class="line"><span class="lineno">  282</span>        Console.WriteLine($<span class="stringliteral">&quot;(offset 11)\tRandom (32 bytes): {BitConverter.ToString(data, 11, 32).Replace(&quot;</span>-<span class="stringliteral">&quot;, &quot;</span> <span class="stringliteral">&quot;)}&quot;</span>);</div>
+<div class="line"><span class="lineno">  283</span>        <span class="comment">//Session ID</span></div>
+<div class="line"><span class="lineno">  284</span>        Console.WriteLine($<span class="stringliteral">&quot;(offset 43 (riga {43 / 16}, col {43 % 16}))\tSession ID: 0x{data[43]:X2}&quot;</span>);</div>
+<div class="line"><span class="lineno">  285</span>        <span class="comment">//Cipher Suites </span></div>
+<div class="line"><span class="lineno">  286</span>        <span class="comment">//two bytes to int</span></div>
+<div class="line"><span class="lineno">  287</span>        ushort cipher_suites_length = Utils.BytesToUShort([data[44], data[45]]);</div>
+<div class="line"><span class="lineno">  288</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  289</span>            $<span class="stringliteral">&quot;(offset 44 (riga {44 / 16}, col {44 % 16}))\tCipher Suites Length: {data[44]:X2} {data[45]:X2} (int : {cipher_suites_length / 2})&quot;</span>);</div>
+<div class="line"><span class="lineno">  290</span>        <span class="keywordtype">int</span> offset = 46;</div>
+<div class="line"><span class="lineno">  291</span>        <span class="keywordtype">int</span> col = offset % 16;</div>
+<div class="line"><span class="lineno">  292</span>        <span class="keywordtype">int</span> row = offset / 16;</div>
+<div class="line"><span class="lineno">  293</span> </div>
+<div class="line"><span class="lineno">  294</span>        <span class="keywordflow">for</span> (i = 0; i &lt; cipher_suites_length; i += 2)</div>
+<div class="line"><span class="lineno">  295</span>        {</div>
+<div class="line"><span class="lineno">  296</span>            offset += i;</div>
+<div class="line"><span class="lineno">  297</span>            Console.Write(</div>
+<div class="line"><span class="lineno">  298</span>                $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tCipher Suite: 0x{data[46 + i]:X2}, 0x{data[47 + i]:X2} -&gt; &quot;</span>);</div>
+<div class="line"><span class="lineno">  299</span>            Console.WriteLine(CipherSuite.GetCipher([data[46 + i], data[47 + i]]));</div>
+<div class="line"><span class="lineno">  300</span>        }</div>
+<div class="line"><span class="lineno">  301</span> </div>
+<div class="line"><span class="lineno">  302</span>        <span class="comment">//compression methods</span></div>
+<div class="line"><span class="lineno">  303</span>        offset = 46 + cipher_suites_length;</div>
+<div class="line"><span class="lineno">  304</span>        col = offset % 16;</div>
+<div class="line"><span class="lineno">  305</span>        row = offset / 16;</div>
+<div class="line"><span class="lineno">  306</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  307</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tCompression Methods Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {Utils.BytesToUShort([data[offset], data[offset + 1]])})&quot;</span>);</div>
+<div class="line"><span class="lineno">  308</span>        offset += 2;</div>
+<div class="line"><span class="lineno">  309</span>        col = offset % 16;</div>
+<div class="line"><span class="lineno">  310</span>        row = offset / 16;</div>
+<div class="line"><span class="lineno">  311</span>        <span class="comment">//Extensions length</span></div>
+<div class="line"><span class="lineno">  312</span>        <span class="keywordtype">int</span> extensionsLength = Utils.BytesToUShort([data[offset], data[offset + 1]]);</div>
+<div class="line"><span class="lineno">  313</span>        Console.WriteLine(</div>
+<div class="line"><span class="lineno">  314</span>            $<span class="stringliteral">&quot;(offset {offset} (riga {row}, col {col}))\tExtensions Length: {data[offset]:X2} {data[offset + 1]:X2} (int : {extensionsLength}))&quot;</span>);</div>
+<div class="line"><span class="lineno">  315</span>        offset += 2;</div>
+<div class="line"><span class="lineno">  316</span>        <span class="comment">//Each extension will start with two bytes that indicate which extension it is, </span></div>
+<div class="line"><span class="lineno">  317</span>        <span class="comment">//followed by a two-byte content length field, followed by the contents of the extension.</span></div>
+<div class="line"><span class="lineno">  318</span>        <span class="comment">//Extensions</span></div>
+<div class="line"><span class="lineno">  319</span> </div>
+<div class="line"><span class="lineno">  320</span>        <span class="comment">//server name?</span></div>
+<div class="line"><span class="lineno">  321</span>        <span class="comment">/*   Console.WriteLine(&quot;Extension 1&quot;);</span></div>
+<div class="line"><span class="lineno">  322</span><span class="comment">            byte[] extensionType = new byte[] { data[offset], data[offset + 1] };</span></div>
+<div class="line"><span class="lineno">  323</span><span class="comment">            Console.WriteLine($&quot;(offset {offset} (riga {row}, col {col}))\tExtension Type: 0x{data[offset]:X2} 0x{data[offset + 1]:X2}&quot;);</span></div>
+<div class="line"><span class="lineno">  324</span><span class="comment">            offset += 2;</span></div>
+<div class="line"><span class="lineno">  325</span><span class="comment">            ushort extensionLength = TwoBytesToShort(new byte[] { data[offset], data[offset + 1] });</span></div>
+<div class="line"><span class="lineno">  326</span><span class="comment">            Console.WriteLine($&quot;(offset {offset} (riga {row}, col {col}))\tExtension Length: 0x{data[offset]:X2} 0x{data[offset + 1]:X2} (int : {extensionLength})&quot;);</span></div>
+<div class="line"><span class="lineno">  327</span><span class="comment">            offset += 2;</span></div>
+<div class="line"><span class="lineno">  328</span><span class="comment">            byte[] extensionData = new byte[extensionLength];</span></div>
+<div class="line"><span class="lineno">  329</span><span class="comment">            Array.Copy(data, offset, extensionData, 0, extensionLength);</span></div>
+<div class="line"><span class="lineno">  330</span><span class="comment">            Console.WriteLine($&quot;(offset {offset} (riga {row}, col {col}))\tExtension Data: {BitConverter.ToString(extensionData).Replace(&quot;-&quot;, &quot; &quot;)} -&gt; {Encoding.ASCII.GetString(extensionData)}&quot;);</span></div>
+<div class="line"><span class="lineno">  331</span><span class="comment"></span> </div>
+<div class="line"><span class="lineno">  332</span><span class="comment">            //next extension</span></div>
+<div class="line"><span class="lineno">  333</span><span class="comment">            Console.WriteLine(&quot;Extension 2&quot;);</span></div>
+<div class="line"><span class="lineno">  334</span><span class="comment">            offset += extensionLength;</span></div>
+<div class="line"><span class="lineno">  335</span><span class="comment">            extensionType = new byte[] { data[offset], data[offset + 1] };</span></div>
+<div class="line"><span class="lineno">  336</span><span class="comment">            Console.WriteLine($&quot;(offset {offset} (riga {row}, col {col}))\tExtension Type: 0x{data[offset]:X2} 0x{data[offset + 1]:X2}&quot;);</span></div>
+<div class="line"><span class="lineno">  337</span><span class="comment">            offset += 2;</span></div>
+<div class="line"><span class="lineno">  338</span><span class="comment">            extensionLength = TwoBytesToShort(new byte[] { data[offset], data[offset + 1] });</span></div>
+<div class="line"><span class="lineno">  339</span><span class="comment">            Console.WriteLine($&quot;(offset {offset} (riga {row}, col {col}))\tExtension Length: 0x{data[offset]:X2} 0x{data[offset + 1]:X2} (int : {extensionLength})&quot;);</span></div>
+<div class="line"><span class="lineno">  340</span><span class="comment">            offset += 2;</span></div>
+<div class="line"><span class="lineno">  341</span><span class="comment">            extensionData = new byte[extensionLength];</span></div>
+<div class="line"><span class="lineno">  342</span><span class="comment">            Array.Copy(data, offset, extensionData, 0, extensionLength);</span></div>
+<div class="line"><span class="lineno">  343</span><span class="comment">            Console.WriteLine($&quot;(offset {offset} (riga {row}, col {col}))\tExtension Data: {BitConverter.ToString(extensionData).Replace(&quot;-&quot;, &quot; &quot;)} -&gt; {Encoding.ASCII.GetString(extensionData)}&quot;);</span></div>
+<div class="line"><span class="lineno">  344</span><span class="comment">*/</span></div>
+<div class="line"><span class="lineno">  345</span> </div>
+<div class="line"><span class="lineno">  346</span> </div>
+<div class="line"><span class="lineno">  347</span>        Console.WriteLine(<span class="stringliteral">&quot;Client Hello (TLS version max 1.2) parsed!&quot;</span>);</div>
+<div class="line"><span class="lineno">  348</span>    }</div>
+<div class="line"><span class="lineno">  349</span>}</div>
+<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html">HSB.TLS.Messages.ClientHello</a></div><div class="ttdef"><b>Definition</b> <a href="_client_hello_8cs_source.html#l00006">ClientHello.cs:7</a></div></div>
+<div class="ttc" id="ainterface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension_html"><div class="ttname"><a href="interface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension.html">HSB.TLS.Extensions.IExtension</a></div><div class="ttdef"><b>Definition</b> <a href="_i_extension_8cs_source.html#l00007">IExtension.cs:8</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_html_a3990ef88d0f4cc432d134fa5893b453f"><div class="ttname"><a href="namespace_h_s_b.html#a3990ef88d0f4cc432d134fa5893b453f">HSB.DataReader</a></div><div class="ttdeci">class DataReader(byte[] data)</div><div class="ttdoc">A class to simplify reading data from a byte array.</div><div class="ttdef"><b>Definition</b> <a href="_data_reader_8cs_source.html#l00005">DataReader.cs:5</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -1,6 +1,6 @@
 # HttpServerBoxed
 
-![alt text](banner.png)
+![](banner.png)
 
 ### 🇬🇧🇺🇸 Description
 

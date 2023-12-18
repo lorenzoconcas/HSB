@@ -4,19 +4,15 @@ var annotated_dup =
       [ "Components", "namespace_h_s_b_1_1_components.html", [
         [ "WebSockets", "namespace_h_s_b_1_1_components_1_1_web_sockets.html", [
           [ "Frame", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame" ],
-          [ "Message", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_message.html", null ],
-          [ "WebSocket", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket.html", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket" ]
+          [ "Message", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_message.html", null ]
         ] ],
         [ "FilePart", "class_h_s_b_1_1_components_1_1_file_part.html", null ],
         [ "Form", "class_h_s_b_1_1_components_1_1_form.html", null ],
-        [ "FormPart", "class_h_s_b_1_1_components_1_1_form_part.html", null ],
-        [ "MultiPartFormData", "class_h_s_b_1_1_components_1_1_multi_part_form_data.html", "class_h_s_b_1_1_components_1_1_multi_part_form_data" ]
-      ] ],
-      [ "DefaultPages", "namespace_h_s_b_1_1_default_pages.html", [
-        [ "FileList", "class_h_s_b_1_1_default_pages_1_1_file_list.html", "class_h_s_b_1_1_default_pages_1_1_file_list" ]
+        [ "FormPart", "class_h_s_b_1_1_components_1_1_form_part.html", null ]
       ] ],
       [ "Exceptions", "namespace_h_s_b_1_1_exceptions.html", [
         [ "CookieValuesNotSetException", "class_h_s_b_1_1_exceptions_1_1_cookie_values_not_set_exception.html", null ],
+        [ "DeprecatedTLSVersionException", "class_h_s_b_1_1_exceptions_1_1_deprecated_t_l_s_version_exception.html", null ],
         [ "InvalidConfigurationParameterException", "class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html", null ],
         [ "InvalidHttpCodeException", "class_h_s_b_1_1_exceptions_1_1_invalid_http_code_exception.html", null ],
         [ "InvalidRedirectRoute", "class_h_s_b_1_1_exceptions_1_1_invalid_redirect_route.html", null ]
@@ -37,11 +33,8 @@ var annotated_dup =
           [ "SupportedGroups", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_supported_groups.html", null ]
         ] ],
         [ "Messages", "namespace_h_s_b_1_1_t_l_s_1_1_messages.html", [
-          [ "ClientHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html", null ],
-          [ "ServerHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_server_hello.html", null ]
+          [ "ClientHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html", null ]
         ] ],
-        [ "Curl", "class_h_s_b_1_1_t_l_s_1_1_curl.html", "class_h_s_b_1_1_t_l_s_1_1_curl" ],
-        [ "CustomTLS", "class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html", null ],
         [ "ProtocolVersion", "class_h_s_b_1_1_t_l_s_1_1_protocol_version.html", "class_h_s_b_1_1_t_l_s_1_1_protocol_version" ]
       ] ],
       [ "WebSockets", "namespace_h_s_b_1_1_web_sockets.html", [
@@ -52,12 +45,9 @@ var annotated_dup =
       [ "Configuration", "class_h_s_b_1_1_configuration.html", "class_h_s_b_1_1_configuration" ],
       [ "Cookie", "class_h_s_b_1_1_cookie.html", null ],
       [ "Custom", "class_h_s_b_1_1_custom.html", null ],
-      [ "DataReader", "class_h_s_b_1_1_data_reader.html", "class_h_s_b_1_1_data_reader" ],
       [ "DataWriter", "class_h_s_b_1_1_data_writer.html", "class_h_s_b_1_1_data_writer" ],
       [ "Debugger", "class_h_s_b_1_1_debugger.html", null ],
       [ "Error", "class_h_s_b_1_1_error.html", null ],
-      [ "Index", "class_h_s_b_1_1_index.html", null ],
-      [ "OAuth1_0Information", "struct_h_s_b_1_1_o_auth1__0_information.html", null ],
       [ "Request", "class_h_s_b_1_1_request.html", "class_h_s_b_1_1_request" ],
       [ "Response", "class_h_s_b_1_1_response.html", "class_h_s_b_1_1_response" ],
       [ "Server", "class_h_s_b_1_1_server.html", null ],
@@ -68,8 +58,8 @@ var annotated_dup =
       [ "SystemTLS", "class_h_s_b_1_1_system_t_l_s.html", null ],
       [ "TLSImpl", "class_h_s_b_1_1_t_l_s_impl.html", null ]
     ] ],
-    [ "HSBStandalone", "namespace_h_s_b_standalone.html", [
-      [ "HSBStandalone", "class_h_s_b_standalone_1_1_h_s_b_standalone.html", null ]
+    [ "HSBBootstrapper", "namespace_h_s_b_bootstrapper.html", [
+      [ "Bootstrapper", "class_h_s_b_bootstrapper_1_1_bootstrapper.html", null ]
     ] ],
     [ "Runner", "namespace_runner.html", [
       [ "RunnerModels", "namespace_runner_1_1_runner_models.html", [
@@ -83,7 +73,6 @@ var annotated_dup =
       [ "AssociatedFileServletMultipleCustomMethods", "class_runner_1_1_associated_file_servlet_multiple_custom_methods.html", null ],
       [ "AssociatedFileServletMultipleMethods", "class_runner_1_1_associated_file_servlet_multiple_methods.html", null ],
       [ "AssociatedFileServletOneMethod", "class_runner_1_1_associated_file_servlet_one_method.html", null ],
-      [ "FileUpload", "class_runner_1_1_file_upload.html", null ],
       [ "Form", "class_runner_1_1_form.html", null ],
       [ "HSBRunner", "class_runner_1_1_h_s_b_runner.html", null ],
       [ "JsonResponse", "class_runner_1_1_json_response.html", null ],
@@ -91,12 +80,10 @@ var annotated_dup =
       [ "Parameters", "class_runner_1_1_parameters.html", null ],
       [ "SendHTMLFile", "class_runner_1_1_send_h_t_m_l_file.html", null ],
       [ "SharedObjects", "class_runner_1_1_shared_objects.html", null ],
-      [ "SingleBinding", "class_runner_1_1_single_binding.html", null ],
-      [ "WebSocketHandler", "class_runner_1_1_web_socket_handler.html", "class_runner_1_1_web_socket_handler" ]
+      [ "SingleBinding", "class_runner_1_1_single_binding.html", null ]
     ] ],
     [ "Template", "namespace_template.html", [
       [ "Servlet", "class_template_1_1_servlet.html", null ]
     ] ],
-    [ "DeprecatedTLSVersionException", "class_deprecated_t_l_s_version_exception.html", null ],
     [ "PluginLoadContext", "class_plugin_load_context.html", null ]
 ];

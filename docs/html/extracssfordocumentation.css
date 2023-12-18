@@ -1,8 +1,10 @@
 img[alt='Logo'] {
-    width: 96px;
+    width: 80px;
+    padding:10px;
 }
 
-img.inline[title='alt text'] {
-    width: 600px;
+
+img[src="banner.png"]{
+     width: 600px;
     max-width: 600px;
 }

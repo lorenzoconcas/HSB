@@ -127,7 +127,7 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">void</span> PrintLoadedAssemblies(<span class="keywordtype">bool</span> filter = <span class="keyword">true</span>)</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        AppDomain currentDomain = AppDomain.CurrentDomain;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        List&lt;Assembly&gt; assems = currentDomain.GetAssemblies().ToList();</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        List&lt;Assembly&gt; assems = [.. currentDomain.GetAssemblies()];</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="keywordflow">if</span> (filter)</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        {</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            assems.RemoveAll(a =&gt; a.ToString().StartsWith(<span class="stringliteral">&quot;System&quot;</span>));</div>
@@ -137,7 +137,7 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keywordflow">foreach</span> (Assembly assem <span class="keywordflow">in</span> assems)</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            List&lt;Type&gt; classes = assem.GetTypes().ToList();</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>            List&lt;Type&gt; classes = [.. assem.GetTypes()];</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            <span class="keywordflow">foreach</span> (var c <span class="keywordflow">in</span> classes)</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                Terminal.WriteLine(c.FullName, BG_COLOR.WHITE, FG_COLOR.BLUE);</div>
@@ -146,7 +146,7 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keyword">public</span> <span class="keyword">static</span> T Safe&lt;T&gt;(T? o, T safe) =&gt; o ?? safe!;</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">public</span> <span class="keyword">static</span> T TryGetValueFromDict&lt;T&gt;(<span class="keyword">this</span> Dictionary&lt;string, T&gt; dict, <span class="keywordtype">string</span> key, T safe)</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    {</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">if</span> (dict.ContainsKey(key)) <span class="keywordflow">return</span> dict[key];</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">if</span> (dict.TryGetValue(key, out T? value)) <span class="keywordflow">return</span> value;</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordflow">else</span> <span class="keywordflow">return</span> safe;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    }</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">string</span> DictToString(<span class="keyword">this</span> Dictionary&lt;string, string&gt; obj)</div>
@@ -297,7 +297,7 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    }</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="keyword">public</span> <span class="keyword">static</span> List&lt;byte[]&gt; Split(<span class="keyword">this</span> <span class="keywordtype">byte</span>[] array, <span class="keywordtype">byte</span>[] separator)</div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    {</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        List&lt;byte[]&gt; result = <span class="keyword">new</span>();</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>        List&lt;byte[]&gt; result = [];</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        <span class="keywordtype">int</span> offset = 0;</div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordflow">while</span> (offset &lt; array.Length)</div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        {</div>
@@ -388,13 +388,13 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span> </div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">bool</span>[] ToBitArray(<span class="keyword">this</span> <span class="keywordtype">byte</span>[] array)</div>
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    {</div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>        List&lt;bool&gt; bits = <span class="keyword">new</span>();</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>        List&lt;bool&gt; bits = [];</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span> </div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        <span class="keywordflow">foreach</span> (var b <span class="keywordflow">in</span> array)</div>
 <div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>        {</div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>            bits.AddRange(b.ToBitArray());</div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>        }</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        <span class="keywordflow">return</span> bits.ToArray();</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>        <span class="keywordflow">return</span> [.. bits];</div>
 <div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    }</div>
 <div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span> </div>
 <div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">byte</span> GetByte(params <span class="keywordtype">bool</span>[] bits)</div>
@@ -436,33 +436,33 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    {</div>
 <div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        <span class="keywordflow">if</span> (bits.Length % 8 != 0) <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentException(<span class="stringliteral">&quot;The array must have a length multiple of 8&quot;</span>);</div>
 <div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span> </div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        List&lt;byte&gt; bytes = <span class="keyword">new</span>();</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>        List&lt;byte&gt; bytes = [];</div>
 <div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; bits.Length; i += 8)</div>
 <div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        {</div>
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>            bytes.Add(GetByte(bits[i..(i + 8)]));</div>
 <div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        }</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        <span class="keywordflow">return</span> bytes.ToArray();</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        <span class="keywordflow">return</span> [.. bytes];</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    }</div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span> </div>
 <div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    <span class="keyword">public</span> <span class="keyword">static</span> T[] ExtendRepeating&lt;T&gt;(<span class="keyword">this</span> T[] array, <span class="keywordtype">int</span> size)</div>
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    {</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>        List&lt;T&gt; result = <span class="keyword">new</span>();</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>        List&lt;T&gt; result = [];</div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; size; i++)</div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>        {</div>
 <div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>            result.Add(array[i % array.Length]);</div>
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>        }</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>        <span class="keywordflow">return</span> result.ToArray();</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>        <span class="keywordflow">return</span> [.. result];</div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span> </div>
 <div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    }</div>
 <div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
 <div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>    <span class="keyword">internal</span> <span class="keyword">static</span> <span class="keywordtype">bool</span> IsEmbeddedResource(<span class="keywordtype">string</span> url, <span class="keywordtype">string</span> prefix = <span class="stringliteral">&quot;&quot;</span>)</div>
 <div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>    {</div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>        <span class="keywordflow">if</span> (url.StartsWith(<span class="stringliteral">&quot;/&quot;</span>)) url = url[1..];</div>
-<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>        url = url.Replace(<span class="stringliteral">&quot;/&quot;</span>, <span class="stringliteral">&quot;.&quot;</span>);</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>        <span class="keywordflow">if</span> (url.StartsWith(<span class="charliteral">&#39;/&#39;</span>)) url = url[1..];</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>        url = url.Replace(<span class="charliteral">&#39;/&#39;</span>, <span class="charliteral">&#39;.&#39;</span>);</div>
 <div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        <span class="keywordflow">if</span> (prefix != <span class="stringliteral">&quot;&quot;</span>)</div>
 <div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>            url = $<span class="stringliteral">&quot;{prefix}.{url}&quot;</span>;</div>
 <div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>        AppDomain currentDomain = AppDomain.CurrentDomain;</div>
-<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>        List&lt;Assembly&gt; assemblies = currentDomain.GetAssemblies().ToList();</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>        List&lt;Assembly&gt; assemblies = [.. currentDomain.GetAssemblies()];</div>
 <div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span> </div>
 <div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>        assemblies.RemoveAll(a =&gt; a.ToString().StartsWith(<span class="stringliteral">&quot;System&quot;</span>));</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>        assemblies.RemoveAll(a =&gt; a.ToString().StartsWith(<span class="stringliteral">&quot;Microsoft&quot;</span>));</div>
@@ -479,14 +479,14 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>    }</div>
 <div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span> </div>
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>    <span class="comment">//Search all the loaded assemblies for the resource, then reads it and returns it as object</span></div>
-<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>    <span class="keyword">internal</span> <span class="keyword">static</span> T LoadResource&lt;T&gt;(<span class="keywordtype">string</span> resName, <span class="keywordtype">string</span> prefix = <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>    <span class="keyword">public</span> <span class="keyword">static</span> T LoadResource&lt;T&gt;(<span class="keywordtype">string</span> resName, <span class="keywordtype">string</span> prefix = <span class="stringliteral">&quot;&quot;</span>)</div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    {</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>        <span class="keywordflow">if</span> (resName.StartsWith(<span class="stringliteral">&quot;/&quot;</span>)) resName = resName[1..];</div>
-<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>        resName = resName.Replace(<span class="stringliteral">&quot;/&quot;</span>, <span class="stringliteral">&quot;.&quot;</span>);</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>        <span class="keywordflow">if</span> (resName.StartsWith(<span class="charliteral">&#39;/&#39;</span>)) resName = resName[1..];</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>        resName = resName.Replace(<span class="charliteral">&#39;/&#39;</span>, <span class="charliteral">&#39;.&#39;</span>);</div>
 <div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>        <span class="keywordflow">if</span> (prefix != <span class="stringliteral">&quot;&quot;</span>)</div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>            resName = $<span class="stringliteral">&quot;{prefix}.{resName}&quot;</span>;</div>
 <div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>        AppDomain currentDomain = AppDomain.CurrentDomain;</div>
-<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>        List&lt;Assembly&gt; assemblies = currentDomain.GetAssemblies().ToList();</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>        List&lt;Assembly&gt; assemblies = [.. currentDomain.GetAssemblies()];</div>
 <div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span> </div>
 <div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>        assemblies.RemoveAll(a =&gt; a.ToString().StartsWith(<span class="stringliteral">&quot;System&quot;</span>));</div>
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>        assemblies.RemoveAll(a =&gt; a.ToString().StartsWith(<span class="stringliteral">&quot;Microsoft&quot;</span>));</div>
@@ -499,15 +499,32 @@ $(document).ready(function(){initNavTree('_h_s_b_2_utils_8cs_source.html',''); i
 <div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>            <span class="keywordtype">string</span> resourceName = assembly.GetManifestResourceNames().First(str =&gt; str.EndsWith(resName));</div>
 <div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>            <span class="keywordflow">if</span> (resourceName != <span class="keyword">null</span>)</div>
 <div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>            {</div>
-<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>                <span class="keyword">using </span>Stream stream = assembly.GetManifestResourceStream(resourceName)!;</div>
-<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>                <span class="keyword">using </span>StreamReader reader = <span class="keyword">new</span>(stream);</div>
-<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>                <span class="keywordflow">return</span> (T)Convert.ChangeType(reader.ReadToEnd(), typeof(T));</div>
-<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>            }</div>
-<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>        }</div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        <span class="keywordflow">return</span> <span class="keywordflow">default</span>!;</div>
-<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>    }</div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>}</div>
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span> </div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>                <span class="keywordflow">try</span></div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>                {</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span> </div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>                    <span class="keyword">using </span>Stream stream = assembly.GetManifestResourceStream(resourceName)!;</div>
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>                    <span class="keywordflow">if</span> (typeof(T) == typeof(<span class="keywordtype">byte</span>[]))</div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>                    {</div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>                        var ms = <span class="keyword">new</span> MemoryStream();</div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>                        stream.CopyTo(ms);</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>                        <span class="keywordflow">return</span> (T)Convert.ChangeType(ms.ToArray(), typeof(T));</div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>                    }</div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>                    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>                    {</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>                        <span class="keyword">using </span>StreamReader r = <span class="keyword">new</span>(stream);</div>
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>                        <span class="keywordflow">return</span> (T)Convert.ChangeType(r.ReadToEnd(), typeof(T));</div>
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>                    }</div>
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>                }</div>
+<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>                <span class="keywordflow">catch</span> (Exception)</div>
+<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>                {</div>
+<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>                    <span class="keywordflow">return</span> <span class="keywordflow">default</span>!;</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>                }</div>
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>            }</div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>        }</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>        <span class="keywordflow">return</span> <span class="keywordflow">default</span>!;</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>    }</div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>}</div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span> </div>
 <div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

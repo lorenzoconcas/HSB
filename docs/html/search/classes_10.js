@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tlsimpl_0',['TLSImpl',['../class_h_s_b_1_1_t_l_s_impl.html',1,'HSB']]]
+  ['websocket_0',['WebSocket',['../class_h_s_b_1_1_web_sockets_1_1_web_socket.html',1,'HSB::WebSockets']]]
 ];

@@ -111,22 +111,22 @@ $(document).ready(function(){initNavTree('_custom_8cs_source.html',''); initResi
 <div class="foldopen" id="foldopen00009" data-start="{" data-end="};">
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="class_h_s_b_1_1_custom.html">    9</a></span><span class="keyword">public</span> <span class="keyword">class </span><a class="code hl_class" href="class_h_s_b_1_1_custom.html">Custom</a></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>{</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_curl.html">Curl</a> c = <span class="keyword">new</span>();</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    IPAddress address = IPAddress.Any;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    IPEndPoint endPoint;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    Socket listener;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    readonly <a class="code hl_function" href="namespace_h_s_b_1_1_t_l_s.html#a701975eea2d1041adf5fbe89ce232395">Curl</a> c = <span class="keyword">new</span>();</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    readonly IPAddress address = IPAddress.Any;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    readonly IPEndPoint endPoint;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    readonly Socket listener;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keywordtype">byte</span>[] buffer = <span class="keyword">new</span> <span class="keywordtype">byte</span>[512];</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    readonly <span class="keywordtype">byte</span>[] buffer = <span class="keyword">new</span> <span class="keywordtype">byte</span>[512];</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">public</span> <a class="code hl_class" href="class_h_s_b_1_1_custom.html">Custom</a>(<span class="keywordtype">string</span>[] args)</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">public</span> <a class="code hl_class" href="class_h_s_b_1_1_custom.html">Custom</a>()</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    {</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        Console.WriteLine(<span class="stringliteral">&quot;Hello from HSB&quot;</span>);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        c.setTLSVersion(TLSVersion.TLS_1_2);</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        <span class="comment">//c.RunAsync(false, 700);</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        c.SetTLSVersion(TLSVersion.TLS_1_2);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        c.RunAsync(<span class="keyword">false</span>, 700);</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        <span class="comment">//c.setCipherSuites(&quot;TLS_AES_256_GCM_SHA384 TLS_CHACHA20_POLY1305_SHA256 TLS_AES_128_GCM_SHA256 TLS_AES_128_CCM_8_SHA256 TLS_AES_128_CCM_SHA256&quot;);</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        endPoint = <span class="keyword">new</span>(address, 8080);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        endPoint = <span class="keyword">new</span>(address, 443);</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        listener = <span class="keyword">new</span>(</div>
@@ -147,7 +147,7 @@ $(document).ready(function(){initNavTree('_custom_8cs_source.html',''); initResi
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>            <span class="keywordtype">int</span> received = newSocket.Receive(buffer);</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            <span class="keywordflow">if</span> (received &gt; 0 &amp;&amp; buffer[0] == 0x16) <span class="comment">//parse client hello</span></div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            {</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                <span class="keyword">new</span> <a class="code hl_class" href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">CustomTLS</a>(newSocket).Parse(buffer);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                <span class="keyword">new</span> CustomTLS(newSocket).Parse(buffer);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            }</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            {</div>
@@ -170,10 +170,9 @@ $(document).ready(function(){initNavTree('_custom_8cs_source.html',''); initResi
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>}</div>
 </div>
 <div class="ttc" id="aclass_h_s_b_1_1_custom_html"><div class="ttname"><a href="class_h_s_b_1_1_custom.html">HSB.Custom</a></div><div class="ttdef"><b>Definition</b> <a href="_custom_8cs_source.html#l00009">Custom.cs:10</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_curl_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_curl.html">HSB.TLS.Curl</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00008">Curl.cs:9</a></div></div>
-<div class="ttc" id="aclass_h_s_b_1_1_t_l_s_1_1_custom_t_l_s_html"><div class="ttname"><a href="class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html">HSB.TLS.CustomTLS</a></div><div class="ttdef"><b>Definition</b> <a href="_t_l_s_8cs_source.html#l00012">TLS.cs:13</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_1_1_t_l_s_1_1_constants_html"><div class="ttname"><a href="namespace_h_s_b_1_1_t_l_s_1_1_constants.html">HSB.TLS.Constants</a></div><div class="ttdef"><b>Definition</b> <a href="_cipher_suite_8cs_source.html#l00004">CipherSuite.cs:4</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_1_1_t_l_s_html"><div class="ttname"><a href="namespace_h_s_b_1_1_t_l_s.html">HSB.TLS</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_t_l_s_html_a701975eea2d1041adf5fbe89ce232395"><div class="ttname"><a href="namespace_h_s_b_1_1_t_l_s.html#a701975eea2d1041adf5fbe89ce232395">HSB.TLS.Curl</a></div><div class="ttdeci">class Curl(string url=&quot;localhost&quot;, string port=&quot;443&quot;)</div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00008">Curl.cs:8</a></div></div>
 <div class="ttc" id="anamespace_h_s_b_html"><div class="ttname"><a href="namespace_h_s_b.html">HSB</a></div><div class="ttdef"><b>Definition</b> <a href="_curl_8cs_source.html#l00007">Curl.cs:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

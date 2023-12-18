@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('_experiments_2_t_l_s_impl_2_utils_8cs_
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespace_h_s_b.html">HSB</a>;</div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//todo -&gt; move to HSB/Utils.cs</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//todo -&gt; merge with HSB/Utils.cs</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class </span>Utils</div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span>{</div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>    <span class="keyword">public</span> <span class="keyword">static</span> uint UInt24ToUInt32(<span class="keywordtype">byte</span>[] data)</div>
@@ -130,7 +130,7 @@ $(document).ready(function(){initNavTree('_experiments_2_t_l_s_impl_2_utils_8cs_
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keywordtype">byte</span>[] UShortToBytes(ushort data)</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> <span class="keywordtype">byte</span>[] { (byte)(data &gt;&gt; 8), (byte)(data &amp; 0xFF) };</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">return</span> [(byte)(data &gt;&gt; 8), (byte)(data &amp; 0xFF)];</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    }</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>

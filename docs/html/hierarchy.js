@@ -7,18 +7,16 @@ var hierarchy =
       [ "HSB.AssociatedFile", "class_h_s_b_1_1_associated_file.html", null ],
       [ "HSB.Binding", "class_h_s_b_1_1_binding.html", null ]
     ] ],
+    [ "HSBBootstrapper.Bootstrapper", "class_h_s_b_bootstrapper_1_1_bootstrapper.html", null ],
     [ "HSB.TLS.Messages.ClientHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_client_hello.html", null ],
     [ "HSB.Configuration", "class_h_s_b_1_1_configuration.html", null ],
     [ "HSB.Cookie", "class_h_s_b_1_1_cookie.html", null ],
-    [ "HSB.TLS.Curl", "class_h_s_b_1_1_t_l_s_1_1_curl.html", null ],
     [ "HSB.Custom", "class_h_s_b_1_1_custom.html", null ],
-    [ "HSB.TLS.CustomTLS", "class_h_s_b_1_1_t_l_s_1_1_custom_t_l_s.html", null ],
-    [ "HSB.DataReader", "class_h_s_b_1_1_data_reader.html", null ],
     [ "HSB.DataWriter", "class_h_s_b_1_1_data_writer.html", null ],
     [ "HSB.Debugger", "class_h_s_b_1_1_debugger.html", null ],
     [ "Exception", null, [
-      [ "DeprecatedTLSVersionException", "class_deprecated_t_l_s_version_exception.html", null ],
       [ "HSB.Exceptions.CookieValuesNotSetException", "class_h_s_b_1_1_exceptions_1_1_cookie_values_not_set_exception.html", null ],
+      [ "HSB.Exceptions.DeprecatedTLSVersionException", "class_h_s_b_1_1_exceptions_1_1_deprecated_t_l_s_version_exception.html", null ],
       [ "HSB.Exceptions.InvalidConfigurationParameterException", "class_h_s_b_1_1_exceptions_1_1_invalid_configuration_parameter_exception.html", null ],
       [ "HSB.Exceptions.InvalidHttpCodeException", "class_h_s_b_1_1_exceptions_1_1_invalid_http_code_exception.html", null ],
       [ "HSB.Exceptions.InvalidRedirectRoute", "class_h_s_b_1_1_exceptions_1_1_invalid_redirect_route.html", null ]
@@ -29,7 +27,6 @@ var hierarchy =
     ] ],
     [ "HSB.Components.WebSockets.Frame", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html", null ],
     [ "Runner.HSBRunner", "class_runner_1_1_h_s_b_runner.html", null ],
-    [ "HSBStandalone.HSBStandalone", "class_h_s_b_standalone_1_1_h_s_b_standalone.html", null ],
     [ "HSB.TLS.Extensions.IExtension", "interface_h_s_b_1_1_t_l_s_1_1_extensions_1_1_i_extension.html", [
       [ "HSB.TLS.Extensions.ApplicationLayerProtocolNegotiation", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_application_layer_protocol_negotiation.html", null ],
       [ "HSB.TLS.Extensions.ECPointFormats", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_e_c_point_formats.html", null ],
@@ -41,22 +38,16 @@ var hierarchy =
       [ "HSB.TLS.Extensions.SupportedGroups", "class_h_s_b_1_1_t_l_s_1_1_extensions_1_1_supported_groups.html", null ]
     ] ],
     [ "HSB.Components.WebSockets.Message", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_message.html", null ],
-    [ "HSB.Components.MultiPartFormData", "class_h_s_b_1_1_components_1_1_multi_part_form_data.html", null ],
-    [ "HSB.OAuth1_0Information", "struct_h_s_b_1_1_o_auth1__0_information.html", null ],
     [ "HSB.TLS.ProtocolVersion", "class_h_s_b_1_1_t_l_s_1_1_protocol_version.html", null ],
     [ "HSB.Request", "class_h_s_b_1_1_request.html", null ],
     [ "HSB.Response", "class_h_s_b_1_1_response.html", null ],
     [ "HSB.Server", "class_h_s_b_1_1_server.html", null ],
-    [ "HSB.TLS.Messages.ServerHello", "class_h_s_b_1_1_t_l_s_1_1_messages_1_1_server_hello.html", null ],
     [ "HSB.Servlet", "class_h_s_b_1_1_servlet.html", [
-      [ "HSB.DefaultPages.FileList", "class_h_s_b_1_1_default_pages_1_1_file_list.html", null ],
       [ "HSB.Error", "class_h_s_b_1_1_error.html", null ],
-      [ "HSB.Index", "class_h_s_b_1_1_index.html", null ],
       [ "Runner.AssociatedFileServletCustomMethods", "class_runner_1_1_associated_file_servlet_custom_methods.html", null ],
       [ "Runner.AssociatedFileServletMultipleCustomMethods", "class_runner_1_1_associated_file_servlet_multiple_custom_methods.html", null ],
       [ "Runner.AssociatedFileServletMultipleMethods", "class_runner_1_1_associated_file_servlet_multiple_methods.html", null ],
       [ "Runner.AssociatedFileServletOneMethod", "class_runner_1_1_associated_file_servlet_one_method.html", null ],
-      [ "Runner.FileUpload", "class_runner_1_1_file_upload.html", null ],
       [ "Runner.Form", "class_runner_1_1_form.html", null ],
       [ "Runner.JsonResponse", "class_runner_1_1_json_response.html", null ],
       [ "Runner.MultiBinding", "class_runner_1_1_multi_binding.html", null ],
@@ -75,8 +66,5 @@ var hierarchy =
     [ "HSB.TLS.Constants.SupportedGroupsTypes", "class_h_s_b_1_1_t_l_s_1_1_constants_1_1_supported_groups_types.html", null ],
     [ "HSB.SystemTLS", "class_h_s_b_1_1_system_t_l_s.html", null ],
     [ "HSB.TLSImpl", "class_h_s_b_1_1_t_l_s_impl.html", null ],
-    [ "HSB.Components.WebSockets.WebSocket", "class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket.html", [
-      [ "Runner.WebSocketHandler", "class_runner_1_1_web_socket_handler.html", null ]
-    ] ],
     [ "HSB.WebSockets.WebSocket", "class_h_s_b_1_1_web_sockets_1_1_web_socket.html", null ]
 ];

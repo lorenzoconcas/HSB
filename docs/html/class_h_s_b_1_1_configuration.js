@@ -2,7 +2,7 @@ var class_h_s_b_1_1_configuration =
 [
     [ "Configuration", "class_h_s_b_1_1_configuration.html#a9ed733219b854a37a087ca712e721680", null ],
     [ "Configuration", "class_h_s_b_1_1_configuration.html#a25555c41e54a0e9c3595f69e1fe6dc58", null ],
-    [ "Configuration", "class_h_s_b_1_1_configuration.html#a6628e90f64ff80410de698128b40b22a", null ],
+    [ "Configuration", "class_h_s_b_1_1_configuration.html#a701ef934150d06c4fc692cb2004d6686", null ],
     [ "AddCustomGlobalCookie", "class_h_s_b_1_1_configuration.html#a11776c1a9fa620633647038d9764a5a3", null ],
     [ "AddCustomGlobalHeader", "class_h_s_b_1_1_configuration.html#a3cfdc7ff414cb5f28c1d76e59843d03a", null ],
     [ "AddSharedObject", "class_h_s_b_1_1_configuration.html#a969070184f3cc859f3c16dfc355e68b1", null ],
@@ -35,6 +35,7 @@ var class_h_s_b_1_1_configuration =
     [ "IPAutoblock", "class_h_s_b_1_1_configuration.html#a044a463e6cd75bcbbf7073a3e6035f9d", null ],
     [ "PermanentIPList", "class_h_s_b_1_1_configuration.html#a14912c05081f54a504a8582f979a9ba4", null ],
     [ "Port", "class_h_s_b_1_1_configuration.html#a85d8ec8abb5266cba795eb2783db950d", null ],
+    [ "PublicURL", "class_h_s_b_1_1_configuration.html#aa4086855b52a92d9bdef7ecfc8394926", null ],
     [ "RequestMaxSize", "class_h_s_b_1_1_configuration.html#aa260c9d1bc475cfd186e138d840f2c68", null ],
     [ "ServeEmbeddedResource", "class_h_s_b_1_1_configuration.html#accad064ebef5991c910d7ab3942bda68", null ],
     [ "sharedObjects", "class_h_s_b_1_1_configuration.html#a6c0ecab7b311c62c25ab46472305e5d0", null ],

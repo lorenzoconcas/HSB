@@ -183,7 +183,7 @@ Public Member Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="_protocol_version_8cs_source.html#l00033">33</a> of file <a class="el" href="_protocol_version_8cs_source.html">ProtocolVersion.cs</a>.</p>
 <div class="fragment"><div class="line"><span class="lineno">   34</span>    {</div>
-<div class="line"><span class="lineno">   35</span>        <span class="keywordflow">return</span> <span class="keyword">new</span> uint[] { (uint)version &gt;&gt; 8, (uint)version &amp; 0xFF };</div>
+<div class="line"><span class="lineno">   35</span>        <span class="keywordflow">return</span> [(uint)version &gt;&gt; 8, (uint)version &amp; 0xFF];</div>
 <div class="line"><span class="lineno">   36</span>    }</div>
 </div><!-- fragment -->
 </div>

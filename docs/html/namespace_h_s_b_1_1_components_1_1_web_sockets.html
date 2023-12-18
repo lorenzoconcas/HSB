@@ -94,7 +94,8 @@ $(document).ready(function(){initNavTree('namespace_h_s_b_1_1_components_1_1_web
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">HSB.Components.WebSockets Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -104,8 +105,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_components_1_1_web_sockets_1_1_frame.html">Frame</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_components_1_1_web_sockets_1_1_message.html">Message</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_s_b_1_1_components_1_1_web_sockets_1_1_web_socket.html">WebSocket</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -122,6 +121,11 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:aea8f627fe09a5408ce5c22d13ece284b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The opcodes for the WebSocket protocol.  <a href="namespace_h_s_b_1_1_components_1_1_web_sockets.html#aea8f627fe09a5408ce5c22d13ece284b">More...</a><br /></td></tr>
 <tr class="separator:aea8f627fe09a5408ce5c22d13ece284b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ad4baf5837d57d0159f8dea86dd3b5d70" id="r_ad4baf5837d57d0159f8dea86dd3b5d70"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_h_s_b_1_1_components_1_1_web_sockets.html#ad4baf5837d57d0159f8dea86dd3b5d70">WebSocket</a> (<a class="el" href="class_h_s_b_1_1_request.html">Request</a> req, <a class="el" href="class_h_s_b_1_1_response.html">Response</a> res, <a class="el" href="class_h_s_b_1_1_configuration.html">Configuration</a>? c=null)</td></tr>
+<tr class="separator:ad4baf5837d57d0159f8dea86dd3b5d70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="aea8f627fe09a5408ce5c22d13ece284b" name="aea8f627fe09a5408ce5c22d13ece284b"></a>
@@ -148,6 +152,506 @@ Enumerations</h2></td></tr>
 <div class="line"><span class="lineno">   12</span>    PING = 9,</div>
 <div class="line"><span class="lineno">   13</span>    PONG = 10</div>
 <div class="line"><span class="lineno">   14</span>}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ad4baf5837d57d0159f8dea86dd3b5d70" name="ad4baf5837d57d0159f8dea86dd3b5d70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4baf5837d57d0159f8dea86dd3b5d70">&#9670;&#160;</a></span>WebSocket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">class HSB.Components.WebSockets.WebSocket </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_h_s_b_1_1_request.html">Request</a>&#160;</td>
+          <td class="paramname"><em>req</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_h_s_b_1_1_response.html">Response</a>&#160;</td>
+          <td class="paramname"><em>res</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_h_s_b_1_1_configuration.html">Configuration</a>?&#160;</td>
+          <td class="paramname"><em>c</em> = <code>null</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the Base64 string of the SecWebSocketKey+WS_GUID</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<p>Accept the ws connection request</p>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<p>Sets a message to be sent to the client when the connection is open</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sends a message to the client when the connection is open</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Exception</td><td>If connection is not opened</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sends a message to the client when the connection is open</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Exception</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Sends an object to the client as a json string</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td></td></tr>
+    <tr><td class="paramname">includeFields</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Exception</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Closes the websocket connection</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Exception</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Set requirements to accept the connection request</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">requiredHeaders</td><td></td></tr>
+    <tr><td class="paramname">requiredParams</td><td></td></tr>
+    <tr><td class="paramname">bearerToken</td><td></td></tr>
+    <tr><td class="paramname">oAuth2Token</td><td></td></tr>
+    <tr><td class="paramname">basicAuth</td><td></td></tr>
+    <tr><td class="paramname">oAuth1_0Information</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Returns the current state of the websocket</p>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+<p>OnMessage is called when a message is received from the client</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<p>OnOpen is called after a connection request is received from the client</p>
+<p>OnClose is called after a close request is received from the client, to directly close the connection use Close()</p>
+
+<p class="definition">Definition at line <a class="el" href="_h_s_b_2_components_2_web_sockets_2_web_socket_8cs_source.html#l00011">11</a> of file <a class="el" href="_h_s_b_2_components_2_web_sockets_2_web_socket_8cs_source.html">WebSocket.cs</a>.</p>
+<div class="fragment"><div class="line"><span class="lineno">   12</span>{</div>
+<div class="line"><span class="lineno">   13</span> </div>
+<div class="line"><span class="lineno">   14</span>    <span class="keyword">private</span> <span class="keyword">static</span> JsonSerializerOptions jo = <span class="keyword">new</span>()</div>
+<div class="line"><span class="lineno">   15</span>    {</div>
+<div class="line"><span class="lineno">   16</span>        MaxDepth = 0</div>
+<div class="line"><span class="lineno">   17</span>    };</div>
+<div class="line"><span class="lineno">   18</span> </div>
+<div class="line"><span class="lineno">   19</span>    <span class="comment">//todo -&gt; add multiframe support</span></div>
+<div class="line"><span class="lineno">   20</span>    <span class="keyword">protected</span> <a class="code hl_class" href="class_h_s_b_1_1_response.html">Response</a> res = res;</div>
+<div class="line"><span class="lineno">   21</span>    <span class="keyword">protected</span> <a class="code hl_class" href="class_h_s_b_1_1_request.html">Request</a> req = req;</div>
+<div class="line"><span class="lineno">   22</span>    <span class="keyword">private</span> readonly Socket socket = req.GetSocket();</div>
+<div class="line"><span class="lineno">   23</span>    <span class="keyword">protected</span> <a class="code hl_class" href="class_h_s_b_1_1_configuration.html">Configuration</a>? c = c;</div>
+<div class="line"><span class="lineno">   24</span> </div>
+<div class="line"><span class="lineno">   25</span>    <span class="keyword">private</span> WebSocketState state = WebSocketState.CLOSED;</div>
+<div class="line"><span class="lineno">   26</span> </div>
+<div class="line"><span class="lineno">   27</span><span class="preprocessor">    #region Acceptance Requirements</span></div>
+<div class="line"><span class="lineno">   28</span>    Dictionary&lt;string, string&gt; requiredHeaders = [];</div>
+<div class="line"><span class="lineno">   29</span>    Dictionary&lt;string, string&gt; requiredParams = [];</div>
+<div class="line"><span class="lineno">   30</span>    <span class="keywordtype">string</span> bearerToken = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   31</span>    <span class="keywordtype">string</span> oAuth2Token = <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">   32</span>    Tuple&lt;string, string&gt;? basicAuth = <span class="keyword">null</span>;</div>
+<div class="line"><span class="lineno">   33</span>    OAuth1_0Information? oAuth1_0Information = <span class="keyword">null</span>;</div>
+<div class="line"><span class="lineno">   34</span><span class="preprocessor">    #endregion</span></div>
+<div class="line"><span class="lineno">   35</span>    <span class="keyword">private</span> <span class="keywordtype">byte</span>[] messageSentOnOpen = [];</div>
+<div class="line"><span class="lineno">   36</span> </div>
+<div class="line"><span class="lineno">   42</span>    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keywordtype">string</span> DigestKey(<span class="keywordtype">string</span> key)</div>
+<div class="line"><span class="lineno">   43</span>    {</div>
+<div class="line"><span class="lineno">   44</span>        <span class="keywordflow">return</span> Convert.ToBase64String(</div>
+<div class="line"><span class="lineno">   45</span>            SHA1.HashData(</div>
+<div class="line"><span class="lineno">   46</span>                Encoding.UTF8.GetBytes(key + WebSocketsContants.WS_GUID)</div>
+<div class="line"><span class="lineno">   47</span>            ));</div>
+<div class="line"><span class="lineno">   48</span>    }</div>
+<div class="line"><span class="lineno">   53</span>    <span class="keyword">private</span> <span class="keywordtype">bool</span> Accept()</div>
+<div class="line"><span class="lineno">   54</span>    {</div>
+<div class="line"><span class="lineno">   55</span> </div>
+<div class="line"><span class="lineno">   56</span>        <span class="keywordflow">if</span> (!req.<a class="code hl_function" href="class_h_s_b_1_1_request.html#a5ae1b1c0549c9056041a976f40f1e2f3">IsWebSocket</a>()) <span class="comment">//not a websocket request, we cannot do anything here</span></div>
+<div class="line"><span class="lineno">   57</span>        {</div>
+<div class="line"><span class="lineno">   58</span>            c?.Debug.WARNING(<span class="stringliteral">&quot;Not a websocket request, this code should never be reached&quot;</span>);</div>
+<div class="line"><span class="lineno">   59</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST);</div>
+<div class="line"><span class="lineno">   60</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   61</span>        }</div>
+<div class="line"><span class="lineno">   62</span> </div>
+<div class="line"><span class="lineno">   63</span> </div>
+<div class="line"><span class="lineno">   64</span>        var headers = req.<a class="code hl_property" href="class_h_s_b_1_1_request.html#a387bb9dbb95798340e659b257d653251">Headers</a>;</div>
+<div class="line"><span class="lineno">   65</span>        <span class="comment">//those two values are required, if they are missing -&gt; 400</span></div>
+<div class="line"><span class="lineno">   66</span>        <span class="keywordflow">if</span> (!headers.ContainsKey(<span class="stringliteral">&quot;Sec-WebSocket-Key&quot;</span>) &amp;&amp; !headers.ContainsKey(<span class="stringliteral">&quot;Sec-WebSocket-Version&quot;</span>))</div>
+<div class="line"><span class="lineno">   67</span>        {</div>
+<div class="line"><span class="lineno">   68</span>            c?.Debug.WARNING(<span class="stringliteral">&quot;Missing Sec-WebSocket-Key or Sec-WebSocket-Version, malformed request&quot;</span>);</div>
+<div class="line"><span class="lineno">   69</span>            res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST);</div>
+<div class="line"><span class="lineno">   70</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   71</span>        }</div>
+<div class="line"><span class="lineno">   72</span> </div>
+<div class="line"><span class="lineno">   73</span>        <span class="comment">//check if request contains all the required headers</span></div>
+<div class="line"><span class="lineno">   74</span>        <span class="keywordflow">if</span> (requiredHeaders.Count &gt; 0)</div>
+<div class="line"><span class="lineno">   75</span>        {</div>
+<div class="line"><span class="lineno">   76</span>            <span class="keywordflow">foreach</span> (var header <span class="keywordflow">in</span> requiredHeaders)</div>
+<div class="line"><span class="lineno">   77</span>            {</div>
+<div class="line"><span class="lineno">   78</span>                <span class="keywordflow">if</span> (!headers.TryGetValue(header.Key, out <span class="keywordtype">string</span>? value) || value != header.Value)</div>
+<div class="line"><span class="lineno">   79</span>                {</div>
+<div class="line"><span class="lineno">   80</span>                    c?.Debug.WARNING($<span class="stringliteral">&quot;Missing required header {header.Key} or value is not correct&quot;</span>);</div>
+<div class="line"><span class="lineno">   81</span>                    res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST); <span class="comment">//is this correct?</span></div>
+<div class="line"><span class="lineno">   82</span>                    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   83</span>                }</div>
+<div class="line"><span class="lineno">   84</span>            }</div>
+<div class="line"><span class="lineno">   85</span>        }</div>
+<div class="line"><span class="lineno">   86</span>        <span class="comment">//same for parameters</span></div>
+<div class="line"><span class="lineno">   87</span>        <span class="keywordflow">if</span> (requiredParams.Count &gt; 0)</div>
+<div class="line"><span class="lineno">   88</span>        {</div>
+<div class="line"><span class="lineno">   89</span>            <span class="keywordflow">foreach</span> (var param <span class="keywordflow">in</span> requiredParams)</div>
+<div class="line"><span class="lineno">   90</span>            {</div>
+<div class="line"><span class="lineno">   91</span>                <span class="keywordflow">if</span> (!req.<a class="code hl_property" href="class_h_s_b_1_1_request.html#ac30fb995e33a2d09dccbbc0b7255fe1b">Parameters</a>.TryGetValue(param.Key, out <span class="keywordtype">string</span>? value) || value != param.Value)</div>
+<div class="line"><span class="lineno">   92</span>                {</div>
+<div class="line"><span class="lineno">   93</span>                    c?.Debug.WARNING($<span class="stringliteral">&quot;Missing required parameter {param.Key} or value is not correct&quot;</span>);</div>
+<div class="line"><span class="lineno">   94</span>                    res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST); <span class="comment">//is this correct?</span></div>
+<div class="line"><span class="lineno">   95</span>                    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">   96</span>                }</div>
+<div class="line"><span class="lineno">   97</span>            }</div>
+<div class="line"><span class="lineno">   98</span>        }</div>
+<div class="line"><span class="lineno">   99</span>        <span class="comment">//if an authentication method is set, check if it is correct</span></div>
+<div class="line"><span class="lineno">  100</span>        <span class="keywordflow">if</span> (bearerToken != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">  101</span>        {</div>
+<div class="line"><span class="lineno">  102</span>            <span class="keywordflow">if</span> (!headers.TryGetValue(<span class="stringliteral">&quot;Authorization&quot;</span>, out <span class="keywordtype">string</span>? value) || value != $<span class="stringliteral">&quot;Bearer {bearerToken}&quot;</span>)</div>
+<div class="line"><span class="lineno">  103</span>            {</div>
+<div class="line"><span class="lineno">  104</span>                c?.Debug.WARNING($<span class="stringliteral">&quot;Missing or incorrect Authorization header&quot;</span>);</div>
+<div class="line"><span class="lineno">  105</span>                res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST); <span class="comment">//is this correct?</span></div>
+<div class="line"><span class="lineno">  106</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  107</span>            }</div>
+<div class="line"><span class="lineno">  108</span>        }</div>
+<div class="line"><span class="lineno">  109</span>        <span class="keywordflow">if</span> (oAuth2Token != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">  110</span>        {</div>
+<div class="line"><span class="lineno">  111</span>            <span class="keywordflow">if</span> (!headers.TryGetValue(<span class="stringliteral">&quot;Authorization&quot;</span>, out <span class="keywordtype">string</span>? value) || value != $<span class="stringliteral">&quot;OAuth {oAuth2Token}&quot;</span>)</div>
+<div class="line"><span class="lineno">  112</span>            {</div>
+<div class="line"><span class="lineno">  113</span>                c?.Debug.WARNING($<span class="stringliteral">&quot;Missing or incorrect Authorization header&quot;</span>);</div>
+<div class="line"><span class="lineno">  114</span>                res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST); <span class="comment">//is this correct?</span></div>
+<div class="line"><span class="lineno">  115</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  116</span>            }</div>
+<div class="line"><span class="lineno">  117</span>        }</div>
+<div class="line"><span class="lineno">  118</span>        <span class="keywordflow">if</span> (basicAuth != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  119</span>        {</div>
+<div class="line"><span class="lineno">  120</span>            var bAuth = req.GetBasicAuthInformation();</div>
+<div class="line"><span class="lineno">  121</span>            <span class="keywordflow">if</span> (bAuth == <span class="keyword">null</span> || bAuth.Item1 != basicAuth.Item1 || bAuth.Item2 != basicAuth.Item2)</div>
+<div class="line"><span class="lineno">  122</span>            {</div>
+<div class="line"><span class="lineno">  123</span>                c?.Debug.WARNING($<span class="stringliteral">&quot;Missing or incorrect Authorization header&quot;</span>);</div>
+<div class="line"><span class="lineno">  124</span>                res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST); <span class="comment">//is this correct?</span></div>
+<div class="line"><span class="lineno">  125</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  126</span>            }</div>
+<div class="line"><span class="lineno">  127</span>        }</div>
+<div class="line"><span class="lineno">  128</span>        <span class="keywordflow">if</span> (oAuth1_0Information != <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  129</span>        {</div>
+<div class="line"><span class="lineno">  130</span>            var oAuth1 = req.GetOAuth1_0Information();</div>
+<div class="line"><span class="lineno">  131</span>            <span class="keywordflow">if</span> (oAuth1 == <span class="keyword">null</span> || oAuth1.Equals(oAuth1))</div>
+<div class="line"><span class="lineno">  132</span>            {</div>
+<div class="line"><span class="lineno">  133</span>                c?.Debug.WARNING($<span class="stringliteral">&quot;Missing or incorrect Authorization header&quot;</span>);</div>
+<div class="line"><span class="lineno">  134</span>                res.<a class="code hl_function" href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">SendCode</a>(HTTP_CODES.BAD_REQUEST); <span class="comment">//is this correct?</span></div>
+<div class="line"><span class="lineno">  135</span>                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><span class="lineno">  136</span>            }</div>
+<div class="line"><span class="lineno">  137</span>        }</div>
+<div class="line"><span class="lineno">  138</span> </div>
+<div class="line"><span class="lineno">  139</span> </div>
+<div class="line"><span class="lineno">  140</span>        state = WebSocketState.CONNECTING;</div>
+<div class="line"><span class="lineno">  141</span> </div>
+<div class="line"><span class="lineno">  142</span>        var clientKey = headers[<span class="stringliteral">&quot;Sec-WebSocket-Key&quot;</span>];</div>
+<div class="line"><span class="lineno">  143</span>        var clientVersion = headers[<span class="stringliteral">&quot;Sec-WebSocket-Version&quot;</span>];</div>
+<div class="line"><span class="lineno">  144</span> </div>
+<div class="line"><span class="lineno">  145</span>        var key = DigestKey(clientKey);</div>
+<div class="line"><span class="lineno">  146</span>        List&lt;string&gt; response = [</div>
+<div class="line"><span class="lineno">  147</span>            <span class="stringliteral">&quot;HTTP/1.1 101 Switching Protocols\r\n&quot;</span>,</div>
+<div class="line"><span class="lineno">  148</span>            <span class="stringliteral">&quot;Upgrade: websocket\r\n&quot;</span>,</div>
+<div class="line"><span class="lineno">  149</span>            <span class="stringliteral">&quot;Connection: Upgrade\r\n&quot;</span>,</div>
+<div class="line"><span class="lineno">  150</span>            <span class="stringliteral">&quot;Sec-WebSocket-Accept: &quot;</span> + key + <span class="stringliteral">&quot;\r\n&quot;</span>,</div>
+<div class="line"><span class="lineno">  151</span>            <span class="stringliteral">&quot;Sec-WebSocket-Version: &quot;</span> + clientVersion + <span class="stringliteral">&quot;\r\n&quot;</span>,</div>
+<div class="line"><span class="lineno">  152</span>        ];</div>
+<div class="line"><span class="lineno">  153</span> </div>
+<div class="line"><span class="lineno">  154</span>        <span class="comment">//to-do add protocol support via decorator</span></div>
+<div class="line"><span class="lineno">  155</span> </div>
+<div class="line"><span class="lineno">  156</span>        var protocol = headers.GetValueOrDefault(<span class="stringliteral">&quot;Sec-WebSocket-Protocol&quot;</span>, <span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><span class="lineno">  157</span> </div>
+<div class="line"><span class="lineno">  158</span>        <span class="keywordflow">if</span> (protocol != <span class="stringliteral">&quot;&quot;</span>) <span class="comment">//if the protocol is not empty, add it to the response</span></div>
+<div class="line"><span class="lineno">  159</span>            response.Add(<span class="stringliteral">&quot;Sec-WebSocket-Protocol: &quot;</span> + protocol + <span class="stringliteral">&quot;\r\n&quot;</span>);</div>
+<div class="line"><span class="lineno">  160</span> </div>
+<div class="line"><span class="lineno">  161</span>        response.Add(<span class="stringliteral">&quot;\r\n&quot;</span>);</div>
+<div class="line"><span class="lineno">  162</span> </div>
+<div class="line"><span class="lineno">  163</span>        socket?.Send(Encoding.UTF8.GetBytes(<span class="keywordtype">string</span>.Join(<span class="stringliteral">&quot;&quot;</span>, response)));</div>
+<div class="line"><span class="lineno">  164</span> </div>
+<div class="line"><span class="lineno">  165</span>        state = WebSocketState.OPEN;</div>
+<div class="line"><span class="lineno">  166</span> </div>
+<div class="line"><span class="lineno">  167</span> </div>
+<div class="line"><span class="lineno">  168</span>        <span class="keywordflow">if</span> (messageSentOnOpen.Length &gt; 0)</div>
+<div class="line"><span class="lineno">  169</span>        {</div>
+<div class="line"><span class="lineno">  170</span>            Send(messageSentOnOpen);</div>
+<div class="line"><span class="lineno">  171</span>        }</div>
+<div class="line"><span class="lineno">  172</span> </div>
+<div class="line"><span class="lineno">  173</span> </div>
+<div class="line"><span class="lineno">  174</span>        <span class="keyword">new</span> Task(() =&gt;</div>
+<div class="line"><span class="lineno">  175</span>        {</div>
+<div class="line"><span class="lineno">  176</span>            OnOpen();</div>
+<div class="line"><span class="lineno">  177</span>        }).Start();</div>
+<div class="line"><span class="lineno">  178</span> </div>
+<div class="line"><span class="lineno">  179</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><span class="lineno">  180</span>    }</div>
+<div class="line"><span class="lineno">  181</span>  </div>
+<div class="line"><span class="lineno">  182</span>    <span class="keyword">private</span> <span class="keywordtype">void</span> MessageLoop()</div>
+<div class="line"><span class="lineno">  183</span>    {</div>
+<div class="line"><span class="lineno">  184</span>        <span class="comment">//todo add error loop detection</span></div>
+<div class="line"><span class="lineno">  185</span>        <span class="keywordtype">int</span> errorCount = 0;</div>
+<div class="line"><span class="lineno">  186</span>        var buffer = <span class="keyword">new</span> <span class="keywordtype">byte</span>[Configuration.KILOBYTE * 32];</div>
+<div class="line"><span class="lineno">  187</span> </div>
+<div class="line"><span class="lineno">  188</span>        <span class="comment">//  while (state == WebSocketState.OPEN &amp;&amp; errorCount &lt; 10)</span></div>
+<div class="line"><span class="lineno">  189</span>        <span class="comment">// {</span></div>
+<div class="line"><span class="lineno">  190</span>        <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">  191</span>        {</div>
+<div class="line"><span class="lineno">  192</span>            <span class="keywordflow">if</span> (state == WebSocketState.OPEN)</div>
+<div class="line"><span class="lineno">  193</span>                socket?.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, <span class="keyword">new</span> AsyncCallback((IAsyncResult ar) =&gt;</div>
+<div class="line"><span class="lineno">  194</span>                {</div>
+<div class="line"><span class="lineno">  195</span>                    var socket = (Socket?)ar.AsyncState;</div>
+<div class="line"><span class="lineno">  196</span>                    <span class="keywordflow">if</span> (socket == <span class="keyword">null</span>)</div>
+<div class="line"><span class="lineno">  197</span>                    {</div>
+<div class="line"><span class="lineno">  198</span>                        Terminal.DEBUG(<span class="stringliteral">&quot;socket is null??&quot;</span>);</div>
+<div class="line"><span class="lineno">  199</span>                        errorCount++;</div>
+<div class="line"><span class="lineno">  200</span>                        <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  201</span>                    }</div>
+<div class="line"><span class="lineno">  202</span>                    <span class="keywordtype">int</span> received = 0;</div>
+<div class="line"><span class="lineno">  203</span>                    <span class="keywordflow">try</span></div>
+<div class="line"><span class="lineno">  204</span>                    {</div>
+<div class="line"><span class="lineno">  205</span>                        received = socket.EndReceive(ar);</div>
+<div class="line"><span class="lineno">  206</span>                    }</div>
+<div class="line"><span class="lineno">  207</span>                    <span class="keywordflow">catch</span> (Exception e)</div>
+<div class="line"><span class="lineno">  208</span>                    {</div>
+<div class="line"><span class="lineno">  209</span>                        Terminal.DEBUG(<span class="stringliteral">&quot;WS Exception &quot;</span> + e.Message);</div>
+<div class="line"><span class="lineno">  210</span>                        <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  211</span>                    }</div>
+<div class="line"><span class="lineno">  212</span>                    <span class="keywordflow">if</span> (received &lt; 2)</div>
+<div class="line"><span class="lineno">  213</span>                    {</div>
+<div class="line"><span class="lineno">  214</span>                        <span class="comment">//Terminal.DEBUG(&quot;wrong data length?? -&gt; &quot; + received);</span></div>
+<div class="line"><span class="lineno">  215</span>                        errorCount++;</div>
+<div class="line"><span class="lineno">  216</span>                        <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  217</span>                    }</div>
+<div class="line"><span class="lineno">  218</span>                    Frame f = <span class="keyword">new</span>(buffer[..received]);</div>
+<div class="line"><span class="lineno">  219</span>                    <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a> opcode = f.GetOpcode();</div>
+<div class="line"><span class="lineno">  220</span> </div>
+<div class="line"><span class="lineno">  221</span>                    <span class="keywordflow">switch</span> (f.GetOpcode())</div>
+<div class="line"><span class="lineno">  222</span>                    {</div>
+<div class="line"><span class="lineno">  223</span>                        <span class="keywordflow">case</span> <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.CLOSE:</div>
+<div class="line"><span class="lineno">  224</span>                            this.Close();</div>
+<div class="line"><span class="lineno">  225</span>                            state = WebSocketState.CLOSED;</div>
+<div class="line"><span class="lineno">  226</span>                            <span class="keywordflow">return</span>;</div>
+<div class="line"><span class="lineno">  227</span>                        <span class="comment">//todo -&gt; check Ping e Pong correctness</span></div>
+<div class="line"><span class="lineno">  228</span>                        <span class="keywordflow">case</span> <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.PING:</div>
+<div class="line"><span class="lineno">  229</span>                            Frame pong = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  230</span>                            pong.SetOpcode(<a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.PONG);</div>
+<div class="line"><span class="lineno">  231</span>                            socket.Send(pong.Build());</div>
+<div class="line"><span class="lineno">  232</span>                            <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  233</span>                        <span class="keywordflow">case</span> <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.PONG:</div>
+<div class="line"><span class="lineno">  234</span>                            Frame ping = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  235</span>                            ping.SetOpcode(<a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.PING);</div>
+<div class="line"><span class="lineno">  236</span>                            socket.Send(ping.Build());</div>
+<div class="line"><span class="lineno">  237</span>                            <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  238</span>                        <span class="keywordflow">case</span> <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.TEXT:</div>
+<div class="line"><span class="lineno">  239</span>                        <span class="keywordflow">case</span> <a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.BINARY:</div>
+<div class="line"><span class="lineno">  240</span>                            {</div>
+<div class="line"><span class="lineno">  241</span>                                OnMessage(<span class="keyword">new</span>(f));</div>
+<div class="line"><span class="lineno">  242</span>                                <span class="keywordflow">break</span>;</div>
+<div class="line"><span class="lineno">  243</span>                            }</div>
+<div class="line"><span class="lineno">  244</span>                    }</div>
+<div class="line"><span class="lineno">  245</span>                    MessageLoop(); <span class="comment">//speriamo che lo stack regga</span></div>
+<div class="line"><span class="lineno">  246</span>                }), socket);</div>
+<div class="line"><span class="lineno">  247</span>        }</div>
+<div class="line"><span class="lineno">  248</span>        <span class="keywordflow">catch</span> (Exception)</div>
+<div class="line"><span class="lineno">  249</span>        {</div>
+<div class="line"><span class="lineno">  250</span>            state = WebSocketState.CLOSED;</div>
+<div class="line"><span class="lineno">  251</span>            socket?.Close();</div>
+<div class="line"><span class="lineno">  252</span>        }</div>
+<div class="line"><span class="lineno">  253</span>        <span class="comment">//  }</span></div>
+<div class="line"><span class="lineno">  254</span>    }</div>
+<div class="line"><span class="lineno">  255</span> </div>
+<div class="line"><span class="lineno">  256</span> </div>
+<div class="line"><span class="lineno">  257</span>    <span class="comment">//this is should be use only by HSB/Server.cs or HSB/Configuration.cs</span></div>
+<div class="line"><span class="lineno">  258</span>    <span class="keyword">internal</span> <span class="keywordtype">void</span> Process()</div>
+<div class="line"><span class="lineno">  259</span>    {</div>
+<div class="line"><span class="lineno">  260</span>        var frame = <span class="keyword">new</span> System.Diagnostics.StackTrace().GetFrame(1);</div>
+<div class="line"><span class="lineno">  261</span>        var method = frame?.GetMethod();</div>
+<div class="line"><span class="lineno">  262</span>        var rfn = method?.ReflectedType?.Name ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  263</span>        var callerName = method?.Name ?? <span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><span class="lineno">  264</span>        <span class="keywordflow">if</span> (rfn != <span class="stringliteral">&quot;Server&quot;</span> &amp;&amp; callerName != <span class="stringliteral">&quot;ProcessRequest&quot;</span>)</div>
+<div class="line"><span class="lineno">  265</span>        {</div>
+<div class="line"><span class="lineno">  266</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;This function must be called ONLY by the server process&quot;</span>);</div>
+<div class="line"><span class="lineno">  267</span>        }</div>
+<div class="line"><span class="lineno">  268</span> </div>
+<div class="line"><span class="lineno">  269</span>        <span class="keywordflow">if</span> (Accept())</div>
+<div class="line"><span class="lineno">  270</span>        {</div>
+<div class="line"><span class="lineno">  271</span>            <span class="keyword">new</span> Thread(MessageLoop).Start();</div>
+<div class="line"><span class="lineno">  272</span>        }</div>
+<div class="line"><span class="lineno">  273</span>    }</div>
+<div class="line"><span class="lineno">  274</span><span class="preprocessor">    #region PUBLIC METHODS</span></div>
+<div class="line"><span class="lineno">  279</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> SetMessageSentOnOpen(<span class="keywordtype">byte</span>[] data)</div>
+<div class="line"><span class="lineno">  280</span>    {</div>
+<div class="line"><span class="lineno">  281</span>        messageSentOnOpen = data;</div>
+<div class="line"><span class="lineno">  282</span>    }</div>
+<div class="line"><span class="lineno">  288</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> Send(<span class="keywordtype">byte</span>[] data)</div>
+<div class="line"><span class="lineno">  289</span>    {</div>
+<div class="line"><span class="lineno">  290</span>        <span class="keywordflow">if</span> (state == WebSocketState.OPEN)</div>
+<div class="line"><span class="lineno">  291</span>        {</div>
+<div class="line"><span class="lineno">  292</span>            Frame f = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  293</span>            f.SetPayload(data);</div>
+<div class="line"><span class="lineno">  294</span>            socket?.Send(f.Build());</div>
+<div class="line"><span class="lineno">  295</span>        }</div>
+<div class="line"><span class="lineno">  296</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">  297</span>        {</div>
+<div class="line"><span class="lineno">  298</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;WebSocket is not connected&quot;</span>);</div>
+<div class="line"><span class="lineno">  299</span>        }</div>
+<div class="line"><span class="lineno">  300</span>    }</div>
+<div class="line"><span class="lineno">  306</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> Send(<span class="keywordtype">string</span> message)</div>
+<div class="line"><span class="lineno">  307</span>    {</div>
+<div class="line"><span class="lineno">  308</span>        <span class="keywordflow">if</span> (state == WebSocketState.OPEN)</div>
+<div class="line"><span class="lineno">  309</span>        {</div>
+<div class="line"><span class="lineno">  310</span>            Frame f = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  311</span>            f.SetPayload(message);</div>
+<div class="line"><span class="lineno">  312</span>            socket?.Send(f.Build());</div>
+<div class="line"><span class="lineno">  313</span>            <span class="comment">//destroy frame</span></div>
+<div class="line"><span class="lineno">  314</span>            f.Dispose();</div>
+<div class="line"><span class="lineno">  315</span>        }</div>
+<div class="line"><span class="lineno">  316</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">  317</span>        {</div>
+<div class="line"><span class="lineno">  318</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;WebSocket is not connected&quot;</span>);</div>
+<div class="line"><span class="lineno">  319</span>        }</div>
+<div class="line"><span class="lineno">  320</span>    }</div>
+<div class="line"><span class="lineno">  321</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> Send(Message msg)</div>
+<div class="line"><span class="lineno">  322</span>    {</div>
+<div class="line"><span class="lineno">  323</span>        <span class="keywordflow">if</span> (state == WebSocketState.OPEN)</div>
+<div class="line"><span class="lineno">  324</span>        {</div>
+<div class="line"><span class="lineno">  325</span>            Frame f = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  326</span>            <span class="keywordflow">if</span> (msg.GetMessage() != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">  327</span>                f.SetPayload(msg.GetMessage());</div>
+<div class="line"><span class="lineno">  328</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (msg.GetMessageBytes() != <span class="stringliteral">&quot;&quot;</span>)</div>
+<div class="line"><span class="lineno">  329</span>                f.SetPayload(msg.GetMessageBytes());</div>
+<div class="line"><span class="lineno">  330</span>            socket?.Send(f.Build());</div>
+<div class="line"><span class="lineno">  331</span>            <span class="comment">//destroy frame</span></div>
+<div class="line"><span class="lineno">  332</span>            f.Dispose();</div>
+<div class="line"><span class="lineno">  333</span> </div>
+<div class="line"><span class="lineno">  334</span>        }</div>
+<div class="line"><span class="lineno">  335</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">  336</span>        {</div>
+<div class="line"><span class="lineno">  337</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;WebSocket is not connected&quot;</span>);</div>
+<div class="line"><span class="lineno">  338</span>        }</div>
+<div class="line"><span class="lineno">  339</span>    }</div>
+<div class="line"><span class="lineno">  346</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> Send&lt;T&gt;(T obj, <span class="keywordtype">bool</span> includeFields = <span class="keyword">true</span>)</div>
+<div class="line"><span class="lineno">  347</span>    {</div>
+<div class="line"><span class="lineno">  348</span>        <span class="keywordflow">if</span> (state == WebSocketState.OPEN)</div>
+<div class="line"><span class="lineno">  349</span>        {</div>
+<div class="line"><span class="lineno">  350</span>            Frame f = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  351</span>            <span class="comment">//serialize object to json, with fields</span></div>
+<div class="line"><span class="lineno">  352</span>            jo.IncludeFields = includeFields;</div>
+<div class="line"><span class="lineno">  353</span>            f.SetPayload(JsonSerializer.SerializeToUtf8Bytes(obj, jo));</div>
+<div class="line"><span class="lineno">  354</span>            socket?.Send(f.Build());</div>
+<div class="line"><span class="lineno">  355</span>            <span class="comment">//destroy frame</span></div>
+<div class="line"><span class="lineno">  356</span>            f.Dispose();</div>
+<div class="line"><span class="lineno">  357</span>        }</div>
+<div class="line"><span class="lineno">  358</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">  359</span>        {</div>
+<div class="line"><span class="lineno">  360</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;WebSocket is not connected&quot;</span>);</div>
+<div class="line"><span class="lineno">  361</span>        }</div>
+<div class="line"><span class="lineno">  362</span>    }</div>
+<div class="line"><span class="lineno">  367</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> Close()</div>
+<div class="line"><span class="lineno">  368</span>    {</div>
+<div class="line"><span class="lineno">  369</span>        <span class="keywordflow">if</span> (state == WebSocketState.OPEN)</div>
+<div class="line"><span class="lineno">  370</span>        {</div>
+<div class="line"><span class="lineno">  371</span>            Frame f = <span class="keyword">new</span>();</div>
+<div class="line"><span class="lineno">  372</span>            f.SetOpcode(<a class="code hl_enumeration" href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">Opcode</a>.CLOSE);</div>
+<div class="line"><span class="lineno">  373</span>            socket?.Send(f.Build());</div>
+<div class="line"><span class="lineno">  374</span>            socket?.Close();</div>
+<div class="line"><span class="lineno">  375</span>            f.Dispose();</div>
+<div class="line"><span class="lineno">  376</span>            OnClose();</div>
+<div class="line"><span class="lineno">  377</span>        }</div>
+<div class="line"><span class="lineno">  378</span>        <span class="keywordflow">else</span></div>
+<div class="line"><span class="lineno">  379</span>        {</div>
+<div class="line"><span class="lineno">  380</span>            <span class="keywordflow">throw</span> <span class="keyword">new</span> Exception(<span class="stringliteral">&quot;WebSocket is not connected, cannot close&quot;</span>);</div>
+<div class="line"><span class="lineno">  381</span>        }</div>
+<div class="line"><span class="lineno">  382</span>    }</div>
+<div class="line"><span class="lineno">  383</span> </div>
+<div class="line"><span class="lineno">  393</span>    <span class="keyword">public</span> <span class="keywordtype">void</span> SetConnectionRequirements(</div>
+<div class="line"><span class="lineno">  394</span>        Dictionary&lt;string, string&gt; requiredHeaders,</div>
+<div class="line"><span class="lineno">  395</span>        Dictionary&lt;string, string&gt; requiredParams,</div>
+<div class="line"><span class="lineno">  396</span>        <span class="keywordtype">string</span> bearerToken = <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><span class="lineno">  397</span>        <span class="keywordtype">string</span> oAuth2Token = <span class="stringliteral">&quot;&quot;</span>,</div>
+<div class="line"><span class="lineno">  398</span>        Tuple&lt;string, string&gt;? basicAuth = <span class="keyword">null</span>,</div>
+<div class="line"><span class="lineno">  399</span>        OAuth1_0Information? oAuth1_0Information = <span class="keyword">null</span></div>
+<div class="line"><span class="lineno">  400</span>    )</div>
+<div class="line"><span class="lineno">  401</span>    {</div>
+<div class="line"><span class="lineno">  402</span>        <span class="comment">//todo -&gt; accept only one auth type</span></div>
+<div class="line"><span class="lineno">  403</span>        this.requiredHeaders = requiredHeaders;</div>
+<div class="line"><span class="lineno">  404</span>        this.requiredParams = requiredParams;</div>
+<div class="line"><span class="lineno">  405</span>        this.bearerToken = bearerToken;</div>
+<div class="line"><span class="lineno">  406</span>        this.oAuth2Token = oAuth2Token;</div>
+<div class="line"><span class="lineno">  407</span>        this.basicAuth = basicAuth;</div>
+<div class="line"><span class="lineno">  408</span>        this.oAuth1_0Information = oAuth1_0Information;</div>
+<div class="line"><span class="lineno">  409</span> </div>
+<div class="line"><span class="lineno">  410</span>    }</div>
+<div class="line"><span class="lineno">  415</span>    <span class="keyword">public</span> WebSocketState GetState()</div>
+<div class="line"><span class="lineno">  416</span>    {</div>
+<div class="line"><span class="lineno">  417</span>        <span class="keywordflow">return</span> state;</div>
+<div class="line"><span class="lineno">  418</span>    }</div>
+<div class="line"><span class="lineno">  419</span><span class="preprocessor">    #endregion</span></div>
+<div class="line"><span class="lineno">  420</span><span class="preprocessor">    #region EVENTS</span></div>
+<div class="line"><span class="lineno">  425</span>    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnMessage(Message msg) { }</div>
+<div class="line"><span class="lineno">  429</span>    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnOpen() { }</div>
+<div class="line"><span class="lineno">  433</span>    <span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnClose() { }</div>
+<div class="line"><span class="lineno">  434</span><span class="preprocessor">    #endregion</span></div>
+<div class="line"><span class="lineno">  435</span>}</div>
+<div class="ttc" id="aclass_h_s_b_1_1_configuration_html"><div class="ttname"><a href="class_h_s_b_1_1_configuration.html">HSB.Configuration</a></div><div class="ttdoc">This class contains all the settings of the server.</div><div class="ttdef"><b>Definition</b> <a href="_configuration_8cs_source.html#l00011">Configuration.cs:12</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html"><div class="ttname"><a href="class_h_s_b_1_1_request.html">HSB.Request</a></div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00010">Request.cs:11</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html_a387bb9dbb95798340e659b257d653251"><div class="ttname"><a href="class_h_s_b_1_1_request.html#a387bb9dbb95798340e659b257d653251">HSB.Request.Headers</a></div><div class="ttdeci">Dictionary&lt; string, string &gt; Headers</div><div class="ttdoc">Return the headers.</div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00287">Request.cs:287</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html_a5ae1b1c0549c9056041a976f40f1e2f3"><div class="ttname"><a href="class_h_s_b_1_1_request.html#a5ae1b1c0549c9056041a976f40f1e2f3">HSB.Request.IsWebSocket</a></div><div class="ttdeci">bool IsWebSocket()</div><div class="ttdoc">Returns true if the request is a websocket request.</div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00318">Request.cs:318</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_request_html_ac30fb995e33a2d09dccbbc0b7255fe1b"><div class="ttname"><a href="class_h_s_b_1_1_request.html#ac30fb995e33a2d09dccbbc0b7255fe1b">HSB.Request.Parameters</a></div><div class="ttdeci">Dictionary&lt; string, string &gt; Parameters</div><div class="ttdoc">Return the parameters.</div><div class="ttdef"><b>Definition</b> <a href="_request_8cs_source.html#l00295">Request.cs:295</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html"><div class="ttname"><a href="class_h_s_b_1_1_response.html">HSB.Response</a></div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00014">Response.cs:15</a></div></div>
+<div class="ttc" id="aclass_h_s_b_1_1_response_html_a7069234663584810b1b429ec4ebd9cdd"><div class="ttname"><a href="class_h_s_b_1_1_response.html#a7069234663584810b1b429ec4ebd9cdd">HSB.Response.SendCode</a></div><div class="ttdeci">void SendCode(int statusCode)</div><div class="ttdoc">Send an HTTP Response with no body but with given status code.</div><div class="ttdef"><b>Definition</b> <a href="_response_8cs_source.html#l00198">Response.cs:198</a></div></div>
+<div class="ttc" id="anamespace_h_s_b_1_1_constants_1_1_web_socket_html_ab59b2901889f241bdc1c4486cc0b9ac6"><div class="ttname"><a href="namespace_h_s_b_1_1_constants_1_1_web_socket.html#ab59b2901889f241bdc1c4486cc0b9ac6">HSB.Constants.WebSocket.Opcode</a></div><div class="ttdeci">Opcode</div><div class="ttdoc">The opcodes for the WebSocket protocol.</div><div class="ttdef"><b>Definition</b> <a href="_w_s_opcodes_8cs_source.html#l00007">WSOpcodes.cs:8</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

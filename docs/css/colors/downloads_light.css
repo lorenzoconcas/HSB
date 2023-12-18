@@ -1,0 +1,15 @@
+@media (prefers-color-scheme: light){
+    h4 a:visited,
+    .downloadLink {
+        color: #000000
+    }
+    
+  
+    .downloadLink:hover {
+        background-color: #ededed;
+    }
+
+    .downloadLink>div>img{
+        filter: invert(1);
+    }
+}

@@ -5,6 +5,9 @@
     <title>Http Server Boxed</title>
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style.css">
+    <!--color schemes-->
+    <link rel="stylesheet" href="css/colors/common_dark.css">
+    <link rel="stylesheet" href="css/colors/common_light.css">
     <!--favicon -->
     <link rel="shortcut icon" href="icon.png" type="image/x-icon">
     <!--update every 2 seconds-->
@@ -12,24 +15,28 @@
 </head>
 
 <body>
-    <img src="./assets/background.png" alt="background" id="background">
+
     <div id="actionbar" class="font_cascadia">
-        <a class="actionbar_item" href="https://github.com/lorenzoconcas/HSB">
-            <img src="./assets/GithubIcon.png" alt="github">
-            <span>Explore on GitHub</span>
-        </a>
+        <div class="actionbar_item">
+            <a href="https://github.com/lorenzoconcas/HSB">
+                <img src="./assets/github.svg" alt="github">
+                <span>Explore on GitHub</span>
+            </a>
+        </div>
         <div class="separator"></div>
-        <a class="actionbar_item" href="./html/index.html">
-            <img src="./assets/doc_icon.png" alt="documentation">
-            <span>Documentation</span>
-        </a>
+        <div class="actionbar_item">
+            <a href="./html/index.html">
+                <img src="./assets/book.png" alt="documentation">
+                <span>Documentation</span>
+            </a>
+        </div>
     </div>
 
     <div id="container">
         <div class="subcontainer">
             <img class="icon" src="icon.png" alt="banner">
             <span class="font_cascadia" role="title">Http Server Boxed<sup>&reg;</sup></span>
-           
+
             <a href="https://github.com/lorenzoconcas/HSB/releases/download/v0.0.10/HSB_v0.0.10_Release.zip"
                 class="button">
                 <img src="./assets/downloadIcon.png" alt="download">
@@ -37,7 +44,7 @@
                     Download Library
                 </span>
             </a>
-            
+
             <a href="./downloads.html" class="font_cascadia hflex">
                 Other downloads available here
                 <img id="moreArrow" class="invert" src="assets/arrow.svg" />
@@ -48,7 +55,7 @@
 
             <a class="whiteLink hflex" href="https://github.com/lorenzoconcas/HSB/tree/main/Examples">
                 See more examples here
-              
+
             </a>
 
         </div>

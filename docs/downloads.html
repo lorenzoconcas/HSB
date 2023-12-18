@@ -6,6 +6,13 @@
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/style_downloads.css">
     <link rel="stylesheet" href="css/multitab.css">
+    <!--color schemes-->
+    <link rel="stylesheet" href="css/colors/common_dark.css">
+    <link rel="stylesheet" href="css/colors/common_light.css">
+    <link rel="stylesheet" href="css/colors/multitab_dark.css">
+    <link rel="stylesheet" href="css/colors/multitab_light.css">
+    <link rel="stylesheet" href="css/colors/downloads_dark.css">
+    <link rel="stylesheet" href="css/colors/downloads_light.css">
     <!--favicon -->
     <link rel="shortcut icon" href="icon.png" type="image/x-icon">
     <!--update every 2 seconds-->
@@ -14,37 +21,44 @@
 
 <body>
 
-    <img src="./assets/background.png" alt="background" id="background">
+
     <div id="actionbar" class="font_cascadia">
-        <a class="actionbar_item">
-            <img src="./assets/GithubIcon.png" alt="github">
-            <span>Explore on GitHub</span>
-        </a>
+        <div class="actionbar_item">
+            <a href="https://github.com/lorenzoconcas/HSB">
+                <img src="./assets/github.svg" alt="github">
+                <span>Explore on GitHub</span>
+            </a>
+        </div>
         <div class="separator"></div>
-        <a class="actionbar_item" href="./html/index.html">
-            <img src="./assets/doc_icon.png" alt="documentation">
-            <span>Documentation</span>
-        </a>
+        <div class="actionbar_item">
+            <a href="./html/index.html">
+                <img src="./assets/book.png" alt="documentation">
+                <span>Documentation</span>
+            </a>
+        </div>
+
     </div>
 
-    <spacer vspace="8px"></spacer>
+  
 
     <div class="header">
-       
-        <div>
-            <h1 class="font_cascadia">Downloads</h1>
-            <h3 class="font_cascadia">Http Server Boxed <sup>&reg;</sup></h3>
-        </div>
+        <h1 class="font_cascadia">Downloads</h1>
+        <h3 class="font_cascadia">Http Server Boxed <sup>&reg;</sup></h3>
     </div>
 
-    <spacer vspace="8px"></spacer>
 
     <div class="subcontainer">
+
+        <section>
+            <h2>Main library</h2>
+            <h4>Precompiled binaries (as dll) of the library</a></h4>
+        </section>
+
         <multitab-section id="librarySection">
             <multitab-header>
                 <multitab-header-title>
                     <span>
-                        <img class="icon" src="assets/small.png" alt="banner" width="48px">  
+                        <img class="icon" src="assets/small.png" alt="banner" width="48px">
                         Library
                     </span>
                 </multitab-header-title>
@@ -160,7 +174,9 @@
         <section>
             <h2>Utilities</h2>
             <h3>Multiplatform Launcher</h3>
-            <h4>Precompiled binaries for the launcher, more info : <a href="">Launcher project page</a></h4>
+            <h4>Precompiled binaries for the launcher, more info : <a
+                    href="https://github.com/lorenzoconcas/HSB/blob/main/Launcher/Launcher.cs">Launcher project
+                    source</a></h4>
         </section>
 
 
@@ -168,15 +184,16 @@
             <multitab-header>
                 <multitab-header-title>
                     <span>
-                        <img class="icon" src="assets/launcher_smaller.png" alt="banner" width="48px">  
+                        <img class="icon" src="assets/launcher_smaller.png" alt="banner" width="48px">
                         Launcher</span>
                 </multitab-header-title>
 
                 <multitab-tabs>
                     <span class="tab-selected"> <img src="./assets/windows11.svg" alt="download"
-                            class="invert normalizeSize">Windows</span>
-                    <span> <img src="./assets/apple.logo.svg" alt="download" class="invert normalizeSize">macOS</span>
-                    <span> <img src="./assets/linux.png" alt="download" class="invert normalizeSize">Linux</span>
+                            class="invertIfDark normalizeSize">Windows</span>
+                    <span> <img src="./assets/apple.logo.svg" alt="download"
+                            class="invertIfDark normalizeSize">macOS</span>
+                    <span> <img src="./assets/linux.png" alt="download" class="invertIfDark normalizeSize">Linux</span>
                 </multitab-tabs>
             </multitab-header>
 
@@ -284,28 +301,49 @@
             </mulitab-content>
         </multitab-section>
 
-
-
-        <section id="utilitiesSection">
-
-            <br>
-
-            <h3>.NET Framework</h3>
-            <h4>HSB is written in C# (hence the name HSB-#) and targets .NET 7+</h4>
-            <h4>The library will always target the current version of .NET</h4>
-            <div id="dotnet">
-                <a href="https://dotnet.microsoft.com/en-us/download" class="button">
-                    <img src="./assets/downloadIcon.png" alt="download">
-                    <span class="font_cascadia">
-                        .NET 8
-                    </span>
-                </a>               
-            </div>
-            <br />
+        <section>
+            <h2>Requirements</h2>
+            <h3>Software needed to compile or run HSB</h3>
         </section>
-    </div>
-    <spacer vspace="16px"></spacer>
 
+
+
+        <multitab-section>
+            <multitab-header>
+                <multitab-header-title>
+                    <span>
+                        <img class="icon" src="assets/dotnet.png" alt="banner" width="48px">
+                        .NET</span>
+                </multitab-header-title>
+            </multitab-header>
+
+
+            <mulitab-content>
+                <section class="tab">
+                    <span class="contentDescription">
+                        HSB is written in C# (hence the name HSB-#) and targets .NET 8+
+                        <br>
+                        The library will always target the current version of .NET
+                    </span>
+
+                    <a class="downloadLink" href="https://dotnet.microsoft.com/en-us/download">
+                        <div>
+                            <img src="./assets/downloadIcon.png" alt="download">
+                        </div>
+                        <div>
+                            <span class="font_cascadia">
+                                .NET 8
+                            </span>
+                        </div>
+                    </a>
+
+                </section>
+
+            </mulitab-content>
+        </multitab-section>
+    </div>
+    
+    <spacer vspace="32px"></spacer>
 
     <div class="footer">
         <span>HSB-#</span>
@@ -376,7 +414,7 @@
             if (height == null) height = "16px";
             spacer.style.paddingTop = height;
             spacer.style.paddingBottom = height;
-            
+
             let width = spacer.getAttribute("hspace");
             if (width == null) width = "16px";
             spacer.style.paddingLeft = width;

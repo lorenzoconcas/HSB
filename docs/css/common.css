@@ -5,14 +5,18 @@
         url("CascadiaMonoPL.ttf");
 }
 
+@font-face {
+    font-family: "UbuntuMono";
+    src:
+        local("UbuntuMono"),
+        url("UbuntuMono-Regular.ttf");
+}
+
 
 body {
     font-family: "system-ui", "eSans", "Roboto", "serif";
-    background: #13222E;
-    background-image: linear-gradient(101deg, #004680 0%, #13222E 33%);
     background-attachment: fixed;
     margin: 0;
-    color: white;
     width: 100%;
     height: 100%;
 }
@@ -23,12 +27,12 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "CascadiaMonoPL";
+    font-family: "UbuntuMono";
 
 }
 
 .footer {
-    font-family: CascadiaMonoPL;
+    font-family: UbuntuMono;
     width: 100%;
     text-align: center;
 
@@ -36,7 +40,7 @@ h6 {
     padding: 20px 0px;
     bottom: 0px;
     z-index: 2;
-    background: #14212d8a;
+
     backdrop-filter: blur(4px);
 }
 
@@ -49,7 +53,7 @@ h6 {
 }
 
 .font_cascadia {
-    font-family: CascadiaMonoPL;
+    font-family: UbuntuMono;
 }
 
 
@@ -59,22 +63,31 @@ h6 {
     left: 0;
     top: 0;
     width: 100%;
-    height: 80px;
+    height: 72px;
     display: flex;
     flex-direction: row;
     z-index: 20;
-
 }
 
 .actionbar_item {
-    padding: 16px;
+    height: fit-content;
+    border-radius: 64px;
+    padding: 4px 10px 4px 4px;
+    margin: 8px 8px;
+}
+
+
+.actionbar_item a {
     display: flex;
     flex-direction: row;
-    color: white;
     align-items: center;
     vertical-align: middle;
-    gap: 16px;
+    gap: 8px;
     text-decoration: none;
+}
+
+.actionbar_item a>img {
+    width: 32px;
 }
 
 .invert {
@@ -87,47 +100,33 @@ h6 {
     align-items: center;
 }
 
-a:visited {
-    color: white;
-}
 
 a:link {
     text-decoration: none;
 }
 
 .whiteLink {
-    color: white;
     cursor: pointer;
-
 }
 
 .whiteLink:link {
     text-decoration: underline;
 }
 
-.whiteLink:visited {
-    color: white;
-}
-
-
-
 .separator {
     width: 1px;
-    height: 48px;
-    background-color: white;
-    margin: 16px;
+    height: 32px;
+    margin: 12px 0px;
 }
 
 /*test*/
 
 .button {
-    border: 1px solid #2B4E7B;
-    box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
+
     border-radius: 8px;
-    background: #000000;
-    background: rgba(19, 34, 46, 0.91);
-    font-family: CascadiaMonoPLRoman-Bold;
-    color: #FFFFFF;
+
+    font-family: UbuntuMono;
+
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -163,3 +162,14 @@ spacer {
         left: 50%;
     }
 }
+
+.invertIfDark {
+   filter:invert(1);
+}
+
+@media (prefers-color-scheme: light) {
+    .invertIfDark {
+        filter: invert(0);
+    }
+}
+

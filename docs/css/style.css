@@ -29,25 +29,6 @@
 }
 
 
-.buttons>button {
-    margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #7D573A;
-    background: linear-gradient(#FFFCF9, #FFF3E9);
-    color: #7D573A;
-    font-size: 1.2em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
-
-.buttons>button>a:link,
-.buttons>button>a:visited {
-    color: #7D573A;
-    text-decoration: none;
-}
-
 /*New style*/
 
 .actionbar_item>img {
@@ -69,25 +50,15 @@ span[role="title"]> sup {
 }
 
 .button {
-    border: 1px solid #2B4E7B;
-    box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
-    border-radius: 8px;
-    background: #000000;
-    background: rgba(19, 34, 46, 0.91);
-    font-family: CascadiaMonoPLRoman-Bold;
-    font-size: 32px;
-    color: #FFFFFF;
-    padding:4px;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-    padding: 16px;
-    font-size: 27px;
-    gap:16px;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+   padding: 16px;
+   font-size: 24px;
+   gap:16px;
+   border-radius: 8px;
 }
 .button > img{
     padding-left:8px;

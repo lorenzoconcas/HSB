@@ -2,30 +2,20 @@
     top: 0;
     left: 0;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     padding-left: 32px;
     padding-top: 80px;
 }
 
-.header>div {
-    display: flex;
-    flex-direction: column;
-    /* margin-left: 16px; */
-}
-
-.header>div>h1,
-.header>div>h3 {
-    
-    margin: 0;
-}
 
 .subcontainer {
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    justify-content: center;
     text-align: left;
-    width: 100%;
+    width: 75%;
+    padding-left: 12.5%;
 }
 
 .subcontainer>section {
@@ -56,15 +46,11 @@ a:visited {
 
 }
 
-h4 a:visited {
-    color: rgb(202, 253, 255);
-}
-
 
 .downloadLink {
     font-size: 16px;
     padding: 16px;
-    color: white;
+
     display: flex;
     width: calc(100% - 32px);
     align-items: center;
@@ -85,10 +71,16 @@ h4 a:visited {
     width: 24px;
 }
 
-.downloadLink:hover {
-    background-color: #376198;
+
+#dotnet {
+    width: 50%;
 }
 
-#dotnet{
-    width: 50%;
+#colorModeToggle {
+    margin-left: auto;
+    order: 2;
+}
+
+.header > h1, .header > h3 {
+    margin: 0;
 }

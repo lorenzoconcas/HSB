@@ -247,16 +247,18 @@ public class SslConfiguration
 
 
         var command =
-        $"openssl " +
-        $"req -x509 -newkey rsa:4096 -sha256 -days 30 -nodes " +
+        $"openssl version && openssl " +
+        $"req -x509 -newkey rsa:4096 -sha256 -days 30 -nodes -subj \"/CN=localhost/C=US\" " +
         $"-keyout \"{DEBUG_CERT_KEY_PATH}\" " +
-        $"-out \"{DEBUG_CERT_CRT_PATH}\" " +
-        $"-subj \"/CN=localhost\" && " +
+        $"-out \"{DEBUG_CERT_CRT_PATH}\" && " +
         $"openssl pkcs12 -export " +
         $"-out \"{DEBUG_CERT_P12_PATH}\" " +
         $"-inkey \"{DEBUG_CERT_KEY_PATH}\" " +
         $"-in \"{DEBUG_CERT_CRT_PATH}\" " +
         $"-passout pass:\"{DEBUG_CERT_PASSWORD}\"";
+
+
+        Terminal.DEBUG($"Creating debug certificate with command: {command}");
 
 
 
@@ -267,12 +269,18 @@ public class SslConfiguration
             startInfo.Arguments = $"/C \"{command}\"";
 
         }
-        else
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            startInfo.FileName = "/bin/zsh";
+            startInfo.Arguments = $"-c \"{command}\"";
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             startInfo.FileName = "/bin/bash";
             startInfo.Arguments = $"-c \"{command}\"";
         }
-
+        startInfo.RedirectStandardOutput = false;
+        startInfo.RedirectStandardError = true;
         process = new()
         {
             StartInfo = startInfo

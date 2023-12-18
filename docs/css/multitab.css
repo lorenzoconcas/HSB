@@ -1,27 +1,15 @@
-
 /*Tabs styles*/
-multitab-section {
-    border: 1px solid #2B4E7B;
-    box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
-    border-radius: 8px;
-    background: #000000;
-    background: rgba(19, 34, 46, 0.91);
-    font-family: CascadiaMonoPLRoman-Bold;
-    font-size: 32px;
-    color: #FFFFFF;
 
+multitab-section {
+    border-radius: 8px;
+    font-family: UbuntuMono-Bold;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: left;
-
-
     font-size: 27px;
     gap: 16px;
-
-    width: 75%;
-
-    margin: 10px 30px;
+    width: 100%;
 }
 
 multitab-header {
@@ -31,25 +19,21 @@ multitab-header {
 
 multitab-header-title {
     font-family: CascadiaMonoPL;
-    border-bottom: 1px solid #101f32;
     margin: 0px;
     font-size: 16px;
     position: relative;
     padding: 8px 12px;
     width: calc(100% - 24px);
-    background: #1f3859;
     border-radius: 8px 8px 0 0;
 }
 
 multitab-tabs {
-    font-family: CascadiaMonoPL;
+    font-family: UbuntuMono;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: stretch;
     vertical-align: middle;
-    border-bottom: 1px solid #0d1b2b;
-    background: #13253d;
 }
 
 multitab-tabs span {
@@ -58,18 +42,11 @@ multitab-tabs span {
     cursor: pointer;
     border-radius: 0px;
     border-collapse: collapse;
-    /* border-right: 1px solid #2B4E7B; */
     display: flex;
     align-items: center;
     gap:16px;
 }
 
-multitab-tabs span:hover {
-    background-color: #376198;
-}
-multitab-tabs span.tab-selected {
-    background-color: #2B4E7B;
-}
 .contentDescription{
     font-family: monospace;
     font-size: 14px;

@@ -24,10 +24,10 @@ public class HSBRunner
             Address = "", //listen any address
             Port = 8080,
             RequestMaxSize = Configuration.MEGABYTE * 2,
-            CustomServerName = "Runner powered by HSB",
             ListeningMode = HSB.Constants.IPMode.IPV4_ONLY, //valid only if address == "",
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static"),
-            SslSettings = ssl,
+            //CustomServerName = "Runner powered by HSB",
+           // SslSettings = ssl,
         };
 
        

@@ -1,0 +1,32 @@
+@media (prefers-color-scheme: dark) {
+
+
+    multitab-section {
+        box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
+        color: #FFFFFF;
+        border: 0.5px solid #686f7e;
+        background: linear-gradient(179deg, #10222ebf, #eeeeee14);
+    }
+
+
+    multitab-header-title {
+        border-bottom: 1px solid #101f32;
+        background: linear-gradient(179deg, #10222ebf, #eeeeee14);
+    }
+
+    multitab-tabs {
+        border-bottom: 1px solid #686f7e;
+        background: #192834;
+    }
+
+
+    multitab-tabs span:hover {
+        background-color: #376198;
+    }
+
+    multitab-tabs span.tab-selected {
+        background-color: #2B4E7B;
+    }
+
+
+}

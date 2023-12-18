@@ -1,0 +1,53 @@
+@media (prefers-color-scheme: light) {
+    body {
+        background: #b8e0fc;
+        background: linear-gradient(180deg, #b8e0fc 0%, #bacff7 100%);
+        background-attachment: fixed;
+        margin: 0;
+        color: #122634;
+    }
+
+    .footer {
+        background: #14212d8a;
+        color: #fbfbfb;
+    }
+
+    a:visited {
+        color: #14212d8a;
+    }
+
+    .whiteLink {
+        color: #14212d8a;
+    }
+
+    .whiteLink:visited {
+        color: #14212d8a;
+    }
+
+    .footer .whiteLink,
+    .footer .whiteLink:visited {
+        color: #fbfbfb;
+    }
+
+    .separator {
+        background-color: #122634;
+    }
+
+    .actionbar_item,
+    .button {
+        border: 0.5px solid #e7e7e7;
+        background: #fbfbfb;
+        color: #122634;
+        box-shadow: 0 4px 18px 0 rgba(99, 99, 99, 0.14);
+    }
+
+
+    #moreArrow{
+        filter:invert(0);
+    }
+
+    .button>img,   
+    .actionbar_item img {
+        filter: invert(1);
+    }
+}

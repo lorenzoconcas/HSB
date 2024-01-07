@@ -186,21 +186,17 @@ public class SslConfiguration
 
     }
 
-    /// <summary>
-    /// Creates a developer certificate valid only for 1 month and for localhost.
-    /// OpenSSL is required to use this feature.
-    /// </summary>
-    public static bool CreateDebugCertificate()
+    private static bool CheckOpenSslInstalled()
     {
         //check if openssl is installed
         var startInfo = new ProcessStartInfo
         {
             RedirectStandardOutput = true,
-            RedirectStandardError = true,
+            RedirectStandardError = false,
             UseShellExecute = false,
             CreateNoWindow = true
         };
-
+        //maybe this case can be removed, but needs testing
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             startInfo.FileName = "cmd.exe";
@@ -209,21 +205,30 @@ public class SslConfiguration
         }
         else
         {
-            startInfo.FileName = "/bin/bash";
-            startInfo.Arguments = $"-c openssl version";
+            startInfo.FileName = "openssl";
+            startInfo.Arguments = $"version";
         }
         var process = new Process
         {
             StartInfo = startInfo
         };
+
         process.Start();
         process.WaitForExit();
+
         if (process.ExitCode != 0)
         {
-            Terminal.ERROR($"Openssl is not installed, cannot continue ({process.ExitCode})", true);
+            Terminal.ERROR($"❌ Openssl is not installed, cannot continue ({process.ExitCode})", true);
             return false;
         }
 
+        Terminal.DEBUG("Openssl is installed", true);
+
+        return true;
+    }
+
+    private static bool PrepareFolders()
+    {
         //if old certificate exists, delete it
         if (Directory.Exists(DEBUG_CERT_FOLDER_PATH))
         {
@@ -242,67 +247,90 @@ public class SslConfiguration
         }
         else //create folder if not exists
         {
-            Directory.CreateDirectory(DEBUG_CERT_FOLDER_PATH);
+            Terminal.DEBUG("Creating debug certificate folder", true);
+            try
+            {
+                DirectoryInfo dirInfo = Directory.CreateDirectory(DEBUG_CERT_FOLDER_PATH);
+
+                Terminal.DEBUG($"Debug certificate folder created at {dirInfo.FullName}", true);
+            }
+            catch (Exception e)
+            {
+                Terminal.ERROR($"Cannot create debug certificate folder: {e.Message}", true);
+                return false;
+            }
         }
+        return true;
+    }
 
-
-        var command =
-        $"openssl version && openssl " +
-        $"req -x509 -newkey rsa:4096 -sha256 -days 30 -nodes -subj \"/CN=localhost/C=US\" " +
-        $"-keyout \"{DEBUG_CERT_KEY_PATH}\" " +
-        $"-out \"{DEBUG_CERT_CRT_PATH}\" && " +
-        $"openssl pkcs12 -export " +
-        $"-out \"{DEBUG_CERT_P12_PATH}\" " +
-        $"-inkey \"{DEBUG_CERT_KEY_PATH}\" " +
-        $"-in \"{DEBUG_CERT_CRT_PATH}\" " +
-        $"-passout pass:\"{DEBUG_CERT_PASSWORD}\"";
-
-
-        Terminal.DEBUG($"Creating debug certificate with command: {command}");
-
-
-
-        //if windows
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    /// <summary>
+    /// Creates a developer certificate valid only for 1 month and for localhost.
+    /// OpenSSL is required to use this feature.
+    /// </summary>
+    public static bool CreateDebugCertificate()
+    {
+        //check prerequisites
+        if (!CheckOpenSslInstalled())
         {
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C \"{command}\"";
-
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            startInfo.FileName = "/bin/zsh";
-            startInfo.Arguments = $"-c \"{command}\"";
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            startInfo.FileName = "/bin/bash";
-            startInfo.Arguments = $"-c \"{command}\"";
-        }
-        startInfo.RedirectStandardOutput = false;
-        startInfo.RedirectStandardError = true;
-        process = new()
-        {
-            StartInfo = startInfo
-        };
-
-        process.Start();
-        process.WaitForExit();
-
-        if (process.ExitCode != 0)
-        {
-            Terminal.WARNING($"Openssl error, certificate has not been created\nCommand used is : {command}", true);
             return false;
         }
-        else
+        //remove old certificates, create folders if needed
+        if (!PrepareFolders())
         {
-            Terminal.DEBUG($"Debug certificate (valid only for localhost) created successfully");
+            return false;
         }
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "openssl",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        List<string> commands = [
+            //command 1
+            $"req -x509 -newkey rsa:4096 -sha256 -days 30 -nodes -subj \"/CN=localhost/C=US\" " +
+            $"-keyout \"{DEBUG_CERT_KEY_PATH}\" " +
+            $"-out \"{DEBUG_CERT_CRT_PATH}\"",
+            //command 2
+            $"pkcs12 -export " +
+            $"-out \"{DEBUG_CERT_P12_PATH}\" " +
+            $"-inkey \"{DEBUG_CERT_KEY_PATH}\" " +
+            $"-in \"{DEBUG_CERT_CRT_PATH}\" " +
+            $"-passout pass:\"{DEBUG_CERT_PASSWORD}\""
+        ];
+
+        Process process;
+
+        foreach (var arg in commands)
+        {
+            //set the command argument
+            startInfo.Arguments = arg;
+
+            process = new()
+            {
+                StartInfo = startInfo
+            };
+
+            process.Start();
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                Terminal.WARNING($"Openssl error, certificate has not been created", true);
+                return false;
+            }
+
+        }
+        Terminal.DEBUG($"Debug certificate (valid only for localhost) created successfully", true);
         return true;
     }
 
     public static X509Certificate2? TryLoadDebugCertificate(bool create = true, Configuration? c = null)
     {
+        c?.Debug.DEBUG("Loading debug certificate");
 
         X509Certificate2 cert;
 

@@ -27,10 +27,9 @@ public class HSBRunner
             ListeningMode = HSB.Constants.IPMode.IPV4_ONLY, //valid only if address == "",
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static"),
             //CustomServerName = "Runner powered by HSB",
-           // SslSettings = ssl,
+            SslSettings = ssl,
         };
 
-       
         //test expressjs-like routing
         //note that these are controlled first, so eventual servlet
         //with same routing will be ignored if they respond to that http method

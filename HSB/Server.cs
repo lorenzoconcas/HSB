@@ -109,6 +109,7 @@ public class Server
                 }
                 if (sslConf.UseDebugCertificate)
                 {
+                    config.Debug.INFO("Server is set to use a debug certificate");
                     sslCertificate = SslConfiguration.TryLoadDebugCertificate(c: config);
                     if (sslCertificate == null)
                     {

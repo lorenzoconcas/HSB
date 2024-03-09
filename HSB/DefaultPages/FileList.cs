@@ -17,6 +17,12 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
         try
         {
             var cd = Environment.CurrentDirectory;
+            //if a static file path is set use that as the current directory
+            if (configuration.StaticFolderPath != "")
+            {
+                cd = configuration.StaticFolderPath;
+            }
+
             var url = NormalizeIfWindows(req.URL.Replace("%20", " "));
             var cwd = cd;
             var rootRequested = req.URL == "/";
@@ -33,10 +39,13 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
 
 
             //if is file -> download 
-            if (File.Exists("." + url))
+
+            var filePath = Path.Combine(cwd, url[1..]);
+
+            if (File.Exists(filePath))
             {
                 configuration.Debug.INFO($"{req.METHOD} '{url}' 200 (Static file)");
-                res.SendFile("." + url);
+                res.SendFile(filePath);
                 return;
             }
 
@@ -69,7 +78,7 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
                 string version = "";
                 if (Assembly.GetExecutingAssembly().GetName().Version != null)
                 {
-                    version = "v"+Assembly.GetExecutingAssembly().GetName().Version!.ToString();
+                    version = "v" + Assembly.GetExecutingAssembly().GetName().Version!.ToString();
                 }
 
 
@@ -101,9 +110,9 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
             configuration.Debug.INFO($"{req.METHOD} '{url}' 404 (Resource not found)");
             new Error(req, res, configuration, "Page not found", HTTP_CODES.NOT_FOUND).Process();
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            configuration.Debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");         
+            configuration.Debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
             new Error(req, res, configuration, e.ToString(), HTTP_CODES.INTERNAL_SERVER_ERROR).Process();
         }
     }

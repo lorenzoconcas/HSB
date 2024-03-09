@@ -478,6 +478,15 @@ public class Server
             }
 
 
+            //if global CORS are set in configuration, check if the request is allowed
+            if(config.GlobalCORS != null){
+                if(!config.GlobalCORS.IsRequestAllowed(req)){
+                    config.Debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.FORBIDDEN} (CORS not allowed)", true);
+                    new Error(req, res, config, "CORS not allowed", HTTP_CODES.FORBIDDEN).Process();
+                    return;
+                }
+            }
+
             //if dev has used the express mapping, we run the mapped function
             if (RunIfExpressMapping(req, res)) return;
 

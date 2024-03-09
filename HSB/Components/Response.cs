@@ -11,24 +11,23 @@ using System.Net.Security;
 
 namespace HSB;
 
-public class Response
+public class Response(Socket socket, Request request, Configuration c, SslStream? sslStream)
 {
     private const string NEW_LINE = "\r\n";
 
-    private readonly Socket socket;
-    private SslStream? sslStream;
-    private readonly Request request;
-    private readonly Configuration config;
-    readonly Dictionary<string, string> attributes = new();
+    private readonly Socket socket = socket;
+    private SslStream? sslStream = sslStream;
+    private readonly Request request = request;
+    private readonly Configuration config = c;
+    readonly Dictionary<string, string> attributes = [];
 
+    private CORS? cors = null;
 
-    public Response(Socket socket, Request request, Configuration c, SslStream? sslStream)
+    public void SetCORS(CORS cors)
     {
-        this.socket = socket;
-        this.request = request;
-        this.sslStream = sslStream;
-        config = c;
+        this.cors = cors;
     }
+
 
     //Send methods
 
@@ -361,7 +360,7 @@ public class Response
             }
         }
 
-        if (config.CustomGlobalHeaders.Any())
+        if (config.CustomGlobalHeaders.Count != 0)
         {
             foreach (var h in config.CustomGlobalHeaders)
             {
@@ -369,13 +368,23 @@ public class Response
             }
         }
 
-        if (config.CustomGlobalCookies.Any())
+        if (config.CustomGlobalCookies.Count != 0)
         {
             foreach (var c in config.CustomGlobalCookies)
             {
                 headers += $"Set-Cookie: {c.Value}{NEW_LINE}";
             }
         }
+
+        //CORS
+        config.GlobalCORS?.AllowedOrigins.ForEach(origin =>
+            {
+                headers += $"Access-Control-Allow-Origin: {origin}{NEW_LINE}";
+            });
+        cors?.AllowedOrigins.ForEach(origin =>
+            {
+                headers += $"Access-Control-Allow-Origin: {origin}{NEW_LINE}";
+            });
 
         /*   if (request.GetHeaders["Connection"] != null)
            {

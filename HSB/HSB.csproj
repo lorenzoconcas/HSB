@@ -10,7 +10,7 @@
 		<Description>Http Server Boxed</Description>
 		<Configurations>Debug;Release</Configurations>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
-		<Copyright>(c) 2021-2023 Lorenzo L. Concas</Copyright>
+		<Copyright>(c) 2021-2024 Lorenzo L. Concas</Copyright>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>embedded</DebugType>
@@ -49,8 +49,10 @@
 		<MonoDevelop>
 			<Properties>
 				<Policies>
-					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-					<StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
+					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault"
+						DirectoryNamespaceAssociation="PrefixedHierarchical" />
+					<StandardHeader IncludeInNewFiles="True"
+						Text="${CopyrightHolder}&#xA;${AuthorName}" />
 				</Policies>
 			</Properties>
 		</MonoDevelop>

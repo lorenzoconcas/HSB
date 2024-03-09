@@ -116,6 +116,8 @@ public class Configuration
     /// </summary>
     public SslConfiguration SslSettings;
 
+    public CORS? GlobalCORS = null;
+
     /// <summary>
     /// Creates a default fail-safe configuration (still, the port could be in use)
     /// </summary>
@@ -130,6 +132,7 @@ public class Configuration
         //default one day
         DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
         SslSettings = new SslConfiguration();
+        GlobalCORS = null;
     }
 
     /// <summary>
@@ -159,7 +162,7 @@ public class Configuration
             lastProp = "ServeEmbeddedResource"; ServeEmbeddedResource = root.GetProperty("ServeEmbeddedResource").GetBoolean();
             lastProp = "EmbeddedResourcePrefix"; EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
             lastProp = "DefaultSessionExpirationTime"; DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
-
+            lastProp = "GlobalCORS"; GlobalCORS = CORS.FromJSON(root);
             lastProp = "PermanentIPList";
             foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
             {

@@ -320,7 +320,8 @@ public class Server
     protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
     {
         AppDomain currentDomain = AppDomain.CurrentDomain;
-        List<Assembly> assemblies = [.. currentDomain.GetAssemblies()];
+        
+        List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
 
         assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
         assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
@@ -331,7 +332,7 @@ public class Server
 
         foreach (var assem in assemblies)
         {
-            List<Type> classes = [.. assem.GetTypes()];
+            List<Type> classes = assem.GetTypes().ToList();
 
             foreach (var c in classes)
             {

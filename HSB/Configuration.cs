@@ -119,6 +119,11 @@ public class Configuration
     public CORS? GlobalCORS = null;
 
     /// <summary>
+    /// If set to a non-empty string, a page mapped to this path will show routes with the @Documentation attribute,
+    /// it's similiar to Swagger or alternative documentation systems
+    /// </summary>
+    public string DocumentationPath = "";
+    /// <summary>
     /// Creates a default fail-safe configuration (still, the port could be in use)
     /// </summary>
     public Configuration()
@@ -133,6 +138,7 @@ public class Configuration
         DefaultSessionExpirationTime = (ulong)TimeSpan.FromDays(1).Ticks;
         SslSettings = new SslConfiguration();
         GlobalCORS = null;
+        DocumentationPath = "";
     }
 
     /// <summary>
@@ -163,7 +169,9 @@ public class Configuration
             lastProp = "EmbeddedResourcePrefix"; EmbeddedResourcePrefix = root.GetProperty("EmbeddedResourcePrefix").GetString() ?? "";
             lastProp = "DefaultSessionExpirationTime"; DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
             lastProp = "GlobalCORS"; GlobalCORS = CORS.FromJSON(root);
+            lastProp = "DocumentationPath"; DocumentationPath = root.GetProperty("DocumentationPath").GetString() ?? "";
             lastProp = "PermanentIPList";
+
             foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
             {
                 string? v = item.GetString();
@@ -206,7 +214,7 @@ public class Configuration
         //default one day
         DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong)TimeSpan.FromDays(1).Ticks;
         SslSettings = sslConfiguration ?? new SslConfiguration();
-
+        DocumentationPath = "";
     }
 
     /// <summary>

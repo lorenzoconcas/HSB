@@ -142,7 +142,7 @@ public class Server
                 else config.Debug.INFO($"Listening at https://{config.PublicURL}:{sslConf.SslPort}/");
             }
 
-            else if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled())&& sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
+            else if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
                 prefix += "s";
 
             if (config.PublicURL == "")
@@ -319,48 +319,52 @@ public class Server
 
     protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
     {
-        AppDomain currentDomain = AppDomain.CurrentDomain;
-        
-        List<Assembly> assemblies = currentDomain.GetAssemblies().ToList();
-
-        assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
-        assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
-        assemblies.RemoveAll(a => a.ToString().StartsWith("Internal"));
-
         Dictionary<Tuple<string, bool>, Type> routes = [];
 
+        string[] excludeList = ["System", "Microsoft", "Internal"];
 
-        foreach (var assem in assemblies)
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !excludeList.Any(e => a.FullName!.StartsWith(e)));
+      
+        var classes = from assembly in assemblies
+                      from type in assembly.GetTypes()
+                      where type.IsClass
+                      select type;
+
+    
+
+        foreach (var c in classes)
         {
-            List<Type> classes = assem.GetTypes().ToList();
+            IEnumerable<Binding> multipleBinded = c.GetCustomAttributes<Binding>(false);
 
-            foreach (var c in classes)
+            if (multipleBinded.Any())
             {
-                try
-                {
-                    IEnumerable<Binding> multiBindings = c.GetCustomAttributes<Binding>(false);
 
-                    //if no class have more than one binding, we search the ones with only one
-                    if (multiBindings.Any())
+                foreach (Binding b in multipleBinded)
+                {
+                    if (b.Path != "")
                     {
-                        foreach (Binding b in multiBindings)
-                        {
-                            if (b.Path != "")
-                                routes.Add(new(b.Path, b.StartsWith), c);
-                        }
-                    }
-                    else
+                        routes.Add(new(b.Path, b.StartsWith), c);
+                    }else if (b.Auto)
                     {
-                        Binding? attr = c.GetCustomAttribute<Binding>(false);
-                        if (attr != null && attr.Path != "")
-                            routes.Add(new(attr.Path, attr.StartsWith), c);
+                        routes.Add(new("/"+c.Name.ToLower(), false), c);
                     }
                 }
-                catch (Exception)
+            }
+            else
+            {
+                Binding? attr = c.GetCustomAttribute<Binding>(false);
+                if (attr == null) continue;
+                if (attr.Path != "")
                 {
+                    routes.Add(new(attr.Path, attr.StartsWith), c);
+                }
+                else if (attr.Auto)
+                {
+                    routes.Add(new(c.Name.ToLower(), false), c);
                 }
             }
         }
+
 
         return routes;
     }
@@ -480,8 +484,10 @@ public class Server
 
 
             //if global CORS are set in configuration, check if the request is allowed
-            if(config.GlobalCORS != null){
-                if(!config.GlobalCORS.IsRequestAllowed(req)){
+            if (config.GlobalCORS != null)
+            {
+                if (!config.GlobalCORS.IsRequestAllowed(req))
+                {
                     config.Debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.FORBIDDEN} (CORS not allowed)", true);
                     new Error(req, res, config, "CORS not allowed", HTTP_CODES.FORBIDDEN).Process();
                     return;
@@ -537,6 +543,11 @@ public class Server
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Default Index Page)");
                         new Index(req, res, config).Process();
                     }
+                }
+                else if (config.DocumentationPath != "" && config.DocumentationPath == req.URL)
+                {
+                    config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Documentation Page)");
+                    new Documentation(req, res, config).Process();
                 }
                 else
                 {

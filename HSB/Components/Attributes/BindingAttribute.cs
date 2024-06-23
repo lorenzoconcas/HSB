@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 namespace HSB;
 
 /// <summary>
@@ -12,15 +13,31 @@ public class Binding : Attribute
     /// The path of the servlet
     /// </summary>
     private readonly string path;
+
+
+    /// <summary>
+    /// If set, the path will be automatically derived from the class name
+    /// </summary>
+    private readonly bool auto;
+
     /// <summary>
     /// Whether or not the servlet must respond to all request where url starts with path
     /// </summary>
     private readonly bool startsWith;
 
+
+    public Binding()
+    {
+        this.auto = true;
+        this.path = "";
+        this.startsWith = false;
+    }
+
     public Binding(string path, bool startsWith = false)
     {
         this.path = path;
         this.startsWith = startsWith;
+        this.auto = false;
     }
 
     public string Path
@@ -31,6 +48,11 @@ public class Binding : Attribute
     public bool StartsWith
     {
         get { return startsWith; }
+    }
+
+    public bool Auto
+    {
+        get { return auto; }
     }
 }
 

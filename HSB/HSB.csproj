@@ -37,9 +37,6 @@
 		<None Remove="DefaultPages\logo_b64" />
 	</ItemGroup>
 	<ItemGroup>
-		<Folder Include="Components\" />
-	</ItemGroup>
-	<ItemGroup>
 		<EmbeddedResource Include="DefaultPages\filelisting.html" />
 		<EmbeddedResource Include="DefaultPages\index.html" />
 		<EmbeddedResource Include="DefaultPages\error.html" />
@@ -49,10 +46,8 @@
 		<MonoDevelop>
 			<Properties>
 				<Policies>
-					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault"
-						DirectoryNamespaceAssociation="PrefixedHierarchical" />
-					<StandardHeader IncludeInNewFiles="True"
-						Text="${CopyrightHolder}&#xA;${AuthorName}" />
+					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
+					<StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
 				</Policies>
 			</Properties>
 		</MonoDevelop>

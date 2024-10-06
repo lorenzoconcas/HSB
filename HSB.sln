@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CORS", "Experiments\CORS\CO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Documentation", "Examples\Documentation\Documentation.csproj", "{7DF155A0-C835-492F-A7CA-C1810F361631}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Requestio", "Experiments\Requestio\Requestio.csproj", "{DDFCBDA3-FD05-456B-9685-275B50FFB6EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,10 @@ Global
 		{7DF155A0-C835-492F-A7CA-C1810F361631}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DF155A0-C835-492F-A7CA-C1810F361631}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DF155A0-C835-492F-A7CA-C1810F361631}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDFCBDA3-FD05-456B-9685-275B50FFB6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDFCBDA3-FD05-456B-9685-275B50FFB6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDFCBDA3-FD05-456B-9685-275B50FFB6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDFCBDA3-FD05-456B-9685-275B50FFB6EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,6 +161,7 @@ Global
 		{6768F953-8A9A-483C-9FA8-5B7863F2E2EE} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
 		{22830714-D02E-4C25-8192-6FD5B9273ED3} = {8B5CD76D-9C1D-43F4-B674-3FD5986E4F97}
 		{7DF155A0-C835-492F-A7CA-C1810F361631} = {0DE81A42-C946-4FD6-93D6-7C3F236282D5}
+		{DDFCBDA3-FD05-456B-9685-275B50FFB6EF} = {8B5CD76D-9C1D-43F4-B674-3FD5986E4F97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB06B193-55A8-4511-BBE7-B6E49532B2B3}

@@ -76,20 +76,22 @@ public class Servlet
     public void Process()
     {
         //if the servlet has a method with a file associated and it exists it will be send
-        var associatedFiles = GetType().GetCustomAttributes<AssociatedFile>();
+        var associatedFiles = GetType().GetCustomAttributes<AssociateFile>();
         if (associatedFiles.Any())
         {
             var file = associatedFiles.Where(a => a.MethodMatches(req.METHOD) || a.CustomMethodMatches(req.RawMethod.ToUpper()));
             if (file.Any())
             {
-                var path =  file.First().FilePath;
-                if(!Path.IsPathRooted(path)){
+                var path = file.First().FilePath;
+                if (!Path.IsPathRooted(path))
+                {
                     //if the path is not rooted, we assume it is relative to the current directory
                     path = Path.Combine(Directory.GetCurrentDirectory(), path);
                 }
-                if(File.Exists(path)){
+                if (File.Exists(path))
+                {
                     res.SendFile(file.First().FilePath);
-                   // configuration.debug.INFO($"Serving associated file {}", true);
+                    // configuration.debug.INFO($"Serving associated file {}", true);
                 }
                 return;
             }

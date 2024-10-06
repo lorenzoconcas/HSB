@@ -1,7 +1,7 @@
 ﻿using HSB;
-using System.Net;
+using HSB.Components.Attributes;
 using System.Reflection;
-using System.Text.Json;
+
 
 namespace HSB.DefaultPages;
 
@@ -12,9 +12,9 @@ public class Documentation(Request req, Response res, Configuration config) : Se
 
     public class Endpoint
     {
-        string path;
-        string description;
-        List<(HSB.Constants.HTTP_METHOD, string, string)> methods;
+        public string path;
+        public string description;
+        public List<(HSB.Constants.HTTP_METHOD, string, string)> methods;
 
         public Endpoint(string path, string description)
         {
@@ -59,6 +59,8 @@ public class Documentation(Request req, Response res, Configuration config) : Se
             return json;
         }
 
+
+
     }
 
 
@@ -67,7 +69,7 @@ public class Documentation(Request req, Response res, Configuration config) : Se
         //collect al classes with HSB.Components.Attributes.Documentation attribute
         var classes = AppDomain.CurrentDomain.GetAssemblies()
             .SelectMany(s => s.GetTypes())
-            .Where(p => p.GetCustomAttributes(typeof(HSB.Components.Attributes.Documentation), false).Length > 0);
+            .Where(p => p.GetCustomAttributes(typeof(DocumentClass), false).Length > 0);
         // .Select(p => new { p.Name, ((HSB.Components.Attributes.Documentation)p.GetCustomAttributes(typeof(HSB.Components.Attributes.Documentation), false)[0]).Description });
 
         //then we need to enumerate all overidden methods of the classes
@@ -78,8 +80,8 @@ public class Documentation(Request req, Response res, Configuration config) : Se
             //get all declared methods of the class that starts ith "Process"
             //BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly
             var methods = c.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-            Binding bind = ((Binding)c.GetCustomAttributes(typeof(Binding), false)[0]);
-            HSB.Components.Attributes.Documentation doc = ((HSB.Components.Attributes.Documentation)c.GetCustomAttributes(typeof(HSB.Components.Attributes.Documentation), false)[0]);
+            Binding bind = (Binding)c.GetCustomAttributes(typeof(Binding), false)[0];
+            DocumentClass doc = (DocumentClass)c.GetCustomAttributes(typeof(DocumentClass), false)[0];
             string path = bind.Path;
             string documentation = doc.Description;
 
@@ -99,30 +101,84 @@ public class Documentation(Request req, Response res, Configuration config) : Se
                     description = $"This method returns a {m.ReturnType}";
                 }
 
-                ep.AddMethod(HttpUtils.GetMethod(m.Name.Replace("Process", "")), "", description);
+                ep.AddMethod(HttpUtils.GetMethod(m.Name.Replace("Process", "").ToUpper()), "", description);
             }
 
             endpoints.Add(ep);
-            Console.WriteLine(methods);
+        }
+
+        string page = ReadFromResources("documentation.html");
+        string version = "v";
+        if (Assembly.GetExecutingAssembly().GetName().Version != null)
+        {
+            version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
         }
 
 
 
-        var json = "";
-        json += "[";
+        string footer_div = "";
+        string server_name;
+        string logo = "";
+        //string title = "";
+        if (configuration.CustomServerName != "")
+        {
+            server_name = configuration.CustomServerName;
+        }
+        else
+        {
+            server_name = "HSB<sup>#</sup>";
+            footer_div = "<div class=\"footer\">Copyright &copy; 2021-2024 Lorenzo L. Concas</div>";
+            string logo_b64 = ReadFromResources("logo_b64");
+            logo = $"<img width=\"32px\" src=\"{logo_b64}\" />";
+            // title = "Http Server Boxed <sup>#</sup>";
+        }
+
+
+        //build divs
+        string content = "";
         foreach (var ep in endpoints)
         {
-            json += ep.GetJSON();
-            if (!endpoints.Last().Equals(ep))
+            content += "<div class=\"endpoint\">";
+            content += $"<h2>{ep.path}</h2>";
+            content += $"<p>{ep.description}</p>";
+
+            foreach (var method in ep.methods)
             {
-                json += ",";
+                content += $"<div><div class='method {HttpUtils.MethodAsString(method.Item1).ToUpper()}'>{method.Item1}</div></div>";
             }
+
+            content += "</div>";
         }
-        json += "]";
 
 
-        res.JSON(json);
+        //set attributes
+        res.AddAttribute("content", content);
 
+        res.AddAttribute("logo", logo); //this break some configurations, logo must be replaced with a smaller image
+                                        //  res.AddAttribute("title", title);
+        res.AddAttribute("serverName", server_name);
+        res.AddAttribute("footer_div", footer_div);
+        res.AddAttribute("hsbVersion", version);
+
+        res.SendHTMLContent(page, true);
+
+
+
+        /*   var json = "";
+          json += "[";
+          foreach (var ep in endpoints)
+          {
+              json += ep.GetJSON();
+              if (!endpoints.Last().Equals(ep))
+              {
+                  json += ",";
+              }
+          }
+          json += "]";
+
+
+          res.JSON(json);
+   */
 
         // res.SendJSON("{}");
     }

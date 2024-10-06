@@ -3,32 +3,32 @@ using HSB.Constants;
 namespace HSB;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public class AssociatedFile : Attribute
+public class AssociateFile : Attribute
 {
     private readonly string filePath;
     private readonly List<HTTP_METHOD> methods;
     private readonly List<string> customMethods;
 
-    public AssociatedFile(string filePath, HTTP_METHOD method = HTTP_METHOD.GET)
+    public AssociateFile(string filePath, HTTP_METHOD method = HTTP_METHOD.GET)
     {
         this.filePath = filePath;
         methods = [method];
         customMethods = [];
     }
 
-    public AssociatedFile(string filePath, HTTP_METHOD[] methods)
+    public AssociateFile(string filePath, HTTP_METHOD[] methods)
     {
         this.filePath = filePath;
         this.methods = new(methods);
         customMethods = [];
     }
-    public AssociatedFile(string filePath, string customMethod)
+    public AssociateFile(string filePath, string customMethod)
     {
         this.filePath = filePath;
         methods = [];
         customMethods = [customMethod.ToUpper()];
     }
-    public AssociatedFile(string filePath, string[] customMethod)
+    public AssociateFile(string filePath, string[] customMethod)
     {
         this.filePath = filePath;
         methods = [];

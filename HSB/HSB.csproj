@@ -40,14 +40,17 @@
 		<EmbeddedResource Include="DefaultPages\filelisting.html" />
 		<EmbeddedResource Include="DefaultPages\index.html" />
 		<EmbeddedResource Include="DefaultPages\error.html" />
+		<EmbeddedResource Include="DefaultPages\documentation.html" />
 		<EmbeddedResource Include="DefaultPages\logo_b64" />
 	</ItemGroup>
 	<ProjectExtensions>
 		<MonoDevelop>
 			<Properties>
 				<Policies>
-					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault" DirectoryNamespaceAssociation="PrefixedHierarchical" />
-					<StandardHeader IncludeInNewFiles="True" Text="${CopyrightHolder}&#xA;${AuthorName}" />
+					<DotNetNamingPolicy ResourceNamePolicy="FileFormatDefault"
+						DirectoryNamespaceAssociation="PrefixedHierarchical" />
+					<StandardHeader IncludeInNewFiles="True"
+						Text="${CopyrightHolder}&#xA;${AuthorName}" />
 				</Policies>
 			</Properties>
 		</MonoDevelop>

@@ -9,6 +9,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace HSB;
 
@@ -28,16 +29,17 @@ public class Server
         Terminal.INFO("To run as standalone you must compile/execute the \"Standalone\" or the \"Launcher\" project");
         Terminal.INFO("Check the documentation for more info (\"https://github.com/lorenzoconcas/HSB-Sharp\")");
     }
+
     public Server(Configuration config)
     {
-        int errorCode = 0;
+        var errorCode = 0;
         if (!config.HideBranding)
             Utils.PrintLogo();
 
         if (config.Port == 0)
         {
             //if port is 0, we use a random port in the range 1024-65535
-            config.Port = (ushort)new Random().Next(1024, 65535);
+            config.Port = (ushort) new Random().Next(1024, 65535);
         }
 
         this.config = config;
@@ -45,8 +47,6 @@ public class Server
 
         try
         {
-
-
             if (config.Address == "")
             {
                 //address must be ANY
@@ -77,7 +77,7 @@ public class Server
                     }
                     else
                     {
-                        errorCode = (int)SERVER_ERRORS.ADDRESS_NOT_FOUND;
+                        errorCode = (int) SERVER_ERRORS.ADDRESS_NOT_FOUND;
                         throw new Exception("Cannot found address to listen to");
                     }
                 }
@@ -97,24 +97,27 @@ public class Server
                 sslLocalEndPoint = new(ipAddress, config.SslSettings.SslPort);
                 if (sslLocalEndPoint == null)
                 {
-                    errorCode = (int)SERVER_ERRORS.CANNOT_CREATE_SSL_ENDPOINT;
+                    errorCode = (int) SERVER_ERRORS.CANNOT_CREATE_SSL_ENDPOINT;
                     throw new Exception("Cannot create SSL endpoint");
                 }
+
                 sslListener = new(ipAddress.AddressFamily,
                     SocketType.Stream, ProtocolType.Tcp);
                 if (sslListener == null)
                 {
-                    errorCode = (int)SERVER_ERRORS.CANNOT_CREATE_SSL_LISTENER;
+                    errorCode = (int) SERVER_ERRORS.CANNOT_CREATE_SSL_LISTENER;
                     throw new Exception("Cannot create SSL listener");
                 }
+
                 if (sslConf.UseDebugCertificate)
                 {
                     config.Debug.INFO("Server is set to use a debug certificate");
                     sslCertificate = SslConfiguration.TryLoadDebugCertificate(c: config);
                     if (sslCertificate == null)
                     {
-                        errorCode = (int)SERVER_ERRORS.CANNOT_LOAD_DEBUG_CERTIFICATE;
-                        throw new Exception("Cannot load debug certificate, server cannot start with this configuration! Make sure openssl is installed");
+                        errorCode = (int) SERVER_ERRORS.CANNOT_LOAD_DEBUG_CERTIFICATE;
+                        throw new Exception(
+                            "Cannot load debug certificate, server cannot start with this configuration! Make sure openssl is installed");
                     }
                 }
                 else if (sslConf.IsEnabled())
@@ -132,22 +135,23 @@ public class Server
             if (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled())
             {
                 config.Debug.INFO("Server is running in SSL mode");
-
             }
+
             var prefix = "http";
             if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
             {
-                if (config.PublicURL == "")
+                if (config.PublicUrl == "")
                     config.Debug.INFO($"Listening at https://{sslLocalEndPoint}/");
-                else config.Debug.INFO($"Listening at https://{config.PublicURL}:{sslConf.SslPort}/");
+                else config.Debug.INFO($"Listening at https://{config.PublicUrl}:{sslConf.SslPort}/");
             }
 
-            else if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
+            else if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) &&
+                     sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT)
                 prefix += "s";
 
-            if (config.PublicURL == "")
+            if (config.PublicUrl == "")
                 config.Debug.INFO($"Listening at {prefix}://{localEndPoint}/");
-            else config.Debug.INFO($"Listening at {prefix}://{config.PublicURL}:{config.Port}/");
+            else config.Debug.INFO($"Listening at {prefix}://{config.PublicUrl}:{config.Port}/");
 
             config.Debug.INFO("Server started");
         }
@@ -162,7 +166,6 @@ public class Server
 
     public void Start(bool openInBrowser = false)
     {
-
         try
         {
             listener.Bind(localEndPoint);
@@ -171,12 +174,14 @@ public class Server
             var sslConf = config.SslSettings;
 
             if (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled())
-            { //sslListener and sslLocalEndPoint are not null because we checked in the constructor
+            {
+                //sslListener and sslLocalEndPoint are not null because we checked in the constructor
                 sslListener!.Bind(sslLocalEndPoint!);
                 sslListener.Listen(100);
             }
 
-            OpenInBrowserIfSet(openInBrowser, sslConf.IsEnabled(), sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint);
+            OpenInBrowserIfSet(openInBrowser, sslConf.IsEnabled(),
+                sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint);
 
             //this makes the second port listen to SSL requests
             if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
@@ -194,7 +199,8 @@ public class Server
             while (true)
             {
                 //if ssl is enabled and single port is used
-                var sslMode = (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
+                var sslMode = (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) &&
+                              sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
 
                 Step(listener, sslMode);
             }
@@ -254,7 +260,9 @@ public class Server
 
                     //the endpoint varies if by the port mode
                     //if the port mode is dual port, we redirect to the ssl port
-                    IPEndPoint redirectEndpoint = config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint;
+                    IPEndPoint redirectEndpoint = config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
+                        ? sslLocalEndPoint!
+                        : localEndPoint;
                     res.Redirect("https://" + redirectEndpoint, HTTP_CODES.MOVED_PERMANENTLY);
                     return;
                 }
@@ -278,10 +286,13 @@ public class Server
 
                 //the endpoint varies if by the port mode
                 //if the port mode is dual port, we redirect to the ssl port
-                IPEndPoint redirectEndpoint = config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT ? sslLocalEndPoint! : localEndPoint;
+                IPEndPoint redirectEndpoint = config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
+                    ? sslLocalEndPoint!
+                    : localEndPoint;
                 res.Redirect("https://" + redirectEndpoint, HTTP_CODES.MOVED_PERMANENTLY);
                 return;
             }
+
             bytesRec = socket.Receive(bytes);
         }
 
@@ -304,11 +315,30 @@ public class Server
 
     private bool RunIfExpressMapping(Request req, Response res)
     {
-        var e = config.ExpressRoutes.Find(e => e.Item1 == req.URL && e.Item2.Item1 == req.METHOD);
+        var route = config.ExpressRoutes.Find(e => e.Item1 == req.URL && e.Item2.Item1 == req.METHOD);
+        //regex routes are the ones that starts with /` (slash and backtick)
+        var regexRoutes = config.ExpressRoutes.FindAll(e => e.Item1.StartsWith("/`") && e.Item2.Item1 == req.METHOD);
 
-        if (e == null) return false;
+        //regex paths have priority
+        if (regexRoutes.Count > 0)
+        {
+            var regexRoute = regexRoutes.Find(r => 
+                new Regex(r.Item1[2..])
+                    .Match(req.URL)
+                    .Success
+            );
 
-        e.Item2.Item2.DynamicInvoke(req, res);
+            if (regexRoute != null)
+            {
+                regexRoute.Item2.Item2.DynamicInvoke(req, res);
+                return true;
+            }
+        }
+
+
+        if (route == null) return false;
+
+        route.Item2.Item2.DynamicInvoke(req, res);
         return true;
     }
 
@@ -316,51 +346,50 @@ public class Server
     /// Collect all the static routes from the assemblies
     /// </summary>
     /// <returns></returns>
-
     protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
     {
         Dictionary<Tuple<string, bool>, Type> routes = [];
 
         string[] excludeList = ["System", "Microsoft", "Internal"];
 
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => !excludeList.Any(e => a.FullName!.StartsWith(e)));
-      
-        var classes = from assembly in assemblies
-                      from type in assembly.GetTypes()
-                      where type.IsClass
-                      select type;
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => !excludeList.Any(e => a.FullName!.StartsWith(e)));
 
-    
+        var classes = assemblies.SelectMany(assembly => assembly.GetTypes(), (assembly, type) => new {assembly, type})
+            .Where(@t => @t.type.IsClass)
+            .Select(@t => @t.type);
+
 
         foreach (var c in classes)
         {
-            IEnumerable<Binding> multipleBinded = c.GetCustomAttributes<Binding>(false);
+            var multipleBinded = c.GetCustomAttributes<Binding>(false);
 
-            if (multipleBinded.Any())
+            var enumerable = multipleBinded as Binding[] ?? multipleBinded.ToArray();
+            if (enumerable.Any())
             {
-
-                foreach (Binding b in multipleBinded)
+                foreach (var b in enumerable)
                 {
                     if (b.Path != "")
                     {
-                        routes.Add(new(b.Path, b.StartsWith), c);
-                    }else if (b.Auto)
+                        routes.Add(new Tuple<string, bool>(b.Path, b.StartsWith), c);
+                    }
+                    else if (b.Auto)
                     {
-                        routes.Add(new("/"+c.Name.ToLower(), false), c);
+                        routes.Add(new Tuple<string, bool>("/" + c.Name.ToLower(), false), c);
                     }
                 }
             }
             else
             {
-                Binding? attr = c.GetCustomAttribute<Binding>(false);
+                var attr = c.GetCustomAttribute<Binding>(false);
                 if (attr == null) continue;
                 if (attr.Path != "")
                 {
-                    routes.Add(new(attr.Path, attr.StartsWith), c);
+                    routes.Add(new Tuple<string, bool>(attr.Path, attr.StartsWith), c);
                 }
                 else if (attr.Auto)
                 {
-                    routes.Add(new(c.Name.ToLower(), false), c);
+                    routes.Add(new Tuple<string, bool>(c.Name.ToLower(), false), c);
                 }
             }
         }
@@ -369,7 +398,7 @@ public class Server
         return routes;
     }
 
-    protected internal static string GetStaticRoutesInfo()
+    /*protected internal static string GetStaticRoutesInfo()
     {
         string str = "";
         var staticRoutes = CollectStaticRoutes();
@@ -379,17 +408,51 @@ public class Server
             str += "\nStatic routes:";
             staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");
         }
+
         return str;
-    }
+    }*/
 
     private object? GetInstance(Request req, Response res)
     {
         Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
 
-
-        if (routes.ContainsKey(new(req.URL, false)))
+        //fetch routes with regexes
+        var regexRoutes = routes.Keys.Where(e => e.Item1.StartsWith("/`")).ToList();
+        if (regexRoutes.Count > 0)
         {
-            Type c = routes[new(req.URL, false)];
+            var regexRoute = regexRoutes.Find(r => 
+                new Regex(r.Item1[2..])
+                    .Match(req.URL)
+                    .Success
+                );
+
+
+            /*var regexRoute = regexRoutes.Find(r =>
+            {
+                var regexString = r.Item1[2..];
+                //check if regex matches and return if true
+                var regex = new Regex(regexString);
+                var success = regex.Match(req.URL).Success;
+                return success;
+            });*/
+
+            if (regexRoute != null)
+            {
+                var c = routes[regexRoute];
+                var x = c.GetConstructors()[0];
+                return x.GetParameters().Length switch
+                {
+                    3 => Activator.CreateInstance(c, req, res, config),
+                    2 => Activator.CreateInstance(c, req, res),
+                    _ => throw new Exception($"Invalid constructor found {x.Name}"),
+                };
+            }
+        }
+
+
+        if (routes.ContainsKey(new Tuple<string, bool>(req.URL, false)))
+        {
+            var c = routes[new(req.URL, false)];
             var x = c.GetConstructors()[0];
             return x.GetParameters().Length switch
             {
@@ -400,20 +463,21 @@ public class Server
         }
 
         //we omit the else branch 
-        //we check if there is a a path that starts like the request url
+        //we check if there is a path that starts like the request url
         return (from r in routes
-                let path = r.Key.Item1
-                where req.URL.StartsWith(path)
-                select r.Value
+            let path = r.Key.Item1
+            where req.URL.StartsWith(path)
+            select r.Value
             into c
-                let x = c.GetConstructors()[0]
-                select x.GetParameters().Length switch
-                {
-                    3 => Activator.CreateInstance(c, req, res, config),
-                    2 => Activator.CreateInstance(c, req, res),
-                    _ => throw new Exception($"Invalid constructor found {x.Name}"),
-                }).FirstOrDefault();
+            let x = c.GetConstructors()[0]
+            select x.GetParameters().Length switch
+            {
+                3 => Activator.CreateInstance(c, req, res, config),
+                2 => Activator.CreateInstance(c, req, res),
+                _ => throw new Exception($"Invalid constructor found {x.Name}"),
+            }).FirstOrDefault();
     }
+
     /// <summary>
     /// Check if the request is blocked by a blocking rule
     /// </summary>
@@ -430,6 +494,7 @@ public class Server
                 {
                     return true; //blocked request
                 }
+
                 if (File.Exists("./banned_ips.txt"))
                 {
                     var bannedIps = File.ReadAllLines("./banned_ips.txt");
@@ -438,6 +503,7 @@ public class Server
                         return true; //blocked request
                     }
                 }
+
                 return true;
             case BLOCK_MODE.OKLIST:
                 if (config.PermanentIPList.Any(ip => ip == req.ClientIP))
@@ -453,6 +519,7 @@ public class Server
 
                 return false; //no allowed_ips.txt file found, so we allow all requests
         }
+
         return false;
     }
 
@@ -511,13 +578,13 @@ public class Server
                 {
                     if (!req.IsWebSocket())
                     {
-                        config.Debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
+                        config.Debug.WARNING(
+                            $"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
                         new Error(req, res, config, "Invalid Request", HTTP_CODES.METHOD_NOT_ALLOWED).Process();
                         return;
                     }
                     else
                     {
-
                         ws.Process();
                         return;
                     }
@@ -558,6 +625,7 @@ public class Server
                     {
                         return;
                     }
+
                     //if the path is safe, the static folder is set and the file exists, we send it
                     if (config.StaticFolderPath != "" && File.Exists(config.StaticFolderPath + "/" + req.URL))
                     {
@@ -565,7 +633,8 @@ public class Server
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
                         res.SendFile(config.StaticFolderPath + "/" + req.URL);
                     }
-                    else if (config.ServeEmbeddedResource && Utils.IsEmbeddedResource(req.URL, config.EmbeddedResourcePrefix))
+                    else if (config.ServeEmbeddedResource &&
+                             Utils.IsEmbeddedResource(req.URL, config.EmbeddedResourcePrefix))
                     {
                         config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Embedded resource)");
                         object resource = Utils.LoadResource<object>(req.URL, config.EmbeddedResourcePrefix);
@@ -603,8 +672,10 @@ public class Server
                 else
                     File.WriteAllText("./banned_ips.txt", req.ClientIP + "\n");
             }
+
             return true;
         }
+
         return false;
     }
 }

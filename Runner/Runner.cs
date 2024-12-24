@@ -42,6 +42,14 @@ public class HSBRunner
         c.GET("/echo", Echo);
         c.POST("/echo", Echo);
 
+        /*var pathRegex = @"\/.*\/*regex.+";
+        
+        c.GET($"/`{pathRegex}", (Request req, Response res) =>
+        {
+            res.SendHTMLContent($"Path is {req.URL} and match regex {pathRegex}");
+        });*/
+        
+
         c.GET("/embeddedindex", (Request req, Response res) =>
         {
             new HSB.Index(req, res, c).ProcessGet();

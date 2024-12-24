@@ -460,5 +460,38 @@ public static partial class Utils
         }
         return default!;
     }
+
+    public static List<String> GetResourcesList(string prefix = "")
+    {
+
+
+        AppDomain currentDomain = AppDomain.CurrentDomain;
+        List<Assembly> assemblies = [.. currentDomain.GetAssemblies()];
+
+        assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Microsoft"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("Internal"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("ILLink"));
+        assemblies.RemoveAll(a => a.ToString().StartsWith("FxResources"));
+
+
+        List<string> resources = [];
+
+        foreach (var assembly in assemblies)
+        {
+
+            var rsrcs = assembly.GetManifestResourceNames().ToList();
+            //filter by prefix if not ""
+            if (rsrcs.Count > 0 && prefix != "")
+            {
+               rsrcs = rsrcs.Where(rsrc => rsrc.StartsWith(prefix)).ToList();
+            }
+
+            resources.AddRange(rsrcs);
+        }
+        return resources;
+
+        //  string resourceName = assembly.GetManifestResourceNames().First(str => str.EndsWith(resName));
+    }
 }
 

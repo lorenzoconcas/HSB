@@ -12,6 +12,7 @@ public static class MimeTypeUtils
 
     public static readonly string TEXT_PLAIN = "text/plain";
     public static readonly string TEXT_HTML = "text/html";
+    public static readonly string TEXT_JAVASCRIPT = "text/javascript";
     public static readonly string APPLICATION_OCTET = "application/octet";
 
     private static readonly Lazy<IDictionary<string, string>> _mappings = new(BuildMappings);

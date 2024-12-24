@@ -1,9 +1,9 @@
 ﻿using System;
 using HSB;
 
-namespace Runner.TestRunnerClasses
+namespace Runner.Servlets
 {
-    [Binding("/regex/", true)]
+    [Binding(@"/`\/.*\/*regex.")]
     public class RegexBinding : Servlet
     {
         public RegexBinding(Request req, Response res) : base(req, res)
@@ -12,7 +12,8 @@ namespace Runner.TestRunnerClasses
 
         public override void ProcessGet()
         {
-            res.Send("<h1>Ciao</h1>", "text/html");
+         
+            res.Send($@"<h1>Hi</h1><h4> you used regex /`\/.*\/*regex. to match {req.URL}</h4>", "text/html");
         }
     }
 }

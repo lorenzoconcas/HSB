@@ -26,7 +26,7 @@ public class Configuration
     /// <summary>
     /// When this field is set, it will be used for Unsecure SSL requests upgrade 
     /// </summary>
-    public string PublicURL = "";
+    public string PublicUrl = "";
     /// <summary>
     /// Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to ""
     /// </summary>
@@ -106,6 +106,22 @@ public class Configuration
     /// the server will search for the resource in the assembly resources at www/index.html
     /// </summary>
     public string EmbeddedResourcePrefix = "";
+
+    /// <summary>
+    /// If this is not empty the server will map any embedded resource with the prefix in this list as paths
+    /// for example the folder ./dist/ is included as embedded resources and this folder contains the following files:
+    /// ./dist/index.html
+    /// ./dist/file.js
+    /// ./dist/style.css
+    ///
+    ///  those files will have this resource identifier:
+    /// YourApplicationNameSpace.dist.FILE_NAME
+    /// setting this prefix will make convert automatically those files in paths, ex
+    /// ./dist/file.js -> /file.js and so on
+    ///
+    /// WIP!
+    /// </summary>
+    public string[] EmbeddedPaths = [];
     /// <summary>
     /// Contains the arguments passed from the command line
     /// </summary>
@@ -123,6 +139,7 @@ public class Configuration
     /// it's similiar to Swagger or alternative documentation systems
     /// </summary>
     public string DocumentationPath = "";
+    
     /// <summary>
     /// Creates a default fail-safe configuration (still, the port could be in use)
     /// </summary>
@@ -155,7 +172,7 @@ public class Configuration
 
             lastProp = "Address"; Address = root.GetProperty("Address").GetString() ?? "";
             lastProp = "Port"; Port = root.GetProperty("Port").GetUInt16();
-            lastProp = "PublicURL"; PublicURL = root.GetProperty("PublicURL").GetString() ?? "";
+            lastProp = "PublicURL"; PublicUrl = root.GetProperty("PublicURL").GetString() ?? "";
             lastProp = "StaticFolderPath"; StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
             lastProp = "Debug"; Debug = Debugger.FromJson(root.GetProperty("Debug"));
             lastProp = "SslSettings"; SslSettings = SslConfiguration.FromJSON(root.GetProperty("SslSettings"));
@@ -172,13 +189,9 @@ public class Configuration
             lastProp = "DocumentationPath"; DocumentationPath = root.GetProperty("DocumentationPath").GetString() ?? "";
             lastProp = "PermanentIPList";
 
-            foreach (var item in root.GetProperty("PermanentIPList").EnumerateArray())
+            foreach (var v in root.GetProperty("PermanentIPList").EnumerateArray().Select(item => item.GetString()).OfType<string>())
             {
-                string? v = item.GetString();
-                if (v != null)
-                {
-                    PermanentIPList.Add(v!);
-                }
+                PermanentIPList.Add(v);
             }
 
 

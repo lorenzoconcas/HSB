@@ -67,6 +67,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     public void Send(string data, string mimeType = "text/plain", int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
     {
         string _mime = mimeType;
+
         string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
 
         Send(Encoding.UTF8.GetBytes(resp));

@@ -92,7 +92,8 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
                 else
                 {
 
-                    footer_div = "<div class=\"footer\">Copyright &copy; 2021-2023 Lorenzo L. Concas</div>";
+                    var currentYear = DateTime.Now.Year;
+                    footer_div = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
                     server_name = "HSB<sup>#</sup>";
                 }
                 res.AddAttribute("folder", rootRequested ? " / " : url[1..]);

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Security.Cryptography;
-using HSB;
+﻿using HSB;
 using HSB.Constants;
 
 namespace Runner;
@@ -24,7 +22,7 @@ public class HSBRunner
             Address = "", //listen any address
             Port = 8080,
             RequestMaxSize = Configuration.MEGABYTE * 2,
-            ListeningMode = HSB.Constants.IPMode.IPV4_ONLY, //valid only if address == "",
+            ListeningMode = IPMode.IPV4_ONLY, //valid only if address == "",
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static"),
             //CustomServerName = "Runner powered by HSB",
             SslSettings = ssl,
@@ -186,7 +184,9 @@ public class HSBRunner
                         favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_non_ssl.ico\" />";
                     }
                 }
-                html += "<br/><hr><footer>HSB-# Runner &copy; 2021-2023</footer>";
+
+                var currentYear = DateTime.Now.Year;
+                html += $"<br/><hr><footer>HSB-# Runner &copy; 2021-{currentYear}</footer>";
                 html += "<script> console.log(window.location.href)</script>";
                 html += "</body></html>";
                 html = "<html><head>" + favicon + html;
@@ -197,7 +197,7 @@ public class HSBRunner
         c.GET("/favicon.ico", (Request req, Response res) =>
         {
             Terminal.INFO("hello");
-            var resource = HSB.Utils.LoadResource<byte[]?>("favicon.png");
+            var resource = Utils.LoadResource<byte[]?>("favicon.png");
 
             if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
 
@@ -206,7 +206,7 @@ public class HSBRunner
         c.GET("/favicon_ssl.ico", (Request req, Response res) =>
         {
 
-            var resource = HSB.Utils.LoadResource<byte[]?>("favicon_ssl.ico");
+            var resource = Utils.LoadResource<byte[]?>("favicon_ssl.ico");
 
             if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
 
@@ -214,7 +214,7 @@ public class HSBRunner
         });
         c.GET("/favicon_non_ssl.ico", (Request req, Response res) =>
         {
-            var resource = HSB.Utils.LoadResource<byte[]?>("favicon_nonssl.ico");
+            var resource = Utils.LoadResource<byte[]?>("favicon_nonssl.ico");
             if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
             res.SendFile(resource, "image/x-icon");
         });

@@ -1,16 +1,20 @@
 ﻿using System.Reflection;
 using HSB.Constants;
+
 namespace HSB;
 
 public class Servlet
 {
     protected Request req;
     protected Response res;
+
     protected Configuration configuration;
+
     //in case of an unsupported http method, we can specify a generic handler
     protected Delegate? handlerFallback;
 
     private Dictionary<string, Delegate> CustomMethodsMap;
+
     public Servlet(Request req, Response res)
     {
         if (req == null || res == null)
@@ -47,6 +51,7 @@ public class Servlet
         var binding = this.GetType().GetCustomAttribute<Binding>();
         return binding == null ? "" : binding.Path;
     }
+
     /// <summary>
     /// Extract a string from an embedded resource
     /// </summary>
@@ -56,15 +61,15 @@ public class Servlet
     {
         try
         {
-
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string _resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(resourceName));
+            var assembly = Assembly.GetExecutingAssembly();
+            var _resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(resourceName));
             string result;
-            using (Stream stream = assembly.GetManifestResourceStream(_resourceName)!)
+            using (var stream = assembly.GetManifestResourceStream(_resourceName)!)
             using (StreamReader reader = new(stream))
             {
                 result = reader.ReadToEnd();
             }
+
             return result;
         }
         catch (Exception)
@@ -75,12 +80,14 @@ public class Servlet
 
     public void Process()
     {
-        //if the servlet has a method with a file associated and it exists it will be send
-        var associatedFiles = GetType().GetCustomAttributes<AssociateFile>();
-        if (associatedFiles.Any())
+        //if the servlet has a method with a file associated and if it exists it will be sent
+        var associatedFiles = GetType().GetCustomAttributes<AssociateFile>().ToList();
+        if (associatedFiles.Count > 0)
         {
-            var file = associatedFiles.Where(a => a.MethodMatches(req.METHOD) || a.CustomMethodMatches(req.RawMethod.ToUpper()));
-            if (file.Any())
+            var file = associatedFiles
+                .Where(a => a.MethodMatches(req.METHOD) || a.CustomMethodMatches(req.RawMethod.ToUpper()))
+                .ToList();
+            if (file.Count > 0)
             {
                 var path = file.First().FilePath;
                 if (!Path.IsPathRooted(path))
@@ -88,11 +95,13 @@ public class Servlet
                     //if the path is not rooted, we assume it is relative to the current directory
                     path = Path.Combine(Directory.GetCurrentDirectory(), path);
                 }
+
                 if (File.Exists(path))
                 {
                     res.SendFile(file.First().FilePath);
                     // configuration.debug.INFO($"Serving associated file {}", true);
                 }
+
                 return;
             }
         }
@@ -126,23 +135,30 @@ public class Servlet
             case HTTP_METHOD.CONNECT:
                 ProcessConnect();
                 break;
+            case HTTP_METHOD.UNKNOWN:
             default:
-                if (!CustomMethodsMap.Any()) { res.Send(HTTP_CODES.METHOD_NOT_ALLOWED); return; };
+                if (CustomMethodsMap.Count < 1)
+                {
+                    res.Send(HTTP_CODES.METHOD_NOT_ALLOWED);
+                    return;
+                }
                 if (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))
                 {
                     Terminal.INFO($"Custom method requested for route '{req.URL}'", true);
                     CustomMethodsMap[req.RawMethod].DynamicInvoke(req, res);
                     return;
                 }
+
                 if (handlerFallback != null)
                 {
                     handlerFallback.DynamicInvoke();
                     return;
                 }
-                Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}", true);
+
+                Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}",
+                    true);
                 res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
                 break;
-
         }
     }
 

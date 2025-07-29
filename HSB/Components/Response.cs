@@ -23,19 +23,14 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
 
     private CORS? cors = null;
 
-    public void SetCORS(CORS cors)
-    {
-        this.cors = cors;
-    }
 
-
-    //Send methods
-
+    #region Global Send methods
 
     /// <summary>
-    /// Send an un modified byte array to to the socket
+    /// Send an un modified byte array to the socket
     /// </summary>
     /// <param name="data"></param>
+    /// <param name="disconnect"></param>
     public void Send(byte[] data, bool disconnect = true)
     {
         try
@@ -48,9 +43,11 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
             }
             else
             {
-                int totalBytes = socket.Send(data);
-                socket.Disconnect(disconnect);
+                var totalBytes = socket.Send(data);
+                if (disconnect)
+                    socket.Disconnect(disconnect);
             }
+
             data = [];
         }
         catch (Exception e)
@@ -58,21 +55,24 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
             Terminal.ERROR($"Error sending data ->\n {e}");
         }
     }
+
+
     /// <summary>
     /// Sends an HTTP Response with the body passed as parameter
     /// </summary>
     /// <param name="data">Body of the response</param>
     /// <param name="mimeType">MimeType of the body</param>
     /// <param name="statusCode">Response status code</param>
-    public void Send(string data, string mimeType = "text/plain", int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
+    public void Send(string data, string mimeType = "text/plain", int statusCode = HTTP_CODES.OK,
+        Dictionary<string, string>? customHeaders = null)
     {
         string _mime = mimeType;
 
         string resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, _mime, customHeaders) + data;
 
         Send(Encoding.UTF8.GetBytes(resp));
-
     }
+
     /// <summary>
     /// Loads and HTML file from path and sends it as HTTP Response with mimeType = text/html
     /// Optionally it can provides a basic processor function
@@ -99,6 +99,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
             Terminal.ERROR("Error sending file : " + path);
         }
     }
+
     /// <summary>
     /// Sends an html page passed as string
     /// </summary>
@@ -107,23 +108,27 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="statusCode">Response status code</param>
     /// <param name="encoding">Encoding of the document</param>
     /// <param name="customHeaders">Optional headers</param>
-    public void SendHTMLContent(string content, bool process = false, int statusCode = HTTP_CODES.OK, string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null)
+    public void SendHTMLContent(string content, bool process = false, int statusCode = HTTP_CODES.OK,
+        string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null)
     {
         if (process)
             content = ProcessContent(content);
         Send(content, MimeTypeUtils.TEXT_HTML + $"; charset={encoding}", statusCode, customHeaders);
     }
+
     /// <summary>
     /// Loads a file from a given path and sends an HTTP Response
     /// </summary>
     /// <param name="absPath">Path (absolute) of the file</param>
     /// <param name="mimeType">MimeType of the file</param>
     /// <param name="statusCode">Response status code</param>
-    public void SendFile(string absPath, string? mimeType = null, int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
+    public void SendFile(string absPath, string? mimeType = null, int statusCode = HTTP_CODES.OK,
+        Dictionary<string, string>? customHeaders = null)
     {
         var data = File.ReadAllBytes(absPath);
 
-        string _mime = mimeType ?? MimeTypeUtils.GetMimeType(Path.GetExtension(absPath)) ?? MimeTypeUtils.APPLICATION_OCTET;
+        string _mime = mimeType ??
+                       MimeTypeUtils.GetMimeType(Path.GetExtension(absPath)) ?? MimeTypeUtils.APPLICATION_OCTET;
         string headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);
         byte[] headersBytes = Encoding.UTF8.GetBytes(headers);
         byte[] responseBytes = new byte[data.Length + headersBytes.Length];
@@ -138,13 +143,15 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         headersBytes = [];
         responseBytes = [];
     }
+
     /// <summary>
     /// Sends data to the client
     /// </summary>
     /// <param name="data"></param>
     /// <param name="mimeType"></param>
     /// <param name="statusCode"></param>
-    public void SendFile(byte[] data, string mimeType, int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
+    public void SendFile(byte[] data, string mimeType, int statusCode = HTTP_CODES.OK,
+        Dictionary<string, string>? customHeaders = null)
     {
         string _mime = mimeType;
         string headers = GetHeaders(statusCode, data.Length, _mime, customHeaders);
@@ -160,47 +167,59 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         headersBytes = [];
         responseBytes = [];
     }
+
     /// <summary>
     /// Sends a generic object to the client, with possible optimization (string, byte[], FilePart, generic object)
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="fileName"></param>
-    public void SendObject(object obj, string fileName = "")
+    public void SendObject(object? obj, string fileName = "")
     {
-        if (obj == null) return;
-
-        if (obj is string str)
-            if (fileName != "")
+        switch (obj)
+        {
+            case null:
+                return;
+            case string str when fileName != "":
                 Send(str, MimeTypeUtils.GetMimeType(Path.GetExtension(fileName)) ?? MimeTypeUtils.TEXT_PLAIN);
-            else
+                break;
+            case string str:
                 Send(str);
-        else if (obj is byte[] bytes)
-            Send(bytes);
-        else if (obj is FilePart filePart)
-            SendFile(filePart);
-        else
-            SendJSON(obj);
+                break;
+            case byte[] bytes:
+                Send(bytes);
+                break;
+            case FilePart filePart:
+                SendFile(filePart);
+                break;
+            default:
+                SendJSON(obj);
+                break;
+        }
     }
+
     /// <summary>
     /// Send a FilePart to the client
     /// </summary>
     /// <param name="filePart"></param>
     /// <param name="statusCode"></param>
     /// <param name="customHeaders"></param>
-    public void SendFile(FilePart filePart, int statusCode = HTTP_CODES.OK, Dictionary<string, string>? customHeaders = null)
+    public void SendFile(FilePart filePart, int statusCode = HTTP_CODES.OK,
+        Dictionary<string, string>? customHeaders = null)
     {
         SendFile(filePart.GetBytes(), filePart.GetMimeType(), statusCode, customHeaders);
     }
+
     /// <summary>
     /// Send an HTTP Response with no body but with given status code
     /// </summary>
     /// <param name="statusCode"></param>
     public void SendCode(int statusCode)
     {
-        string resp = GetHeaders(statusCode, 0, MimeTypeUtils.TEXT_PLAIN) + NEW_LINE;
+        var resp = GetHeaders(statusCode, 0, MimeTypeUtils.TEXT_PLAIN) + NEW_LINE;
 
         Send(Encoding.UTF8.GetBytes(resp));
     }
+
     /// <summary>
     /// Shorthand for SendCode
     /// </summary>
@@ -209,24 +228,30 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         SendCode(statusCode);
     }
+
+    #endregion
+
+    #region Redirect methods
     /// <summary>
     /// Sends a redirect to the client
     /// </summary>
     /// <param name="route"></param>
+    /// <param name="statusCode"></param>
     public void Redirect(string route, int statusCode = HTTP_CODES.FOUND)
     {
-        if (statusCode < 300 && statusCode > 399)
+        if (statusCode < 300 || statusCode > 399)
             throw new InvalidHttpCodeException(statusCode);
 
-        string response = GetHeaders(
-           statusCode,
+        var response = GetHeaders(
+            statusCode,
             0,
             MimeTypeUtils.TEXT_PLAIN,
-            new Dictionary<string, string>() { { "Location", route } }
+            new Dictionary<string, string>() {{"Location", route}}
         ) + NEW_LINE;
 
         Send(Encoding.UTF8.GetBytes(response));
     }
+
     /// <summary>
     /// Redirects to a given servlet
     /// </summary>
@@ -236,6 +261,11 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         Redirect(s.GetRoute(), statusCode);
     }
+
+    #endregion
+
+    #region Staus codes shorthand methods
+
     //common status codes
     /// <summary>
     /// Bad Request
@@ -244,6 +274,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         SendCode(HTTP_CODES.BAD_REQUEST);
     }
+
     /// <summary>
     /// Unauthorized
     /// </summary>
@@ -251,6 +282,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         SendCode(HTTP_CODES.UNAUTHORIZED);
     }
+
     /// <summary>
     /// Not Found
     /// </summary>
@@ -258,6 +290,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         SendCode(HTTP_CODES.NOT_FOUND);
     }
+
     /// <summary>
     /// Internal Server Error
     /// </summary>
@@ -265,6 +298,10 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         SendCode(HTTP_CODES.INTERNAL_SERVER_ERROR);
     }
+
+    #endregion
+    
+    #region Json sending related methods
     /// <summary>
     /// Sends a HTTP Response with a JSON body passed as parameter
     /// </summary>
@@ -273,6 +310,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         Send(content, "application/json");
     }
+
     /// <summary>
     /// Serializes and sends an Object in JSON format
     /// </summary>
@@ -282,23 +320,26 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         JSON(JsonSerializer.Serialize(o, options));
     }
+
     /// <summary>
     /// Serialize and sends an Object in JSON Format
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="o"></param>
-    /// <param name="includeFields">Whether or not or not include fields of the object</param>
-    public void JSON<T>(T o, bool includeFields = true, bool WriteIndented = true)
+    /// <param name="includeFields">Whether include fields of the object</param>
+    /// <param name="writeIndented"></param>
+    public void JSON<T>(T o, bool includeFields = true, bool writeIndented = true)
     {
         JsonSerializerOptions jo = new()
         {
             IncludeFields = includeFields,
             MaxDepth = 0,
-            WriteIndented = WriteIndented
+            WriteIndented = writeIndented
         };
 
         JSON(JsonSerializer.Serialize(o, jo));
     }
+
     /// <summary>
     /// Alternate name for function JSON
     /// </summary>
@@ -306,18 +347,82 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="o"></param>
     /// <param name="options"></param>
     public void SendJSON<T>(T o, JsonSerializerOptions options) => JSON(o, options);
+
     /// <summary>
     /// Alternate name for function JSON
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="o"></param>
-    /// <param name="options"></param>
+    /// <param name="includeFields"></param>
     public void SendJSON<T>(T o, bool includeFields = true) => JSON(o, includeFields);
+
     ///<summary>
     /// Alternate name for function JSON
     /// </summary>
     /// <param name="content"></param>                
     public void SendJSON(string content) => JSON(content);
+
+    
+    #endregion
+    
+    #region attributes methods
+    //function related to a basic preprocessing feature
+
+    /// <summary>
+    /// Adds an attribute to the HTML file that will be processed, if it already exists it will be overwritten
+    /// </summary>
+    /// <param name="name">Name of the attribute</param>
+    /// <param name="value">Value of the attribute</param>
+    public void AddAttribute(string name, string value)
+    {
+        if (attributes.ContainsKey(name))
+            attributes[name] = value;
+        else
+            attributes.Add(name, value);
+    }
+
+    /// <summary>
+    /// Removes an attribute to the HTML file that will be processed
+    /// </summary>
+    /// <param name="name">Name of the attribute</param>
+    public void RemoveAttribute(string name)
+    {
+        attributes.Remove(name);
+    }
+
+    /// <summary>
+    /// Retrieves the value of an attribute to the HTML file that will be processed, if doesn't exists it will return an empty string
+    /// </summary>
+    /// <param name="name">Name of the attribute</param>
+    public string GetAttribute(string name)
+    {
+        return attributes[name] ?? "";
+    }
+
+    #endregion
+    
+    #region Utils
+    
+    public void SetCORS(CORS cors)
+    {
+        this.cors = cors;
+    }
+    
+    /// <summary>
+    /// Does a basic content-processing of a given HTML file
+    /// </summary>
+    /// <param name="content">Name of the attribute</param>
+    private string ProcessContent(string content)
+    {
+        foreach (var attr in attributes)
+        {
+            content = content.Replace($"#{{{attr.Key}}}", attr.Value);
+        }
+
+        return content;
+    }
+    
+        
     /// <summary>
     /// Calculate the header of an HTTP Response
     /// </summary>
@@ -326,13 +431,14 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="contentType">Mimetype of the body</param>
     /// <param name="customHeaders">Optional headers</param>
     /// <returns></returns>
-    private string GetHeaders(int responseCode, int size, string contentType, Dictionary<string, string>? customHeaders = null)
+    private string GetHeaders(int responseCode, int size, string contentType,
+        Dictionary<string, string>? customHeaders = null)
     {
         CultureInfo ci = new("en-US");
 
-        string currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss ", ci) + "GMT";
+        var currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss ", ci) + "GMT";
 
-        string headers = $"{HttpUtils.ProtocolAsString(request.PROTOCOL)} {responseCode} {request.URL} {NEW_LINE}";
+        var headers = $"{HttpUtils.ProtocolAsString(request.PROTOCOL)} {responseCode} {request.URL} {NEW_LINE}";
         headers += "Date: " + currentTime + NEW_LINE;
         if (config.CustomServerName != "")
             headers += $"Server: {config.CustomServerName}{NEW_LINE}";
@@ -341,8 +447,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
 
         headers += $"Last-Modified: {currentTime}{NEW_LINE}";
 
-
-        if (responseCode < 300 || responseCode > 399)
+        if (responseCode is < 300 or > 399)
         {
             headers += $"Content-Length: {size}{NEW_LINE}";
             headers += $"Content-Type: {contentType}{NEW_LINE}";
@@ -350,12 +455,13 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
 
         if (customHeaders != null)
         {
-
             foreach (var h in customHeaders)
+            {
                 headers += $"{h.Key}: {h.Value}{NEW_LINE}";
+            }
 
             //if it's a redirect "Location" header is a must
-            if (responseCode >= 300 && responseCode <= 399 && !customHeaders.ContainsKey("Location"))
+            if (responseCode is >= 300 and <= 399 && !customHeaders.ContainsKey("Location"))
             {
                 throw new InvalidRedirectRoute();
             }
@@ -379,13 +485,10 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
 
         //CORS
         config.GlobalCORS?.AllowedOrigins.ForEach(origin =>
-            {
-                headers += $"Access-Control-Allow-Origin: {origin}{NEW_LINE}";
-            });
-        cors?.AllowedOrigins.ForEach(origin =>
-            {
-                headers += $"Access-Control-Allow-Origin: {origin}{NEW_LINE}";
-            });
+        {
+            headers += $"Access-Control-Allow-Origin: {origin}{NEW_LINE}";
+        });
+        cors?.AllowedOrigins.ForEach(origin => { headers += $"Access-Control-Allow-Origin: {origin}{NEW_LINE}"; });
 
         /*   if (request.GetHeaders["Connection"] != null)
            {
@@ -404,7 +507,6 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
 
     private static object GetOSInfo()
     {
-
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             return Environment.OSVersion.ToString().Replace("Unix", "macOS");
@@ -413,47 +515,77 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         return Environment.OSVersion;
     }
 
-    //function related to a basic preprocessing feature
+    
+    
+    #endregion
+
+    #region Streaming Response Methods
+
+    // Streaming Response methods
+    /// <summary>
+    /// Inizializza una risposta HTTP in modalità chunked streaming.
+    /// Invia gli header HTTP con Transfer-Encoding: chunked.
+    /// Deve essere chiamata prima di AddStreamChunk/EndStream.
+    /// </summary>
+    public async Task InitStream(string mimeType = "text/plain", int statusCode = HTTP_CODES.OK,
+        Dictionary<string, string>? customHeaders = null)
+    {
+        var headers = new Dictionary<string, string>
+        {
+            {"Transfer-Encoding", "chunked"},
+            {"Content-Type", mimeType},
+            {"Connection", "keep-alive"}
+        };
+
+        if (customHeaders != null)
+        {
+            foreach (var h in customHeaders)
+                headers[h.Key] = h.Value;
+        }
+
+        string headerStr = GetHeaders(statusCode, 0, mimeType, headers);
+        await WriteRaw(Encoding.UTF8.GetBytes(headerStr));
+    }
 
     /// <summary>
-    /// Adds an attribute to the HTML file that will be processed, if it already exists it will be overwritten
+    /// Invia un blocco (chunk) di dati al client secondo la codifica HTTP chunked.
+    /// Può essere chiamata più volte dopo InitStream per inviare contenuti progressivi.
     /// </summary>
-    /// <param name="name">Name of the attribute</param>
-    /// <param name="value">Value of the attribute</param>
-    public void AddAttribute(string name, string value)
+    public async Task AddStreamChunk(string data)
     {
-        if (attributes.ContainsKey(name))
-            attributes[name] = value;
-        else
-            attributes.Add(name, value);
+        byte[] chunkBytes = Encoding.UTF8.GetBytes(data);
+        string chunkSize = chunkBytes.Length.ToString("X"); // dimensione in esadecimale
+        string chunk = $"{chunkSize}\r\n{data}\r\n";
+        await WriteRaw(Encoding.UTF8.GetBytes(chunk));
     }
+
     /// <summary>
-    /// Removes an attribute to the HTML file that will be processed
+    /// Termina una risposta HTTP in streaming inviando il chunk finale.
+    /// Obbligatorio per chiudere correttamente la connessione secondo lo standard.
     /// </summary>
-    /// <param name="name">Name of the attribute</param>
-    public void RemoveAttribute(string name)
+    public async Task EndStream()
     {
-        attributes.Remove(name);
+        await WriteRaw(Encoding.UTF8.GetBytes("0\r\n\r\n"));
     }
+
     /// <summary>
-    /// Retrieves the value of an attribute to the HTML file that will be processed, if doesn't exists it will return an empty string
+    /// Scrive direttamente byte sulla connessione attiva (SSL o socket).
+    /// Utilizzato internamente da InitStream/AddStreamChunk/EndStream.
     /// </summary>
-    /// <param name="name">Name of the attribute</param>
-    public string GetAttribute(string name)
+    private async Task WriteRaw(byte[] data)
     {
-        return attributes[name] ?? "";
-    }
-    /// <summary>
-    /// Does a basic content-processing of a given HTML file
-    /// </summary>
-    /// <param name="name">Name of the attribute</param>
-    /// <param name="value">Value of the attribute</param>
-    private string ProcessContent(string content)
-    {
-        foreach (var attr in attributes)
+        try
         {
-            content = content.Replace($"#{{{attr.Key}}}", attr.Value);
+            if (sslStream != null)
+                await sslStream.WriteAsync(data);
+            else
+                await socket.SendAsync(data, SocketFlags.None);
         }
-        return content;
+        catch (Exception e)
+        {
+            Terminal.ERROR("Errore durante WriteRaw: " + e);
+        }
     }
+
+    #endregion
 }

@@ -21,7 +21,7 @@ public class Binding : Attribute
     private readonly bool auto;
 
     /// <summary>
-    /// Whether or not the servlet must respond to all request where url starts with path
+    /// Whether the servlet must respond to all request where url starts with path
     /// </summary>
     private readonly bool startsWith;
 

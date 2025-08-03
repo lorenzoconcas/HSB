@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Lorenzo L. Concas")]
 [assembly: AssemblyProduct("HSB-#")]
-[assembly: AssemblyCopyright("Copyright © 2021-2024 Lorenzo L. Concas")]
+[assembly: AssemblyCopyright("Copyright © 2021-2025 Lorenzo L. Concas")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

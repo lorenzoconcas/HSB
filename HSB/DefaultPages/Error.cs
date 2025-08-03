@@ -67,7 +67,7 @@ namespace HSB
             {
                 server_name = "HSB<sup>#</sup>";
                 var currentYear = DateTime.Now.Year;
-                footer_div = "<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
+                footer_div = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
             }
             res.AddAttribute("page_title", "Error " + errorCode);
             res.AddAttribute("serverName", server_name);

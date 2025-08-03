@@ -20,6 +20,7 @@ public class Index(Request req, Response res, Configuration config) : Servlet(re
         string footer_div = "";
         string server_name;
         string logo = "";
+        int currentYear = DateTime.Now.Year;
         //string title = "";
         if (configuration.CustomServerName != "")
         {
@@ -28,7 +29,7 @@ public class Index(Request req, Response res, Configuration config) : Servlet(re
         else
         {
             server_name = "HSB<sup>#</sup>";
-            footer_div = "<div class=\"footer\">Copyright &copy; 2021-2024 Lorenzo L. Concas</div>";
+            footer_div = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
             string logo_b64 = ReadFromResources("logo_b64");
             logo = $"<img width=\"32px\" src=\"{logo_b64}\" />";
             // title = "Http Server Boxed <sup>#</sup>";

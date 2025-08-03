@@ -13,7 +13,7 @@ public class HSBRunner
         {
             PortMode = HSB.Constants.TLS.SSL_PORT_MODE.DUAL_PORT,
             SslPort = 8081,
-            UseDebugCertificate = true,
+            UseDebugCertificate = false,
             UpgradeUnsecureRequests = false
         };
 

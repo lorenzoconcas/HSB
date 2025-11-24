@@ -173,26 +173,29 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     /// <param name="obj"></param>
     /// <param name="fileName"></param>
-    public void SendObject(object? obj, string fileName = "")
+    /// <param name="statusCode"></param>
+    /// <param name="customHeaders"></param>
+    /// <param name="mime"></param>
+    public void SendObject(object? obj, string fileName = "", int statusCode = 200, string mime = "text/plain", Dictionary<string, string>? customHeaders = null)
     {
         switch (obj)
         {
             case null:
                 return;
             case string str when fileName != "":
-                Send(str, MimeTypeUtils.GetMimeType(Path.GetExtension(fileName)) ?? MimeTypeUtils.TEXT_PLAIN);
+                Send(str, MimeTypeUtils.GetMimeType(Path.GetExtension(fileName)) ?? mime, statusCode, customHeaders);
                 break;
             case string str:
-                Send(str);
+                Send(str, mimeType: mime, statusCode: statusCode, customHeaders: customHeaders);
                 break;
             case byte[] bytes:
                 Send(bytes);
                 break;
             case FilePart filePart:
-                SendFile(filePart);
+                SendFile(filePart, statusCode, customHeaders);
                 break;
             default:
-                SendJSON(obj);
+                SendJSON(obj, true, statusCode);
                 break;
         }
     }
@@ -303,9 +306,19 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     
     #region Json sending related methods
     /// <summary>
-    /// Sends a HTTP Response with a JSON body passed as parameter
+    /// Sends an HTTP Response with a JSON body passed as parameter
     /// </summary>
     /// <param name="content">String of the body in JSON format</param>
+    /// <param name="statusCode">Set a custom status code if provided
+    public void JSON(string content, int statusCode)
+    {
+        Send(content, "application/json", statusCode);
+    }
+    
+    /// <summary>
+    /// Sends an HTTP response with a JSON body 
+    /// </summary>
+    /// <param name="content"></param>
     public void JSON(string content)
     {
         Send(content, "application/json");
@@ -316,9 +329,9 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     /// <param name="o">Object to be serialized and sended as response</param>
     /// <param name="options">Options for the serializer (System.Text.Json.JsonSerializer)</param>
-    public void JSON<T>(T o, JsonSerializerOptions options)
+    public void JSON<T>(T o, JsonSerializerOptions options, int statusCode = HTTP_CODES.OK)
     {
-        JSON(JsonSerializer.Serialize(o, options));
+        JSON(JsonSerializer.Serialize(o, options), statusCode);
     }
 
     /// <summary>
@@ -328,7 +341,8 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="o"></param>
     /// <param name="includeFields">Whether include fields of the object</param>
     /// <param name="writeIndented"></param>
-    public void JSON<T>(T o, bool includeFields = true, bool writeIndented = true)
+    /// <param name="statusCode"></param>
+    public void JSON<T>(T o, bool includeFields = true, bool writeIndented = true, int statusCode = HTTP_CODES.OK)
     {
         JsonSerializerOptions jo = new()
         {
@@ -337,7 +351,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
             WriteIndented = writeIndented
         };
 
-        JSON(JsonSerializer.Serialize(o, jo));
+        JSON(JsonSerializer.Serialize(o, jo), statusCode);
     }
 
     /// <summary>
@@ -356,11 +370,34 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="includeFields"></param>
     public void SendJSON<T>(T o, bool includeFields = true) => JSON(o, includeFields);
 
+
+    /// <summary>
+    /// Alternate name for function JSON
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o"></param>
+    /// <param name="includeFields"></param>
+    /// <param name="statusCode"></param>
+    public void SendJSON<T>(T o, bool includeFields = true, int statusCode = HTTP_CODES.OK)
+    {
+        SendJSON<T>(o, includeFields, true, statusCode);
+    }
+
+    /// <summary>
+    /// Alternate name for function JSON
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o"></param>
+    /// <param name="includeFields"></param>
+    /// <param name="writeIndented"></param>
+    /// <param name="statusCode"></param>
+    public void SendJSON<T>(T o, bool includeFields = true, bool writeIndented = true, int statusCode = HTTP_CODES.OK) => JSON(o, includeFields, writeIndented, statusCode);
+    
     ///<summary>
     /// Alternate name for function JSON
     /// </summary>
     /// <param name="content"></param>                
-    public void SendJSON(string content) => JSON(content);
+    public void SendJSON(string content) => JSON(content, HTTP_CODES.OK);
 
     
     #endregion

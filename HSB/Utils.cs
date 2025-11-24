@@ -99,7 +99,7 @@ public static partial class Utils
         var bom = new byte[4];
         using (var file = new FileStream(filename, FileMode.Open, FileAccess.Read))
         {
-            file.Read(bom, 0, 4);
+            file.ReadExactly(bom, 0, 4);
         }
 
         return GetEncoding(bom);
@@ -433,29 +433,28 @@ public static partial class Utils
 
         foreach (var assembly in assemblies)
         {
-            string resourceName = assembly.GetManifestResourceNames().First(str => str.EndsWith(resName));
-            if (resourceName != null)
+            var resources = assembly.GetManifestResourceNames();
+            if (resources.Length == 0) continue;
+            var resourceName = resources.First(str => str.EndsWith(resName));
+            try
             {
-                try
-                {
 
-                    using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
-                    if (typeof(T) == typeof(byte[]))
-                    {
-                        var ms = new MemoryStream();
-                        stream.CopyTo(ms);
-                        return (T)Convert.ChangeType(ms.ToArray(), typeof(T));
-                    }
-                    else
-                    {
-                        using StreamReader r = new(stream);
-                        return (T)Convert.ChangeType(r.ReadToEnd(), typeof(T));
-                    }
-                }
-                catch (Exception)
+                using var stream = assembly.GetManifestResourceStream(resourceName)!;
+                if (typeof(T) == typeof(byte[]))
                 {
-                    return default!;
+                    var ms = new MemoryStream();
+                    stream.CopyTo(ms);
+                    return (T)Convert.ChangeType(ms.ToArray(), typeof(T));
                 }
+                else
+                {
+                    using StreamReader r = new(stream);
+                    return (T)Convert.ChangeType(r.ReadToEnd(), typeof(T));
+                }
+            }
+            catch (Exception)
+            {
+                return default!;
             }
         }
         return default!;
@@ -492,6 +491,16 @@ public static partial class Utils
         return resources;
 
         //  string resourceName = assembly.GetManifestResourceNames().First(str => str.EndsWith(resName));
+    }
+    
+    public static string JoinPath(params string[] parts)
+    {
+        if (parts.Length == 0)
+            return string.Empty;
+
+        return string.Join("/", parts
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .Select(p => p.Trim('/')));
     }
 }
 

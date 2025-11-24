@@ -214,7 +214,7 @@ public class Configuration
     /// <param name="port">Listening port</param>
     /// <param name="staticPath">Path of the static folder</param>
     /// <param name="debugInfo">Class holding debugging information</param>
-    /// <param name="IPv4Only">Sets whether or not listen only to ipv6 addresses</param>
+    /// <param name="IPv4Only">Sets whether listen only to ipv6 addresses</param>
     public Configuration(string address, ushort port, string staticPath, Debugger? debugInfo = null, IPMode ipMode = IPMode.ANY, int requestMaxSize = KILOBYTE, ulong? defaultSessionExpirationTime = null, SslConfiguration? sslConfiguration = null)
     {
         Address = address;
@@ -250,7 +250,7 @@ public class Configuration
         string json = JsonSerializer.Serialize(this, jserializerOptions);
         File.WriteAllText(path, json);
     }
-    private void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)
+    public void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)
     {
         Tuple<HTTP_METHOD, Delegate> x = new(method, func);
         Tuple<string, Tuple<HTTP_METHOD, Delegate>> tuple = new(path, x);

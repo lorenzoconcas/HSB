@@ -22,10 +22,13 @@
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<DebugType>none</DebugType>
 		<WarningLevel>9999</WarningLevel>
-		<DocumentationFile>bin\Release\net10.0\HSB.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\net8.0\HSB.xml</DocumentationFile>
 		<SignAssembly>true</SignAssembly>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	</PropertyGroup>
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
 	<ItemGroup>
 		<None Remove="DefaultPages\" />
 		<None Remove="DefaultPages\filelisting.html" />

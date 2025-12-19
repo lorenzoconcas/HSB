@@ -160,20 +160,72 @@ public class Tls12Handler(Socket socket, X509Certificate2 serverCertificate)
     private byte[] ReceiveClientKeyExchange()
     {
         var header = new byte[5];
-        if (socket.Receive(header) < 5) throw new Exception("Failed to receive ClientKeyExchange header");
+        ReadExactly(header, 5);
+
+        var type = (ContentType)header[0];
         var length = (header[3] << 8) | header[4];
+
         var body = new byte[length];
-        if (socket.Receive(body) < length) throw new Exception("Failed to receive ClientKeyExchange body");
+        ReadExactly(body, length);
+
+        if (type == ContentType.Alert)
+        {
+            // Alert Level (1 byte) + Alert Description (1 byte)
+            byte level = (length > 0) ? body[0] : (byte)0;
+            byte desc = (length > 1) ? body[1] : (byte)0;
+            Console.WriteLine($"[HSB_TLS] Received Alert during Handshake: Level={level}, Desc={desc}");
+            throw new Exception($"Handshake Failed: Received Alert {desc} (Level {level})");
+        }
+
+        if (type != ContentType.Handshake)
+        {
+             throw new Exception($"Expected Handshake(ClientKeyExchange) but received {type}");
+        }
 
         // Buffer ClientKeyExchange
         BufferHandshakeMessage(body);
 
-        // Body[0]=Type, Body[1..3]=Length, Body[4..5]=EncLen
+        // ClientKeyExchange(RSA) body: EncryptedPreMasterSecret
+        // The body *is* the Handshake Message Payload.
+        // For ClientKeyExchange, it contains the EncryptedPreMasterSecret structure.
+        // Struct: 2 bytes length + N bytes ciphertext
+        
+        if (body.Length < 6) throw new Exception($"ClientKeyExchange body too short: {body.Length}");
+
+        // Parse Handshake Header within the TLS Record
+        var handshakeType = (HandshakeType)body[0];
+        if (handshakeType != HandshakeType.ClientKeyExchange)
+             throw new Exception($"Expected ClientKeyExchange(16) but got {handshakeType}");
+             
+        int handshakeLength = (body[1] << 16) | (body[2] << 8) | body[3];
+        // Note: handshakeLength should match body.Length - 4
+
+        // Content starts at index 4
+        // ClientKeyExchange(RSA) content: EncryptedPreMasterSecret
+        // EncryptedPreMasterSecret: 2 bytes length + N bytes ciphertext
+        
         int encryptedLen = (body[4] << 8) | body[5];
+        
+        if (encryptedLen + 6 > body.Length) 
+        {
+             throw new Exception($"Invalid EncryptedPreMasterSecret length. Body={body.Length}, Expected={encryptedLen + 6}");
+        }
+
         var encryptedPreMaster = new byte[encryptedLen];
         Array.Copy(body, 6, encryptedPreMaster, 0, encryptedLen);
 
         return TlsCrypto.RsaDecrypt(serverCertificate, encryptedPreMaster);
+    }
+
+    private void ReadExactly(byte[] buffer, int count)
+    {
+        int totalRead = 0;
+        while (totalRead < count)
+        {
+            int read = socket.Receive(buffer, totalRead, count - totalRead, SocketFlags.None);
+            if (read == 0) throw new Exception("Socket closed during read");
+            totalRead += read;
+        }
     }
     
     private void CalculateMasterSecret(byte[] preMasterSecret)
@@ -213,7 +265,6 @@ public class Tls12Handler(Socket socket, X509Certificate2 serverCertificate)
         if (body[0] != 1) throw new Exception("Invalid CCS payload");
         
         // Note: Do NOT buffer CCS in handshake messages
-        Console.WriteLine("[HSB_TLS] Received ChangeCipherSpec. Resetting Client Sequence Number to 0.");
         _clientResultSequence = 0;
     }
 

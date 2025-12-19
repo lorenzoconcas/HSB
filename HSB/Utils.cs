@@ -13,11 +13,11 @@ public static partial class Utils
     public static void PrintLogo()
     {
         Terminal.Write("Welcome to ");
-        Terminal.Write("H", BG_COLOR.DEFAULT, FG_COLOR.RED);
-        Terminal.Write("S", BG_COLOR.DEFAULT, FG_COLOR.GREEN);
-        Terminal.Write("B", BG_COLOR.DEFAULT, FG_COLOR.BLUE);
-        Terminal.Write("-", BG_COLOR.DEFAULT, FG_COLOR.WHITE);
-        Terminal.Write("#", BG_COLOR.DEFAULT, FG_COLOR.YELLOW);
+        Terminal.Write("H", BgColor.DEFAULT, FgColor.RED);
+        Terminal.Write("S", BgColor.DEFAULT, FgColor.GREEN);
+        Terminal.Write("B", BgColor.DEFAULT, FgColor.BLUE);
+        Terminal.Write("-", BgColor.DEFAULT, FgColor.WHITE);
+        Terminal.Write("#", BgColor.DEFAULT, FgColor.YELLOW);
         Terminal.Write(" (Http Server Boxed)");
         Terminal.WriteLine($" v{Assembly.GetExecutingAssembly().GetName().Version}");
     }
@@ -38,7 +38,7 @@ public static partial class Utils
             List<Type> classes = [.. assem.GetTypes()];
 
             foreach (var c in classes)
-                Terminal.WriteLine(c.FullName, BG_COLOR.WHITE, FG_COLOR.BLUE);
+                Terminal.WriteLine(c.FullName, BgColor.WHITE, FgColor.BLUE);
         }
     }
     public static T Safe<T>(T? o, T safe) => o ?? safe!;

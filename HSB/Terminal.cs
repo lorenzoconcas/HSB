@@ -1,6 +1,6 @@
 ﻿namespace HSB
 {
-    public enum BG_COLOR
+    public enum BgColor
     {
         DEFAULT,
         BLACK,
@@ -12,7 +12,7 @@
         CYAN,
         WHITE
     }
-    public enum FG_COLOR
+    public enum FgColor
     {
         DEFAULT,
         BLACK,
@@ -27,15 +27,15 @@
 
     public static class Terminal
     {
-        private static readonly string RESET = "\x1b[0m";
-        /* private static string BRIGHT = "\x1b[1m";
-         private static string DIM = "\x1b[2m";
-         private static string UNDERSCORE = "\x1b[4m";
-         private static string BLINK = "\x1b[5m";
-         private static string REVERSE = "\x1b[7m";
-         private static string HIDDEN = "\x1b[8m";*/
+        private static readonly string RESET = "\e[0m";
+        /* private static string BRIGHT = "\e[1m";
+         private static string DIM = "\e[2m";
+         private static string UNDERSCORE = "\e[4m";
+         private static string BLINK = "\e[5m";
+         private static string REVERSE = "\e[7m";
+         private static string HIDDEN = "\e[8m";*/
 
-        public static void Write<T>(T o, BG_COLOR background = BG_COLOR.DEFAULT, FG_COLOR foreground = FG_COLOR.DEFAULT)
+        public static void Write<T>(T o, BgColor background = BgColor.DEFAULT, FgColor foreground = FgColor.DEFAULT)
         {
 
             Console.Write(BG_TO_STRING(background));
@@ -43,7 +43,7 @@
             Console.Write(o);
             Console.Write(RESET);
         }
-        public static void WriteLine<T>(T o, BG_COLOR background = BG_COLOR.DEFAULT, FG_COLOR foreground = FG_COLOR.DEFAULT)
+        public static void WriteLine<T>(T o, BgColor background = BgColor.DEFAULT, FgColor foreground = FgColor.DEFAULT)
         {
 
             Console.Write(BG_TO_STRING(background));
@@ -65,26 +65,26 @@
         }
         public static void INFO<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "I", FG_COLOR.BLUE, BG_COLOR.DEFAULT, printExtraInfo);
+            LOG(o, "I", FgColor.BLUE, BgColor.DEFAULT, printExtraInfo);
         }
         public static void WARNING<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "W", FG_COLOR.YELLOW, BG_COLOR.BLACK, printExtraInfo);
+            LOG(o, "W", FgColor.YELLOW, BgColor.BLACK, printExtraInfo);
         }
         public static void ERROR<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "E", FG_COLOR.RED, BG_COLOR.BLACK, printExtraInfo);
+            LOG(o, "E", FgColor.RED, BgColor.BLACK, printExtraInfo);
         }
         public static void DEBUG<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "D", FG_COLOR.GREEN, BG_COLOR.BLACK, printExtraInfo);
+            LOG(o, "D", FgColor.GREEN, BgColor.BLACK, printExtraInfo);
         }
-        private static void LOG<T>(T o, string lvl, FG_COLOR foreground,
-            BG_COLOR background = BG_COLOR.BLACK, bool printExtraInfo = false)
+        private static void LOG<T>(T o, string lvl, FgColor foreground,
+            BgColor background = BgColor.BLACK, bool printExtraInfo = false)
         {
             if (printExtraInfo)
             {
-                Write($"[{DateTime.Now:yyyy/MM/dd # HH:mm:ss.ffff}][{lvl}][", background, foreground);
+                Write($"[{DateTime.Now:yyyy-MM-ddTHH:mm:ss.fffZ}][{lvl}][", background, foreground);
             }
             Write(o, background, foreground);
             if (printExtraInfo)
@@ -99,7 +99,7 @@
         {
             Console.Write(RESET);
         }
-        public static void StartColor(BG_COLOR background = BG_COLOR.DEFAULT, FG_COLOR foreground = FG_COLOR.DEFAULT)
+        public static void StartColor(BgColor background = BgColor.DEFAULT, FgColor foreground = FgColor.DEFAULT)
         {
             Console.WriteLine(BG_TO_STRING(background));
             Console.WriteLine(FG_TO_STRING(foreground));
@@ -111,30 +111,30 @@
         }
 
 
-        private static string BG_TO_STRING(BG_COLOR color) => color switch
+        private static string BG_TO_STRING(BgColor color) => color switch
         {
-            BG_COLOR.DEFAULT => "",
-            BG_COLOR.BLACK => "\x1b[40m",
-            BG_COLOR.RED => "\x1b[41m",
-            BG_COLOR.GREEN => "\x1b[42m",
-            BG_COLOR.YELLOW => "\x1b[43m",
-            BG_COLOR.BLUE => "\x1b[44m",
-            BG_COLOR.MAGENTA => "\x1b[45m",
-            BG_COLOR.CYAN => "\x1b[46m",
-            BG_COLOR.WHITE => "\x1b[47m",
+            BgColor.DEFAULT => "",
+            BgColor.BLACK => "\e[40m",
+            BgColor.RED => "\e[41m",
+            BgColor.GREEN => "\e[42m",
+            BgColor.YELLOW => "\e[43m",
+            BgColor.BLUE => "\e[44m",
+            BgColor.MAGENTA => "\e[45m",
+            BgColor.CYAN => "\e[46m",
+            BgColor.WHITE => "\e[47m",
             _ => ""
         };
-        private static string FG_TO_STRING(FG_COLOR color) => color switch
+        private static string FG_TO_STRING(FgColor color) => color switch
         {
-            FG_COLOR.DEFAULT => "",
-            FG_COLOR.BLACK => "\x1b[30m",
-            FG_COLOR.RED => "\x1b[31m",
-            FG_COLOR.GREEN => "\x1b[32m",
-            FG_COLOR.YELLOW => "\x1b[33m",
-            FG_COLOR.BLUE => "\x1b[34m",
-            FG_COLOR.MAGENTA => "\x1b[35m",
-            FG_COLOR.CYAN => "\x1b[36m",
-            FG_COLOR.WHITE => "\x1b[37m",
+            FgColor.DEFAULT => "",
+            FgColor.BLACK => "\e[30m",
+            FgColor.RED => "\e[31m",
+            FgColor.GREEN => "\e[32m",
+            FgColor.YELLOW => "\e[33m",
+            FgColor.BLUE => "\e[34m",
+            FgColor.MAGENTA => "\e[35m",
+            FgColor.CYAN => "\e[36m",
+            FgColor.WHITE => "\e[37m",
             _ => ""
         };
     }

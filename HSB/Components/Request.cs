@@ -242,7 +242,7 @@ public class Request
         }
         catch (Exception e)
         {
-            Terminal.WriteLine("Invalid request, reason : " + e.Message, BG_COLOR.BLACK, FG_COLOR.RED);
+            Terminal.WriteLine("Invalid request, reason : " + e.Message, BgColor.BLACK, FgColor.RED);
             validRequest = false;
             return;
         }

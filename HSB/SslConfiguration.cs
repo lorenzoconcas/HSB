@@ -13,6 +13,13 @@ using HSB.Exceptions;
 
 namespace HSB;
 
+
+public enum SslHandler
+{
+    NATIVE, //DOTNET NATIVE SSL HANDLER
+    HSB
+}
+
 public class SslConfiguration
 {
     private static readonly string DEBUG_CERT_FOLDER_PATH =
@@ -22,8 +29,7 @@ public class SslConfiguration
     private static readonly string DEBUG_CERT_P12_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.p12");
     private static readonly string DEBUG_CERT_CRT_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.crt");
     private static readonly string DEBUG_CERT_KEY_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.key");
-
-
+    
     //TODO -> add support for loading certificates from store
 
     public ushort SslPort = 8443;
@@ -32,6 +38,9 @@ public class SslConfiguration
         PortMode = SSL_PORT_MODE.DUAL_PORT; //by default we use two ports, one for HTTP and one for HTTPS
 
     public bool UpgradeUnsecureRequests = true;
+
+    public SslHandler SslHandler = SslHandler.NATIVE;
+    
     public string? CertificatePath;
 
     /// <summary>
@@ -127,24 +136,18 @@ public class SslConfiguration
     /// <exception cref="DeprecatedTLSVersionException"></exception>
     internal SslProtocols GetProtocols()
     {
-        SslProtocols protocols = SslProtocols.None;
         if (TLSVersions.Count == 0)
         {
             return SslProtocols.None;
         }
 
-        foreach (var version in TLSVersions)
+        return TLSVersions.Aggregate(SslProtocols.None, (current, version) => current | version switch
         {
-            protocols |= version switch
-            {
-                TLSVersion.TLS_1_2 => SslProtocols.Tls12,
-                TLSVersion.TLS_1_3 => SslProtocols.Tls13,
-                TLSVersion.NOT_SET => SslProtocols.None,
-                _ => throw new DeprecatedTLSVersionException(version)
-            };
-        }
-
-        return protocols;
+            TLSVersion.TLS_1_2 => SslProtocols.Tls12,
+            TLSVersion.TLS_1_3 => SslProtocols.Tls13,
+            TLSVersion.NOT_SET => SslProtocols.None,
+            _ => throw new DeprecatedTLSVersionException(version)
+        });
     }
 
     public static SslConfiguration FromJSON(JsonElement json)
@@ -154,49 +157,49 @@ public class SslConfiguration
         var lastProp = "SslPort";
         try
         {
-            var SslPort = Utils.Safe(json.GetProperty("SslPort").GetUInt16(), (ushort) 8443);
+            var sslPort = Utils.Safe(json.GetProperty("SslPort").GetUInt16(), (ushort) 8443);
             lastProp = "PortMode";
-            SSL_PORT_MODE PortMode = (SSL_PORT_MODE) Utils.Safe(json.GetProperty("PortMode").GetInt16(),
+            var portMode = (SSL_PORT_MODE) Utils.Safe(json.GetProperty("PortMode").GetInt16(),
                 (int) SSL_PORT_MODE.DUAL_PORT);
             lastProp = "upgradeUnsecureRequests";
-            bool upgradeUnsecureRequests = Utils.Safe(json.GetProperty("UpgradeUnsecureRequests").GetBoolean(), true);
+            var upgradeUnsecureRequests = Utils.Safe(json.GetProperty("UpgradeUnsecureRequests").GetBoolean(), true);
             lastProp = "CertificatePath";
-            var CertificatePath = json.GetProperty("CertificatePath").GetString();
+            var certificatePath = json.GetProperty("CertificatePath").GetString();
             lastProp = "CertificatePassword";
-            var CertificatePassword = json.GetProperty("CertificatePassword").GetString();
+            var certificatePassword = json.GetProperty("CertificatePassword").GetString();
             lastProp = "CheckCertificateRevocation";
-            var CheckCertificateRevocation =
+            var checkCertificateRevocation =
                 Utils.Safe(json.GetProperty("CheckCertificateRevocation").GetBoolean(), true);
             lastProp = "ValidateClientCertificate";
-            var ValidateClientCertificate =
+            var validateClientCertificate =
                 Utils.Safe(json.GetProperty("ValidateClientCertificate").GetBoolean(), false);
             lastProp = "ClientCertificateRequired";
-            var ClientCertificateRequired =
+            var clientCertificateRequired =
                 Utils.Safe(json.GetProperty("ClientCertificateRequired").GetBoolean(), false);
             lastProp = "tlsVersions";
             var tlsVersions = json.GetProperty("TLSVersions").EnumerateArray().Select(x => (TLSVersion) x.GetInt16())
                 .ToList();
-
-            return new()
+            
+            return new SslConfiguration()
             {
-                PortMode = PortMode,
-                SslPort = SslPort,
+                PortMode = portMode,
+                SslPort = sslPort,
                 UpgradeUnsecureRequests = upgradeUnsecureRequests,
-                CertificatePath = CertificatePath,
-                CertificatePassword = CertificatePassword,
+                CertificatePath = certificatePath,
+                CertificatePassword = certificatePassword,
                 TLSVersions = tlsVersions,
-                CheckCertificateRevocation = CheckCertificateRevocation,
-                ValidateClientCertificate = ValidateClientCertificate,
-                ClientCertificateRequired = ClientCertificateRequired,
+                CheckCertificateRevocation = checkCertificateRevocation,
+                ValidateClientCertificate = validateClientCertificate,
+                ClientCertificateRequired = clientCertificateRequired
             };
         }
         catch (Exception e)
         {
             Terminal.ERROR("Error while parsing SslSettings property: " + lastProp + " " + e.Message);
-            return new();
+            return new SslConfiguration();
         }
     }
-
+    
     private static bool CheckOpenSslInstalled()
     {
         //check if openssl is installed
@@ -224,8 +227,16 @@ public class SslConfiguration
             StartInfo = startInfo
         };
 
-        process.Start();
-        process.WaitForExit();
+        try
+        {
+            process.Start();
+            process.WaitForExit();
+        } 
+        catch
+        {
+             Terminal.ERROR($"❌ Openssl is not installed (exception), cannot continue", true);
+             return false;
+        }
 
         if (process.ExitCode != 0)
         {
@@ -238,6 +249,7 @@ public class SslConfiguration
         return true;
     }
 
+
     private static bool PrepareFolders()
     {
         //if old certificate exists, delete it
@@ -247,12 +259,10 @@ public class SslConfiguration
             {
                 File.Delete(DEBUG_CERT_P12_PATH);
             }
-
             if (File.Exists(DEBUG_CERT_CRT_PATH))
             {
                 File.Delete(DEBUG_CERT_CRT_PATH);
             }
-
             if (File.Exists(DEBUG_CERT_KEY_PATH))
             {
                 File.Delete(DEBUG_CERT_KEY_PATH);
@@ -281,7 +291,7 @@ public class SslConfiguration
     /// Creates a developer certificate valid only for 1 month and for localhost.
     /// OpenSSL is required to use this feature.
     /// </summary>
-    public static bool CreateDebugCertificate()
+    private static bool CreateDebugCertificate()
     {
         //check prerequisites
         if (!CheckOpenSslInstalled())
@@ -340,7 +350,7 @@ public class SslConfiguration
             }
         }
 
-        Terminal.DEBUG($"Debug certificate (valid only for localhost) created successfully", true);
+        Terminal.DEBUG($"Debug certificate (OPENSSL) created successfully", true);
         return true;
     }
 
@@ -348,13 +358,11 @@ public class SslConfiguration
     {
         c?.Debug.DEBUG("Loading debug certificate");
 
-        X509Certificate2 cert;
-
         if (!File.Exists(DEBUG_CERT_P12_PATH))
         {
             if (create)
             {
-                if (!CreateDebugCertificate())
+               if (!CreateDebugCertificate())
                 {
                     c?.Debug.WARNING("Cannot load debug certificate, file not found");
                     return null;
@@ -370,11 +378,9 @@ public class SslConfiguration
 
         //workaround  to avoid error if path contains spaces
         //use the new certificate loader as the old method is deprecated
-        cert = X509CertificateLoader.LoadCertificateFromFile(DEBUG_CERT_P12_PATH);
-
+        var cert = X509CertificateLoader.LoadPkcs12FromFile(DEBUG_CERT_P12_PATH, DEBUG_CERT_PASSWORD);
         /*var bytes = File.ReadAllBytes(DEBUG_CERT_P12_PATH);
         cert = new X509Certificate2(bytes, DEBUG_CERT_PASSWORD);*/
-
         //if expired, delete and create again
         if (cert.NotAfter < DateTime.Now)
         {

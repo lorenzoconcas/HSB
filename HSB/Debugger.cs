@@ -54,7 +54,7 @@ public class Debugger
 
 
     private static string GetDateFormatted()
-    {       
+    {
         return DateTime.Now.ToString("yyyy_mm_dd_hh_MM");
     }
 
@@ -74,11 +74,9 @@ public class Debugger
     {
         if (verbose)
             Terminal.ERROR(o, printExtraInfo);
-        if((int) logLevel <= (int)LOG_LEVEL.ERROR && logLevel > 0 && o != null)
-        {
-            var msg = o.ToString() ?? "";
-            AppendToFile(GetMessage("W", msg));
-        }
+        if ((int) logLevel > (int) LOG_LEVEL.ERROR || logLevel <= 0 || o == null) return;
+        var msg = o.ToString() ?? "";
+        AppendToFile(GetMessage("W", msg));
     }
 
     public void WARNING<T>(T o, bool printExtraInfo = true)
@@ -86,11 +84,9 @@ public class Debugger
         if (verbose)
             Terminal.WARNING(o, printExtraInfo);
 
-        if((int) logLevel <= (int)LOG_LEVEL.WARNING && logLevel > 0 && o != null)
-        {
-            var msg = o.ToString() ?? "";
-            AppendToFile(GetMessage("W", msg));
-        }
+        if ((int) logLevel > (int) LOG_LEVEL.WARNING || logLevel <= 0 || o == null) return;
+        var msg = o.ToString() ?? "";
+        AppendToFile(GetMessage("W", msg));
     }
 
     public void INFO<T>(T o, bool printExtraInfo = true)
@@ -98,22 +94,18 @@ public class Debugger
         if (verbose)
             Terminal.INFO(o, printExtraInfo);
 
-         if((int) logLevel <= (int)LOG_LEVEL.INFO && logLevel > 0 && o != null)
-        {
-            var msg = o.ToString() ?? "";
-            AppendToFile(GetMessage("I", msg));
-        }
+        if ((int) logLevel > (int) LOG_LEVEL.INFO || logLevel <= 0 || o == null) return;
+        var msg = o.ToString() ?? "";
+        AppendToFile(GetMessage("I", msg));
     }
 
     public void DEBUG<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
             Terminal.DEBUG(o, printExtraInfo);
-        if (logLevel == LOG_LEVEL.ALL && logLevel > 0 && o != null)
-        {
-            var msg = o.ToString() ?? "";
-            AppendToFile(GetMessage("D", msg));
-        }
+        if (logLevel != LOG_LEVEL.ALL || logLevel <= 0 || o == null) return;
+        var msg = o.ToString() ?? "";
+        AppendToFile(GetMessage("D", msg));
     }
 
     private void AppendToFile(string content)

@@ -17,3 +17,4 @@ Releases/
 build/
 Tests/
 MultiplatformLauncher/CompileCode.sh
+server_log.txt

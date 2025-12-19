@@ -12,9 +12,8 @@ public class Configuration
 {
 
     //private props
-    private readonly static JsonSerializerOptions jserializerOptions = new() { WriteIndented = true, IncludeFields = true };
-
-
+    private static readonly JsonSerializerOptions JserializerOptions = new() { WriteIndented = true, IncludeFields = true };
+    
     /// <summary>
     /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address)
     /// </summary>
@@ -23,10 +22,15 @@ public class Configuration
     /// The server listening port
     /// </summary>
     public ushort Port;
+
+    /// <summary>
+    /// The max number of concurrent connections, by default is 100
+    /// </summary>
+    public ushort MaxConnections = 100;
     /// <summary>
     /// When this field is set, it will be used for Unsecure SSL requests upgrade 
     /// </summary>
-    public string PublicUrl = "";
+    public readonly string PublicUrl = "";
     /// <summary>
     /// Set server listening mode to any, only ipv4 or only ipv6. This is valid only if the address is set to ""
     /// </summary>
@@ -147,6 +151,7 @@ public class Configuration
     {
         Address = "";
         Port = 8080;
+        
         StaticFolderPath = ""; //no static file support if not set
         Debug = new Debugger();
         RequestMaxSize = KILOBYTE; //max 1KB Requests default
@@ -172,6 +177,7 @@ public class Configuration
 
             lastProp = "Address"; Address = root.GetProperty("Address").GetString() ?? "";
             lastProp = "Port"; Port = root.GetProperty("Port").GetUInt16();
+            lastProp = "MaxConnections"; MaxConnections = root.GetProperty("MaxConnections").GetUInt16();
             lastProp = "PublicURL"; PublicUrl = root.GetProperty("PublicURL").GetString() ?? "";
             lastProp = "StaticFolderPath"; StaticFolderPath = root.GetProperty("StaticFolderPath").GetString() ?? "";
             lastProp = "Debug"; Debug = Debugger.FromJson(root.GetProperty("Debug"));
@@ -247,7 +253,7 @@ public class Configuration
     public void SaveToJson(string path)
     {
        
-        string json = JsonSerializer.Serialize(this, jserializerOptions);
+        string json = JsonSerializer.Serialize(this, JserializerOptions);
         File.WriteAllText(path, json);
     }
     public void AddExpressMapping(string path, HTTP_METHOD method, Delegate func)

@@ -9,14 +9,17 @@ using HSB.Components;
 using HSB.Exceptions;
 using System.Net.Security;
 
+using HSB.Constants.TLS.Manual;
+
 namespace HSB;
 
-public class Response(Socket socket, Request request, Configuration c, SslStream? sslStream)
+public class Response(Socket socket, Request request, Configuration c, SslStream? sslStream, Tls12Handler? tlsHandler = null)
 {
     private const string NEW_LINE = "\r\n";
 
     private readonly Socket socket = socket;
     private SslStream? sslStream = sslStream;
+    private readonly Tls12Handler? _tlsHandler = tlsHandler;
     private readonly Request request = request;
     private readonly Configuration config = c;
     readonly Dictionary<string, string> attributes = [];
@@ -35,7 +38,13 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         try
         {
-            if (sslStream != null)
+            if (_tlsHandler != null)
+            {
+                _tlsHandler.Write(data, 0, data.Length);
+                if (disconnect)
+                    socket.Close(); // Or should we send Alert? For now Close.
+            }
+            else if (sslStream != null)
             {
                 sslStream.Write(data);
                 if (disconnect)
@@ -55,7 +64,6 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
             Terminal.ERROR($"Error sending data ->\n {e}");
         }
     }
-
 
     /// <summary>
     /// Sends an HTTP Response with the body passed as parameter
@@ -613,6 +621,14 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         try
         {
+            if (_tlsHandler != null)
+            {
+                 // Async implementation of Write? 
+                 // Tls12Handler.Write is sync for now.
+                 _tlsHandler.Write(data, 0, data.Length);
+                 return;
+            }
+
             if (sslStream != null)
                 await sslStream.WriteAsync(data);
             else

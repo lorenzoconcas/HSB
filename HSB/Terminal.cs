@@ -27,7 +27,7 @@
 
     public static class Terminal
     {
-        private static readonly string RESET = "\e[0m";
+        public static readonly string RESET = "\e[0m";
         /* private static string BRIGHT = "\e[1m";
          private static string DIM = "\e[2m";
          private static string UNDERSCORE = "\e[4m";
@@ -65,26 +65,26 @@
         }
         public static void INFO<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "I", FgColor.BLUE, BgColor.DEFAULT, printExtraInfo);
+            LOG(o, $"{FG_TO_STRING(FgColor.BLUE)}I{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
         }
         public static void WARNING<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "W", FgColor.YELLOW, BgColor.BLACK, printExtraInfo);
+            LOG(o, $"{FG_TO_STRING(FgColor.YELLOW)}W{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
         }
         public static void ERROR<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "E", FgColor.RED, BgColor.BLACK, printExtraInfo);
+            LOG(o, $"{FG_TO_STRING(FgColor.RED)}E{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
         }
         public static void DEBUG<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, "D", FgColor.GREEN, BgColor.BLACK, printExtraInfo);
+            LOG(o, $"{FG_TO_STRING(FgColor.GREEN)}I{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
         }
         private static void LOG<T>(T o, string lvl, FgColor foreground,
             BgColor background = BgColor.BLACK, bool printExtraInfo = false)
         {
             if (printExtraInfo)
             {
-                Write($"[{DateTime.Now:yyyy-MM-ddTHH:mm:ss.fffZ}][{lvl}][", background, foreground);
+                Write($"[HSB {Environment.ProcessId}][{DateTime.Now:yyyy-MM-ddTHH:mm:ssZ}][{lvl}][", background, foreground);
             }
             Write(o, background, foreground);
             if (printExtraInfo)
@@ -111,7 +111,7 @@
         }
 
 
-        private static string BG_TO_STRING(BgColor color) => color switch
+        public static string BG_TO_STRING(BgColor color) => color switch
         {
             BgColor.DEFAULT => "",
             BgColor.BLACK => "\e[40m",
@@ -124,7 +124,7 @@
             BgColor.WHITE => "\e[47m",
             _ => ""
         };
-        private static string FG_TO_STRING(FgColor color) => color switch
+        public static string FG_TO_STRING(FgColor color) => color switch
         {
             FgColor.DEFAULT => "",
             FgColor.BLACK => "\e[30m",

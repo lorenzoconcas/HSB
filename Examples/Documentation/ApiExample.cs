@@ -9,7 +9,7 @@ namespace Documentation;
 public class ApiExample(Request req, Response res) : Servlet(req, res)
 {
 
-    override public void ProcessGet()
+    override public void GET()
     {
         res.SendJSON("{}");
     }

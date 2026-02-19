@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Lorenzo L. Concas")]
 [assembly: AssemblyProduct("HSB-#")]
-[assembly: AssemblyCopyright("Copyright © 2021-2025 Lorenzo L. Concas")]
+[assembly: AssemblyCopyright("Copyright © 2021-2026 Lorenzo L. Concas")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion("0.0.15.*")]
+[assembly: AssemblyVersion("0.0.16.*")]
 
 // The following attributes are used to specify the signing key for the assembly, 
 // if desired. See the Mono documentation for more information about signing.

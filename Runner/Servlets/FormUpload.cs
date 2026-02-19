@@ -14,7 +14,7 @@ public class Form : Servlet
 
     }
 
-    public override void ProcessGet()
+    public override void GET()
     {
         if (req.URL == "/form.html")
         {
@@ -30,7 +30,7 @@ public class Form : Servlet
         }
     }
 
-    public override void ProcessPost()
+    public override void POST()
     {
         if (req.URL == "/formupload" && req.IsFormUpload())
         {

@@ -11,35 +11,34 @@ public class FileUpload(Request req, Response res) : Servlet(req, res)
 {
     private const string savePath = "./uploaded";
 
-    public override void ProcessGet()
+    public override void GET()
     {
-        if (req.URL == "/fileupload.html")
+        switch (req.URL)
         {
-            res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
-            "<input type=\"text\" name=\"value1\" id=\"value1\"></input>" +
-            "<input type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\">" +
-            "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
-            "</form>");
-        }
-        else if (req.URL == "/fileupload")
-        {
-            res.SendHTMLContent("<h1>File Uploaded</h1>");
-        }
-        else if (req.URL == "/fileuploadmulti.html")
-        {
-            res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
-            "<input type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\">" +
-            "<input type=\"file\" name=\"fileToUpload2\" id=\"fileToUpload2\">" +
-            "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
-            "</form>");
-        }
-        else
-        {
-            res.SendHTMLContent("<h1>404 Not Found</h1>");
+            case "/fileupload.html":
+                res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
+                                    "<input type=\"text\" name=\"value1\" id=\"value1\"></input>" +
+                                    "<input type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\">" +
+                                    "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
+                                    "</form>");
+                break;
+            case "/fileupload":
+                res.SendHTMLContent("<h1>File Uploaded</h1>");
+                break;
+            case "/fileuploadmulti.html":
+                res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
+                                    "<input type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\">" +
+                                    "<input type=\"file\" name=\"fileToUpload2\" id=\"fileToUpload2\">" +
+                                    "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
+                                    "</form>");
+                break;
+            default:
+                res.SendHTMLContent("<h1>404 Not Found</h1>");
+                break;
         }
     }
 
-    public override void ProcessPost()
+    public override void POST()
     {
         if (req.URL == "/fileupload" && req.IsFileUpload())
         {

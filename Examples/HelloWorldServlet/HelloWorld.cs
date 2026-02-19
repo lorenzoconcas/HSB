@@ -7,7 +7,7 @@ public class HelloWorld(Request req, Response res) : Servlet(req, res)
 {
 
     //we override the function that handle the GET response processing
-    public override void ProcessGet()
+    public override void GET()
     {
         //reply to request with an hello world
         res.SendHTMLContent("<h1>Hello world</h1>");
@@ -15,7 +15,7 @@ public class HelloWorld(Request req, Response res) : Servlet(req, res)
 
 
     //same for the post request
-    public override void ProcessPost()
+    public override void POST()
     {
         //if no change are made, the server will reply with code 405
     }

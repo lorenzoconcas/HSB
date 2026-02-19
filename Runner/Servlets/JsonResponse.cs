@@ -12,12 +12,12 @@ namespace Runner
 
         }
 
-        public override void ProcessGet()
+        public override void GET()
         {
             res.JSON(new SimpleObject());
         }
 
-        public override void ProcessPost()
+        public override void POST()
         {
             res.JSON("{'success':true}");
         }

@@ -64,7 +64,7 @@ public class Documentation(Request req, Response res, Configuration config) : Se
     }
 
 
-    override public void ProcessGet()
+    override public void GET()
     {
         //collect al classes with HSB.Components.Attributes.Documentation attribute
         var classes = AppDomain.CurrentDomain.GetAssemblies()

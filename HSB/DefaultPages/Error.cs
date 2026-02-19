@@ -13,9 +13,9 @@ namespace HSB
             this.errorCode = errorCode;
             errorMsg = errorMessage;
 
-            handlerFallback = ProcessGet;
+            handlerFallback = GET;
         }
-        public override void ProcessGet()
+        public override void GET()
         {
             var debugMode = false;
 #if DEBUG

@@ -9,7 +9,7 @@ namespace Runner.Servlets;
 public class BulkWSPage(Request req, Response res) : Servlet(req, res)
 {
 
-    public override void ProcessGet()
+    public override void GET()
     {
         //returns and html page that spawns 20 websockets connections
         //and send a message to the server every 2 seconds

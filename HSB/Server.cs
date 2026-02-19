@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using HSB.Components.Controller;
 using HSB.Constants.TLS.Manual;
 
 namespace HSB;
@@ -24,7 +25,11 @@ public class Server
     private Socket _listener;
     private Socket? _sslListener;
     private TlsConnection? _tlsConnection;
+
     private X509Certificate2? _serverCertificate;
+
+    //routing-related variables
+    private List<Map> _routes = [];
 
     public static void Main()
     {
@@ -198,6 +203,7 @@ public class Server
         SetIpAddress();
         SetEndpoint();
         SetSsl();
+        MapRoutes();
         PrintFinalInfo();
 
         //end of the server initialization
@@ -269,7 +275,6 @@ public class Server
         System.Diagnostics.Process.Start(psi);
     }
 
-
     private void Process(Socket listener, bool sslMode)
     {
         var socket = listener.Accept();
@@ -287,12 +292,11 @@ public class Server
                 // Manual TLS Implementation (POC)
                 try
                 {
-
                     if (_serverCertificate == null) throw new Exception("Server certificate is null");
 
                     hsbTls = new Tls12Handler(socket, _serverCertificate);
                     hsbTls.PerformHandshake();
-                    
+
                     bytesRec = hsbTls.Read(bytes, 0, bytes.Length);
                     sslOk = true;
                 }
@@ -465,7 +469,7 @@ public class Server
             var multipleBinded = c.GetCustomAttributes<Binding>(false);
 
             var enumerable = multipleBinded as Binding[] ?? multipleBinded.ToArray();
-            if (enumerable.Any())
+            if (enumerable.Length != 0)
             {
                 foreach (var b in enumerable)
                 {
@@ -498,84 +502,62 @@ public class Server
         return routes;
     }
 
-    /*protected internal static string GetStaticRoutesInfo()
-    {
-        string str = "";
-        var staticRoutes = CollectStaticRoutes();
-
-        if (staticRoutes.Count != 0)
-        {
-            str += "\nStatic routes:";
-            staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");
-        }
-
-        return str;
-    }*/
-
     private object? GetInstance(Request req, Response res)
     {
-        Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
+        var candidateControllers = _routes.Where(map => req.URL.StartsWith(map.Path)).ToArray();
 
-        //fetch routes with regexes
-        var regexRoutes = routes.Keys.Where(e => e.Item1.StartsWith("/`")).ToList();
-        if (regexRoutes.Count > 0)
+        foreach (var map in candidateControllers)
         {
-            var regexRoute = regexRoutes.Find(r =>
-                new Regex(r.Item1[2..])
-                    .Match(req.URL)
-                    .Success
-            );
-
-
-            /*var regexRoute = regexRoutes.Find(r =>
+            if (map.SubRoutes.Count == 0)
             {
-                var regexString = r.Item1[2..];
-                //check if regex matches and return if true
-                var regex = new Regex(regexString);
-                var success = regex.Match(req.URL).Success;
-                return success;
-            });*/
-
-            if (regexRoute != null)
-            {
-                var c = routes[regexRoute];
-                var x = c.GetConstructors()[0];
-                return x.GetParameters().Length switch
-                {
-                    3 => Activator.CreateInstance(c, req, res, _config),
-                    2 => Activator.CreateInstance(c, req, res),
-                    _ => throw new Exception($"Invalid constructor found {x.Name}"),
-                };
+                continue;
             }
+
+            //slice relative path, for example if the map path is "/api" and the request url is "/api/status", the relative path will be "/status"
+            var relativePath = req.URL[map.Path.Length..];
+            var candidateMethods = map.SubRoutes.Where(r => r.HttpMethod == req.METHOD).ToList();
+
+            //if the root is called, activate the first "/" subRoute if exists, else return 404
+            if (relativePath == "")
+            {
+                MethodRoute? rootRoute = candidateMethods.Find(sr => sr.Path == "/");
+                if (rootRoute.HasValue)
+                {
+                    return (map.Class, rootRoute.Value); //activation is done in replacement of the Process() function call
+                }
+
+                return null;
+            }
+
+            foreach (var route in candidateMethods)
+            {
+                if (route.Path == relativePath)
+                    return (map.Class, route);
+                
+                var pattern = "^" + Regex.Replace(route.Path, @":[^/]+", @"[^/]+") + "$";
+               
+                if(Regex.IsMatch(relativePath, pattern))
+                {
+                    //we extract the parameters from the url and add them to the request parameters
+                    var routeParts = route.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                    var relativeParts = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < routeParts.Length; i++)
+                    {
+                        if (routeParts[i].StartsWith(":"))
+                        {
+                            var paramName = routeParts[i][1..];
+                            var paramValue = relativeParts[i];
+                            req.Parameters[paramName] = paramValue;
+                        }
+                    }
+                    return (map.Class, route);
+                }
+            }
+            
+            
         }
 
-
-        if (routes.ContainsKey(new Tuple<string, bool>(req.URL, false)))
-        {
-            var c = routes[new(req.URL, false)];
-            var x = c.GetConstructors()[0];
-            return x.GetParameters().Length switch
-            {
-                3 => Activator.CreateInstance(c, req, res, _config),
-                2 => Activator.CreateInstance(c, req, res),
-                _ => throw new Exception($"Invalid constructor found {x.Name}"),
-            };
-        }
-
-        //we omit the else branch 
-        //we check if there is a path that starts like the request url
-        return (from r in routes
-            let path = r.Key.Item1
-            where req.URL.StartsWith(path)
-            select r.Value
-            into c
-            let x = c.GetConstructors()[0]
-            select x.GetParameters().Length switch
-            {
-                3 => Activator.CreateInstance(c, req, res, _config),
-                2 => Activator.CreateInstance(c, req, res),
-                _ => throw new Exception($"Invalid constructor found {x.Name}"),
-            }).FirstOrDefault();
+        return null;
     }
 
     /// <summary>
@@ -595,32 +577,22 @@ public class Server
                     return true; //blocked request
                 }
 
-                if (File.Exists("./banned_ips.txt"))
-                {
-                    var bannedIps = File.ReadAllLines("./banned_ips.txt");
-                    if (bannedIps.Contains(req.ClientIP))
-                    {
-                        return true; //blocked request
-                    }
-                }
-
-                return true;
+                if (!File.Exists("./banned_ips.txt")) return true;
+                var bannedIps = File.ReadAllLines("./banned_ips.txt");
+                return bannedIps.Contains(req.ClientIP) || true; //blocked request
             case BLOCK_MODE.OKLIST:
                 if (_config.PermanentIPList.Any(ip => ip == req.ClientIP))
                 {
                     return false; //allowed request
                 }
 
-                if (File.Exists("./allowed_ips.txt"))
-                {
-                    var allowedIps = File.ReadAllLines("./allowed_ips.txt");
-                    return !allowedIps.Contains(req.ClientIP);
-                }
-
-                return false; //no allowed_ips.txt file found, so we allow all requests
+                if (!File.Exists("./allowed_ips.txt"))
+                    return false; //no allowed_ips.txt file found, so we allow all requests
+                var allowedIps = File.ReadAllLines("./allowed_ips.txt");
+                return !allowedIps.Contains(req.ClientIP);
+            default:
+                return false;
         }
-
-        return false;
     }
 
 
@@ -635,7 +607,6 @@ public class Server
                 new Error(req, res, _config, "Invalid Request", HTTP_CODES.NOT_FOUND).Process();
                 return;
             }
-
 
             //check if there is a filter that blocks the request
             if (Filter(req)) return;
@@ -665,31 +636,53 @@ public class Server
             if (RunIfExpressMapping(req, res)) return;
 
             //We check if the route requested is handled by any servlet
-            object? o = GetInstance(req, res);
+            var o = GetInstance(req, res);
 
             if (o != null)
             {
-                //we check if the object is a servlet or a websocket
-                if (o is Servlet s)
+                switch (o)
                 {
-                    s.Process();
-                }
-                else if (o is WebSocket ws)
-                {
-                    if (!req.IsWebSocket())
-                    {
+                    //we check if the object is a servlet or a websocket
+                    case Servlet s:
+                        Terminal.WARNING(
+                            "Servlet are deprecated and will be removed in future versions, consider using controllers instead");
+                        s.Process();
+                        break;
+                    case WebSocket ws when !req.IsWebSocket():
                         _config.Debug.WARNING(
                             $"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
                         new Error(req, res, _config, "Invalid Request", HTTP_CODES.METHOD_NOT_ALLOWED).Process();
                         return;
-                    }
-                    else
-                    {
+                    case WebSocket ws:
                         ws.Process();
                         return;
-                    }
+                    case (Type tipo, MethodRoute route):
+                        var parameters = route.MethodInfo.GetParameters();
+                        var instance = Activator.CreateInstance(tipo);
+                        _config.Debug.INFO($"HTTP Request | {req.METHOD} {req.URL}");
+                        switch (parameters.Length)
+                        {
+                            case 2:
+                                route.MethodInfo.Invoke(instance, [req, res]);
+                                break;
+                            case 0:
+                                route.MethodInfo.Invoke(instance, null);
+                                break;
+                            default:
+                                _config.Debug.ERROR(
+                                    $"Invalid number of parameters for route {req.URL} in controller {tipo.Name}");
+                                new Error(req, res, _config,
+                                        "Internal Server Error: Invalid route configuration",
+                                        HTTP_CODES.INTERNAL_SERVER_ERROR)
+                                    .Process();
+                                break;
+                        }
+
+                        return;
+                    default:
+                        Console.WriteLine(o.GetType());
+                        throw new Exception($"Developer tried to map an invalid object to a route -> {o.GetType()}");
                 }
-                else throw new Exception($"Developer tried to map an invalid object to a route -> {o.GetType()}");
             }
             else
             {
@@ -761,20 +754,73 @@ public class Server
     private bool CheckSafePath(string path, Request req, Response res)
     {
         if (!Utils.IsUnsafePath(path)) return false;
-        
+
         _config.Debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
         new Error(req, res, _config, "", HTTP_CODES.NOT_FOUND).Process();
-        
+
         if (!_config.IPAutoblock) return true;
-        
+
         _config.Debug.WARNING($"Autoblocking IP {req.ClientIP}");
-        
+
         if (File.Exists("./banned_ips.txt"))
             File.AppendAllText("./banned_ips.txt", req.ClientIP + "\n");
         else
             File.WriteAllText("./banned_ips.txt", req.ClientIP + "\n");
 
         return true;
+    }
 
+    private void MapRoutes()
+    {
+        //order : ExpressMapping -> Controllers -> Servlets -> Static files
+        //Servlets must be deprecated
+
+        _config.Debug.INFO("Collecting routes...");
+
+        string[] excludeList = ["System", "Microsoft", "Internal", "HSB"];
+
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => !excludeList.Any(e => a.FullName!.StartsWith(e)));
+
+        var classes = assemblies.SelectMany(assembly => assembly.GetTypes(), (assembly, type) => new {assembly, type})
+            .Where(@t => @t.type.IsClass)
+            .Select(@t => @t.type);
+
+
+        foreach (var c in classes)
+        {
+            //get only class with the attribute [Controller]
+
+            var attr = c.GetCustomAttribute<Controller>(false);
+            if (attr == null) continue;
+            _config.Debug.INFO($"Controller | {c.Name} -> {attr.Path}");
+
+            var map = new Map()
+            {
+                Path = attr.Path,
+                Class = c,
+                SubRoutes = []
+            };
+
+            var methods = c.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(m => m.GetCustomAttribute<Route>(false) != null);
+            foreach (var m in methods)
+            {
+                var routeAttr = m.GetCustomAttribute<Route>(true);
+                if (routeAttr == null) continue;
+                var logStr =
+                    $"ROUTE | {Terminal.FG_TO_STRING(FgColor.GREEN)}{routeAttr.Method}{Terminal.RESET} -> {Terminal.FG_TO_STRING(FgColor.YELLOW)}{attr.Path}{routeAttr.Path}{Terminal.RESET} {m.Name}";
+                _config.Debug.INFO(logStr);
+
+                map.SubRoutes.Add(new MethodRoute()
+                {
+                    Path = routeAttr.Path,
+                    HttpMethod = routeAttr.Method,
+                    MethodInfo = m
+                });
+            }
+
+            _routes.Add(map);
+        }
     }
 }

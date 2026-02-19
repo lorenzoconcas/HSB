@@ -11,7 +11,7 @@ namespace HSB.DefaultPages;
 
 public class FileList(Request req, Response res, Configuration config) : Servlet(req, res, config)
 {
-    public override void ProcessGet()
+    public override void GET()
     {
         //since this mode bypasses normal error handling we must handle them manually
         try

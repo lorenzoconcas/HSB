@@ -6,7 +6,7 @@ namespace HSB;
 
 public class Index(Request req, Response res, Configuration config) : Servlet(req, res, config)
 {
-    public override void ProcessGet()
+    public override void GET()
     {
         string page = ReadFromResources("index.html");
         string version = "v";

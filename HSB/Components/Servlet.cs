@@ -3,6 +3,7 @@ using HSB.Constants;
 
 namespace HSB;
 
+//[Obsolete("Use Controller instead of Servlet for better organization and more features. Servlet will still work but it's recommended to switch to Controller for new projects.", false)]
 public class Servlet
 {
     protected Request req;
@@ -109,31 +110,31 @@ public class Servlet
         switch (req.METHOD)
         {
             case HTTP_METHOD.GET:
-                ProcessGet();
+                GET();
                 break;
             case HTTP_METHOD.POST:
-                ProcessPost();
+                POST();
                 break;
             case HTTP_METHOD.PUT:
-                ProcessPut();
+                PUT();
                 break;
             case HTTP_METHOD.DELETE:
-                ProcessDelete();
+                DELETE();
                 break;
             case HTTP_METHOD.HEAD:
-                ProcessHead();
+                HEAD();
                 break;
             case HTTP_METHOD.PATCH:
-                ProcessPatch();
+                PATCH();
                 break;
             case HTTP_METHOD.OPTIONS:
-                ProcessOptions();
+                OPTIONS();
                 break;
             case HTTP_METHOD.TRACE:
-                ProcessTrace();
+                TRACE();
                 break;
             case HTTP_METHOD.CONNECT:
-                ProcessConnect();
+                CONNECT();
                 break;
             case HTTP_METHOD.UNKNOWN:
             default:
@@ -162,47 +163,47 @@ public class Servlet
         }
     }
 
-    public virtual void ProcessPost()
+    public virtual void POST()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessGet()
+    public virtual void GET()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessDelete()
+    public virtual void DELETE()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessPut()
+    public virtual void PUT()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessHead()
+    public virtual void HEAD()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessPatch()
+    public virtual void PATCH()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessOptions()
+    public virtual void OPTIONS()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessTrace()
+    public virtual void TRACE()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }
 
-    public virtual void ProcessConnect()
+    public virtual void CONNECT()
     {
         res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
     }

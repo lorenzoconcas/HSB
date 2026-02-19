@@ -14,13 +14,13 @@ namespace Runner.TestRunnerClasses
         {
         }
 
-        public override void ProcessGet()
+        public override void GET()
         {
             //todo
             res.Send(HTTP_CODES.NOT_IMPLEMENTED);
         }
 
-        public override void ProcessPost()
+        public override void POST()
         {
             res.Send(HTTP_CODES.NOT_IMPLEMENTED);
         }

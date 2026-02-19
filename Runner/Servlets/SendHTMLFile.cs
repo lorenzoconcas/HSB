@@ -9,7 +9,7 @@ namespace Runner
         {
         }
 
-        public override void ProcessGet()
+        public override void GET()
         {
             res.SendHTMLFile("./static/main.html");
         }

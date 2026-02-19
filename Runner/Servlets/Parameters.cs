@@ -10,12 +10,12 @@ namespace Runner
 
         }
         //example : http://localhost:8080/parameters?param1=1&param2=2&param3=3
-        public override void ProcessGet()
+        public override void GET()
         {
             res.SendHTMLContent($"<h1>Prova GET -> {req.URL}</h1>\nParams : {req.Parameters.DictToString()}");
         }
 
-        public override void ProcessPost()
+        public override void POST()
         {
             res.JSON(req.Parameters);
 

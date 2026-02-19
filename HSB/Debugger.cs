@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using HSB.Constants;
 namespace HSB;
@@ -118,6 +119,8 @@ public class Debugger
 
     private static string GetMessage(string lvl, string msg)
     {
-        return $"[{GetDateFormatted()}][{lvl}][{msg}]\n";
+        return $"[HSB] [{Environment.ProcessId}] [{GetDateFormatted()}][{lvl}][{msg}]\n";
     }
+    
+    
 }

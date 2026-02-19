@@ -50,7 +50,7 @@ public class HSBRunner
 
         c.GET("/embeddedindex", (Request req, Response res) =>
         {
-            new HSB.Index(req, res, c).ProcessGet();
+            new HSB.Index(req, res, c).GET();
         });
 
         c.GET("/500", (Request req, Response res) =>

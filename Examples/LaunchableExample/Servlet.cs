@@ -9,7 +9,7 @@ namespace Test
         {
         }
 
-        public override void ProcessGet()
+        public override void GET()
         {
             res.SendHTMLContent("<h1>Hello there</h1>");
         }

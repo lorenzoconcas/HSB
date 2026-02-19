@@ -10,7 +10,7 @@ namespace Runner
 
         }
 
-        public override void ProcessGet()
+        public override void GET()
         {
             int item = (int)configuration.GetSharedObject("test");
             res.SendHTMLContent($"<h1>Prova SharedObjects -> {item}</h1>");

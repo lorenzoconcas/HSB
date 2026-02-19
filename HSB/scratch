@@ -1,0 +1,59 @@
+ Dictionary<Tuple<string, bool>, Type> routes = CollectStaticRoutes();
+
+        //fetch routes with regexes
+        var regexRoutes = routes.Keys.Where(e => e.Item1.StartsWith("/`")).ToList();
+        if (regexRoutes.Count > 0)
+        {
+            var regexRoute = regexRoutes.Find(r =>
+                new Regex(r.Item1[2..])
+                    .Match(req.URL)
+                    .Success
+            );
+
+
+            /*var regexRoute = regexRoutes.Find(r =>
+            {
+                var regexString = r.Item1[2..];
+                //check if regex matches and return if true
+                var regex = new Regex(regexString);
+                var success = regex.Match(req.URL).Success;
+                return success;
+            });*/
+
+            if (regexRoute != null)
+            {
+                var c = routes[regexRoute];
+                var x = c.GetConstructors()[0];
+                return x.GetParameters().Length switch
+                {
+                    3 => Activator.CreateInstance(c, req, res, _config),
+                    2 => Activator.CreateInstance(c, req, res),
+                    _ => throw new Exception($"Invalid constructor found {x.Name}"),
+                };
+            }
+        }
+
+
+        if (!routes.ContainsKey(new Tuple<string, bool>(req.URL, false)))
+            return (from r in routes
+                let path = r.Key.Item1
+                where req.URL.StartsWith(path)
+                select r.Value
+                into c
+                let x = c.GetConstructors()[0]
+                select x.GetParameters().Length switch
+                {
+                    3 => Activator.CreateInstance(c, req, res, _config),
+                    2 => Activator.CreateInstance(c, req, res),
+                    _ => throw new Exception($"Invalid constructor found {x.Name}"),
+                }).FirstOrDefault();
+        {
+            var c = routes[new(req.URL, false)];
+            var x = c.GetConstructors()[0];
+            return x.GetParameters().Length switch
+            {
+                3 => Activator.CreateInstance(c, req, res, _config),
+                2 => Activator.CreateInstance(c, req, res),
+                _ => throw new Exception($"Invalid constructor found {x.Name}"),
+            };
+        }

@@ -116,6 +116,11 @@ public class Request
             string[] firstLine = requestContent.First().Split(" ");
             _method = HttpUtils.GetMethod(firstLine[0]);
             _url = firstLine[1].Split("?")[0];
+            if (!_url.StartsWith('/') && _url.EndsWith('/'))
+            {
+                //delete last "/" if url is like "example.com/"
+                _url = _url[..^1];
+            }
             _protocol = HttpUtils.GetProtocol(firstLine[2]);
 
             //collect parameters

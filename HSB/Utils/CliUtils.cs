@@ -14,6 +14,6 @@ public static class CliUtils
         Terminal.Write("#", BgColor.DEFAULT, FgColor.YELLOW);
         Terminal.Write(" (Http Server Boxed)");
         Terminal.Write($" v{Assembly.GetExecutingAssembly().GetName().Version}");
-        Terminal.WriteLine($"PID {Environment.ProcessId}");
+        Terminal.WriteLine($" - PID {Environment.ProcessId}");
     }
 }

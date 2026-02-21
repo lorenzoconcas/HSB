@@ -771,7 +771,7 @@ public class Server
                              ResourceUtils.IsEmbeddedResource(req.Url, _config.EmbeddedResourcePrefix))
                     {
                         _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Embedded resource)");
-                        object resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix);
+                        object resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix) ?? throw new Exception("Resource not found");
                         res.SendObject(resource, req.Url);
                     }
                     else

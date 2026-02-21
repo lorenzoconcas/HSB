@@ -45,7 +45,8 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
         });
         configuration.Get(configuration.OpenApiSettings.Path, (Request Request, HSB.Response res) =>
         {
-            var page = ResourceUtils.LoadResource<string>("swagger_ui.html");
+            var page = ResourceUtils.LoadResource<string>("swagger_ui.html") ??
+                       throw new Exception("Resource not found");
             res.SendHTMLContent(page);
         });
     }

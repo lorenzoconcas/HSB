@@ -1,10 +1,11 @@
 ﻿using HSB;
 using HSB.Constants;
+using HSB.OpenApi;
 using HSB.Utils;
 
 namespace Runner;
 
-public class HSBRunner
+public class HsbRunner
 {
 
     private static void Main()
@@ -27,6 +28,10 @@ public class HSBRunner
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static"),
             //CustomServerName = "Runner powered by HSB",
             SslSettings = ssl,
+            OpenApiSettings = new OpenApiSettings()
+            {
+                Mode = Mode.SwaggerOnly
+            }
         };
 
         //test expressjs-like routing
@@ -35,24 +40,13 @@ public class HSBRunner
         //ex a Servlet that responds to the GET call of route "/test" will be ignored
         //but a POST call to the same route will be handled by the servlet
 
-        c.Get("/expressget", TestExpressRoutingGET);
-        c.Post("/expresspost", TestExpressRoutingPOST);
+        c.Get("/expressget", TestExpressRoutingGet);
+        c.Post("/expresspost", TestExpressRoutingPost);
         c.Get("/printheaders", PrintHeaders);
         c.Get("/echo", Echo);
         c.Post("/echo", Echo);
 
-        /*var pathRegex = @"\/.*\/*regex.+";
-        
-        c.GET($"/`{pathRegex}", (Request req, Response res) =>
-        {
-            res.SendHTMLContent($"Path is {req.URL} and match regex {pathRegex}");
-        });*/
-        
-
-        c.Get("/embeddedindex", (Request req, Response res) =>
-        {
-            new HSB.Index(req, res, c).GET();
-        });
+      
 
         c.Get("/500", (Request req, Response res) =>
         {
@@ -76,7 +70,7 @@ public class HSBRunner
             //a text input to send messages to the server
             // a button to send the message
 
-            string html = @"<html><head></head><body><h1>Websocket test page</h1>
+            const string html = @"<html><head></head><body><h1>Websocket test page</h1>
             <div id='status'>Not connected</div>
             <button onclick='connect()'>Connect</button>
             <button onclick='disconnect()'>Disconnect</button>
@@ -114,8 +108,6 @@ public class HSBRunner
             </script>
             </body></html>";
             res.SendHTMLContent(html);
-
-
         });
 
         c.Get("/", (Request req, Response res) =>
@@ -197,7 +189,6 @@ public class HSBRunner
 
         c.Get("/favicon.ico", (Request req, Response res) =>
         {
-            Terminal.INFO("hello");
             var resource = ResourceUtils.LoadResource<byte[]?>("favicon.png");
 
             if (resource == null) { res.Send(HttpCodes.NOT_FOUND); return; }
@@ -222,13 +213,13 @@ public class HSBRunner
         new Server(c).Start();
     }
 
-    private static void TestExpressRoutingGET(Request req, Response res)
+    private static void TestExpressRoutingGet(Request req, Response res)
     {
         res.Send("<html><head></head><body onload='loaded()'><h1>Hello there from quick routing</h1>" +
             "<script src=\"/utils.js\"></script></body></html>", "text/html");
     }
 
-    private static void TestExpressRoutingPOST(Request req, Response res)
+    private static void TestExpressRoutingPost(Request req, Response res)
     {
         res.Send(@"{""value"": 1}", "application/json");
     }

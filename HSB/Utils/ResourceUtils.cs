@@ -29,13 +29,13 @@ public static class ResourceUtils
     }
 
     //Search all the loaded assemblies for the resource, then reads it and returns it as object
-    public static T LoadResource<T>(string resName, string prefix = "")
+    public static T? LoadResource<T>(string resName, string prefix = "")
     {
         if (resName.StartsWith('/')) resName = resName[1..];
         resName = resName.Replace('/', '.');
         if (prefix != "")
             resName = $"{prefix}.{resName}";
-        AppDomain currentDomain = AppDomain.CurrentDomain;
+        var currentDomain = AppDomain.CurrentDomain;
         List<Assembly> assemblies = [.. currentDomain.GetAssemblies()];
 
         assemblies.RemoveAll(a => a.ToString().StartsWith("System"));
@@ -44,33 +44,46 @@ public static class ResourceUtils
         assemblies.RemoveAll(a => a.ToString().StartsWith("ILLink"));
         assemblies.RemoveAll(a => a.ToString().StartsWith("FxResources"));
 
-        foreach (var assembly in assemblies)
+
+        List<Tuple<Assembly, string>> resources = [];
+
+        assemblies.SelectMany(a => a.GetManifestResourceNames(), (a, r) => new Tuple<Assembly, string>(a, r))
+            .Where(t => t.Item2.EndsWith(resName)).ToList().ForEach(t => resources.Add(t));
+
+        var matchingResources = resources.Where(r => r.Item2.EndsWith(resName)).ToList();
+
+        if (matchingResources.Count == 0)
         {
-            var resources = assembly.GetManifestResourceNames();
-            if (resources.Length == 0) continue;
-            var resourceName = resources.First(str => str.EndsWith(resName));
-            try
-            {
-                using var stream = assembly.GetManifestResourceStream(resourceName)!;
-                if (typeof(T) == typeof(byte[]))
-                {
-                    var ms = new MemoryStream();
-                    stream.CopyTo(ms);
-                    return (T) Convert.ChangeType(ms.ToArray(), typeof(T));
-                }
-                else
-                {
-                    using StreamReader r = new(stream);
-                    return (T) Convert.ChangeType(r.ReadToEnd(), typeof(T));
-                }
-            }
-            catch (Exception)
-            {
-                return default!;
-            }
+            return default;
         }
 
-        return default!;
+        try
+        {
+            var assembly = matchingResources.First().Item1;
+            var resourceName = matchingResources.First().Item2;
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                return default;
+            }
+
+            if (typeof(T) == typeof(byte[]))
+            {
+                var ms = new MemoryStream();
+                stream.CopyTo(ms);
+                return (T) Convert.ChangeType(ms.ToArray(), typeof(T));
+            }
+            else
+            {
+                using StreamReader r = new(stream);
+                return (T) Convert.ChangeType(r.ReadToEnd(), typeof(T));
+            }
+        }
+        catch (Exception e)
+        {
+            Terminal.ERROR(e);
+            return default;
+        }
     }
 
     internal static string LoadResourceAsString(string resName)

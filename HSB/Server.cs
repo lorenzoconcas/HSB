@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
+using HSB.Components.Attributes;
 using HSB.Components.Controller;
 using HSB.Constants.TLS.Manual;
 using HSB.OpenApi;
@@ -206,10 +207,10 @@ public class Server
         SetSsl();
         MapRoutes();
         PrintFinalInfo();
-        
+
         //build openapi documentation if enabled in configuration
         if (!this._config.OpenApiSettings.IsEnabled) return;
-        
+
         var openApiBuilder = new OpenApiBuilder(config, _routes);
         openApiBuilder.Init();
 
@@ -528,19 +529,19 @@ public class Server
             if (relativePath == "")
             {
                 RoutableMethod? rootRoute = candidateMethods.Find(sr => sr.Path == "/");
-                if (rootRoute.HasValue)
-                {
-                    return (map.Class, rootRoute.Value); //activation is done in replacement of the Process() function call
-                }
+                if (!rootRoute.HasValue) return null;
+                //inject Request and Response in the class if there are any parameter with those types, this allows to avoid having to declare them in the route method
 
-                return null;
+                return (map.Class, rootRoute.Value); //activation is done in replacement of the Process() function call
             }
 
             foreach (var route in candidateMethods)
             {
+                //get public instance fields
+
                 if (route.Path == relativePath)
                     return (map.Class, route);
-                
+
                 var pattern = "^" + Regex.Replace(route.Path, @":[^/]+", @"[^/]+") + "$";
 
                 if (!Regex.IsMatch(relativePath, pattern)) continue;
@@ -554,10 +555,9 @@ public class Server
                     var paramValue = relativeParts[i];
                     req.Parameters[paramName] = paramValue;
                 }
+
                 return (map.Class, route);
             }
-            
-            
         }
 
         return null;
@@ -657,23 +657,69 @@ public class Server
                     case (Type tipo, RoutableMethod route):
                         var parameters = route.MethodInfo.GetParameters();
                         var instance = Activator.CreateInstance(tipo);
+
+                        //get public instance fields
+                        var fields = tipo
+                            .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .Where(fi => fi.FieldType == typeof(Request) || fi.FieldType == typeof(Response));
+                        foreach (var field in fields)
+                        {
+                            if (field.FieldType == typeof(Request))
+                            {
+                                field.SetValue(instance, req);
+                            }
+                            else if (field.FieldType == typeof(Response))
+                            {
+                                field.SetValue(instance,
+                                    res); //response is not available at this point, we will set it to null and then inject the real response in the Process() function
+                            }
+                        }
+
                         _config.Debug.INFO($"HTTP Request | {req.Method} {req.Url}");
+                        //try automatically inject parameters from request to the method
+                        //method must use decorator to specify the parameters to inject, for example [FromQuery] or [FromBody]
+                        //try collect parameters
+                        var methodParameters = route.MethodInfo.GetParameters()
+                            .Where(p => p.GetCustomAttribute<NamedParameter>() != null);
+
+                        List<object> injectionParameters = [];
+
+                        foreach (var methodParameter in methodParameters)
+                        {
+                            var paramAttributes = methodParameter.GetCustomAttribute<NamedParameter>();
+
+                            if ((!req.Parameters.ContainsKey(paramAttributes!.Name) || req.Parameters[paramAttributes!.Name] == "") && paramAttributes.Required)
+                            {
+                                new Error(res,
+                                        _config,
+                                        $"Missing value for parameter {paramAttributes!.Name}",
+                                        HttpCodes.BAD_REQUEST)
+                                    .Throw();
+                                return;
+                            }
+
+                            //parameters must be collected in order to be applied
+                            var paramValue = req.Parameters[paramAttributes!.Name];
+                            var parsedType = TypeUtils.ConvertToType(paramValue, methodParameter.ParameterType);
+                            injectionParameters.Add(parsedType);
+                        }
+
                         switch (parameters.Length)
                         {
-                            case 2:
-                                route.MethodInfo.Invoke(instance, [req, res]);
-                                break;
                             case 0:
                                 route.MethodInfo.Invoke(instance, null);
                                 break;
                             default:
+                                route.MethodInfo.Invoke(instance, injectionParameters.ToArray());
+                                break;
+                            /*default:
                                 _config.Debug.ERROR(
                                     $"Invalid number of parameters for route {req.Url} in controller {tipo.Name}");
                                 new Error(res, _config,
                                         "Internal Server Error: Invalid route configuration",
                                         HttpCodes.INTERNAL_SERVER_ERROR)
                                     .Throw();
-                                break;
+                                break;*/
                         }
 
                         return;
@@ -785,7 +831,6 @@ public class Server
             .Select(@t => @t.type)
             .Where(@t => @t.GetCustomAttribute<Controller>() != null)
             .ToList();
-            
 
 
         foreach (var c in classes)

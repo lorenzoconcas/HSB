@@ -25,13 +25,13 @@ public class Error(Response res, Configuration config, string errorMessage, int 
             {
                 if (debugMode || config.Debug.enabled)
                     content = GetStacktracePage();
-                else content = Get5XXPage();
+                else content = Get5XxPage();
 
                 errId = "stacktrace";
                 break;
             }
             case >= 400 and <= 499:
-                content = Get4XXPage();
+                content = Get4XxPage(errorMessage);
                 break;
         }
 
@@ -40,8 +40,11 @@ public class Error(Response res, Configuration config, string errorMessage, int 
     }
 
     private string GetStacktracePage() => "Stacktrace:<br>" + errorMessage.Replace("\n", "<br>");
-    private static string Get4XXPage() => $"<h3>The requested resource was not found on this server</h3>";
-    private static string Get5XXPage() => $"<h3>An internal error occurred while elaborating the request</h3>";
+
+    private static string Get4XxPage(string errorMessage = "The requested resource was not found on this server") =>
+        $"<h3>{errorMessage.Replace("\n", "<br>")}</h3>";
+
+    private static string Get5XxPage() => $"<h3>An internal error occurred while elaborating the request</h3>";
 
     private void Send(string title, string msg, int statusCode)
     {

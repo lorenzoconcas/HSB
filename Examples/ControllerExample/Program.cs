@@ -8,6 +8,7 @@ var c = new Configuration
     OpenApiSettings = new OpenApiSettings()
     {
         IsEnabled = true,
+        Path =  "/swagger/index.html",
         Info = new Info("Controller Example", "An example of a controller")
     }
 };

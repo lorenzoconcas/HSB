@@ -12,12 +12,12 @@ namespace Runner
 
         public override void GET()
         { 
-            res.SendHTMLContent($"<h1>Hello GET -> {req.URL}</h1>");
+            res.SendHTMLContent($"<h1>Hello GET -> {req.Url}</h1>");
         }
 
         public override void POST()
         {
-            res.SendHTMLContent($"<h1>Hello POST -> {req.URL}</h1>");
+            res.SendHTMLContent($"<h1>Hello POST -> {req.Url}</h1>");
         }
 
 

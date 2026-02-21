@@ -1,9 +1,11 @@
 ﻿using System.Net;
-using System.Net.Security;
+
 using System.Net.Sockets;
 using System.Text;
 using HSB.Components;
 using HSB.Constants;
+using HSB.Utils;
+using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB;
 
@@ -19,39 +21,33 @@ public class Request
 
 
     //Request variables
-    public bool validRequest = false;
-    HTTP_METHOD _method = HTTP_METHOD.UNKNOWN;
-    HTTP_PROTOCOL _protocol = HTTP_PROTOCOL.UNKNOWN; //HTTP1.0 ecc
-    readonly string clientIP = "";
-    readonly int clientPort = -1;
-    readonly AddressFamily clientIPVersion;
-    string _url = "";
-    string body = "";
+    public bool ValidRequest;
+    private string body = "";
     readonly Dictionary<string, string> headers = [];
     readonly Dictionary<string, string> parameters = [];
     readonly List<string> rawHeaders = [];
     readonly Dictionary<string, Cookie> cookies = [];
-    public readonly bool IsTLS = false;
+    public readonly bool IsTls;
 
     //Auth structs
     private Tuple<string, string>? basicAuth;
-    private OAuth1_0Information? oAuth1_0Information;
-    private string oAuth2_0Token = "";
+    private OAuth10Information? oAuth10Information;
+    private string oAuth20Token = "";
     private Session session = new();
     private MultiPartFormData? multiPartFormData;
     private Form? form;
 
     public bool IsValidRequest = true;
-    public Request(byte[] data, Socket socket, Configuration config, bool isTLS = false)
+    public Request(byte[] data, Socket socket, Configuration config, bool isTls = false)
     {
         connectionSocket = socket;
         rawData = data;
         rawBody = [];
         this.config = config;
         requestContent = [];
-        IsTLS = isTLS;
+        IsTls = isTls;
 
-        if (data == null || data.Length == 0)
+        if (data.Length == 0)
         {
             return;
         }
@@ -60,12 +56,12 @@ public class Request
         if (rEP != null)
         {
             var rIEP = (IPEndPoint)rEP;
-            clientIP = rIEP.Address.ToString();
-            clientPort = rIEP.Port;
-            clientIPVersion = rIEP.AddressFamily;
+            ClientIp = rIEP.Address.ToString();
+            ClientPort = rIEP.Port;
+            ClientIpVersion = rIEP.AddressFamily;
         }
 
-        switch (Utils.GetEncoding(data))
+        switch (EncodingUtils.GetEncoding(data))
         {
             case UTF8Encoding:
                 reqText = Encoding.UTF8.GetString(data);
@@ -83,8 +79,8 @@ public class Request
             //note:
             //it can happen in programs like postman that a request to localhost produces two requests
             //one for IPv6 and one for IPv4
-            //i don't know why but the second request is invalid
-            validRequest = false;
+            //I don't know why but the second request is invalid
+            ValidRequest = false;
             config.Debug.INFO("Got an invalid request, ignoring...");
             requestContent.Add(" ");
             return;
@@ -101,9 +97,9 @@ public class Request
         if (reqText == "")
         {
             //empty request
-            _url = "/";
-            _protocol = HTTP_PROTOCOL.HTTP1_0;
-            _method = HTTP_METHOD.GET;
+            Url = "/";
+            Protocol = HttpProtocol.HTTP1_0;
+            Method = HttpMethod.Get;
             body = "";
             rawBody = [];
             session = new Session(); //default, invalid session
@@ -114,21 +110,21 @@ public class Request
         try
         {
             string[] firstLine = requestContent.First().Split(" ");
-            _method = HttpUtils.GetMethod(firstLine[0]);
-            _url = firstLine[1].Split("?")[0];
-            if (!_url.StartsWith('/') && _url.EndsWith('/'))
+            Method = HttpUtils.GetMethod(firstLine[0]);
+            Url = firstLine[1].Split("?")[0];
+            if (!Url.StartsWith('/') && Url.EndsWith('/'))
             {
                 //delete last "/" if url is like "example.com/"
-                _url = _url[..^1];
+                Url = Url[..^1];
             }
-            _protocol = HttpUtils.GetProtocol(firstLine[2]);
+            Protocol = HttpUtils.GetProtocol(firstLine[2]);
 
             //collect parameters
-            if (firstLine[1].Replace(_url, "") != "")
+            if (firstLine[1].Replace(Url, "") != "")
             {
-                List<string> prms = [.. firstLine[1].Split("?")[1].Split("&")];
+                List<string> requestParameters = [.. firstLine[1].Split("?")[1].Split("&")];
 
-                foreach (string p in prms)
+                foreach (var p in requestParameters)
                 {
                     if (p != "" && !parameters.ContainsKey(p)) //skip empty parameters and no duplicates
                         parameters.Add(p.Split("=")[0], p.Split("=")[1]);
@@ -159,22 +155,22 @@ public class Request
             //basic auth
             if (headers.TryGetValue("Authorization", out string? value))
             {
-                var _auth = value;
+                var requestAuth = value;
                 try
                 {
-                    _auth = Encoding.UTF8.GetString(Convert.FromBase64String(_auth));
-                    var x = _auth.Split(":");
-                    if (_auth.Length == 2)
+                    requestAuth = Encoding.UTF8.GetString(Convert.FromBase64String(requestAuth));
+                    var x = requestAuth.Split(":");
+                    if (requestAuth.Length == 2)
                     {
-                        basicAuth = new(x[0], x[1]);
+                        basicAuth = new Tuple<string, string>(x[0], x[1]);
                     }
 
                 }
                 catch (Exception)
                 {
-                    if (_auth.Contains("Bearer"))
+                    if (requestAuth.Contains("Bearer"))
                     {
-                        oAuth2_0Token = value;
+                        oAuth20Token = value;
                     }
                 }
             }
@@ -185,7 +181,7 @@ public class Request
             //oAuth2.0 token 
             if (parameters.TryGetValue("access_token", out string? tkn))
             {
-                oAuth2_0Token = tkn;
+                oAuth20Token = tkn;
             }
 
 
@@ -229,7 +225,7 @@ public class Request
 
             //extract body, which is the remaining part of the request text
 
-            int offset = Utils.IndexOf(rawData, "\r\n\r\n"u8.ToArray()) + 4;
+            var offset = rawData.IndexOf("\r\n\r\n"u8.ToArray()) + 4;
             rawBody = rawData[offset..];
             body = Encoding.UTF8.GetString(rawBody);
 
@@ -242,14 +238,13 @@ public class Request
                 form = new Form(body);
             }
 
-            validRequest = true;
+            ValidRequest = true;
 
         }
         catch (Exception e)
         {
             Terminal.WriteLine("Invalid request, reason : " + e.Message, BgColor.BLACK, FgColor.RED);
-            validRequest = false;
-            return;
+            ValidRequest = false;
         }
 
     }
@@ -257,27 +252,33 @@ public class Request
     /// <summary>
     /// Return the method of the request
     /// </summary>
-    public HTTP_METHOD METHOD => _method;
+    public HttpMethod Method { get; private set; } = HttpMethod.Unknown;
+
     /// <summary>
     /// Return the protocol of the request
     /// </summary>
-    public HTTP_PROTOCOL PROTOCOL => _protocol;
+    public HttpProtocol Protocol  { get; private set; } = HttpProtocol.UNKNOWN;
+
     /// <summary>
     /// Return the url of the request
     /// </summary>
-    public string URL => _url;
+    public string Url { get; private set; } = "";
+
     /// <summary>
     /// Return the ip of the client (request source ip)
     /// </summary>
-    public string ClientIP => clientIP;
+    public string ClientIp { get; } = "";
+
     /// <summary>
     /// Return the port of the client (request source port)
     /// </summary>
-    public int ClientPort => clientPort;
+    public int ClientPort { get; } = -1;
+
     /// <summary>
     /// Return the ip version of the client (request source ip version (v4 or v6))
     /// </summary>
-    public AddressFamily ClientIPVersion => clientIPVersion;
+    public AddressFamily ClientIpVersion { get; }
+
     /// <summary>
     /// Return the raw body of the request
     /// </summary>
@@ -304,14 +305,14 @@ public class Request
     /// <returns></returns>
     public Session GetSession() => session;
     public Tuple<string, string>? GetBasicAuthInformation() => basicAuth;
-    public OAuth1_0Information? GetOAuth1_0Information() => oAuth1_0Information;
+    public OAuth10Information? GetOAuth1_0Information() => oAuth10Information;
 
 
     /// <summary>
     /// Test if a request contains a JSON document in the body
     /// </summary>
     /// <returns></returns>
-    public bool IsJSON() => headers["Content-Type"].StartsWith("application/json");
+    public bool IsJson() => headers["Content-Type"].StartsWith("application/json");
     /// <summary>
     /// Returns if the request is an ajax request
     /// </summary>
@@ -337,7 +338,7 @@ public class Request
     /// <returns></returns>
     public bool IsFormUpload() => headers.ContainsKey("Content-Type") && headers["Content-Type"].StartsWith("application/x-www-form-urlencoded");
     /// <summary>
-    /// Returns the form data if the request is a multipart formdata upload, else null
+    /// Returns the form data if the request is a multipart form data upload, else null
     /// </summary>
     /// <returns></returns>
     public MultiPartFormData? GetMultiPartFormData() => multiPartFormData;
@@ -372,24 +373,24 @@ public class Request
         Terminal.INFO($"Has basic auth? {basicAuth != null}");
         if (basicAuth != null)
             Terminal.INFO(basicAuth);
-        Terminal.INFO($"Has oauth1.0? {oAuth1_0Information != null}");
-        if (oAuth1_0Information != null)
-            Terminal.INFO(oAuth1_0Information);
+        Terminal.INFO($"Has oauth1.0? {oAuth10Information != null}");
+        if (oAuth10Information != null)
+            Terminal.INFO(oAuth10Information);
 
-        Terminal.INFO($"Has oAuth2.0? {oAuth2_0Token != ""} {oAuth2_0Token}");
+        Terminal.INFO($"Has oAuth2.0? {oAuth20Token != ""} {oAuth20Token}");
 
     }
     private void TryExtractAndSetOAuth1_0()
     {
-        OAuth1_0Information data = new(parameters);
+        OAuth10Information data = new(parameters);
         if (data.IsValid())
-            oAuth1_0Information = data;
+            oAuth10Information = data;
 
     }
 
     public override string ToString()
     {
-        string str = _method.ToString() + " - " + _url + " - " + _protocol.ToString();
+        string str = Method.ToString() + " - " + Url + " - " + Protocol.ToString();
         return str;
     }
 }
@@ -397,48 +398,48 @@ public class Request
 //todo -> move to a separate file, ideally in Constants
 public static class HttpUtils
 {
-    public static string MethodAsString(HTTP_METHOD method) => method switch
+    public static string MethodAsString(HttpMethod method) => method switch
     {
-        HTTP_METHOD.GET => "GET",
-        HTTP_METHOD.POST => "POST",
-        HTTP_METHOD.PUT => "PUT",
-        HTTP_METHOD.DELETE => "DELETE",
-        HTTP_METHOD.HEAD => "HEAD",
-        HTTP_METHOD.PATCH => "PATCH",
-        HTTP_METHOD.OPTIONS => "OPTIONS",
-        HTTP_METHOD.TRACE => "TRACE",
-        HTTP_METHOD.CONNECT => "CONNECT",
+        HttpMethod.Get => "GET",
+        HttpMethod.Post => "POST",
+        HttpMethod.Put => "PUT",
+        HttpMethod.Delete => "DELETE",
+        HttpMethod.Head => "HEAD",
+        HttpMethod.Patch => "PATCH",
+        HttpMethod.Options => "OPTIONS",
+        HttpMethod.Trace => "TRACE",
+        HttpMethod.Connect => "CONNECT",
         _ => "GET", //failsafe?
     };
 
-    public static string ProtocolAsString(HTTP_PROTOCOL protocol) => protocol switch
+    public static string ProtocolAsString(HttpProtocol protocol) => protocol switch
     {
-        HTTP_PROTOCOL.HTTP1_0 => "HTTP/1.0",
-        HTTP_PROTOCOL.HTTP1_1 => "HTTP/1.1",
-        HTTP_PROTOCOL.HTTP2_0 => "HTTP/2.0",
-        HTTP_PROTOCOL.HTTP3_0 => "HTTP/3.0",
+        HttpProtocol.HTTP1_0 => "HTTP/1.0",
+        HttpProtocol.HTTP1_1 => "HTTP/1.1",
+        HttpProtocol.HTTP2_0 => "HTTP/2.0",
+        HttpProtocol.HTTP3_0 => "HTTP/3.0",
         _ => "HTTP/1.0",
     };
-    public static HTTP_METHOD GetMethod(string data) => data switch
+    public static HttpMethod GetMethod(string data) => data switch
     {
-        "GET" => HTTP_METHOD.GET,
-        "POST" => HTTP_METHOD.POST,
-        "PUT" => HTTP_METHOD.PUT,
-        "DELETE" => HTTP_METHOD.DELETE,
-        "HEAD" => HTTP_METHOD.HEAD,
-        "PATCH" => HTTP_METHOD.PATCH,
-        "OPTIONS" => HTTP_METHOD.OPTIONS,
-        "TRACE" => HTTP_METHOD.TRACE,
-        "CONNECT" => HTTP_METHOD.CONNECT,
-        _ => HTTP_METHOD.UNKNOWN
+        "GET" => HttpMethod.Get,
+        "POST" => HttpMethod.Post,
+        "PUT" => HttpMethod.Put,
+        "DELETE" => HttpMethod.Delete,
+        "HEAD" => HttpMethod.Head,
+        "PATCH" => HttpMethod.Patch,
+        "OPTIONS" => HttpMethod.Options,
+        "TRACE" => HttpMethod.Trace,
+        "CONNECT" => HttpMethod.Connect,
+        _ => HttpMethod.Unknown
     };
 
-    public static HTTP_PROTOCOL GetProtocol(string data) => data switch
+    public static HttpProtocol GetProtocol(string data) => data switch
     {
-        "HTTP/1.0" => HTTP_PROTOCOL.HTTP1_0,
-        "HTTP/1.1" => HTTP_PROTOCOL.HTTP1_1,
-        "HTTP/2.0" => HTTP_PROTOCOL.HTTP2_0,
-        "HTTP/3.0" => HTTP_PROTOCOL.HTTP3_0,
+        "HTTP/1.0" => HttpProtocol.HTTP1_0,
+        "HTTP/1.1" => HttpProtocol.HTTP1_1,
+        "HTTP/2.0" => HttpProtocol.HTTP2_0,
+        "HTTP/3.0" => HttpProtocol.HTTP3_0,
         _ => throw new Exception("Unsupported HTTP Protocol")
     };
 

@@ -1,6 +1,6 @@
 ﻿namespace HSB.Constants;
 
-public static class HTTP_CODES
+public static class HttpCodes
 {
     //10x
     public const int CONTINUE = 100;

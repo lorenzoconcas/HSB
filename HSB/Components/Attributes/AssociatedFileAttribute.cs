@@ -1,4 +1,5 @@
 using HSB.Constants;
+using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB;
 
@@ -6,17 +7,17 @@ namespace HSB;
 public class AssociateFile : Attribute
 {
     private readonly string filePath;
-    private readonly List<HTTP_METHOD> methods;
+    private readonly List<HttpMethod> methods;
     private readonly List<string> customMethods;
 
-    public AssociateFile(string filePath, HTTP_METHOD method = HTTP_METHOD.GET)
+    public AssociateFile(string filePath, HttpMethod method = HttpMethod.Get)
     {
         this.filePath = filePath;
         methods = [method];
         customMethods = [];
     }
 
-    public AssociateFile(string filePath, HTTP_METHOD[] methods)
+    public AssociateFile(string filePath, HttpMethod[] methods)
     {
         this.filePath = filePath;
         this.methods = new(methods);
@@ -37,7 +38,7 @@ public class AssociateFile : Attribute
 
     public string FilePath => filePath;
 
-    public bool MethodMatches(HTTP_METHOD method)
+    public bool MethodMatches(HttpMethod method)
     {
         return methods.Contains(method);
     }

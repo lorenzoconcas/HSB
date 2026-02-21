@@ -10,6 +10,7 @@ using HSB.Exceptions;
 using System.Net.Security;
 
 using HSB.Constants.TLS.Manual;
+using HSB.Utils;
 
 namespace HSB;
 
@@ -71,7 +72,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="data">Body of the response</param>
     /// <param name="mimeType">MimeType of the body</param>
     /// <param name="statusCode">Response status code</param>
-    public void Send(string data, string mimeType = "text/plain", int statusCode = HTTP_CODES.OK,
+    public void Send(string data, string mimeType = "text/plain", int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
         string _mime = mimeType;
@@ -94,7 +95,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
             string content = File.ReadAllText(path);
             if (process)
                 content = ProcessContent(content);
-            Encoding encoding = Utils.GetEncoding(path);
+            Encoding encoding = EncodingUtils.GetEncoding(path);
 
             Send(content, MimeTypeUtils.TEXT_HTML + $"; charset={encoding.BodyName}", customHeaders: customHeaders);
 
@@ -103,7 +104,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         catch (Exception)
         {
             //dato che l'invio dei dati è parte nostra, se non riusciamo diamo un errore 500
-            SendCode(HTTP_CODES.INTERNAL_SERVER_ERROR);
+            SendCode(HttpCodes.INTERNAL_SERVER_ERROR);
             Terminal.ERROR("Error sending file : " + path);
         }
     }
@@ -116,7 +117,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="statusCode">Response status code</param>
     /// <param name="encoding">Encoding of the document</param>
     /// <param name="customHeaders">Optional headers</param>
-    public void SendHTMLContent(string content, bool process = false, int statusCode = HTTP_CODES.OK,
+    public void SendHTMLContent(string content, bool process = false, int statusCode = HttpCodes.OK,
         string encoding = "UTF-8", Dictionary<string, string>? customHeaders = null)
     {
         if (process)
@@ -130,7 +131,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="absPath">Path (absolute) of the file</param>
     /// <param name="mimeType">MimeType of the file</param>
     /// <param name="statusCode">Response status code</param>
-    public void SendFile(string absPath, string? mimeType = null, int statusCode = HTTP_CODES.OK,
+    public void SendFile(string absPath, string? mimeType = null, int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
         var data = File.ReadAllBytes(absPath);
@@ -158,7 +159,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="data"></param>
     /// <param name="mimeType"></param>
     /// <param name="statusCode"></param>
-    public void SendFile(byte[] data, string mimeType, int statusCode = HTTP_CODES.OK,
+    public void SendFile(byte[] data, string mimeType, int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
         string _mime = mimeType;
@@ -214,7 +215,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="filePart"></param>
     /// <param name="statusCode"></param>
     /// <param name="customHeaders"></param>
-    public void SendFile(FilePart filePart, int statusCode = HTTP_CODES.OK,
+    public void SendFile(FilePart filePart, int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
         SendFile(filePart.GetBytes(), filePart.GetMimeType(), statusCode, customHeaders);
@@ -248,7 +249,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     /// <param name="route"></param>
     /// <param name="statusCode"></param>
-    public void Redirect(string route, int statusCode = HTTP_CODES.FOUND)
+    public void Redirect(string route, int statusCode = HttpCodes.FOUND)
     {
         if (statusCode < 300 || statusCode > 399)
             throw new InvalidHttpCodeException(statusCode);
@@ -263,6 +264,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         Send(Encoding.UTF8.GetBytes(response));
     }
 
+    /*
     /// <summary>
     /// Redirects to a given servlet
     /// </summary>
@@ -272,6 +274,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     {
         Redirect(s.GetRoute(), statusCode);
     }
+    */
 
     #endregion
 
@@ -283,7 +286,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     public void E400()
     {
-        SendCode(HTTP_CODES.BAD_REQUEST);
+        SendCode(HttpCodes.BAD_REQUEST);
     }
 
     /// <summary>
@@ -291,7 +294,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     public void E401()
     {
-        SendCode(HTTP_CODES.UNAUTHORIZED);
+        SendCode(HttpCodes.UNAUTHORIZED);
     }
 
     /// <summary>
@@ -299,7 +302,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     public void E404()
     {
-        SendCode(HTTP_CODES.NOT_FOUND);
+        SendCode(HttpCodes.NOT_FOUND);
     }
 
     /// <summary>
@@ -307,7 +310,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     public void E500()
     {
-        SendCode(HTTP_CODES.INTERNAL_SERVER_ERROR);
+        SendCode(HttpCodes.INTERNAL_SERVER_ERROR);
     }
 
     #endregion
@@ -337,7 +340,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// </summary>
     /// <param name="o">Object to be serialized and sended as response</param>
     /// <param name="options">Options for the serializer (System.Text.Json.JsonSerializer)</param>
-    public void JSON<T>(T o, JsonSerializerOptions options, int statusCode = HTTP_CODES.OK)
+    public void JSON<T>(T o, JsonSerializerOptions options, int statusCode = HttpCodes.OK)
     {
         JSON(JsonSerializer.Serialize(o, options), statusCode);
     }
@@ -350,7 +353,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="includeFields">Whether include fields of the object</param>
     /// <param name="writeIndented"></param>
     /// <param name="statusCode"></param>
-    public void JSON<T>(T o, bool includeFields = true, bool writeIndented = true, int statusCode = HTTP_CODES.OK)
+    public void JSON<T>(T o, bool includeFields = true, bool writeIndented = true, int statusCode = HttpCodes.OK)
     {
         JsonSerializerOptions jo = new()
         {
@@ -386,7 +389,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="o"></param>
     /// <param name="includeFields"></param>
     /// <param name="statusCode"></param>
-    public void SendJSON<T>(T o, bool includeFields = true, int statusCode = HTTP_CODES.OK)
+    public void SendJSON<T>(T o, bool includeFields = true, int statusCode = HttpCodes.OK)
     {
         SendJSON<T>(o, includeFields, true, statusCode);
     }
@@ -399,13 +402,13 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// <param name="includeFields"></param>
     /// <param name="writeIndented"></param>
     /// <param name="statusCode"></param>
-    public void SendJSON<T>(T o, bool includeFields = true, bool writeIndented = true, int statusCode = HTTP_CODES.OK) => JSON(o, includeFields, writeIndented, statusCode);
+    public void SendJSON<T>(T o, bool includeFields = true, bool writeIndented = true, int statusCode = HttpCodes.OK) => JSON(o, includeFields, writeIndented, statusCode);
     
     ///<summary>
     /// Alternate name for function JSON
     /// </summary>
     /// <param name="content"></param>                
-    public void SendJSON(string content) => JSON(content, HTTP_CODES.OK);
+    public void SendJSON(string content) => JSON(content, HttpCodes.OK);
 
     
     #endregion
@@ -483,7 +486,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
 
         var currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss ", ci) + "GMT";
 
-        var headers = $"{HttpUtils.ProtocolAsString(request.PROTOCOL)} {responseCode} {request.URL} {NEW_LINE}";
+        var headers = $"{HttpUtils.ProtocolAsString(request.Protocol)} {responseCode} {request.Url} {NEW_LINE}";
         headers += "Date: " + currentTime + NEW_LINE;
         if (config.CustomServerName != "")
             headers += $"Server: {config.CustomServerName}{NEW_LINE}";
@@ -529,7 +532,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         }
 
         //CORS
-        config.GlobalCORS?.AllowedOrigins.ForEach(origin =>
+        config.GlobalCors?.AllowedOrigins.ForEach(origin =>
         {
             headers += $"Access-Control-Allow-Origin: {origin}{NEW_LINE}";
         });
@@ -542,7 +545,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
            else
            {*/
         //visit https://httpwg.org/specs/rfc9113.html#ConnectionSpecific, p8.2.2 (27-Jun-23)
-        if (request.PROTOCOL == HTTP_PROTOCOL.HTTP1_0 || request.PROTOCOL == HTTP_PROTOCOL.HTTP1_1)
+        if (request.Protocol == HttpProtocol.HTTP1_0 || request.Protocol == HttpProtocol.HTTP1_1)
             headers += "Connection: Close";
 
         //}
@@ -572,7 +575,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     /// Invia gli header HTTP con Transfer-Encoding: chunked.
     /// Deve essere chiamata prima di AddStreamChunk/EndStream.
     /// </summary>
-    public async Task InitStream(string mimeType = "text/plain", int statusCode = HTTP_CODES.OK,
+    public async Task InitStream(string mimeType = "text/plain", int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
         var headers = new Dictionary<string, string>

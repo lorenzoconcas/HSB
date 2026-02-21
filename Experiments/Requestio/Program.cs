@@ -10,7 +10,7 @@ Configuration c = new()
 //expressjs-like routing
 
 
-c.GET("/json", (Request req, Response res) =>
+c.Get("/json", (Request req, Response res) =>
 {
     Dictionary<string, string> obj = new()
     {
@@ -22,24 +22,24 @@ c.GET("/json", (Request req, Response res) =>
 
 //act as redirect
 
-c.GET("/home", (Request req, Response res) =>
+c.Get("/home", (Request req, Response res) =>
 {
     res.Redirect("/");
 });
 
 
-c.GET("/404", (Request req, Response res) =>
+c.Get("/404", (Request req, Response res) =>
 {
     res.SendCode(404);
 });
 
 
-c.GET("/500", (Request req, Response res) =>
+c.Get("/500", (Request req, Response res) =>
 {
     res.SendCode(500);
 });
 
-c.GET("/error", (Request req, Response res) =>
+c.Get("/error", (Request req, Response res) =>
 {
 
     var errCode = req.Parameters["code"];

@@ -16,12 +16,12 @@ var ajaxHandler = (Request req, Response res) =>
     }
     else
     {
-        res.Send(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.Send(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
 };
 
-c.POST("/ajax", ajaxHandler);
-c.GET("/ajax", ajaxHandler);
+c.Post("/ajax", ajaxHandler);
+c.Get("/ajax", ajaxHandler);
 
 new Server(c).Start();

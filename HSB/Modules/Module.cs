@@ -3,6 +3,7 @@ namespace HSB.Modules;
 /// <summary>
 /// Defines the foundation for a Module
 /// Modules permit to extends or improve HSB functionality
+/// Note that modules are currently not supported and are still in development, so they may not work as expected
 /// </summary> 
 public class Module
 {

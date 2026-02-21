@@ -1,12 +1,11 @@
 namespace HSB.Constants;
 
 public enum ServerErrors{
-    ADDRESS_NOT_FOUND = 100,
-    ADDRESS_ALREADY_IN_USE = 101,
-
-    CANNOT_CREATE_SSL_ENDPOINT = 200,
-    CANNOT_CREATE_SSL_LISTENER = 201,
-    CANNOT_LOAD_DEBUG_CERTIFICATE = 202,
-    CANNOT_CREATE_LOCAL_ENDPOINT = 203
+    AddressNotFound = 100,
+    AddressAlreadyInUse = 101,
+    CannotCreateSslEndpoint = 200,
+    CannotCreateSslListener = 201,
+    CannotLoadDebugCertificate = 202,
+    CannotCreateLocalEndpoint = 203
 
 }

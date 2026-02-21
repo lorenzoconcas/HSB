@@ -30,7 +30,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
     string bearerToken = "";
     string oAuth2Token = "";
     Tuple<string, string>? basicAuth = null;
-    OAuth1_0Information? oAuth1_0Information = null;
+    OAuth10Information? oAuth1_0Information = null;
     #endregion
     private byte[] messageSentOnOpen = [];
 
@@ -56,7 +56,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
         if (!req.IsWebSocket()) //not a websocket request, we cannot do anything here
         {
             c?.Debug.WARNING("Not a websocket request, this code should never be reached");
-            res.SendCode(HTTP_CODES.BAD_REQUEST);
+            res.SendCode(HttpCodes.BAD_REQUEST);
             return false;
         }
 
@@ -66,7 +66,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
         if (!headers.ContainsKey("Sec-WebSocket-Key") && !headers.ContainsKey("Sec-WebSocket-Version"))
         {
             c?.Debug.WARNING("Missing Sec-WebSocket-Key or Sec-WebSocket-Version, malformed request");
-            res.SendCode(HTTP_CODES.BAD_REQUEST);
+            res.SendCode(HttpCodes.BAD_REQUEST);
             return false;
         }
 
@@ -78,7 +78,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 if (!headers.TryGetValue(header.Key, out string? value) || value != header.Value)
                 {
                     c?.Debug.WARNING($"Missing required header {header.Key} or value is not correct");
-                    res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
+                    res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
                     return false;
                 }
             }
@@ -91,7 +91,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 if (!req.Parameters.TryGetValue(param.Key, out string? value) || value != param.Value)
                 {
                     c?.Debug.WARNING($"Missing required parameter {param.Key} or value is not correct");
-                    res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
+                    res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
                     return false;
                 }
             }
@@ -102,7 +102,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             if (!headers.TryGetValue("Authorization", out string? value) || value != $"Bearer {bearerToken}")
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
+                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
                 return false;
             }
         }
@@ -111,7 +111,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             if (!headers.TryGetValue("Authorization", out string? value) || value != $"OAuth {oAuth2Token}")
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
+                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
                 return false;
             }
         }
@@ -121,7 +121,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             if (bAuth == null || bAuth.Item1 != basicAuth.Item1 || bAuth.Item2 != basicAuth.Item2)
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
+                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
                 return false;
             }
         }
@@ -131,7 +131,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             if (oAuth1 == null || oAuth1.Equals(oAuth1))
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HTTP_CODES.BAD_REQUEST); //is this correct?
+                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
                 return false;
             }
         }
@@ -396,7 +396,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
         string bearerToken = "",
         string oAuth2Token = "",
         Tuple<string, string>? basicAuth = null,
-        OAuth1_0Information? oAuth1_0Information = null
+        OAuth10Information? oAuth1_0Information = null
     )
     {
         //todo -> accept only one auth type

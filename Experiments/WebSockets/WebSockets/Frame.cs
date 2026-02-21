@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Text;
+using HSB.Utils;
 
 namespace HSB.Components.WebSockets;
 
@@ -116,7 +117,7 @@ public class Frame
     public byte[] Build()
     {
         List<byte> bytes = new(){
-            Utils.GetByte(
+            ByteUtils.GetByte(
                 FIN,
                 RSV1,
                 RSV2,
@@ -126,7 +127,7 @@ public class Frame
                 opcode?[2] ?? false,
                 opcode?[3] ?? false
             ),
-            Utils.GetByte(
+            ByteUtils.GetByte(
                 //mask and payload length
                 Mask,
                 PayloadLength[0],
@@ -209,17 +210,17 @@ public class Frame
         PayloadData = payload;
         if (payload.Length < 126)
         {
-            PayloadLength = Utils.IntTo7Bits(payload.Length);
+            PayloadLength = ByteUtils.IntTo7Bits(payload.Length);
             return;
         }
 
         if (payload.Length < 65536)
         {
-            PayloadLength = Utils.IntTo7Bits(126);
+            PayloadLength = ByteUtils.IntTo7Bits(126);
             ExtendedPayloadLength = BitConverter.GetBytes(payload.Length - 125);
             return;
         }
-        //a the moment the extended pauload length continued is not supported
+        //at this moment the extended pauload length continued is not supported
     }
     public void SetPayload(string payload)
     {

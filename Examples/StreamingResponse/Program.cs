@@ -120,14 +120,14 @@ const string htmlPage = """
 
 
 
-c.GET("/", (Request req, Response res) =>
+c.Get("/", (Request req, Response res) =>
 {
     //reply to request with an hello world
     res.SendHTMLContent(htmlPage);
 });
 
 
-c.POST("/streaming_service", async (Request req, Response res) =>
+c.Post("/streaming_service", async (Request req, Response res) =>
 {
     // Estrai la domanda dal corpo JSON
     var body = req.Body;

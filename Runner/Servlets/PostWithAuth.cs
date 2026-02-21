@@ -17,12 +17,12 @@ namespace Runner.TestRunnerClasses
         public override void GET()
         {
             //todo
-            res.Send(HTTP_CODES.NOT_IMPLEMENTED);
+            res.Send(HttpCodes.NOT_IMPLEMENTED);
         }
 
         public override void POST()
         {
-            res.Send(HTTP_CODES.NOT_IMPLEMENTED);
+            res.Send(HttpCodes.NOT_IMPLEMENTED);
         }
     }
 }

@@ -28,7 +28,7 @@ public static class MimeTypeUtils
             //   and
             // mime type -> extension
             //
-            // any mime types on left side not pre-loaded on right side, are added automatically
+            // any mime types on left side not preloaded on right side, are added automatically
             // some mime types can map to multiple extensions, so to get a deterministic mapping,
             // add those to the dictionary specifically
             //
@@ -700,9 +700,10 @@ public static class MimeTypeUtils
             {"application/x-iwork-keynote-sffkey", ".key"},
             {"application/x-iwork-numbers-sffnumbers", ".numbers"},
             {"application/x-iwork-pages-sffpages", ".pages"},
+            // anomaly, .xml -> text/xml, but application/xml -> many things, but all are XML, so safest is .xml
             {
                 "application/xml", ".xml"
-            }, // anomaly, .xml -> text/xml, but application/xml -> many things, but all are xml, so safest is .xml
+            },
             {"audio/aac", ".AAC"},
             {"audio/aiff", ".aiff"},
             {"audio/basic", ".snd"},
@@ -723,7 +724,7 @@ public static class MimeTypeUtils
             {"image/png", ".png"}, // Defined in [RFC-2045], [RFC-2048]
             {
                 "image/x-png", ".png"
-            }, // See https://www.w3.org/TR/PNG/#A-Media-type :"It is recommended that implementations also recognize the media type "image/x-png"."
+            }, // See https://www.w3.org/TR/PNG/#A-Media-type : ""It is recommended that implementations also recognize the media type "image/x-png".""
             {"image/tiff", ".tiff"},
             {"image/x-macpaint", ".mac"},
             {"image/x-quicktime", ".qti"},
@@ -767,7 +768,7 @@ public static class MimeTypeUtils
 
         if (!str.StartsWith(Dot))
         {
-            var index = str.LastIndexOf(Dot);
+            var index = str.LastIndexOf(Dot, StringComparison.Ordinal);
             if (index != -1 && str.Length > index + 1)
             {
                 str = str[(index + 1)..];
@@ -809,7 +810,7 @@ public static class MimeTypeUtils
 
         if (Mappings.TryGetValue(mimeType, out string? extension))
         {
-            return extension ?? "";
+            return extension;
         }
 
         if (throwErrorIfNotFound)

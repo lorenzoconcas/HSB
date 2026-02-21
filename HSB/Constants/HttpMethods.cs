@@ -1,4 +1,4 @@
 ﻿namespace HSB.Constants;
 
-public enum HTTP_METHOD { GET, POST, PUT, DELETE, HEAD, PATCH, TRACE, OPTIONS, CONNECT, UNKNOWN }
+public enum HttpMethod { Get, Post, Put, Delete, Head, Patch, Trace, Options, Connect, Unknown }
 

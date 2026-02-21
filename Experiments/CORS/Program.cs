@@ -4,7 +4,7 @@ var c2 = new Configuration()
     Port = 8082
 };
 
-c2.GET("/", (Request req, Response res) =>
+c2.Get("/", (Request req, Response res) =>
 {
     //an html page that make a fetch request to http://localhost:8081
     res.SendHTMLContent(
@@ -41,7 +41,7 @@ var c1 = new Configuration()
     //GlobalCORS = serverCors
 };
 
-c1.GET("/", (Request req, Response res) =>
+c1.Get("/", (Request req, Response res) =>
 {
     res.SetCORS(serverCors);
     //developer should decide if the request should be completed or if it should be rejected

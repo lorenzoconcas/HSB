@@ -13,7 +13,7 @@ public class FileUpload(Request req, Response res) : Servlet(req, res)
 
     public override void GET()
     {
-        switch (req.URL)
+        switch (req.Url)
         {
             case "/fileupload.html":
                 res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
@@ -40,7 +40,7 @@ public class FileUpload(Request req, Response res) : Servlet(req, res)
 
     public override void POST()
     {
-        if (req.URL == "/fileupload" && req.IsFileUpload())
+        if (req.Url == "/fileupload" && req.IsFileUpload())
         {
             MultiPartFormData? data = req.GetMultiPartFormData();
             if (data != null)
@@ -48,7 +48,7 @@ public class FileUpload(Request req, Response res) : Servlet(req, res)
                 var files = data.GetFiles();
                 if (files.Count < 0)
                 {
-                    res.SendCode(HTTP_CODES.NOT_ACCEPTABLE);
+                    res.SendCode(HttpCodes.NOT_ACCEPTABLE);
                     return;
                 }
                 if (!Path.Exists(savePath))
@@ -63,11 +63,11 @@ public class FileUpload(Request req, Response res) : Servlet(req, res)
                 res.SendFile(files.First()); //send first file to che client
                 return;
             }
-            res.SendCode(HTTP_CODES.NOT_ACCEPTABLE);
+            res.SendCode(HttpCodes.NOT_ACCEPTABLE);
         }
         else
         {
-            res.SendCode(HTTP_CODES.FORBIDDEN);
+            res.SendCode(HttpCodes.FORBIDDEN);
         }
 
     }

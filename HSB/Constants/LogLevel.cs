@@ -1,11 +1,11 @@
 //set the Debugger log level
 
 namespace HSB.Constants;
-public enum LOG_LEVEL
+public enum LogLevel
 {
-    NONE,
-    ERROR,
-    WARNING,
-    INFO,
-    ALL
+    None,
+    Error,
+    Warning,
+    Info,
+    All
 }

@@ -11,7 +11,7 @@ Configuration c = new()
 //expressjs-like routing
 
 
-c.GET("/", (Request req, Response res) =>
+c.Get("/", (Request req, Response res) =>
 {
     //reply to request with an hello world
     res.SendHTMLContent("<h1>Hello world</h1>");

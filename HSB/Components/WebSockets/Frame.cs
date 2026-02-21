@@ -2,7 +2,7 @@ using System.Collections;
 using System.Text;
 using HSB.Constants.WebSocket;
 namespace HSB.Components.WebSockets;
-
+using Utils;
 public class Frame
 {
     private bool FIN { get; set; }
@@ -39,7 +39,7 @@ public class Frame
     }
 
     /// <summary>
-    /// Use this costructor to decode a frame
+    /// Use this constructor to decode a frame
     /// </summary>
     /// <param name="data"></param>
     public Frame(byte[] data)
@@ -77,7 +77,7 @@ public class Frame
         int offset = 0; //from the start of the frame byte data
         if (Mask)
         {
-            //Mask position dependd on the size of the payload
+            //Mask position depends on the size of the payload
 
             if (PayloadLength.ToInt() < 126) //ExtendedPayloadLength and ExtendedPayloadLengthContinued are not present
                 offset = 2;
@@ -102,7 +102,7 @@ public class Frame
     public byte[] Build()
     {
         List<byte> bytes = [
-            Utils.GetByte(
+            ByteUtils.GetByte(
                 FIN,
                 RSV1,
                 RSV2,
@@ -112,7 +112,7 @@ public class Frame
                 Opcode?[2] ?? false,
                 Opcode?[3] ?? false
             ),
-            Utils.GetByte(
+            ByteUtils.GetByte(
                 //mask and payload length
                 Mask,
                 PayloadLength[0],
@@ -176,36 +176,36 @@ public class Frame
     {
         if (Opcode == null)
             throw new Exception("Frame: opcode == null");
-        if (Opcode[0] == false && Opcode[1] == false && Opcode[2] == false && Opcode[3] == false)
+        if (!Opcode[0]  && !Opcode[1] && !Opcode[2] && !Opcode[3])
             return Constants.WebSocket.Opcode.CONTINUATION;
-        if (Opcode[0] == false && Opcode[1] == false && Opcode[2] == false && Opcode[3] == true)
+        if (!Opcode[0] && !Opcode[1] && !Opcode[2] && Opcode[3])
             return Constants.WebSocket.Opcode.TEXT;
-        if (Opcode[0] == false && Opcode[1] == false && Opcode[2] == true && Opcode[3] == false)
+        if (!Opcode[0] && !Opcode[1] && Opcode[2] && Opcode[3])
             return Constants.WebSocket.Opcode.BINARY;
-        if (Opcode[0] == true && Opcode[1] == false && Opcode[2] == false && Opcode[3] == false)
+        if (Opcode[0] && !Opcode[1] && !Opcode[2] && !Opcode[3])
             return Constants.WebSocket.Opcode.CLOSE;
-        if (Opcode[0] == true && Opcode[1] == false && Opcode[2] == false && Opcode[3] == true)
+        if (Opcode[0]  && !Opcode[1] && !Opcode[2] && Opcode[3])
             return Constants.WebSocket.Opcode.PING;
-        if (Opcode[0] == true && Opcode[1] == false && Opcode[2] == true && Opcode[3] == false)
+        if (Opcode[0]  && !Opcode[1] && Opcode[2] && !Opcode[3])
             return Constants.WebSocket.Opcode.PONG;
         throw new Exception("Frame: opcode not recognized");
     }
     public void SetPayload(byte[] payload)
     {
         PayloadData = payload;
-        if (payload.Length < 126)
+        switch (payload.Length)
         {
-            PayloadLength = Utils.IntTo7Bits(payload.Length);
-            return;
+            case < 126:
+                PayloadLength = ByteUtils.IntTo7Bits(payload.Length);
+                return;
+            case >= 65536:
+                return;
+            default:
+                PayloadLength = ByteUtils.IntTo7Bits(126);
+                ExtendedPayloadLength = BitConverter.GetBytes(payload.Length - 125);
+                //at this moment the extended payload length continued is not supported
+                break;
         }
-
-        if (payload.Length < 65536)
-        {
-            PayloadLength = Utils.IntTo7Bits(126);
-            ExtendedPayloadLength = BitConverter.GetBytes(payload.Length - 125);
-            return;
-        }
-        //a the moment the extended payload length continued is not supported
     }
     public void SetPayload(string payload)
     {
@@ -222,7 +222,7 @@ public class Frame
         sb += "\tRSV3: " + (RSV3 ? "✅" : "❌ (Good)") + "\n";
         sb += "\tOpcode: " + (Opcode == null ? "Not set??" : GetOpcode().ToString()) + "\n";
         sb += "\tMask: " + (Mask ? "YES" : "NO") + "\n";
-        sb += "\tPayloadLength: " + (PayloadLength == null ? "not set" : PayloadLength.ToInt()) + " bytes\n";
+        sb += "\tPayloadLength: " + (PayloadLength.ToInt()) + " bytes\n";
         sb += "\tExtendedPayloadLength: " + (ExtendedPayloadLength == null ? "not set" : BitConverter.ToInt16(ExtendedPayloadLength)) + "\n";
         sb += "\tExtendedPayloadLengthContinued: " + (ExtendedPayloadLengthContinued == null ? "not set" : BitConverter.ToInt64(ExtendedPayloadLengthContinued)) + "\n";
         sb += $"\tMaskingKey: {(MaskingKey == null ? "Not set" : "0x" + BitConverter.ToString(MaskingKey).Replace("-", " 0x"))}\n";
@@ -251,18 +251,16 @@ public class Frame
            * j                   = i MOD 4
            * transformed-octet-i = original-octet-i XOR masking-key-octet-j
            */
-            //this operation must be done bit level and not byte level
+            //this operation must be done at bit level and not byte level
 
             var payloadBits = new BitArray(PayloadData);
-            BitArray maskBits = MaskingKey.Length != PayloadData.Length ?
+            var maskBits = MaskingKey.Length != PayloadData.Length ?
                 new BitArray(MaskingKey.ExtendRepeating(PayloadData.Length)) :
                 new BitArray(MaskingKey);
-
-
+            
             payloadBits = payloadBits.Xor(maskBits);
-
-
-            byte[] resultBytes = new byte[(payloadBits.Length - 1) / 8 + 1];
+            
+            var resultBytes = new byte[(payloadBits.Length - 1) / 8 + 1];
             payloadBits.CopyTo(resultBytes, 0);
             return resultBytes;
         }

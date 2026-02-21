@@ -1,5 +1,5 @@
 ﻿using HSB;
-using HSB.Constants;
+using HSB.Utils;
 namespace Runner
 {
     [Binding("/parameters")]
@@ -12,7 +12,7 @@ namespace Runner
         //example : http://localhost:8080/parameters?param1=1&param2=2&param3=3
         public override void GET()
         {
-            res.SendHTMLContent($"<h1>Prova GET -> {req.URL}</h1>\nParams : {req.Parameters.DictToString()}");
+            res.SendHTMLContent($"<h1>Prova GET -> {req.Url}</h1>\nParams : {req.Parameters.DictToString()}");
         }
 
         public override void POST()

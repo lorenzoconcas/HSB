@@ -28,7 +28,7 @@ public class CORS
     public bool IsRequestAllowed(Request req)
     {
         return IsOriginAllowed(req.Headers["Origin"])
-        && IsMethodAllowed(HttpUtils.MethodAsString(req.METHOD))
+        && IsMethodAllowed(HttpUtils.MethodAsString(req.Method))
         && IsHeaderAllowed(req.Headers["Access-Control-Request-Headers"])
         && IsExposedHeaderAllowed(req.Headers["Access-Control-Request-Method"]);
     }

@@ -20,7 +20,7 @@ Configuration c = new()
     RequestMaxSize = Configuration.KILOBYTE * 1,
 };
 
-c.GET("/", (Request req, Response res) =>
+c.Get("/", (Request req, Response res) =>
 {
     if (req.IsWebSocket())
     {
@@ -31,7 +31,7 @@ c.GET("/", (Request req, Response res) =>
         //those two values are required, if they are missing -> 400
         if (!headers.ContainsKey("Sec-WebSocket-Key") && !headers.ContainsKey("Sec-WebSocket-Extensions"))
         {
-            res.SendCode(HTTP_CODES.BAD_REQUEST);
+            res.SendCode(HttpCodes.BAD_REQUEST);
             return;
         }
 

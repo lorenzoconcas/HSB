@@ -2,10 +2,8 @@
 using HSB.Constants;
 using HSB.Constants.TLS;
 using HSB.DefaultPages;
-using HSB.Exceptions;
 using System.Diagnostics;
 using System.Net;
-using System.Net.Mime;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
@@ -13,6 +11,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using HSB.Components.Controller;
 using HSB.Constants.TLS.Manual;
+using HSB.OpenApi;
+using HSB.Utils;
+using Index = HSB.DefaultPages.Index;
 
 namespace HSB;
 
@@ -47,7 +48,7 @@ public class Server
         {
             _ipAddress = _config.ListeningMode switch
             {
-                IPMode.IPV4_ONLY => IPAddress.Any,
+                IpMode.Ipv4 => IPAddress.Any,
                 _ => IPAddress.IPv6Any,
             };
             return;
@@ -56,12 +57,12 @@ public class Server
 
         List<IPAddress> addresses = [.. Dns.GetHostAddresses(_config.Address, AddressFamily.InterNetwork)];
 
-        //this fixes an error where user specifies an ipv4 address but want the server to listenes to BOTH or ipv6 only
+        //this fixes an error where user specifies an ipv4 address but want the server to listen BOTH or ipv6 only
 
         if (addresses.Count != 0)
         {
             _ipAddress = addresses.First();
-            _config.ListeningMode = IPMode.IPV4_ONLY;
+            _config.ListeningMode = IpMode.Ipv4;
         }
         else
         {
@@ -69,12 +70,12 @@ public class Server
             if (addresses.Count != 0)
             {
                 _ipAddress = addresses.First();
-                _config.ListeningMode = IPMode.IPV6_ONLY;
+                _config.ListeningMode = IpMode.Ipv6;
             }
             else
             {
                 _config.Debug.ERROR("Cannot determine address to listen to");
-                Environment.Exit((int) ServerErrors.ADDRESS_NOT_FOUND);
+                Environment.Exit((int) ServerErrors.AddressNotFound);
             }
         }
     }
@@ -90,7 +91,7 @@ public class Server
             SocketType.Stream, ProtocolType.Tcp);
 
 
-        if (_config.ListeningMode != IPMode.ANY) return;
+        if (_config.ListeningMode != IpMode.Any) return;
         _listener.DualMode = true;
         if (_config.SslSettings.IsEnabled() && _sslListener != null)
             _sslListener!.DualMode = true;
@@ -114,7 +115,7 @@ public class Server
             if (cert == null)
             {
                 _config.Debug.ERROR("Cannot load debug certificate, server cannot start with this configuration!");
-                Environment.Exit((int) ServerErrors.CANNOT_LOAD_DEBUG_CERTIFICATE);
+                Environment.Exit((int) ServerErrors.CannotLoadDebugCertificate);
             }
         }
         else if (sslConf.IsEnabled())
@@ -138,7 +139,7 @@ public class Server
         if (_sslLocalEndPoint == null)
         {
             _config.Debug.ERROR("Cannot create SSL endpoint");
-            Environment.Exit((int) ServerErrors.CANNOT_CREATE_SSL_ENDPOINT);
+            Environment.Exit((int) ServerErrors.CannotCreateSslEndpoint);
         }
 
         _sslListener = new(_ipAddress!.AddressFamily,
@@ -146,7 +147,7 @@ public class Server
 
         if (_sslListener != null) return;
         _config.Debug.ERROR("Cannot create SSL listener");
-        Environment.Exit((int) ServerErrors.CANNOT_CREATE_SSL_LISTENER);
+        Environment.Exit((int) ServerErrors.CannotCreateSslListener);
     }
 
     private void PrintFinalInfo()
@@ -188,7 +189,7 @@ public class Server
         config ??= new Configuration();
 
         if (!config.HideBranding)
-            Utils.PrintLogo();
+            CliUtils.PrintLogo();
 
         if (config.Port == 0)
         {
@@ -205,6 +206,12 @@ public class Server
         SetSsl();
         MapRoutes();
         PrintFinalInfo();
+        
+        //build openapi documentation if enabled in configuration
+        if (!this._config.OpenApiSettings.IsEnabled) return;
+        
+        var openApiBuilder = new OpenApiBuilder(config, _routes);
+        openApiBuilder.Init();
 
         //end of the server initialization
     }
@@ -214,7 +221,7 @@ public class Server
         if (_localEndPoint == null)
         {
             _config.Debug.ERROR("An error occurred while initializing the server (local endpoint is null)");
-            Environment.Exit((int) ServerErrors.CANNOT_CREATE_LOCAL_ENDPOINT);
+            Environment.Exit((int) ServerErrors.CannotCreateLocalEndpoint);
             return;
         }
 
@@ -345,7 +352,7 @@ public class Server
                     _config.Debug.WARNING(
                         "SSL authentication failed or read error, redirecting (if possible) or closing");
 
-                    Request rq = new(bytes, socket, _config, false);
+                    Request rq = new(bytes, socket, _config);
                     Response res = new(socket, rq, _config, null);
 
                     var redirectEndpoint = _config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
@@ -360,7 +367,7 @@ public class Server
                         return;
                     }
 
-                    res.Redirect("https://" + redirectEndpoint, HTTP_CODES.MOVED_PERMANENTLY);
+                    res.Redirect("https://" + redirectEndpoint, HttpCodes.MOVED_PERMANENTLY);
                 }
                 else
                 {
@@ -393,7 +400,7 @@ public class Server
                 }
 
 
-                res.Redirect("https://" + redirectEndpoint, HTTP_CODES.MOVED_PERMANENTLY);
+                res.Redirect("https://" + redirectEndpoint, HttpCodes.MOVED_PERMANENTLY);
                 return;
             }
 
@@ -419,16 +426,16 @@ public class Server
 
     private bool RunIfExpressMapping(Request req, Response res)
     {
-        var route = _config.ExpressRoutes.Find(e => e.Item1 == req.URL && e.Item2.Item1 == req.METHOD);
+        var route = _config.ExpressRoutes.Find(e => e.Item1 == req.Url && e.Item2.Item1 == req.Method);
         //regex routes are the ones that starts with /` (slash and backtick)
-        var regexRoutes = _config.ExpressRoutes.FindAll(e => e.Item1.StartsWith("/`") && e.Item2.Item1 == req.METHOD);
+        var regexRoutes = _config.ExpressRoutes.FindAll(e => e.Item1.StartsWith("/`") && e.Item2.Item1 == req.Method);
 
         //regex paths have priority
         if (regexRoutes.Count > 0)
         {
             var regexRoute = regexRoutes.Find(r =>
                 new Regex(r.Item1[2..])
-                    .Match(req.URL)
+                    .Match(req.Url)
                     .Success
             );
 
@@ -466,9 +473,9 @@ public class Server
 
         foreach (var c in classes)
         {
-            var multipleBinded = c.GetCustomAttributes<Binding>(false);
+            var multi = c.GetCustomAttributes<Binding>(false);
 
-            var enumerable = multipleBinded as Binding[] ?? multipleBinded.ToArray();
+            var enumerable = multi as Binding[] ?? multi.ToArray();
             if (enumerable.Length != 0)
             {
                 foreach (var b in enumerable)
@@ -502,9 +509,9 @@ public class Server
         return routes;
     }
 
-    private object? GetInstance(Request req, Response res)
+    private object? GetInstance(Request req)
     {
-        var candidateControllers = _routes.Where(map => req.URL.StartsWith(map.Path)).ToArray();
+        var candidateControllers = _routes.Where(map => req.Url.StartsWith(map.Path)).ToArray();
 
         foreach (var map in candidateControllers)
         {
@@ -514,13 +521,13 @@ public class Server
             }
 
             //slice relative path, for example if the map path is "/api" and the request url is "/api/status", the relative path will be "/status"
-            var relativePath = req.URL[map.Path.Length..];
-            var candidateMethods = map.SubRoutes.Where(r => r.HttpMethod == req.METHOD).ToList();
+            var relativePath = req.Url[map.Path.Length..];
+            var candidateMethods = map.SubRoutes.Where(r => r.HttpMethod == req.Method).ToList();
 
             //if the root is called, activate the first "/" subRoute if exists, else return 404
             if (relativePath == "")
             {
-                MethodRoute? rootRoute = candidateMethods.Find(sr => sr.Path == "/");
+                RoutableMethod? rootRoute = candidateMethods.Find(sr => sr.Path == "/");
                 if (rootRoute.HasValue)
                 {
                     return (map.Class, rootRoute.Value); //activation is done in replacement of the Process() function call
@@ -535,23 +542,19 @@ public class Server
                     return (map.Class, route);
                 
                 var pattern = "^" + Regex.Replace(route.Path, @":[^/]+", @"[^/]+") + "$";
-               
-                if(Regex.IsMatch(relativePath, pattern))
+
+                if (!Regex.IsMatch(relativePath, pattern)) continue;
+                //we extract the parameters from the url and add them to the request parameters
+                var routeParts = route.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                var relativeParts = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                for (var i = 0; i < routeParts.Length; i++)
                 {
-                    //we extract the parameters from the url and add them to the request parameters
-                    var routeParts = route.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                    var relativeParts = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 0; i < routeParts.Length; i++)
-                    {
-                        if (routeParts[i].StartsWith(":"))
-                        {
-                            var paramName = routeParts[i][1..];
-                            var paramValue = relativeParts[i];
-                            req.Parameters[paramName] = paramValue;
-                        }
-                    }
-                    return (map.Class, route);
+                    if (!routeParts[i].StartsWith(':')) continue;
+                    var paramName = routeParts[i][1..];
+                    var paramValue = relativeParts[i];
+                    req.Parameters[paramName] = paramValue;
                 }
+                return (map.Class, route);
             }
             
             
@@ -572,16 +575,16 @@ public class Server
         {
             case BLOCK_MODE.NONE: return false; //no blocking
             case BLOCK_MODE.BANLIST:
-                if (_config.PermanentIPList.Any(ip => ip == req.ClientIP))
+                if (_config.PermanentIpList.Any(ip => ip == req.ClientIp))
                 {
                     return true; //blocked request
                 }
 
                 if (!File.Exists("./banned_ips.txt")) return true;
                 var bannedIps = File.ReadAllLines("./banned_ips.txt");
-                return bannedIps.Contains(req.ClientIP) || true; //blocked request
+                return bannedIps.Contains(req.ClientIp) || true; //blocked request
             case BLOCK_MODE.OKLIST:
-                if (_config.PermanentIPList.Any(ip => ip == req.ClientIP))
+                if (_config.PermanentIpList.Any(ip => ip == req.ClientIp))
                 {
                     return false; //allowed request
                 }
@@ -589,7 +592,7 @@ public class Server
                 if (!File.Exists("./allowed_ips.txt"))
                     return false; //no allowed_ips.txt file found, so we allow all requests
                 var allowedIps = File.ReadAllLines("./allowed_ips.txt");
-                return !allowedIps.Contains(req.ClientIP);
+                return !allowedIps.Contains(req.ClientIp);
             default:
                 return false;
         }
@@ -601,10 +604,10 @@ public class Server
         try
         {
             //check if request is valid                    
-            if (!req.validRequest)
+            if (!req.ValidRequest)
             {
-                _config.Debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.NOT_FOUND} (Invalid Request)", true);
-                new Error(req, res, _config, "Invalid Request", HTTP_CODES.NOT_FOUND).Process();
+                _config.Debug.WARNING($"{req.Method} '{req.Url}' {HttpCodes.NOT_FOUND} (Invalid Request)");
+                new Error(res, _config, "Invalid Request", HttpCodes.NOT_FOUND).Throw();
                 return;
             }
 
@@ -614,20 +617,20 @@ public class Server
             //check if server is launched with --listFiles
             if (_config.GetRawArguments().Contains("--listFiles"))
             {
-                if (CheckSafePath(req.URL, req, res)) return;
+                if (CheckSafePath(req.Url, req, res)) return;
 
-                new FileList(req, res, _config).Process();
+                new FileList(req, res, _config).Get();
                 return;
             }
 
 
             //if global CORS are set in configuration, check if the request is allowed
-            if (_config.GlobalCORS != null)
+            if (_config.GlobalCors != null)
             {
-                if (!_config.GlobalCORS.IsRequestAllowed(req))
+                if (!_config.GlobalCors.IsRequestAllowed(req))
                 {
-                    _config.Debug.WARNING($"{req.METHOD} '{req.URL}' {HTTP_CODES.FORBIDDEN} (CORS not allowed)", true);
-                    new Error(req, res, _config, "CORS not allowed", HTTP_CODES.FORBIDDEN).Process();
+                    _config.Debug.WARNING($"{req.Method} '{req.Url}' {HttpCodes.FORBIDDEN} (CORS not allowed)");
+                    new Error(res, _config, "CORS not allowed", HttpCodes.FORBIDDEN).Throw();
                     return;
                 }
             }
@@ -636,30 +639,25 @@ public class Server
             if (RunIfExpressMapping(req, res)) return;
 
             //We check if the route requested is handled by any servlet
-            var o = GetInstance(req, res);
+            var o = GetInstance(req);
 
             if (o != null)
             {
                 switch (o)
                 {
                     //we check if the object is a servlet or a websocket
-                    case Servlet s:
-                        Terminal.WARNING(
-                            "Servlet are deprecated and will be removed in future versions, consider using controllers instead");
-                        s.Process();
-                        break;
-                    case WebSocket ws when !req.IsWebSocket():
+                    case WebSocket when !req.IsWebSocket():
                         _config.Debug.WARNING(
-                            $"{req.METHOD} '{req.URL}' {HTTP_CODES.METHOD_NOT_ALLOWED} (Invalid Request)", true);
-                        new Error(req, res, _config, "Invalid Request", HTTP_CODES.METHOD_NOT_ALLOWED).Process();
+                            $"{req.Method} '{req.Url}' {HttpCodes.METHOD_NOT_ALLOWED} (Invalid Request) ");
+                        new Error(res, _config, "Invalid Request", HttpCodes.METHOD_NOT_ALLOWED).Throw();
                         return;
                     case WebSocket ws:
                         ws.Process();
                         return;
-                    case (Type tipo, MethodRoute route):
+                    case (Type tipo, RoutableMethod route):
                         var parameters = route.MethodInfo.GetParameters();
                         var instance = Activator.CreateInstance(tipo);
-                        _config.Debug.INFO($"HTTP Request | {req.METHOD} {req.URL}");
+                        _config.Debug.INFO($"HTTP Request | {req.Method} {req.Url}");
                         switch (parameters.Length)
                         {
                             case 2:
@@ -670,11 +668,11 @@ public class Server
                                 break;
                             default:
                                 _config.Debug.ERROR(
-                                    $"Invalid number of parameters for route {req.URL} in controller {tipo.Name}");
-                                new Error(req, res, _config,
+                                    $"Invalid number of parameters for route {req.Url} in controller {tipo.Name}");
+                                new Error(res, _config,
                                         "Internal Server Error: Invalid route configuration",
-                                        HTTP_CODES.INTERNAL_SERVER_ERROR)
-                                    .Process();
+                                        HttpCodes.INTERNAL_SERVER_ERROR)
+                                    .Throw();
                                 break;
                         }
 
@@ -689,55 +687,55 @@ public class Server
                 //the client searched for a route that is not mapped by any servlet
                 //so we do some other checks like root page or static resource
                 //if no root page is set we search for and index.html file, else we show the default home page
-                if (req.URL == "/")
+                if (req.Url == "/")
                 {
                     //if the client is requesting the root file, we check if there is an index.html file
                     //if not, we use the default servlet
                     if (File.Exists(_config.StaticFolderPath + "/index.html"))
                     {
-                        _config.Debug.INFO($"{req.METHOD} '{req.URL}' 200");
+                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200");
                         res.SendHTMLFile(_config.StaticFolderPath + "/index.html");
                     }
                     else
                     {
-                        _config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Default Index Page)");
-                        new Index(req, res, _config).Process();
+                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Default Index Page)");
+                        new Index(res, _config).Get();
                     }
                 }
-                else if (_config.DocumentationPath != "" && _config.DocumentationPath == req.URL)
+                else if (_config.DocumentationPath != "" && _config.DocumentationPath == req.Url)
                 {
-                    _config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Documentation Page)");
-                    new Documentation(req, res, _config).Process();
+                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Documentation Page)");
+                    new Documentation(res, _config).Get();
                 }
                 else
                 {
                     //we check if the client is requesting a resource, else 404 not found
                     //to check if the path is safe we use the same regex used in send.js
                     //see: https://github.com/pillarjs/send/blob/master/index.js#L63
-                    if (CheckSafePath(req.URL, req, res))
+                    if (CheckSafePath(req.Url, req, res))
                     {
                         return;
                     }
 
                     //if the path is safe, the static folder is set and the file exists, we send it
-                    if (_config.StaticFolderPath != "" && File.Exists(_config.StaticFolderPath + "/" + req.URL))
+                    if (_config.StaticFolderPath != "" && File.Exists(_config.StaticFolderPath + "/" + req.Url))
                     {
                         //config.debug.INFO($"Static file found, serving '{req.URL}'");
-                        _config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Static file)");
-                        res.SendFile(_config.StaticFolderPath + "/" + req.URL);
+                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Static file)");
+                        res.SendFile(_config.StaticFolderPath + "/" + req.Url);
                     }
                     else if (_config.ServeEmbeddedResource &&
-                             Utils.IsEmbeddedResource(req.URL, _config.EmbeddedResourcePrefix))
+                             ResourceUtils.IsEmbeddedResource(req.Url, _config.EmbeddedResourcePrefix))
                     {
-                        _config.Debug.INFO($"{req.METHOD} '{req.URL}' 200 (Embedded resource)");
-                        object resource = Utils.LoadResource<object>(req.URL, _config.EmbeddedResourcePrefix);
-                        res.SendObject(resource, req.URL);
+                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Embedded resource)");
+                        object resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix);
+                        res.SendObject(resource, req.Url);
                     }
                     else
                     {
                         //if no servlet or static file found, send 404
-                        _config.Debug.INFO($"{req.METHOD} '{req.URL}' 404 (Resource not found)");
-                        new Error(req, res, _config, "Page not found", HTTP_CODES.NOT_FOUND).Process();
+                        _config.Debug.INFO($"{req.Method} '{req.Url}' 404 (Resource not found)");
+                        new Error(res, _config, "Page not found", HttpCodes.NOT_FOUND).Throw();
                     }
                 }
             }
@@ -745,27 +743,27 @@ public class Server
         catch (Exception e)
         {
             //config.debug.ERROR("Error handling request ->\n " + e);
-            _config.Debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
+            _config.Debug.ERROR($"{req.Method} '{req.Url}' 500 (Internal Server Error)\n{e}");
             //we show an error page with the message and code 500
-            new Error(req, res, _config, e.ToString(), HTTP_CODES.INTERNAL_SERVER_ERROR).Process();
+            new Error(res, _config, e.ToString(), HttpCodes.INTERNAL_SERVER_ERROR).Throw();
         }
     }
 
     private bool CheckSafePath(string path, Request req, Response res)
     {
-        if (!Utils.IsUnsafePath(path)) return false;
+        if (!PathUtils.IsUnsafePath(path)) return false;
 
-        _config.Debug.WARNING($"{req.METHOD} '{req.URL}' 200 (Requested unsafe path, ignoring request)");
-        new Error(req, res, _config, "", HTTP_CODES.NOT_FOUND).Process();
+        _config.Debug.WARNING($"{req.Method} '{req.Url}' 200 (Requested unsafe path, ignoring request)");
+        new Error(res, _config, "", HttpCodes.NOT_FOUND).Throw();
 
-        if (!_config.IPAutoblock) return true;
+        if (!_config.IpAutoblock) return true;
 
-        _config.Debug.WARNING($"Autoblocking IP {req.ClientIP}");
+        _config.Debug.WARNING($"Autoblocking IP {req.ClientIp}");
 
         if (File.Exists("./banned_ips.txt"))
-            File.AppendAllText("./banned_ips.txt", req.ClientIP + "\n");
+            File.AppendAllText("./banned_ips.txt", req.ClientIp + "\n");
         else
-            File.WriteAllText("./banned_ips.txt", req.ClientIP + "\n");
+            File.WriteAllText("./banned_ips.txt", req.ClientIp + "\n");
 
         return true;
     }
@@ -784,7 +782,10 @@ public class Server
 
         var classes = assemblies.SelectMany(assembly => assembly.GetTypes(), (assembly, type) => new {assembly, type})
             .Where(@t => @t.type.IsClass)
-            .Select(@t => @t.type);
+            .Select(@t => @t.type)
+            .Where(@t => @t.GetCustomAttribute<Controller>() != null)
+            .ToList();
+            
 
 
         foreach (var c in classes)
@@ -812,7 +813,7 @@ public class Server
                     $"ROUTE | {Terminal.FG_TO_STRING(FgColor.GREEN)}{routeAttr.Method}{Terminal.RESET} -> {Terminal.FG_TO_STRING(FgColor.YELLOW)}{attr.Path}{routeAttr.Path}{Terminal.RESET} {m.Name}";
                 _config.Debug.INFO(logStr);
 
-                map.SubRoutes.Add(new MethodRoute()
+                map.SubRoutes.Add(new RoutableMethod()
                 {
                     Path = routeAttr.Path,
                     HttpMethod = routeAttr.Method,

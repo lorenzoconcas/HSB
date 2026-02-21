@@ -1,4 +1,5 @@
 using System.Text;
+using HSB.Utils;
 
 namespace HSB.Components;
 
@@ -14,7 +15,7 @@ public class FormPart
 
     public FormPart(byte[] data)
     {
-        int offset = Utils.IndexOf(data, Encoding.UTF8.GetBytes("\r\n")) + 2;
+        int offset = ArrayExtensions.IndexOf(data, Encoding.UTF8.GetBytes("\r\n")) + 2;
         ContentDisposition = Encoding.UTF8.GetString(data[..offset]);
         Name = ContentDisposition.Split(";")[1].Split("=")[1].Replace("\"", "");
         Data = data[offset..^2];

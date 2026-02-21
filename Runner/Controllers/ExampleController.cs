@@ -1,6 +1,7 @@
 using HSB;
 using HSB.Components.Controller;
 using HSB.Constants;
+using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace Runner.Controllers;
 
@@ -32,7 +33,7 @@ public class ExampleController
         });
     }
     
-    [Route("/custom", HTTP_METHOD.PUT)]
+    [Route("/custom", HttpMethod.Put)]
     private void CustomRoute(Request req, Response res)
     {
         res.JSON(new

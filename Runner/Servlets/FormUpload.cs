@@ -16,7 +16,7 @@ public class Form : Servlet
 
     public override void GET()
     {
-        if (req.URL == "/form.html")
+        if (req.Url == "/form.html")
         {
 
             res.SendHTMLContent("<form action=\"/formupload\" method=\"post\">" +
@@ -32,7 +32,7 @@ public class Form : Servlet
 
     public override void POST()
     {
-        if (req.URL == "/formupload" && req.IsFormUpload())
+        if (req.Url == "/formupload" && req.IsFormUpload())
         {
             //note that only the first element with a given name is stored inside the FormData
             //  for example a form like this
@@ -45,7 +45,7 @@ public class Form : Servlet
             var f = req.GetFormData();
             if (f == null)
             {
-                res.Send(HTTP_CODES.INTERNAL_SERVER_ERROR);
+                res.Send(HttpCodes.INTERNAL_SERVER_ERROR);
                 return;
             }
             res.SendHTMLContent($"<h1>Hello {f.Get("name")}</h1>");
@@ -53,7 +53,7 @@ public class Form : Servlet
         }
         else
         {
-            res.SendCode(HTTP_CODES.FORBIDDEN);
+            res.SendCode(HttpCodes.FORBIDDEN);
         }
 
     }

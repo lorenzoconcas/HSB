@@ -47,6 +47,10 @@
 		<EmbeddedResource Include="DefaultPages\documentation.html" />
 		<EmbeddedResource Include="DefaultPages\logo_b64" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="OpenApi\swagger_ui.html" />
+	  <EmbeddedResource Include="OpenApi\swagger_ui.html" />
+	</ItemGroup>
 	<ProjectExtensions>
 		<MonoDevelop>
 			<Properties>

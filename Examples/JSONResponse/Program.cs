@@ -10,7 +10,7 @@ Configuration c = new()
 //expressjs-like routing
 
 
-c.GET("/", (Request req, Response res) =>
+c.Get("/", (Request req, Response res) =>
 {
     Dictionary<string, string> obj = new()
     {

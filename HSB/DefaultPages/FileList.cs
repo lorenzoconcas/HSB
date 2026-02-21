@@ -6,12 +6,16 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using HSB.Components.Controller;
+using HSB.Utils;
 
 namespace HSB.DefaultPages;
 
-public class FileList(Request req, Response res, Configuration config) : Servlet(req, res, config)
+
+public class FileList(Request req, Response res, Configuration configuration) 
 {
-    public override void GET()
+    
+    public void Get()
     {
         //since this mode bypasses normal error handling we must handle them manually
         try
@@ -23,19 +27,18 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
                 cd = configuration.StaticFolderPath;
             }
 
-            var url = NormalizeIfWindows(req.URL.Replace("%20", " "));
+            var url = NormalizeIfWindows(req.Url.Replace("%20", " "));
             var cwd = cd;
-            var rootRequested = req.URL == "/";
+            var rootRequested = req.Url == "/";
 
 
-            /**
+            /*
              * If path == / -> list files and folders of the cd (Environment.CurrentDirectory
              * If path == / + subdirectory -> list file of subdirectory
              * if path == / + file -> download
              * 
-             * Disk path == cd + requested path (url)
-             *
-             **/
+             * Disk path == cd + requested path (url), if url starts with .., we remove it before concatenating with cd
+             */
 
 
             //if is file -> download 
@@ -44,13 +47,13 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
 
             if (File.Exists(filePath))
             {
-                configuration.Debug.INFO($"{req.METHOD} '{url}' 200 (Static file)");
+                configuration.Debug.INFO($"{req.Method} '{url}' 200 (Static file)");
                 res.SendFile(filePath);
                 return;
             }
 
             var filelist = "";
-            if (req.URL != "/")
+            if (req.Url != "/")
             {
                 filelist = "<div class='row'><a href='/'>.</a><br/></div>";
                 filelist += $"<div class='row'><a href='{Path.GetRelativePath(cd, cwd)}'>..</a></br/></div>";
@@ -63,7 +66,7 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
             if (Directory.Exists(cwd))
             {
 
-                configuration.Debug.INFO($"{req.METHOD} '{url}' 200");
+                configuration.Debug.INFO($"{req.Method} '{url}' 200");
                 List<string> items = [.. Directory.GetDirectories(cwd)];
                 items.AddRange(Directory.GetFiles(cwd).ToList());
                 foreach (var i in items)
@@ -103,18 +106,18 @@ public class FileList(Request req, Response res, Configuration config) : Servlet
                 res.AddAttribute("footer_div", footer_div);
                 res.AddAttribute("hsbVersion", version);
                 res.AddAttribute("footerExtra", "- File Listing Mode");
-                string page = ReadFromResources("filelisting.html");
+                var page = ResourceUtils.LoadResourceAsString("filelisting.html");
                 res.SendHTMLContent(page, true);
                 return;
             }
 
-            configuration.Debug.INFO($"{req.METHOD} '{url}' 404 (Resource not found)");
-            new Error(req, res, configuration, "Page not found", HTTP_CODES.NOT_FOUND).Process();
+            configuration.Debug.INFO($"{req.Method} '{url}' 404 (Resource not found)");
+            new Error(res, configuration, "Page not found", HttpCodes.NOT_FOUND).Throw();
         }
         catch (Exception e)
         {
-            configuration.Debug.ERROR($"{req.METHOD} '{req.URL}' 500 (Internal Server Error)\n{e}");
-            new Error(req, res, configuration, e.ToString(), HTTP_CODES.INTERNAL_SERVER_ERROR).Process();
+            configuration.Debug.ERROR($"{req.Method} '{req.Url}' 500 (Internal Server Error)\n{e}");
+            new Error(res, configuration, e.ToString(), HttpCodes.INTERNAL_SERVER_ERROR).Throw();
         }
     }
 

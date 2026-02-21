@@ -4,10 +4,10 @@ namespace HSB.Constants;
 /// <summary>
 /// Defines the listening mode of the server
 /// </summary>
-public enum IPMode
+public enum IpMode
 {
-    ANY, //both ipv4 and ipv6
-    IPV4_ONLY,
-    IPV6_ONLY
+    Any, //both ipv4 and ipv6
+    Ipv4,
+    Ipv6
 }
 

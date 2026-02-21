@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
 using HSB.Constants;
+using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB;
 
-//[Obsolete("Use Controller instead of Servlet for better organization and more features. Servlet will still work but it's recommended to switch to Controller for new projects.", false)]
+[Obsolete("Use Controller instead of Servlet for better organization and more features. Servlet will still work but it's recommended to switch to Controller for new projects.", false)]
 public class Servlet
 {
     protected Request req;
@@ -86,7 +87,7 @@ public class Servlet
         if (associatedFiles.Count > 0)
         {
             var file = associatedFiles
-                .Where(a => a.MethodMatches(req.METHOD) || a.CustomMethodMatches(req.RawMethod.ToUpper()))
+                .Where(a => a.MethodMatches(req.Method) || a.CustomMethodMatches(req.RawMethod.ToUpper()))
                 .ToList();
             if (file.Count > 0)
             {
@@ -107,45 +108,45 @@ public class Servlet
             }
         }
 
-        switch (req.METHOD)
+        switch (req.Method)
         {
-            case HTTP_METHOD.GET:
+            case HttpMethod.Get:
                 GET();
                 break;
-            case HTTP_METHOD.POST:
+            case HttpMethod.Post:
                 POST();
                 break;
-            case HTTP_METHOD.PUT:
+            case HttpMethod.Put:
                 PUT();
                 break;
-            case HTTP_METHOD.DELETE:
+            case HttpMethod.Delete:
                 DELETE();
                 break;
-            case HTTP_METHOD.HEAD:
+            case HttpMethod.Head:
                 HEAD();
                 break;
-            case HTTP_METHOD.PATCH:
+            case HttpMethod.Patch:
                 PATCH();
                 break;
-            case HTTP_METHOD.OPTIONS:
+            case HttpMethod.Options:
                 OPTIONS();
                 break;
-            case HTTP_METHOD.TRACE:
+            case HttpMethod.Trace:
                 TRACE();
                 break;
-            case HTTP_METHOD.CONNECT:
+            case HttpMethod.Connect:
                 CONNECT();
                 break;
-            case HTTP_METHOD.UNKNOWN:
+            case HttpMethod.Unknown:
             default:
                 if (CustomMethodsMap.Count < 1)
                 {
-                    res.Send(HTTP_CODES.METHOD_NOT_ALLOWED);
+                    res.Send(HttpCodes.METHOD_NOT_ALLOWED);
                     return;
                 }
                 if (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))
                 {
-                    Terminal.INFO($"Custom method requested for route '{req.URL}'", true);
+                    Terminal.INFO($"Custom method requested for route '{req.Url}'", true);
                     CustomMethodsMap[req.RawMethod].DynamicInvoke(req, res);
                     return;
                 }
@@ -158,53 +159,53 @@ public class Servlet
 
                 Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}",
                     true);
-                res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+                res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
                 break;
         }
     }
 
     public virtual void POST()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void GET()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void DELETE()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void PUT()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void HEAD()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void PATCH()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void OPTIONS()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void TRACE()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 
     public virtual void CONNECT()
     {
-        res.SendCode(HTTP_CODES.METHOD_NOT_ALLOWED);
+        res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
     }
 }

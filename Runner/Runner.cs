@@ -1,5 +1,6 @@
 ﻿using HSB;
 using HSB.Constants;
+using HSB.Utils;
 
 namespace Runner;
 
@@ -22,7 +23,7 @@ public class HSBRunner
             Address = "", //listen any address
             Port = 8080,
             RequestMaxSize = Configuration.MEGABYTE * 2,
-            ListeningMode = IPMode.IPV4_ONLY, //valid only if address == "",
+            ListeningMode = IpMode.Ipv4, //valid only if address == "",
             StaticFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "static"),
             //CustomServerName = "Runner powered by HSB",
             SslSettings = ssl,
@@ -34,11 +35,11 @@ public class HSBRunner
         //ex a Servlet that responds to the GET call of route "/test" will be ignored
         //but a POST call to the same route will be handled by the servlet
 
-        c.GET("/expressget", TestExpressRoutingGET);
-        c.POST("/expresspost", TestExpressRoutingPOST);
-        c.GET("/printheaders", PrintHeaders);
-        c.GET("/echo", Echo);
-        c.POST("/echo", Echo);
+        c.Get("/expressget", TestExpressRoutingGET);
+        c.Post("/expresspost", TestExpressRoutingPOST);
+        c.Get("/printheaders", PrintHeaders);
+        c.Get("/echo", Echo);
+        c.Post("/echo", Echo);
 
         /*var pathRegex = @"\/.*\/*regex.+";
         
@@ -48,12 +49,12 @@ public class HSBRunner
         });*/
         
 
-        c.GET("/embeddedindex", (Request req, Response res) =>
+        c.Get("/embeddedindex", (Request req, Response res) =>
         {
             new HSB.Index(req, res, c).GET();
         });
 
-        c.GET("/500", (Request req, Response res) =>
+        c.Get("/500", (Request req, Response res) =>
         {
             throw new Exception("\nThis is a test exception, should only be visible when compiled in debug mode\n");
         });
@@ -61,12 +62,12 @@ public class HSBRunner
         c.AddSharedObject("test", 1996); //this object is available to all servlets, and accessed by "Servlets/SharedObjects.cs" 
 
         //redirect example
-        c.GET("/redirect", (Request req, Response res) =>
+        c.Get("/redirect", (Request req, Response res) =>
         {
             res.Redirect("/");
         });
 
-        c.GET("/websocketpage", (Request req, Response res) =>
+        c.Get("/websocketpage", (Request req, Response res) =>
         {
             //return a page to test websocket
             // a text showing the connection status
@@ -117,7 +118,7 @@ public class HSBRunner
 
         });
 
-        c.GET("/", (Request req, Response res) =>
+        c.Get("/", (Request req, Response res) =>
             {
                 //return an html page with all the routes and a link
 
@@ -153,7 +154,7 @@ public class HSBRunner
                 {
                     html += "<hr/>";
                     int port;
-                    if (req.IsTLS)
+                    if (req.IsTls)
                     {
                         if (c.SslSettings.PortMode == HSB.Constants.TLS.SSL_PORT_MODE.SINGLE_PORT)
                         {
@@ -194,28 +195,28 @@ public class HSBRunner
             });
 
 
-        c.GET("/favicon.ico", (Request req, Response res) =>
+        c.Get("/favicon.ico", (Request req, Response res) =>
         {
             Terminal.INFO("hello");
-            var resource = Utils.LoadResource<byte[]?>("favicon.png");
+            var resource = ResourceUtils.LoadResource<byte[]?>("favicon.png");
 
-            if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
-
-            res.SendFile(resource, "image/x-icon");
-        });
-        c.GET("/favicon_ssl.ico", (Request req, Response res) =>
-        {
-
-            var resource = Utils.LoadResource<byte[]?>("favicon_ssl.ico");
-
-            if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
+            if (resource == null) { res.Send(HttpCodes.NOT_FOUND); return; }
 
             res.SendFile(resource, "image/x-icon");
         });
-        c.GET("/favicon_non_ssl.ico", (Request req, Response res) =>
+        c.Get("/favicon_ssl.ico", (Request req, Response res) =>
         {
-            var resource = Utils.LoadResource<byte[]?>("favicon_nonssl.ico");
-            if (resource == null) { res.Send(HTTP_CODES.NOT_FOUND); return; }
+
+            var resource = ResourceUtils.LoadResource<byte[]?>("favicon_ssl.ico");
+
+            if (resource == null) { res.Send(HttpCodes.NOT_FOUND); return; }
+
+            res.SendFile(resource, "image/x-icon");
+        });
+        c.Get("/favicon_non_ssl.ico", (Request req, Response res) =>
+        {
+            var resource = ResourceUtils.LoadResource<byte[]?>("favicon_nonssl.ico");
+            if (resource == null) { res.Send(HttpCodes.NOT_FOUND); return; }
             res.SendFile(resource, "image/x-icon");
         });
         new Server(c).Start();

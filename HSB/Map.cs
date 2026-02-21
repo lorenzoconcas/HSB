@@ -1,13 +1,16 @@
 using System.Reflection;
 using HSB.Constants;
+using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB;
 
-public struct MethodRoute
+public struct RoutableMethod
 {
     public string Path;
-    public HTTP_METHOD HttpMethod;
+    public HttpMethod HttpMethod;
     public MethodInfo MethodInfo;
+
+    public bool IsValid => !string.IsNullOrEmpty(Path) && MethodInfo != null;
 }
 
 public struct Map
@@ -15,5 +18,5 @@ public struct Map
     public string Path;
     public Type Class;
 
-    public List<MethodRoute> SubRoutes;
+    public List<RoutableMethod> SubRoutes;
 }

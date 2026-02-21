@@ -10,9 +10,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using HSB.Constants.TLS;
 using HSB.Exceptions;
+using HSB.Utils;
 
 namespace HSB;
-
 
 public enum SslHandler
 {
@@ -29,7 +29,7 @@ public class SslConfiguration
     private static readonly string DEBUG_CERT_P12_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.p12");
     private static readonly string DEBUG_CERT_CRT_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.crt");
     private static readonly string DEBUG_CERT_KEY_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.key");
-    
+
     //TODO -> add support for loading certificates from store
 
     public ushort SslPort = 8443;
@@ -40,7 +40,7 @@ public class SslConfiguration
     public bool UpgradeUnsecureRequests = true;
 
     public SslHandler SslHandler = SslHandler.NATIVE;
-    
+
     public string? CertificatePath;
 
     /// <summary>
@@ -98,8 +98,9 @@ public class SslConfiguration
     /// <returns></returns>
     public X509Certificate2 GetCertificate()
     {
-        return CertificateBytes != null ? X509CertificateLoader.LoadPkcs12(CertificateBytes, CertificatePassword) :
-            X509CertificateLoader.LoadPkcs12FromFile(CertificatePath!, CertificatePassword);
+        return CertificateBytes != null
+            ? X509CertificateLoader.LoadPkcs12(CertificateBytes, CertificatePassword)
+            : X509CertificateLoader.LoadPkcs12FromFile(CertificatePath!, CertificatePassword);
     }
 
     /// <summary>
@@ -157,29 +158,30 @@ public class SslConfiguration
         var lastProp = "SslPort";
         try
         {
-            var sslPort = Utils.Safe(json.GetProperty("SslPort").GetUInt16(), (ushort) 8443);
+            var sslPort = GenericUtils.Safe(json.GetProperty("SslPort").GetUInt16(), (ushort) 8443);
             lastProp = "PortMode";
-            var portMode = (SSL_PORT_MODE) Utils.Safe(json.GetProperty("PortMode").GetInt16(),
+            var portMode = (SSL_PORT_MODE) GenericUtils.Safe(json.GetProperty("PortMode").GetInt16(),
                 (int) SSL_PORT_MODE.DUAL_PORT);
             lastProp = "upgradeUnsecureRequests";
-            var upgradeUnsecureRequests = Utils.Safe(json.GetProperty("UpgradeUnsecureRequests").GetBoolean(), true);
+            var upgradeUnsecureRequests =
+                GenericUtils.Safe(json.GetProperty("UpgradeUnsecureRequests").GetBoolean(), true);
             lastProp = "CertificatePath";
             var certificatePath = json.GetProperty("CertificatePath").GetString();
             lastProp = "CertificatePassword";
             var certificatePassword = json.GetProperty("CertificatePassword").GetString();
             lastProp = "CheckCertificateRevocation";
             var checkCertificateRevocation =
-                Utils.Safe(json.GetProperty("CheckCertificateRevocation").GetBoolean(), true);
+                GenericUtils.Safe(json.GetProperty("CheckCertificateRevocation").GetBoolean(), true);
             lastProp = "ValidateClientCertificate";
             var validateClientCertificate =
-                Utils.Safe(json.GetProperty("ValidateClientCertificate").GetBoolean(), false);
+                GenericUtils.Safe(json.GetProperty("ValidateClientCertificate").GetBoolean(), false);
             lastProp = "ClientCertificateRequired";
             var clientCertificateRequired =
-                Utils.Safe(json.GetProperty("ClientCertificateRequired").GetBoolean(), false);
+                GenericUtils.Safe(json.GetProperty("ClientCertificateRequired").GetBoolean(), false);
             lastProp = "tlsVersions";
             var tlsVersions = json.GetProperty("TLSVersions").EnumerateArray().Select(x => (TLSVersion) x.GetInt16())
                 .ToList();
-            
+
             return new SslConfiguration()
             {
                 PortMode = portMode,
@@ -199,7 +201,7 @@ public class SslConfiguration
             return new SslConfiguration();
         }
     }
-    
+
     private static bool CheckOpenSslInstalled()
     {
         //check if openssl is installed
@@ -231,11 +233,11 @@ public class SslConfiguration
         {
             process.Start();
             process.WaitForExit();
-        } 
+        }
         catch
         {
-             Terminal.ERROR($"❌ Openssl is not installed (exception), cannot continue", true);
-             return false;
+            Terminal.ERROR($"❌ Openssl is not installed (exception), cannot continue", true);
+            return false;
         }
 
         if (process.ExitCode != 0)
@@ -259,10 +261,12 @@ public class SslConfiguration
             {
                 File.Delete(DEBUG_CERT_P12_PATH);
             }
+
             if (File.Exists(DEBUG_CERT_CRT_PATH))
             {
                 File.Delete(DEBUG_CERT_CRT_PATH);
             }
+
             if (File.Exists(DEBUG_CERT_KEY_PATH))
             {
                 File.Delete(DEBUG_CERT_KEY_PATH);
@@ -362,7 +366,7 @@ public class SslConfiguration
         {
             if (create)
             {
-               if (!CreateDebugCertificate())
+                if (!CreateDebugCertificate())
                 {
                     c?.Debug.WARNING("Cannot load debug certificate, file not found");
                     return null;

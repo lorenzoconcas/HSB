@@ -2,6 +2,8 @@
 using System.Reflection;
 using System.Text.Json;
 using HSB;
+using HSB.Utils;
+
 namespace HSBBootstrapper;
 
 public class Bootstrapper
@@ -84,7 +86,7 @@ public class Bootstrapper
                 }
                 if (s.StartsWith("--info") || s.StartsWith('?'))
                 {
-                    Utils.PrintLogo();
+                    CliUtils.PrintLogo();
                     Terminal.WriteLine("Available commands :");
                     Terminal.WriteLine("--config-path : \tSpecifies a path for the json configuration of the server");
                     Terminal.WriteLine("--create-default : \tCreates a default configuration");

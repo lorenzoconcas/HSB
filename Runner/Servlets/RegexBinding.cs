@@ -13,7 +13,7 @@ namespace Runner.Servlets
         public override void GET()
         {
          
-            res.Send($@"<h1>Hi</h1><h4> you used regex /`\/.*\/*regex. to match {req.URL}</h4>", "text/html");
+            res.Send($@"<h1>Hi</h1><h4> you used regex /`\/.*\/*regex. to match {req.Url}</h4>", "text/html");
         }
     }
 }

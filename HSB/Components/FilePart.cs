@@ -1,5 +1,7 @@
 using System.Text;
 using HSB.Constants;
+using HSB.Utils;
+
 namespace HSB.Components;
 
 /// <summary>
@@ -20,8 +22,8 @@ public class FilePart : FormPart
 
         FileName = ContentDisposition.Split(";")[2].Split("=")[1].Replace("\"", "").Replace("\r\n", "");
 
-        int contentTypeLineStart = data.IndexOf("\r\n"u8.ToArray());
-        int contentTypeLineEnd = data.IndexOf("\r\n\r\n"u8.ToArray());
+        int contentTypeLineStart = MemoryExtensions.IndexOf(data, "\r\n"u8.ToArray());
+        int contentTypeLineEnd = MemoryExtensions.IndexOf(data, "\r\n\r\n"u8.ToArray());
         try
         {
             ContentType = Encoding.UTF8
@@ -52,13 +54,13 @@ public class FilePart : FormPart
         else
         {
             _path = Path.Combine(path, FileName);
-            if (Utils.IsUnsafePath(FileName))
+            if (PathUtils.IsUnsafePath(FileName))
             {
                 var detectedExt = MimeTypeUtils.GetExtension(ContentType);
                 if (detectedExt == "")
                     detectedExt = ".bin";
                 _path = Path.Combine(path,
-                "file_" + Utils.GenerateRandomString(4) + "." + detectedExt);
+                "file_" + GenericUtils.GenerateRandomString(4) + "." + detectedExt);
             }
         }
 

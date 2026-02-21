@@ -1,5 +1,6 @@
 ﻿using System;
 using HSB;
+using HSB.Utils;
 namespace Runner
 {
     [Binding("/single1")]
@@ -12,12 +13,12 @@ namespace Runner
 
         public override void GET()
         {
-            res.SendHTMLContent($"<h1>Prova GET -> {req.URL}</h1>\nParams:{req.Parameters.DictToString()}");
+            res.SendHTMLContent($"<h1>Prova GET -> {req.Url}</h1>\nParams:{req.Parameters.DictToString()}");
         }
 
         public override void POST()
         {
-            res.SendHTMLContent($"<h1>Prova POST -> {req.URL}</h1>");
+            res.SendHTMLContent($"<h1>Prova POST -> {req.Url}</h1>");
         }
 
 

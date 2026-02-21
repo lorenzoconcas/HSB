@@ -11,7 +11,7 @@ public class Debugger
     public int port;
     public string address;
     public string logPath;
-    public LOG_LEVEL logLevel;
+    public LogLevel logLevel;
     
     public bool UseDebugCertificate;
 
@@ -25,14 +25,14 @@ public class Debugger
         port = 8081;
         address = "127.0.0.1";
         logPath = Path.Combine(AppContext.BaseDirectory, $"log_{GetDateFormatted()}.txt");
-        logLevel = LOG_LEVEL.INFO;
+        logLevel = LogLevel.Info;
 
         StartDebugServer();
     }
 
 
     public Debugger(bool enabled, bool verbose, int port, string address, string logPath = "",
-        LOG_LEVEL logLevel = LOG_LEVEL.INFO)
+        LogLevel logLevel = LogLevel.Info)
     {
         this.enabled = enabled;
         this.verbose = verbose;
@@ -67,7 +67,7 @@ public class Debugger
             json.GetProperty("port").GetInt16(),
             json.GetProperty("address").GetString() ?? "127.0.0.1",
             json.GetProperty("logPath").GetString() ?? "",
-            (LOG_LEVEL)json.GetProperty("logLevel").GetInt16()
+            (LogLevel)json.GetProperty("logLevel").GetInt16()
         );
     }
 
@@ -75,7 +75,7 @@ public class Debugger
     {
         if (verbose)
             Terminal.ERROR(o, printExtraInfo);
-        if ((int) logLevel > (int) LOG_LEVEL.ERROR || logLevel <= 0 || o == null) return;
+        if ((int) logLevel > (int) LogLevel.Error || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
         AppendToFile(GetMessage("W", msg));
     }
@@ -85,7 +85,7 @@ public class Debugger
         if (verbose)
             Terminal.WARNING(o, printExtraInfo);
 
-        if ((int) logLevel > (int) LOG_LEVEL.WARNING || logLevel <= 0 || o == null) return;
+        if ((int) logLevel > (int) LogLevel.Warning || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
         AppendToFile(GetMessage("W", msg));
     }
@@ -95,7 +95,7 @@ public class Debugger
         if (verbose)
             Terminal.INFO(o, printExtraInfo);
 
-        if ((int) logLevel > (int) LOG_LEVEL.INFO || logLevel <= 0 || o == null) return;
+        if ((int) logLevel > (int) LogLevel.Info || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
         AppendToFile(GetMessage("I", msg));
     }
@@ -104,7 +104,7 @@ public class Debugger
     {
         if (verbose)
             Terminal.DEBUG(o, printExtraInfo);
-        if (logLevel != LOG_LEVEL.ALL || logLevel <= 0 || o == null) return;
+        if (logLevel != LogLevel.All || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
         AppendToFile(GetMessage("D", msg));
     }

@@ -1,85 +1,78 @@
 ﻿using System.Reflection;
+using HSB.Utils;
 
-namespace HSB
+namespace HSB;
+
+public class Error(Response res, Configuration config, string errorMessage, int errorCode)
 {
-    public class Error : Servlet
-    {
-        private readonly string errorMsg;
-        //http error code
-        private readonly int errorCode;
-        private string errID = "genericError";
-        public Error(Request req, Response res, Configuration config, string errorMessage, int errorCode) : base(req, res, config)
-        {
-            this.errorCode = errorCode;
-            errorMsg = errorMessage;
+    private string errId = "genericError";
 
-            handlerFallback = GET;
-        }
-        public override void GET()
-        {
-            var debugMode = false;
+
+    public void Throw()
+    {
 #if DEBUG
-            debugMode = true;
+        var debugMode = true;
+#else
+        var debugMode = false;
 #endif
 
-            string title = $"Error {errorCode}";
-            string content = "";
+        var title = $"Error {errorCode}";
+        var content = "";
 
-            if (errorCode >= 500 && errorCode <= 599)
+        switch (errorCode)
+        {
+            case >= 500 and <= 599:
             {
-
-                if (debugMode || configuration.Debug.enabled)
+                if (debugMode || config.Debug.enabled)
                     content = GetStacktracePage();
                 else content = Get5XXPage();
 
-                errID = "stacktrace";
+                errId = "stacktrace";
+                break;
             }
-
-            else if (errorCode >= 400 && errorCode <= 499)
+            case >= 400 and <= 499:
                 content = Get4XXPage();
-
-
-
-            Send(title, content, errorCode);
+                break;
         }
 
-        private string GetStacktracePage() => "Stacktrace:<br>" + errorMsg.Replace("\n", "<br>");
-        private static string Get4XXPage() => $"<h3>The requested resource was not found on this server</h3>";
-        private static string Get5XXPage() => $"<h3>An internal error occurred while elaborating the request</h3>";
 
-        private void Send(string title, string msg, int statusCode)
+        Send(title, content, errorCode);
+    }
+
+    private string GetStacktracePage() => "Stacktrace:<br>" + errorMessage.Replace("\n", "<br>");
+    private static string Get4XXPage() => $"<h3>The requested resource was not found on this server</h3>";
+    private static string Get5XXPage() => $"<h3>An internal error occurred while elaborating the request</h3>";
+
+    private void Send(string title, string msg, int statusCode)
+    {
+        var page = ResourceUtils.LoadResourceAsString("error.html");
+
+        var version = "v";
+        if (Assembly.GetExecutingAssembly().GetName().Version != null)
         {
-            var page = ReadFromResources("error.html");
-
-            string version = "v";
-            if (Assembly.GetExecutingAssembly().GetName().Version != null)
-            {
-                version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
-            }
-
-            string footer_div = "";
-            string server_name;
-            if (configuration.CustomServerName != "")
-            {
-                server_name = configuration.CustomServerName;
-            }
-            else
-            {
-                server_name = "HSB<sup>#</sup>";
-                var currentYear = DateTime.Now.Year;
-                footer_div = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
-            }
-            res.AddAttribute("page_title", "Error " + errorCode);
-            res.AddAttribute("serverName", server_name);
-            res.AddAttribute("footer_div", footer_div);
-            res.AddAttribute("hsbVersion", version);
-            res.AddAttribute("title", title);
-            res.AddAttribute("errorMsg", msg);
-            res.AddAttribute("errID", errID);
-            res.SendHTMLContent(page, true, statusCode: statusCode);
-
+            version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
         }
 
+        var footerDiv = "";
+        var serverName = "";
+        if (config.CustomServerName != "")
+        {
+            serverName = config.CustomServerName;
+        }
+        else
+        {
+            serverName = "HSB<sup>#</sup>";
+            var currentYear = DateTime.Now.Year;
+            footerDiv = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
+        }
+
+        res.AddAttribute("page_title", "Error " + errorCode);
+        res.AddAttribute("serverName", serverName);
+        res.AddAttribute("footer_div", footerDiv);
+        res.AddAttribute("hsbVersion", version);
+        res.AddAttribute("title", title);
+        res.AddAttribute("errorMsg", msg);
+        res.AddAttribute("errID", errId);
+        res.SendHTMLContent(page, true, statusCode: statusCode);
     }
 }
-

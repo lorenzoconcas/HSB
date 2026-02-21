@@ -1,49 +1,45 @@
-﻿using System;
-using System.Reflection;
-using HSB.Constants;
+﻿using System.Reflection;
+using HSB.Utils;
 
-namespace HSB;
+namespace HSB.DefaultPages;
 
-public class Index(Request req, Response res, Configuration config) : Servlet(req, res, config)
+public class Index(Response res, Configuration config)
 {
-    public override void GET()
+    public void Get()
     {
-        string page = ReadFromResources("index.html");
-        string version = "v";
+        var page = ResourceUtils.LoadResourceAsString("index.html");
+        var version = "v";
         if (Assembly.GetExecutingAssembly().GetName().Version != null)
         {
             version += Assembly.GetExecutingAssembly().GetName().Version!.ToString();
         }
 
 
-
-        string footer_div = "";
-        string server_name;
-        string logo = "";
-        int currentYear = DateTime.Now.Year;
+        string serverName;
+        var footerDiv = "";
+        var logo = "";
+        var currentYear = DateTime.Now.Year;
         //string title = "";
-        if (configuration.CustomServerName != "")
+        if (config.CustomServerName != "")
         {
-            server_name = configuration.CustomServerName;
+            serverName = config.CustomServerName;
         }
         else
         {
-            server_name = "HSB<sup>#</sup>";
-            footer_div = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
-            string logo_b64 = ReadFromResources("logo_b64");
-            logo = $"<img width=\"32px\" src=\"{logo_b64}\" />";
+            var logoB64 = ResourceUtils.LoadResourceAsString("logo_b64");
+            serverName = "HSB<sup>#</sup>";
+            footerDiv = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
+            logo = $"<img width=\"32px\" src=\"{logoB64}\" />";
             // title = "Http Server Boxed <sup>#</sup>";
         }
 
         //set attributes
         res.AddAttribute("logo", logo); //this break some configurations, logo must be replaced with a smaller image
-                                        //  res.AddAttribute("title", title);
-        res.AddAttribute("serverName", server_name);
-        res.AddAttribute("footer_div", footer_div);
+        //  res.AddAttribute("title", title);
+        res.AddAttribute("serverName", serverName);
+        res.AddAttribute("footer_div", footerDiv);
         res.AddAttribute("hsbVersion", version);
 
         res.SendHTMLContent(page, true);
-
     }
 }
-

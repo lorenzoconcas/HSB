@@ -1,10 +1,12 @@
 using HSB;
 using HSB.Constants;
+using HttpMethod = HSB.Constants.HttpMethod;
+
 namespace Runner;
 
 
 [Binding("/associatedfile1")]
-[AssociateFile("./static/main.html", HTTP_METHOD.GET)]
+[AssociateFile("./static/main.html", HttpMethod.Get)]
 public class AssociatedFileServletOneMethod : Servlet
 {
     public AssociatedFileServletOneMethod(Request req, Response res) : base(req, res)
@@ -15,7 +17,7 @@ public class AssociatedFileServletOneMethod : Servlet
 // Test these with postman, curl or custom scripts/pages
 
 [Binding("/associatedfile2")]
-[AssociateFile("./static/main.html", new HTTP_METHOD[] { HTTP_METHOD.GET, HTTP_METHOD.TRACE })]
+[AssociateFile("./static/main.html", new HttpMethod[] { HttpMethod.Get, HttpMethod.Trace })]
 public class AssociatedFileServletMultipleMethods : Servlet
 {
     public AssociatedFileServletMultipleMethods(Request req, Response res) : base(req, res)

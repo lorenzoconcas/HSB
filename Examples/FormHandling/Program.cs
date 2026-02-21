@@ -2,7 +2,7 @@
 using HSB.Constants;
 Configuration c = new();
 
-c.GET("/", (Request req, Response res) =>
+c.Get("/", (Request req, Response res) =>
 {
     //send a complex form
     var html = "<html><head></head></body>" +
@@ -15,11 +15,11 @@ c.GET("/", (Request req, Response res) =>
     res.SendHTMLContent(html);
 });
 
-c.POST("/form", (Request req, Response res) =>
+c.Post("/form", (Request req, Response res) =>
 {
     if (!req.IsFormUpload())
     {
-        res.Send(HTTP_CODES.BAD_REQUEST);
+        res.Send(HttpCodes.BAD_REQUEST);
         return;
     }
     var form = req.GetFormData();

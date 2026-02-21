@@ -11,16 +11,34 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
 {
     public void Init()
     {
-        BuildOpenApiYaml();
-        SetEndpoints();
+        switch (configuration.OpenApiSettings.Mode)
+        {
+            case Mode.Disabled: return;
+            case Mode.SwaggerOnly:
+                BuildOpenApiYaml();
+                SetEndpoints();
+                break;
+            case Mode.FileOnly:
+                BuildOpenApiYaml();
+                File.WriteAllText(configuration.OpenApiSettings.FilePath,
+                    configuration.GetSharedObject("openapi.json") as string);
+                break;
+            case Mode.Full:
+                BuildOpenApiYaml();
+                SetEndpoints();
+                File.WriteAllText(configuration.OpenApiSettings.FilePath,
+                    configuration.GetSharedObject("openapi.json") as string);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     private void SetEndpoints()
     {
-        configuration.Get(configuration.OpenApiSettings.FilePath, (Request request, Response res) =>
+        configuration.Get("/openapi.json", (Request request, Response res) =>
         {
             var openApiJson = configuration.GetSharedObject("openapi.json");
-            Console.WriteLine(openApiJson);
             res.SendObject(openApiJson, "openapi.json", 200, "application/json");
             //send the openapi.yaml file
             //res.SendFile("openapi.json", "application/json");
@@ -165,7 +183,7 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
             Paths = GetPaths(),
             Components = new models.Components(CollectAllResponseModels()),
         };
-        
+
         var json = System.Text.Json.JsonSerializer.Serialize(api,
             new System.Text.Json.JsonSerializerOptions
             {

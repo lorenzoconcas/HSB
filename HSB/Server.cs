@@ -207,12 +207,9 @@ public class Server
         SetSsl();
         MapRoutes();
         PrintFinalInfo();
-
-        //build openapi documentation if enabled in configuration
-        if (!this._config.OpenApiSettings.IsEnabled) return;
-
-        var openApiBuilder = new OpenApiBuilder(config, _routes);
-        openApiBuilder.Init();
+        
+        //the class will automatically set according to configuration
+        new OpenApiBuilder(config, _routes).Init();
 
         //end of the server initialization
     }

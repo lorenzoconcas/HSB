@@ -55,7 +55,7 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
     {
         var paths = new Dictionary<string, PathItem>();
 
-        foreach (var route in routes)
+        foreach (var route in routes.Where(r => r is {Class: not null}))
         {
             //group subroutes by path
             var groups = route.SubRoutes.GroupBy(r => r.Path).ToArray();
@@ -77,7 +77,7 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
                 };
 
 
-                var suggestedTag = route.Class.GetCustomAttribute<ApiTag>()?.Tag ?? route.Path;
+                var suggestedTag = route.Class!.GetCustomAttribute<ApiTag>()?.Tag ?? route.Path;
 
                 pathItem.Get?.Tags = [suggestedTag];
                 pathItem.Post?.Tags = [suggestedTag];
@@ -142,7 +142,7 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
     private static Operation? GetOperation(RoutableMethod routableMethod)
     {
         if (!routableMethod.IsValid) return null;
-        var method = routableMethod.MethodInfo;
+        var method = routableMethod.MethodInfo!;
         var summary = method.GetCustomAttribute<ApiSummary>()?.Summary ?? "No summary provided";
         var description = method.GetCustomAttribute<ApiDescription>()?.Description ?? "No description provided";
         var operationId = method.Name;

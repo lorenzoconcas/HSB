@@ -32,7 +32,7 @@ c2.Get("/", (Request req, Response res) =>
 
 var server2 = new Server(c2);
 
-CORS serverCors = new CORS();
+var serverCors = new Cors();
 serverCors.AllowedOrigins.Add("http://localhost:8082");
 
 var c1 = new Configuration()
@@ -55,7 +55,6 @@ c1.Get("/", (Request req, Response res) =>
     {
         message = "Hello World!"
     });
-    return;
 });
 
 

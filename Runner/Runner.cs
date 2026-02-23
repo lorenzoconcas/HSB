@@ -5,12 +5,10 @@ using HSB.Utils;
 
 namespace Runner;
 
-public class HsbRunner
+public class Runner
 {
-
     private static void Main()
     {
-
         SslConfiguration ssl = new()
         {
             PortMode = HSB.Constants.TLS.SSL_PORT_MODE.DUAL_PORT,
@@ -19,7 +17,8 @@ public class HsbRunner
             UpgradeUnsecureRequests = false
         };
 
-        Configuration c = new()
+
+        var server = new Server(new Configuration
         {
             Address = "", //listen any address
             Port = 8080,
@@ -32,7 +31,9 @@ public class HsbRunner
             {
                 Mode = Mode.SwaggerOnly
             }
-        };
+        });
+
+        var c = server.GetConfiguration();
 
         //test expressjs-like routing
         //note that these are controlled first, so eventual servlet
@@ -46,20 +47,18 @@ public class HsbRunner
         c.Get("/echo", Echo);
         c.Post("/echo", Echo);
 
-      
 
-        c.Get("/500", (Request req, Response res) =>
-        {
-            throw new Exception("\nThis is a test exception, should only be visible when compiled in debug mode\n");
-        });
+        c.Get("/500",
+            (Request req, Response res) =>
+            {
+                throw new Exception("\nThis is a test exception, should only be visible when compiled in debug mode\n");
+            });
 
-        c.AddSharedObject("test", 1996); //this object is available to all servlets, and accessed by "Servlets/SharedObjects.cs" 
+        c.AddSharedObject("test",
+            1996); //this object is available to all servlets, and accessed by "Servlets/SharedObjects.cs" 
 
         //redirect example
-        c.Get("/redirect", (Request req, Response res) =>
-        {
-            res.Redirect("/");
-        });
+        c.Get("/redirect", (Request req, Response res) => { res.Redirect("/"); });
 
         c.Get("/websocketpage", (Request req, Response res) =>
         {
@@ -111,112 +110,124 @@ public class HsbRunner
         });
 
         c.Get("/", (Request req, Response res) =>
+        {
+            //return an html page with all the routes and a link
+
+            var html = "</head><body><h1>Runner HomePage</h1><h3>Available routes:</h3>";
+            var routes = server
+                .GetRoutes()
+                .Where(r => r.Path != "/")
+                .ToList();
+
+            html += "<table><thead><tr><th>Route</th><th>Method</th></tr></thead><tbody>";
+            //print a table with route link and method
+            foreach (var route in routes)
             {
-                //return an html page with all the routes and a link
-
-                string html = "</head><body><h1>Runner HomePage</h1><h3>Available routes:</h3>";
-                var routes = c.GetAllRoutes();
-                routes.Remove(new Tuple<string, string>("/", "GET"));
-
-                html += "<table><thead><tr><th>Route</th><th>Method</th></tr></thead><tbody>";
-                //print a table with route link and method
-                foreach (var route in routes)
+                foreach (var subRoute in route.SubRoutes)
                 {
-                    html += $"<tr><td><a href=\"{route.Item1}\">{route.Item1}</a></td><td>{route.Item2}</td></tr>";
+                    html += $"<tr><td><a href=\"{PathUtils.JoinPath(route.Path, subRoute.Path)}\">{route.Path}</a></td><td>{subRoute.HttpMethod}</td></tr>";
                 }
-                html += "</tbody></table>";
+            }
 
-                //print all available static files
-                var staticFilePath = c.StaticFolderPath;
-                if (staticFilePath != "" && Directory.Exists(staticFilePath))
+            html += "</tbody></table>";
+
+            //print all available static files
+            var staticFilePath = c.StaticFolderPath;
+            if (staticFilePath != "" && Directory.Exists(staticFilePath))
+            {
+                html += "<h3>Available static files:</h3>";
+                html += "<table><thead><tr><th>Static files</th></tr></thead><tbody>";
+                foreach (var file in Directory.GetFiles(staticFilePath))
                 {
-
-                    html += "<h3>Available static files:</h3>";
-                    html += "<table><thead><tr><th>Static files</th></tr></thead><tbody>";
-                    foreach (var file in Directory.GetFiles(staticFilePath))
-                    {
-                        var filePath = file.Replace(staticFilePath, "");
-                        html += $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>";
-                    }
+                    var filePath = file.Replace(staticFilePath, "");
+                    html += $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>";
                 }
-                html += "</tbody></table>";
-                string favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.ico\" />";
+            }
 
-                if ((c.SslSettings.IsEnabled() || c.SslSettings.IsDebugModeEnabled()) && !c.SslSettings.UpgradeUnsecureRequests)
+            html += "</tbody></table>";
+            var favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon.ico\" />";
+
+            if ((c.SslSettings.IsEnabled() || c.SslSettings.IsDebugModeEnabled()) &&
+                !c.SslSettings.UpgradeUnsecureRequests)
+            {
+                html += "<hr/>";
+                int port;
+                if (req.IsTls)
                 {
-                    html += "<hr/>";
-                    int port;
-                    if (req.IsTls)
-                    {
-                        if (c.SslSettings.PortMode == HSB.Constants.TLS.SSL_PORT_MODE.SINGLE_PORT)
-                        {
-                            port = c.Port;
-                        }
-                        else
-                        {
-                            port = c.SslSettings.SslPort;
-                        }
+                    port = c.SslSettings.PortMode == HSB.Constants.TLS.SSL_PORT_MODE.SINGLE_PORT
+                        ? c.Port
+                        : c.SslSettings.SslPort;
 
-                        html += "<script>function ssl(){ return window.location.href.replace('https', 'http').replace('" + port + "', '" + c.Port + "');}</script>";
-                        html += "<a href='javascript:document.location.href=ssl()'>🔓Also available in non-SSL (plain) version </a>";
-                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_ssl.ico\" />";
-                    }
-                    else
-                    {
-                        if (c.SslSettings.PortMode == HSB.Constants.TLS.SSL_PORT_MODE.SINGLE_PORT)
-                        {
-                            port = c.Port;
-                        }
-                        else
-                        {
-                            port = c.SslSettings.SslPort;
-                        }
-
-                        html += "<script>function ssl(){ return window.location.href.replace('http', 'https').replace('" + c.Port + "', '" + port + "');}</script>";
-                        html += "<a href='javascript:document.location.href=ssl()'>🔐Also available in SSL version </a>";
-                        favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_non_ssl.ico\" />";
-                    }
+                    html += "<script>function ssl(){ return window.location.href.replace('https', 'http').replace('" +
+                            port + "', '" + c.Port + "');}</script>";
+                    html +=
+                        "<a href='javascript:document.location.href=ssl()'>🔓Also available in non-SSL (plain) version </a>";
+                    favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_ssl.ico\" />";
                 }
+                else
+                {
+                    port = c.SslSettings.PortMode == HSB.Constants.TLS.SSL_PORT_MODE.SINGLE_PORT
+                        ? c.Port
+                        : c.SslSettings.SslPort;
 
-                var currentYear = DateTime.Now.Year;
-                html += $"<br/><hr><footer>HSB-# Runner &copy; 2021-{currentYear}</footer>";
-                html += "<script> console.log(window.location.href)</script>";
-                html += "</body></html>";
-                html = "<html><head>" + favicon + html;
-                res.SendHTMLContent(html);
-            });
+                    html += "<script>function ssl(){ return window.location.href.replace('http', 'https').replace('" +
+                            c.Port + "', '" + port + "');}</script>";
+                    html += "<a href='javascript:document.location.href=ssl()'>🔐Also available in SSL version </a>";
+                    favicon = "<link rel=\"icon\" type=\"image/png\" href=\"/favicon_non_ssl.ico\" />";
+                }
+            }
+
+            var currentYear = DateTime.Now.Year;
+            html += $"<br/><hr><footer>HSB-# Runner &copy; 2021-{currentYear}</footer>";
+            html += "<script> console.log(window.location.href)</script>";
+            html += "</body></html>";
+            html = "<html><head>" + favicon + html;
+            res.SendHTMLContent(html);
+        });
 
 
         c.Get("/favicon.ico", (Request req, Response res) =>
         {
             var resource = ResourceUtils.LoadResource<byte[]?>("favicon.png");
 
-            if (resource == null) { res.Send(HttpCodes.NOT_FOUND); return; }
+            if (resource == null)
+            {
+                res.Send(HttpCodes.NOT_FOUND);
+                return;
+            }
 
             res.SendFile(resource, "image/x-icon");
         });
         c.Get("/favicon_ssl.ico", (Request req, Response res) =>
         {
-
             var resource = ResourceUtils.LoadResource<byte[]?>("favicon_ssl.ico");
 
-            if (resource == null) { res.Send(HttpCodes.NOT_FOUND); return; }
+            if (resource == null)
+            {
+                res.Send(HttpCodes.NOT_FOUND);
+                return;
+            }
 
             res.SendFile(resource, "image/x-icon");
         });
         c.Get("/favicon_non_ssl.ico", (Request req, Response res) =>
         {
             var resource = ResourceUtils.LoadResource<byte[]?>("favicon_nonssl.ico");
-            if (resource == null) { res.Send(HttpCodes.NOT_FOUND); return; }
+            if (resource == null)
+            {
+                res.Send(HttpCodes.NOT_FOUND);
+                return;
+            }
+
             res.SendFile(resource, "image/x-icon");
         });
-        new Server(c).Start();
+        server.Start();
     }
 
     private static void TestExpressRoutingGet(Request req, Response res)
     {
         res.Send("<html><head></head><body onload='loaded()'><h1>Hello there from quick routing</h1>" +
-            "<script src=\"/utils.js\"></script></body></html>", "text/html");
+                 "<script src=\"/utils.js\"></script></body></html>", "text/html");
     }
 
     private static void TestExpressRoutingPost(Request req, Response res)
@@ -237,4 +248,3 @@ public class HsbRunner
         res.Send(req.Body);
     }
 }
-

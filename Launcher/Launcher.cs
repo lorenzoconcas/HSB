@@ -24,7 +24,7 @@
 
 using System.Reflection;
 using System.Runtime.Loader;
-
+namespace Launcher;
 public static class Launcher
 {
     public static void Main(string[] args)
@@ -36,7 +36,7 @@ public static class Launcher
         }
 
         Console.WriteLine("Listing DLLs...");
-        List<string> dlls = ListDLLs();
+        var dlls = ListDLLs();
 
         if (!dlls.Any())
         {

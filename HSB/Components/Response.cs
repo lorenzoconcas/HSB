@@ -25,7 +25,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     private readonly Configuration config = c;
     readonly Dictionary<string, string> attributes = [];
 
-    private CORS? cors = null;
+    private Cors? cors = null;
 
 
     #region Global Send methods
@@ -62,7 +62,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         }
         catch (Exception e)
         {
-            Terminal.ERROR($"Error sending data ->\n {e}");
+            Terminal.Error($"Error sending data ->\n {e}");
         }
     }
 
@@ -105,7 +105,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         {
             //dato che l'invio dei dati è parte nostra, se non riusciamo diamo un errore 500
             SendCode(HttpCodes.INTERNAL_SERVER_ERROR);
-            Terminal.ERROR("Error sending file : " + path);
+            Terminal.Error("Error sending file : " + path);
         }
     }
 
@@ -451,7 +451,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
     
     #region Utils
     
-    public void SetCORS(CORS cors)
+    public void SetCORS(Cors cors)
     {
         this.cors = cors;
     }
@@ -639,7 +639,7 @@ public class Response(Socket socket, Request request, Configuration c, SslStream
         }
         catch (Exception e)
         {
-            Terminal.ERROR("Errore durante WriteRaw: " + e);
+            Terminal.Error("Errore durante WriteRaw: " + e);
         }
     }
 

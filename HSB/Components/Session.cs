@@ -3,20 +3,20 @@
 public class SessionManager
 {
     private readonly Dictionary<string, Session> data = [];
-    private static SessionManager? instance = null;
+    private static SessionManager? _instance = null;
     private SessionManager()
     {
     }
 
     public static SessionManager GetInstance()
     {
-        instance ??= new();
-        return instance;
+        _instance ??= new SessionManager();
+        return _instance;
     }
 
-    public void CreateSession(string UUID, Session sessionData)
+    public void CreateSession(string uuid, Session sessionData)
     {
-        data.Add(UUID, sessionData);
+        data.Add(uuid, sessionData);
     }
 
     public string CreateSession(Session sessionData)
@@ -45,9 +45,9 @@ public class SessionManager
 
 public class Session
 {
-    protected internal bool valid = false;
+    protected internal bool Valid = false;
     public long ExpirationTime { get; set; }
-    public readonly Dictionary<string, object> attributes;
+    private readonly Dictionary<string, object> attributes;
 
 
     public Session()
@@ -62,7 +62,7 @@ public class Session
 
         ExpirationTime = expirationTime;
         attributes = [];
-        valid = true;
+        Valid = true;
     }
 
 

@@ -13,7 +13,8 @@ public class Configuration
     //private props
     private static readonly JsonSerializerOptions JserializerOptions =
         new() {WriteIndented = true, IncludeFields = true};
-
+    
+    public event Action<ExpressMap>? ExpressRouteAdded;
     /// <summary>
     /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address)
     /// </summary>
@@ -67,7 +68,7 @@ public class Configuration
     /// <summary>
     /// Hide the HSB logo on startup
     /// </summary>
-    public bool HideBranding = false;
+    public bool HideBranding;
 
     /// <summary>
     /// Useful to share objects between servlets without using the singleton technique
@@ -92,12 +93,13 @@ public class Configuration
     /// <summary>
     /// Expressjs-like routing (es in Express.js you map pages and path like : app.get(path, (req, res){})
     /// </summary>
-    private readonly List<Tuple<string, Tuple<HttpMethod, Delegate>>> expressMapping = [];
+    private readonly List<ExpressMap> expressMapping = [];
 
     /// <summary>
     /// When set, the server will use this name instead of the default one (default is: HSB-#/assembly_version (os_version))
+    /// This value will also override the server name inside the error pages
     /// </summary>
-    public string CustomServerName = "";
+    public string? CustomServerName;
 
     /// <summary>
     /// If this is set, the server will block the IP of the client if they try to access unsafe paths
@@ -157,14 +159,8 @@ public class Configuration
     /// </summary>
     public SslConfiguration SslSettings;
 
-    public CORS? GlobalCors;
-
-    /// <summary>
-    /// If set to a non-empty string, a page mapped to this path will show routes with the @Documentation attribute,
-    /// it's similar to Swagger or alternative documentation systems
-    /// </summary>
-    public string DocumentationPath = "";
-
+    public Cors? GlobalCors;
+    
     /// <summary>
     /// Contains all the settings related to OpenApi,
     /// if OpenApiSettings.IsEnabled is set to true, the server will automatically generate an OpenApi specification
@@ -189,7 +185,6 @@ public class Configuration
         DefaultSessionExpirationTime = (ulong) TimeSpan.FromDays(1).Ticks;
         SslSettings = new SslConfiguration();
         GlobalCors = null;
-        DocumentationPath = "";
     }
 
     /// <summary>
@@ -236,9 +231,7 @@ public class Configuration
             lastProp = "DefaultSessionExpirationTime";
             DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
             lastProp = "GlobalCORS";
-            GlobalCors = CORS.FromJSON(root);
-            lastProp = "DocumentationPath";
-            DocumentationPath = root.GetProperty("DocumentationPath").GetString() ?? "";
+            GlobalCors = Cors.FromJson(root);
             lastProp = "PermanentIPList";
 
             foreach (var v in root.GetProperty("PermanentIPList").EnumerateArray().Select(item => item.GetString())
@@ -249,9 +242,9 @@ public class Configuration
         }
         catch (Exception e)
         {
-            Terminal.ERROR("Cannot parse configuration file");
-            Terminal.ERROR(e);
-            Terminal.ERROR($"Last property that was being parsed: {lastProp}");
+            Terminal.Error("Cannot parse configuration file");
+            Terminal.Error(e);
+            Terminal.Error($"Last property that was being parsed: {lastProp}");
             Environment.Exit(1);
         }
     }
@@ -282,7 +275,6 @@ public class Configuration
         //default one day
         DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong) TimeSpan.FromDays(1).Ticks;
         SslSettings = sslConfiguration ?? new SslConfiguration();
-        DocumentationPath = "";
     }
 
     /// <summary>
@@ -308,12 +300,13 @@ public class Configuration
 
     public void AddExpressMapping(string path, HttpMethod method, Delegate func)
     {
-        Tuple<HttpMethod, Delegate> x = new(method, func);
-        Tuple<string, Tuple<HttpMethod, Delegate>> tuple = new(path, x);
-        expressMapping.Add(tuple);
+        var map = new ExpressMap(path, method, func);
+        expressMapping.Add(map);
+        
+        ExpressRouteAdded?.Invoke(map);
     }
 
-    protected internal List<Tuple<string, Tuple<HttpMethod, Delegate>>> ExpressRoutes => expressMapping;
+    protected internal List<ExpressMap> ExpressRoutes => expressMapping;
 
     /// <summary>
     /// Map a function to a path that will reply with a GET response 
@@ -460,35 +453,26 @@ public class Configuration
     /// <returns></returns>
     public override string ToString()
     {
-        string str = $"Current configuration:\nListening address and port: {Address}:{Port}";
+        var str = $"Current configuration:\nListening address and port: {Address}:{Port}";
         if (StaticFolderPath == "")
             str += "\nStatic folder is not set";
         else
             str += $"\nStatic folder path: {StaticFolderPath}";
 
-        if (expressMapping.Count != 0)
+        /*if (expressMapping.Count != 0)
         {
             str += "\nExpressJS-Like routing map:";
-            expressMapping.ForEach(m => str += $"\nPath : {m.Item1} -> {m.Item2.Item2.Method.Name}");
-        }
+            expressMapping.ForEach(m => str += $"\nPath : {m.Path} ");
+        }*/
 
-        var staticRoutes = Server.CollectStaticRoutes();
+        /*var staticRoutes = Server.CollectStaticRoutes();
 
         if (staticRoutes.Count != 0)
         {
             str += "\nStatic routes:";
-            staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Key.Item1} -> {m.Value.Name}");
-        }
+            staticRoutes.ToList().ForEach(m => str += $"\nPath : {m.Path} -> {m.Value.Name}");
+        }*/
 
         return str;
-    }
-
-    public List<Tuple<string, string>> GetAllRoutes()
-    {
-        List<Tuple<string, string>> routes = [];
-        expressMapping.ForEach(m => routes.Add(new(m.Item1, m.Item2.Item1.ToString())));
-        var staticRoutes = Server.CollectStaticRoutes();
-        staticRoutes.ToList().ForEach(m => routes.Add(new(m.Key.Item1, "")));
-        return routes;
     }
 }

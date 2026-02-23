@@ -35,20 +35,3 @@ More info can be found in the Documentation folder
 [](./Documentation/)
 
 
-#### Roadmap
-Small roadmap planned
-
-
-| Version | Feature Planned             | Status                     |
-|---------|-----------------------------|----------------------------|
-| 0.0.5R2 | Better debugging            | ✅ Ready                   |
-| 0.0.6   | Http Session implementation | ✅ Ready                   |
-| 0.0.7   | Refactor/Clean-up           | ✅ Ready 1*                |
-| 0.0.8   | Http Authentication         | ✅ Ready                   |
-| 0.0.9   | FormData/File upload        | ✅ Ready                   |
-| 0.0.10  | WebSocket support           | ✅ Ready (current stable)  | 
-| 0.0.11  | SSL/TLS                     | ✅ Ready for test 2*         |
-
-1* Version 0.0.7 will be skipped
-2* Custom TLS implementation is still WIP
-Note: "Experiments/WebSocket" project is going to be deleted when current version (0.0.11) will reach stable status

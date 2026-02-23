@@ -103,7 +103,7 @@ public class Request
             body = "";
             rawBody = [];
             session = new Session(); //default, invalid session
-            Terminal.INFO("Got an empty request, setting default values");
+            Terminal.Info("Got an empty request, setting default values");
             return;
         }
 
@@ -243,7 +243,7 @@ public class Request
         }
         catch (Exception e)
         {
-            Terminal.WriteLine("Invalid request, reason : " + e.Message, BgColor.BLACK, FgColor.RED);
+            Terminal.WriteLine("Invalid request, reason : " + e.Message, BgColor.Black, FgColor.Red);
             ValidRequest = false;
         }
 
@@ -367,17 +367,17 @@ public class Request
     //utilities functions
     public void FullPrint()
     {
-        Terminal.DEBUG("PRINTING RAW REQUEST\n====================");
-        Terminal.INFO(reqText);
-        Terminal.DEBUG("\n====================");
-        Terminal.INFO($"Has basic auth? {basicAuth != null}");
+        Terminal.Debug("PRINTING RAW REQUEST\n====================");
+        Terminal.Info(reqText);
+        Terminal.Debug("\n====================");
+        Terminal.Info($"Has basic auth? {basicAuth != null}");
         if (basicAuth != null)
-            Terminal.INFO(basicAuth);
-        Terminal.INFO($"Has oauth1.0? {oAuth10Information != null}");
+            Terminal.Info(basicAuth);
+        Terminal.Info($"Has oauth1.0? {oAuth10Information != null}");
         if (oAuth10Information != null)
-            Terminal.INFO(oAuth10Information);
+            Terminal.Info(oAuth10Information);
 
-        Terminal.INFO($"Has oAuth2.0? {oAuth20Token != ""} {oAuth20Token}");
+        Terminal.Info($"Has oAuth2.0? {oAuth20Token != ""} {oAuth20Token}");
 
     }
     private void TryExtractAndSetOAuth1_0()

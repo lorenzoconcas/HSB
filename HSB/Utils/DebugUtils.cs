@@ -21,7 +21,7 @@ public static class DebugUtils
             List<Type> classes = [.. assem.GetTypes()];
 
             foreach (var c in classes)
-                Terminal.WriteLine(c.FullName, BgColor.WHITE, FgColor.BLUE);
+                Terminal.WriteLine(c.FullName, BgColor.White, FgColor.Blue);
         }
     }
 }

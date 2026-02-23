@@ -81,7 +81,7 @@ public static class ResourceUtils
         }
         catch (Exception e)
         {
-            Terminal.ERROR(e);
+            Terminal.Error(e);
             return default;
         }
     }

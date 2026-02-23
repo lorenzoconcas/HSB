@@ -35,9 +35,9 @@ public class Server
 
     public static void Main()
     {
-        Terminal.INFO("HSB-# has wrongfully been compiled has executable and will not run!");
-        Terminal.INFO("To run as standalone you must compile/execute the \"Standalone\" or the \"Launcher\" project");
-        Terminal.INFO("Check the documentation for more info (\"https://github.com/lorenzoconcas/HSB\")");
+        Terminal.Info("HSB-# has wrongfully been compiled has executable and will not run!");
+        Terminal.Info("To run as standalone you must compile/execute the \"Standalone\" or the \"Launcher\" project");
+        Terminal.Info("Check the documentation for more info (\"https://github.com/lorenzoconcas/HSB\")");
     }
 
     /// <summary>
@@ -198,7 +198,30 @@ public class Server
             config.Port = (ushort) new Random().Next(1024, 65535);
         }
 
-        this._config = config;
+        _config = config;
+
+        _config.ExpressRouteAdded += (r) =>
+        {
+            _routes.Add(new Map()
+            {
+                Path = r.Path,
+                SubRoutes =
+                [
+                    new RoutableMethod()
+                    {
+                        Delegate = r.Delegate,
+                        HttpMethod = r.HttpMethod,
+                        Path = "/"
+                    }
+                ]
+            });
+
+
+            _config.Debug.INFO(
+                $"Route |{Terminal.FG_TO_STRING(FgColor.Green)}{r.HttpMethod}{Terminal.RESET} -> {r.Path} (Delegate)");
+        };
+
+
         config.Debug.INFO("Starting logging...");
 
 
@@ -207,7 +230,7 @@ public class Server
         SetSsl();
         MapRoutes();
         PrintFinalInfo();
-        
+
         //the class will automatically set according to configuration
         new OpenApiBuilder(config, _routes).Init();
 
@@ -422,7 +445,7 @@ public class Server
         }
     }
 
-    private bool RunIfExpressMapping(Request req, Response res)
+    /*private bool RunIfExpressMapping(Request req, Response res)
     {
         var route = _config.ExpressRoutes.Find(e => e.Item1 == req.Url && e.Item2.Item1 == req.Method);
         //regex routes are the ones that starts with /` (slash and backtick)
@@ -433,8 +456,7 @@ public class Server
         {
             var regexRoute = regexRoutes.Find(r =>
                 new Regex(r.Item1[2..])
-                    .Match(req.Url)
-                    .Success
+                    .IsMatch(req.Url)
             );
 
             if (regexRoute != null)
@@ -449,63 +471,8 @@ public class Server
 
         route.Item2.Item2.DynamicInvoke(req, res);
         return true;
-    }
+    }*/
 
-    /// <summary>
-    /// Collect all the static routes from the assemblies
-    /// </summary>
-    /// <returns></returns>
-    protected internal static Dictionary<Tuple<string, bool>, Type> CollectStaticRoutes()
-    {
-        Dictionary<Tuple<string, bool>, Type> routes = [];
-
-        string[] excludeList = ["System", "Microsoft", "Internal"];
-
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => !excludeList.Any(e => a.FullName!.StartsWith(e)));
-
-        var classes = assemblies.SelectMany(assembly => assembly.GetTypes(), (assembly, type) => new {assembly, type})
-            .Where(@t => @t.type.IsClass)
-            .Select(@t => @t.type);
-
-
-        foreach (var c in classes)
-        {
-            var multi = c.GetCustomAttributes<Binding>(false);
-
-            var enumerable = multi as Binding[] ?? multi.ToArray();
-            if (enumerable.Length != 0)
-            {
-                foreach (var b in enumerable)
-                {
-                    if (b.Path != "")
-                    {
-                        routes.Add(new Tuple<string, bool>(b.Path, b.StartsWith), c);
-                    }
-                    else if (b.Auto)
-                    {
-                        routes.Add(new Tuple<string, bool>("/" + c.Name.ToLower(), false), c);
-                    }
-                }
-            }
-            else
-            {
-                var attr = c.GetCustomAttribute<Binding>(false);
-                if (attr == null) continue;
-                if (attr.Path != "")
-                {
-                    routes.Add(new Tuple<string, bool>(attr.Path, attr.StartsWith), c);
-                }
-                else if (attr.Auto)
-                {
-                    routes.Add(new Tuple<string, bool>(c.Name.ToLower(), false), c);
-                }
-            }
-        }
-
-
-        return routes;
-    }
 
     private object? GetInstance(Request req)
     {
@@ -633,13 +600,14 @@ public class Server
             }
 
             //if dev has used the express mapping, we run the mapped function
-            if (RunIfExpressMapping(req, res)) return;
+            //if (RunIfExpressMapping(req, res)) return;
 
             //We check if the route requested is handled by any servlet
             var o = GetInstance(req);
 
             if (o != null)
             {
+                ParameterInfo[] parameters;
                 switch (o)
                 {
                     //we check if the object is a servlet or a websocket
@@ -651,8 +619,37 @@ public class Server
                     case WebSocket ws:
                         ws.Process();
                         return;
+                    case (null, RoutableMethod route):
+                        if (route.Type != RoutableMethodType.Delegate)
+                        {
+                            throw new Exception("Invalid route type, expected delegate");
+                        }
+
+                        parameters = route.Delegate!.GetMethodInfo().GetParameters();
+                        List<object> callingParams = [];
+
+                        foreach (var field in parameters)
+                        {
+                            if (field.ParameterType == typeof(Request))
+                            {
+                                callingParams.Add(req);
+                            }
+                            else if (field.ParameterType == typeof(Response))
+                            {
+                                callingParams.Add(res);
+                            }
+                        }
+
+                        route.Delegate!.DynamicInvoke(callingParams.ToArray());
+                        return;
+
                     case (Type tipo, RoutableMethod route):
-                        var parameters = route.MethodInfo.GetParameters();
+                        if (route.Type != RoutableMethodType.Method)
+                        {
+                            throw new Exception("Invalid route type, expected Class and Method");
+                        }
+
+                        parameters = route.MethodInfo!.GetParameters();
                         var instance = Activator.CreateInstance(tipo);
 
                         //get public instance fields
@@ -685,7 +682,8 @@ public class Server
                         {
                             var paramAttributes = methodParameter.GetCustomAttribute<NamedParameter>();
 
-                            if ((!req.Parameters.ContainsKey(paramAttributes!.Name) || req.Parameters[paramAttributes!.Name] == "") && paramAttributes.Required)
+                            if ((!req.Parameters.ContainsKey(paramAttributes!.Name) ||
+                                 req.Parameters[paramAttributes!.Name] == "") && paramAttributes.Required)
                             {
                                 new Error(res,
                                         _config,
@@ -701,6 +699,27 @@ public class Server
                             injectionParameters.Add(parsedType);
                         }
 
+                        if (parameters.Length != methodParameters.Count())
+                        {
+                            //method has parameters that are not noted by decorators, we will try to inject req and res if those are needed
+                            foreach (var parameter in parameters)
+                            {
+                             
+                                if (parameter.ParameterType == typeof(Request))
+                                {
+                                    injectionParameters.Add(req);
+                                }
+                                else if (parameter.ParameterType == typeof(Response))
+                                {
+                                    injectionParameters.Add(res);
+                                }
+                                else
+                                {
+                                    injectionParameters.Add(new object()); //fall back
+                                }
+                            }
+                        }
+
                         switch (parameters.Length)
                         {
                             case 0:
@@ -709,17 +728,10 @@ public class Server
                             default:
                                 route.MethodInfo.Invoke(instance, injectionParameters.ToArray());
                                 break;
-                            /*default:
-                                _config.Debug.ERROR(
-                                    $"Invalid number of parameters for route {req.Url} in controller {tipo.Name}");
-                                new Error(res, _config,
-                                        "Internal Server Error: Invalid route configuration",
-                                        HttpCodes.INTERNAL_SERVER_ERROR)
-                                    .Throw();
-                                break;*/
                         }
 
                         return;
+
                     default:
                         Console.WriteLine(o.GetType());
                         throw new Exception($"Developer tried to map an invalid object to a route -> {o.GetType()}");
@@ -745,11 +757,6 @@ public class Server
                         new Index(res, _config).Get();
                     }
                 }
-                else if (_config.DocumentationPath != "" && _config.DocumentationPath == req.Url)
-                {
-                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Documentation Page)");
-                    new Documentation(res, _config).Get();
-                }
                 else
                 {
                     //we check if the client is requesting a resource, else 404 not found
@@ -771,7 +778,8 @@ public class Server
                              ResourceUtils.IsEmbeddedResource(req.Url, _config.EmbeddedResourcePrefix))
                     {
                         _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Embedded resource)");
-                        object resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix) ?? throw new Exception("Resource not found");
+                        object resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix) ??
+                                          throw new Exception("Resource not found");
                         res.SendObject(resource, req.Url);
                     }
                     else
@@ -818,6 +826,23 @@ public class Server
 
         _config.Debug.INFO("Collecting routes...");
 
+
+        //express routes are now treated equally to controller routes
+        _routes.AddRange(_config.ExpressRoutes.Select(r => new Map()
+        {
+            Path = r.Path,
+            SubRoutes =
+            [
+                new RoutableMethod()
+                {
+                    Delegate = r.Delegate,
+                    HttpMethod = r.HttpMethod,
+                    Path = "/"
+                }
+            ]
+        }));
+
+
         string[] excludeList = ["System", "Microsoft", "Internal", "HSB"];
 
         var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -852,7 +877,7 @@ public class Server
                 var routeAttr = m.GetCustomAttribute<Route>(true);
                 if (routeAttr == null) continue;
                 var logStr =
-                    $"ROUTE | {Terminal.FG_TO_STRING(FgColor.GREEN)}{routeAttr.Method}{Terminal.RESET} -> {Terminal.FG_TO_STRING(FgColor.YELLOW)}{attr.Path}{routeAttr.Path}{Terminal.RESET} {m.Name}";
+                    $"ROUTE | {Terminal.FG_TO_STRING(FgColor.Green)}{routeAttr.Method}{Terminal.RESET} -> {Terminal.FG_TO_STRING(FgColor.Yellow)}{attr.Path}{routeAttr.Path}{Terminal.RESET} {m.Name}";
                 _config.Debug.INFO(logStr);
 
                 map.SubRoutes.Add(new RoutableMethod()
@@ -865,5 +890,16 @@ public class Server
 
             _routes.Add(map);
         }
+    }
+
+
+    public List<Map> GetRoutes()
+    {
+        return _routes;
+    }
+
+    public Configuration GetConfiguration()
+    {
+        return _config;
     }
 }

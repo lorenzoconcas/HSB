@@ -124,7 +124,7 @@ public class ExampleController
     [Route("/test", HttpMethod.Get)]
     private void TestClassReqAndRes()
     {
-        Terminal.INFO(res);
+        Terminal.Info(res);
         res?.JSON(new
         {
             message = "Hello, this is a custom route with PUT method!",

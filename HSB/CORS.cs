@@ -1,6 +1,6 @@
 using System.Text.Json;
 namespace HSB;
-public class CORS
+public class Cors
 {
     List<string> allowedOrigins = [];
     List<string> allowedMethods = [];
@@ -12,7 +12,7 @@ public class CORS
     public List<string> AllowedHeaders { get => allowedHeaders; set => allowedHeaders = value; }
     public List<string> ExposedHeaders { get => exposedHeaders; set => exposedHeaders = value; }
 
-    public CORS(List<string> origins, List<string> methods, List<string> headers, List<string> exposed)
+    public Cors(List<string> origins, List<string> methods, List<string> headers, List<string> exposed)
     {
         allowedOrigins = origins;
         allowedMethods = methods;
@@ -20,7 +20,7 @@ public class CORS
         exposedHeaders = exposed;
     }
 
-    public CORS()
+    public Cors()
     {
 
     }
@@ -56,9 +56,9 @@ public class CORS
         return exposedHeaders.Contains(header);
     }
 
-    public static CORS FromJSON(JsonElement json)
+    public static Cors FromJson(JsonElement json)
     {
-        var cors = new CORS();
+        var cors = new Cors();
         if (json.TryGetProperty("allowedOrigins", out var allowedOrigins))
         {
             foreach (var origin in allowedOrigins.EnumerateArray())
@@ -83,16 +83,13 @@ public class CORS
         }
         if (json.TryGetProperty("allowedHeaders", out var allowedHeaders))
         {
-            foreach (var header in allowedHeaders.EnumerateArray())
+            foreach (var headerString in allowedHeaders.EnumerateArray().Select(header => header.GetString()).OfType<string>())
             {
-                string? headerString = header.GetString();
-                if (headerString != null)
-                {
-                    cors.AllowedHeaders.Add(headerString);
-                }
+                cors.AllowedHeaders.Add(headerString);
             }
         }
-        if (json.TryGetProperty("exposedHeaders", out var exposedHeaders))
+
+        if (!json.TryGetProperty("exposedHeaders", out var exposedHeaders)) return cors;
         {
             foreach (var header in exposedHeaders.EnumerateArray())
             {

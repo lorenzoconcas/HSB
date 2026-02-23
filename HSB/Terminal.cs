@@ -2,27 +2,27 @@
 {
     public enum BgColor
     {
-        DEFAULT,
-        BLACK,
-        RED,
-        GREEN,
-        YELLOW,
-        BLUE,
-        MAGENTA,
-        CYAN,
-        WHITE
+        Default,
+        Black,
+        Red,
+        Green,
+        Yellow,
+        Blue,
+        Magenta,
+        Cyan,
+        White
     }
     public enum FgColor
     {
-        DEFAULT,
-        BLACK,
-        RED,
-        GREEN,
-        YELLOW,
-        BLUE,
-        MAGENTA,
-        CYAN,
-        WHITE
+        Default,
+        Black,
+        Red,
+        Green,
+        Yellow,
+        Blue,
+        Magenta,
+        Cyan,
+        White
     }
 
     public static class Terminal
@@ -35,7 +35,7 @@
          private static string REVERSE = "\e[7m";
          private static string HIDDEN = "\e[8m";*/
 
-        public static void Write<T>(T o, BgColor background = BgColor.DEFAULT, FgColor foreground = FgColor.DEFAULT)
+        public static void Write<T>(T o, BgColor background = BgColor.Default, FgColor foreground = FgColor.Default)
         {
 
             Console.Write(BG_TO_STRING(background));
@@ -43,7 +43,7 @@
             Console.Write(o);
             Console.Write(RESET);
         }
-        public static void WriteLine<T>(T o, BgColor background = BgColor.DEFAULT, FgColor foreground = FgColor.DEFAULT)
+        public static void WriteLine<T>(T o, BgColor background = BgColor.Default, FgColor foreground = FgColor.Default)
         {
 
             Console.Write(BG_TO_STRING(background));
@@ -63,24 +63,24 @@
         {
             Console.Write(o);
         }
-        public static void INFO<T>(T o, bool printExtraInfo = false)
+        public static void Info<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, $"{FG_TO_STRING(FgColor.BLUE)}I{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
+            Log(o, $"{FG_TO_STRING(FgColor.Blue)}I{RESET}", FgColor.White, BgColor.Default, printExtraInfo);
         }
-        public static void WARNING<T>(T o, bool printExtraInfo = false)
+        public static void Warning<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, $"{FG_TO_STRING(FgColor.YELLOW)}W{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
+            Log(o, $"{FG_TO_STRING(FgColor.Yellow)}W{RESET}", FgColor.White, BgColor.Default, printExtraInfo);
         }
-        public static void ERROR<T>(T o, bool printExtraInfo = false)
+        public static void Error<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, $"{FG_TO_STRING(FgColor.RED)}E{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
+            Log(o, $"{FG_TO_STRING(FgColor.Red)}E{RESET}", FgColor.White, BgColor.Default, printExtraInfo);
         }
-        public static void DEBUG<T>(T o, bool printExtraInfo = false)
+        public static void Debug<T>(T o, bool printExtraInfo = false)
         {
-            LOG(o, $"{FG_TO_STRING(FgColor.GREEN)}I{RESET}", FgColor.WHITE, BgColor.DEFAULT, printExtraInfo);
+            Log(o, $"{FG_TO_STRING(FgColor.Green)}I{RESET}", FgColor.White, BgColor.Default, printExtraInfo);
         }
-        private static void LOG<T>(T o, string lvl, FgColor foreground,
-            BgColor background = BgColor.BLACK, bool printExtraInfo = false)
+        private static void Log<T>(T o, string lvl, FgColor foreground,
+            BgColor background = BgColor.Black, bool printExtraInfo = false)
         {
             if (printExtraInfo)
             {
@@ -99,7 +99,7 @@
         {
             Console.Write(RESET);
         }
-        public static void StartColor(BgColor background = BgColor.DEFAULT, FgColor foreground = FgColor.DEFAULT)
+        public static void StartColor(BgColor background = BgColor.Default, FgColor foreground = FgColor.Default)
         {
             Console.WriteLine(BG_TO_STRING(background));
             Console.WriteLine(FG_TO_STRING(foreground));
@@ -113,28 +113,28 @@
 
         public static string BG_TO_STRING(BgColor color) => color switch
         {
-            BgColor.DEFAULT => "",
-            BgColor.BLACK => "\e[40m",
-            BgColor.RED => "\e[41m",
-            BgColor.GREEN => "\e[42m",
-            BgColor.YELLOW => "\e[43m",
-            BgColor.BLUE => "\e[44m",
-            BgColor.MAGENTA => "\e[45m",
-            BgColor.CYAN => "\e[46m",
-            BgColor.WHITE => "\e[47m",
+            BgColor.Default => "",
+            BgColor.Black => "\e[40m",
+            BgColor.Red => "\e[41m",
+            BgColor.Green => "\e[42m",
+            BgColor.Yellow => "\e[43m",
+            BgColor.Blue => "\e[44m",
+            BgColor.Magenta => "\e[45m",
+            BgColor.Cyan => "\e[46m",
+            BgColor.White => "\e[47m",
             _ => ""
         };
         public static string FG_TO_STRING(FgColor color) => color switch
         {
-            FgColor.DEFAULT => "",
-            FgColor.BLACK => "\e[30m",
-            FgColor.RED => "\e[31m",
-            FgColor.GREEN => "\e[32m",
-            FgColor.YELLOW => "\e[33m",
-            FgColor.BLUE => "\e[34m",
-            FgColor.MAGENTA => "\e[35m",
-            FgColor.CYAN => "\e[36m",
-            FgColor.WHITE => "\e[37m",
+            FgColor.Default => "",
+            FgColor.Black => "\e[30m",
+            FgColor.Red => "\e[31m",
+            FgColor.Green => "\e[32m",
+            FgColor.Yellow => "\e[33m",
+            FgColor.Blue => "\e[34m",
+            FgColor.Magenta => "\e[35m",
+            FgColor.Cyan => "\e[36m",
+            FgColor.White => "\e[37m",
             _ => ""
         };
     }

@@ -48,7 +48,7 @@ public class Debugger
     {
         if (enabled)
         {
-            Terminal.DEBUG("Debug server has not been written yet");
+            Terminal.Debug("Debug server has not been written yet");
             //The writing of this feature is complex as is the rest of the entire project
         }
     }
@@ -74,7 +74,7 @@ public class Debugger
     public void ERROR<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
-            Terminal.ERROR(o, printExtraInfo);
+            Terminal.Error(o, printExtraInfo);
         if ((int) logLevel > (int) LogLevel.Error || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
         AppendToFile(GetMessage("W", msg));
@@ -83,7 +83,7 @@ public class Debugger
     public void WARNING<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
-            Terminal.WARNING(o, printExtraInfo);
+            Terminal.Warning(o, printExtraInfo);
 
         if ((int) logLevel > (int) LogLevel.Warning || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
@@ -93,7 +93,7 @@ public class Debugger
     public void INFO<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
-            Terminal.INFO(o, printExtraInfo);
+            Terminal.Info(o, printExtraInfo);
 
         if ((int) logLevel > (int) LogLevel.Info || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
@@ -103,7 +103,7 @@ public class Debugger
     public void DEBUG<T>(T o, bool printExtraInfo = true)
     {
         if (verbose)
-            Terminal.DEBUG(o, printExtraInfo);
+            Terminal.Debug(o, printExtraInfo);
         if (logLevel != LogLevel.All || logLevel <= 0 || o == null) return;
         var msg = o.ToString() ?? "";
         AppendToFile(GetMessage("D", msg));

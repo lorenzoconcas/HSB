@@ -6,7 +6,7 @@
             string msg = $"The configuration contains an invalid parameter : {parameterName}";
             if(reason != null)
                 msg += "\nReason:" + reason ;
-            Terminal.ERROR(msg);
+            Terminal.Error(msg);
         }
     }
 }

@@ -72,7 +72,7 @@ c.Get("/", (Request req, Response res) =>
         //48 65 6C 6C 6F 20 66 72 6F 6D 20 74 68 65 20 48 53 42 2D 23
         //H  e  l  l  o  [] f  r  o  m  []  t  h  e [] H  S  B  -  # 
         //bytes count : 20
-        Terminal.INFO("HelloMessage: " + helloMessage);
+        Terminal.Info("HelloMessage: " + helloMessage);
         socket.Send(helloMessage.Build());
 
 
@@ -90,14 +90,14 @@ c.Get("/", (Request req, Response res) =>
 
                 switch(f.GetOpcode()){
                     case Opcode.CLOSE:{
-                        Terminal.INFO("Closing connection websocket");
+                        Terminal.Info("Closing connection websocket");
                         socket.Close();
                         return;
                     }
                     case Opcode.BINARY:{
-                        Terminal.INFO("Received a binary frame: " + f);
+                        Terminal.Info("Received a binary frame: " + f);
                         var payload = f.GetPayload();
-                        Terminal.INFO("Payload: 0x" + BitConverter.ToString(payload).Replace("-", " 0x"));
+                        Terminal.Info("Payload: 0x" + BitConverter.ToString(payload).Replace("-", " 0x"));
                         return;
                     }
                     case Opcode.TEXT:{
@@ -105,8 +105,8 @@ c.Get("/", (Request req, Response res) =>
                         
                         var payload = f.GetPayload();
                         var str = Encoding.UTF8.GetString(payload);
-                        Terminal.INFO("Received a text frame: " + f);
-                        Terminal.INFO("Content: " + payload);
+                        Terminal.Info("Received a text frame: " + f);
+                        Terminal.Info("Content: " + payload);
                         //Send server echo!
                         Frame echo = new();
                         echo.SetPayload("server echo: " + str);

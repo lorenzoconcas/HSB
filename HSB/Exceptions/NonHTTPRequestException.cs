@@ -4,6 +4,6 @@ public class NonHttpRequestException: Exception
 {
     public NonHttpRequestException(string message = "") : base(message)
     {
-        Terminal.ERROR("Client attempted non-HTTP request: " + message);
+        Terminal.Error("Client attempted non-HTTP request: " + message);
     }
 }

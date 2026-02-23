@@ -4,7 +4,7 @@ public class InvalidHttpCodeException : Exception
 {
     public InvalidHttpCodeException(int code)
     {
-        Terminal.ERROR($"Invalid HTTP redirection code -> {code}");
+        Terminal.Error($"Invalid HTTP redirection code -> {code}");
     }
 }
 

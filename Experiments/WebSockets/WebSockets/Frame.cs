@@ -141,12 +141,12 @@ public class Frame
         };
         if (ExtendedPayloadLength != null) //two bytes
         {
-            Terminal.INFO("This message has an extended payload length of 2 bytes");
+            Terminal.Info("This message has an extended payload length of 2 bytes");
             bytes.AddRange(ExtendedPayloadLength);
         }
         if (Mask)
         {
-            Terminal.INFO("This message has a mask, is this normal?");
+            Terminal.Info("This message has a mask, is this normal?");
             bytes.AddRange(MaskingKey ?? Array.Empty<byte>());
         }
         if (PayloadData != null) //some frames don't have a payload, like close frame and ping/pong frames

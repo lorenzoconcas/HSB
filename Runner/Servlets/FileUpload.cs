@@ -57,7 +57,7 @@ public class FileUpload(Request req, Response res) : Servlet(req, res)
                     foreach (var f in files)
                     {
                         f.SaveToDisk(savePath);
-                        Terminal.INFO(f);
+                        Terminal.Info(f);
                     }
                 }
                 res.SendFile(files.First()); //send first file to che client

@@ -8,19 +8,19 @@ public class WebSocketHandler(Request req, Response res, Configuration c) : WebS
 {
     public override void OnOpen()
     {
-        Terminal.INFO("New websocket connection opened");
+        Terminal.Info("New websocket connection opened");
     }
 
     public override void OnMessage(Message msg)
     {
         //echo the message
-        Terminal.DEBUG($"Got message : {msg.GetMessage()}");
+        Terminal.Debug($"Got message : {msg.GetMessage()}");
         Send(msg.GetMessage());
     }
 
     public override void OnClose()
     {
-        Terminal.INFO("Websocket disconnected");
+        Terminal.Info("Websocket disconnected");
     }
 
 }

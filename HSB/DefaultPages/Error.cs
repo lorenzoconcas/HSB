@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using HSB.Utils;
+using HSB.Utils.HtmlUtils;
 
 namespace HSB;
 
@@ -10,13 +11,23 @@ public class Error(Response res, Configuration config, string errorMessage, int 
 
     public void Throw()
     {
+
+        var builder = new PageBuilder(errorCode.ToString());
+        
+        builder.AddCard(errorCode.ToString(), errorMessage,  PageBuilder.GetFooterString(config));
+        
+        res.SendHTMLContent(builder.Render(), statusCode: errorCode);
+        return;
+        
+        
+/*
 #if DEBUG
         var debugMode = true;
 #else
         var debugMode = false;
 #endif
 
-        var title = $"Error {errorCode}";
+        var title = $"{errorCode}";
         var content = "";
 
         switch (errorCode)
@@ -36,7 +47,7 @@ public class Error(Response res, Configuration config, string errorMessage, int 
         }
 
 
-        Send(title, content, errorCode);
+        Send(title, content, errorCode);*/
     }
 
     private string GetStacktracePage() => "Stacktrace:<br>" + errorMessage.Replace("\n", "<br>");
@@ -48,6 +59,9 @@ public class Error(Response res, Configuration config, string errorMessage, int 
 
     private void Send(string title, string msg, int statusCode)
     {
+        
+        
+        
         var page = ResourceUtils.LoadResourceAsString("error.html");
 
         var version = "v";
@@ -57,18 +71,7 @@ public class Error(Response res, Configuration config, string errorMessage, int 
         }
 
         var footerDiv = "";
-        var serverName = "";
-        if (config.CustomServerName != "")
-        {
-            serverName = config.CustomServerName;
-        }
-        else
-        {
-            serverName = "HSB<sup>#</sup>";
-            var currentYear = DateTime.Now.Year;
-            footerDiv = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
-        }
-
+        var serverName = PageBuilder.GetFooterString(config);
         res.AddAttribute("page_title", "Error " + errorCode);
         res.AddAttribute("serverName", serverName);
         res.AddAttribute("footer_div", footerDiv);

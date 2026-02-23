@@ -1,20 +1,11 @@
 ﻿using HSB.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using HSB.Components.Controller;
-using HSB.Utils;
+using HSB.Utils.HtmlUtils;
 
 namespace HSB.DefaultPages;
 
-
-public class FileList(Request req, Response res, Configuration configuration) 
+public class FileList(Request req, Response res, Configuration configuration)
 {
-    
     public void Get()
     {
         //since this mode bypasses normal error handling we must handle them manually
@@ -33,11 +24,11 @@ public class FileList(Request req, Response res, Configuration configuration)
 
 
             /*
-             * If path == / -> list files and folders of the cd (Environment.CurrentDirectory
+             * If path == / -> list files and folders of the cd (Environment.CurrentDirectory)
              * If path == / + subdirectory -> list file of subdirectory
              * if path == / + file -> download
-             * 
-             * Disk path == cd + requested path (url), if url starts with .., we remove it before concatenating with cd
+             *
+             * Disk path == cd + requested path (url), if url starts with "..", we remove it before concatenating with cd
              */
 
 
@@ -52,20 +43,18 @@ public class FileList(Request req, Response res, Configuration configuration)
                 return;
             }
 
-            var filelist = "";
+            var fileList = "";
             if (req.Url != "/")
             {
-                filelist = "<div class='row'><a href='/'>.</a><br/></div>";
-                filelist += $"<div class='row'><a href='{Path.GetRelativePath(cd, cwd)}'>..</a></br/></div>";
+                fileList = "<div class='row'><a href='/'>.</a><br/></div>";
+                fileList += $"<div class='row'><a href='{Path.GetRelativePath(cd, cwd)}'>..</a></br/></div>";
                 cwd = Path.Combine(cd, url[1..]);
             }
-
 
 
             //if requested path is directory -> list files
             if (Directory.Exists(cwd))
             {
-
                 configuration.Debug.INFO($"{req.Method} '{url}' 200");
                 List<string> items = [.. Directory.GetDirectories(cwd)];
                 items.AddRange(Directory.GetFiles(cwd).ToList());
@@ -73,42 +62,28 @@ public class FileList(Request req, Response res, Configuration configuration)
                 {
                     var filename = Path.GetFileName(i);
                     var relativePath = i.Replace(cd, ""); //the path is relative to the current directory (cd)
-                    filelist += $"<div class='row'><a href='{relativePath}'>{filename}</a></div>";
+                    fileList += $"<div class='row'><a href='{relativePath}'>{filename}</a></div>";
                 }
 
+                var content = $"""
+                               <div class="scrollable-list">
+                                {fileList}
+                               </div>
+                               """;
 
 
-                string version = "";
-                if (Assembly.GetExecutingAssembly().GetName().Version != null)
-                {
-                    version = "v" + Assembly.GetExecutingAssembly().GetName().Version!.ToString();
-                }
+                var folder = rootRequested ? " / " : url[1..];
+                var title = $"Directory listing for {folder}";
+                var builder = new PageBuilder(title);
+                builder.AddCard(
+                    title,
+                    content,
+                    PageBuilder.GetFooterString(configuration)
+                );
 
 
-                string footer_div;
-                string server_name;
-                if (configuration.CustomServerName != "")
-                {
-                    server_name = configuration.CustomServerName;
-                    footer_div = "";
-                }
-                else
-                {
-
-                    var currentYear = DateTime.Now.Year;
-                    footer_div = $"<div class=\"footer\">Copyright &copy; 2021-{currentYear} Lorenzo L. Concas</div>";
-                    server_name = "HSB<sup>#</sup>";
-                }
-                res.AddAttribute("folder", rootRequested ? " / " : url[1..]);
-                res.AddAttribute("items", filelist);
-                res.AddAttribute("footer_div", footer_div);
-                res.AddAttribute("serverName", server_name);
-                res.AddAttribute("footer_div", footer_div);
-                res.AddAttribute("hsbVersion", version);
-                res.AddAttribute("footerExtra", "- File Listing Mode");
-                var page = ResourceUtils.LoadResourceAsString("filelisting.html");
-                res.SendHTMLContent(page, true);
-                return;
+                res.SendHTMLContent(builder.Render());
+                
             }
 
             configuration.Debug.INFO($"{req.Method} '{url}' 404 (Resource not found)");

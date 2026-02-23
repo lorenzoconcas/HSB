@@ -12,15 +12,15 @@ public class Module
     /// by default is set to 0 and is considered empty
     /// the higher the value, the higher the priority
     /// </summary>
-    private readonly int priority;
-
+    private readonly uint priority;
+    
 
     public Module()
     {
-        this.priority = -1;
+        this.priority = 0;
     }
 
-    public int Priority
+    public uint Priority
     {
         get { return priority; }
     }

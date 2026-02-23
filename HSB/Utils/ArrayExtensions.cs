@@ -4,9 +4,9 @@ public static class ArrayExtensions
 {
     private static int[] ComputeFailure(byte[] sequence)
     {
-        int[] failure = new int[sequence.Length];
-        int j = 0;
-        for (int i = 1; i < sequence.Length; i++)
+        var failure = new int[sequence.Length];
+        var j = 0;
+        for (var i = 1; i < sequence.Length; i++)
         {
             while (j > 0 && sequence[j] != sequence[i])
             {

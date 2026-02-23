@@ -197,7 +197,7 @@ public class SslConfiguration
         }
         catch (Exception e)
         {
-            Terminal.ERROR("Error while parsing SslSettings property: " + lastProp + " " + e.Message);
+            Terminal.Error("Error while parsing SslSettings property: " + lastProp + " " + e.Message);
             return new SslConfiguration();
         }
     }
@@ -236,17 +236,17 @@ public class SslConfiguration
         }
         catch
         {
-            Terminal.ERROR($"❌ Openssl is not installed (exception), cannot continue", true);
+            Terminal.Error($"❌ Openssl is not installed (exception), cannot continue", true);
             return false;
         }
 
         if (process.ExitCode != 0)
         {
-            Terminal.ERROR($"❌ Openssl is not installed, cannot continue ({process.ExitCode})", true);
+            Terminal.Error($"❌ Openssl is not installed, cannot continue ({process.ExitCode})", true);
             return false;
         }
 
-        Terminal.DEBUG("Openssl is installed", true);
+        Terminal.Debug("Openssl is installed", true);
 
         return true;
     }
@@ -274,16 +274,16 @@ public class SslConfiguration
         }
         else //create folder if not exists
         {
-            Terminal.DEBUG("Creating debug certificate folder", true);
+            Terminal.Debug("Creating debug certificate folder", true);
             try
             {
                 DirectoryInfo dirInfo = Directory.CreateDirectory(DEBUG_CERT_FOLDER_PATH);
 
-                Terminal.DEBUG($"Debug certificate folder created at {dirInfo.FullName}", true);
+                Terminal.Debug($"Debug certificate folder created at {dirInfo.FullName}", true);
             }
             catch (Exception e)
             {
-                Terminal.ERROR($"Cannot create debug certificate folder: {e.Message}", true);
+                Terminal.Error($"Cannot create debug certificate folder: {e.Message}", true);
                 return false;
             }
         }
@@ -349,12 +349,12 @@ public class SslConfiguration
 
             if (process.ExitCode != 0)
             {
-                Terminal.WARNING($"Openssl error, certificate has not been created", true);
+                Terminal.Warning($"Openssl error, certificate has not been created", true);
                 return false;
             }
         }
 
-        Terminal.DEBUG($"Debug certificate (OPENSSL) created successfully", true);
+        Terminal.Debug($"Debug certificate (OPENSSL) created successfully", true);
         return true;
     }
 

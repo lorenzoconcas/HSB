@@ -10,7 +10,6 @@ namespace HSB.Components.WebSockets;
 
 public class WebSocket(Request req, Response res, Configuration? c = null)
 {
-
     private static JsonSerializerOptions jo = new()
     {
         MaxDepth = 0
@@ -25,13 +24,16 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
     private WebSocketState state = WebSocketState.CLOSED;
 
     #region Acceptance Requirements
+
     Dictionary<string, string> requiredHeaders = [];
     Dictionary<string, string> requiredParams = [];
     string bearerToken = "";
     string oAuth2Token = "";
     Tuple<string, string>? basicAuth = null;
     OAuth10Information? oAuth1_0Information = null;
+
     #endregion
+
     private byte[] messageSentOnOpen = [];
 
     /// <summary>
@@ -46,13 +48,13 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 Encoding.UTF8.GetBytes(key + WebSocketsContants.WS_GUID)
             ));
     }
+
     /// <summary>
     /// Accept the ws connection request
     /// </summary>
     /// <returns></returns>
     private bool Accept()
     {
-
         if (!req.IsWebSocket()) //not a websocket request, we cannot do anything here
         {
             c?.Debug.WARNING("Not a websocket request, this code should never be reached");
@@ -83,6 +85,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 }
             }
         }
+
         //same for parameters
         if (requiredParams.Count > 0)
         {
@@ -96,16 +99,18 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 }
             }
         }
+
         //if an authentication method is set, check if it is correct
         if (bearerToken != "")
         {
-            if (!headers.TryGetValue("Authorization", out string? value) || value != $"Bearer {bearerToken}")
+            if (!headers.TryGetValue("Authorization", out var value) || value != $"Bearer {bearerToken}")
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
                 return false;
             }
         }
+
         if (oAuth2Token != "")
         {
             if (!headers.TryGetValue("Authorization", out string? value) || value != $"OAuth {oAuth2Token}")
@@ -115,6 +120,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 return false;
             }
         }
+
         if (basicAuth != null)
         {
             var bAuth = req.GetBasicAuthInformation();
@@ -125,10 +131,11 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                 return false;
             }
         }
+
         if (oAuth1_0Information != null)
         {
             var oAuth1 = req.GetOAuth1_0Information();
-            if (oAuth1 == null || oAuth1.Equals(oAuth1))
+            if (oAuth1 == null)
             {
                 c?.Debug.WARNING($"Missing or incorrect Authorization header");
                 res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
@@ -143,7 +150,8 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
         var clientVersion = headers["Sec-WebSocket-Version"];
 
         var key = DigestKey(clientKey);
-        List<string> response = [
+        List<string> response =
+        [
             "HTTP/1.1 101 Switching Protocols\r\n",
             "Upgrade: websocket\r\n",
             "Connection: Upgrade\r\n",
@@ -171,18 +179,15 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
         }
 
 
-        new Task(() =>
-        {
-            OnOpen();
-        }).Start();
+        new Task(() => { OnOpen(); }).Start();
 
         return true;
     }
-  
+
     private void MessageLoop()
     {
         //todo add error loop detection
-        int errorCount = 0;
+        var errorCount = 0;
         var buffer = new byte[Configuration.KILOBYTE * 32];
 
         //  while (state == WebSocketState.OPEN && errorCount < 10)
@@ -192,13 +197,14 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             if (state == WebSocketState.OPEN)
                 socket?.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((IAsyncResult ar) =>
                 {
-                    var socket = (Socket?)ar.AsyncState;
+                    var socket = (Socket?) ar.AsyncState;
                     if (socket == null)
                     {
-                        Terminal.DEBUG("socket is null??");
+                        Terminal.Debug("socket is null??");
                         errorCount++;
                         return;
                     }
+
                     int received = 0;
                     try
                     {
@@ -206,15 +212,17 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                     }
                     catch (Exception e)
                     {
-                        Terminal.DEBUG("WS Exception " + e.Message);
+                        Terminal.Debug("WS Exception " + e.Message);
                         return;
                     }
+
                     if (received < 2)
                     {
                         //Terminal.DEBUG("wrong data length?? -> " + received);
                         errorCount++;
                         return;
                     }
+
                     Frame f = new(buffer[..received]);
                     Opcode opcode = f.GetOpcode();
 
@@ -237,11 +245,16 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
                             break;
                         case Opcode.TEXT:
                         case Opcode.BINARY:
-                            {
-                                OnMessage(new(f));
-                                break;
-                            }
+                        {
+                            OnMessage(new(f));
+                            break;
+                        }
+                        case Opcode.CONTINUATION:
+                        default:
+                            break;
+                        //ignore
                     }
+
                     MessageLoop(); //speriamo che lo stack regga
                 }), socket);
         }
@@ -254,7 +267,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
     }
 
 
-    //this is should be use only by HSB/Server.cs or HSB/Configuration.cs
+    //this should be use only by HSB/Server.cs or HSB/Configuration.cs
     internal void Process()
     {
         var frame = new System.Diagnostics.StackTrace().GetFrame(1);
@@ -271,7 +284,9 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             new Thread(MessageLoop).Start();
         }
     }
+
     #region PUBLIC METHODS
+
     /// <summary>
     /// Sets a message to be sent to the client when the connection is open
     /// </summary>
@@ -280,6 +295,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
     {
         messageSentOnOpen = data;
     }
+
     /// <summary>
     /// Sends a message to the client when the connection is open
     /// </summary>
@@ -298,6 +314,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             throw new Exception("WebSocket is not connected");
         }
     }
+
     /// <summary>
     /// Sends a message to the client when the connection is open
     /// </summary>
@@ -318,6 +335,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             throw new Exception("WebSocket is not connected");
         }
     }
+
     public void Send(Message msg)
     {
         if (state == WebSocketState.OPEN)
@@ -330,13 +348,13 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             socket?.Send(f.Build());
             //destroy frame
             f.Dispose();
-
         }
         else
         {
             throw new Exception("WebSocket is not connected");
         }
     }
+
     /// <summary>
     /// Sends an object to the client as a json string
     /// </summary>
@@ -360,6 +378,7 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             throw new Exception("WebSocket is not connected");
         }
     }
+
     /// <summary>
     /// Closes the websocket connection
     /// </summary>
@@ -406,8 +425,8 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
         this.oAuth2Token = oAuth2Token;
         this.basicAuth = basicAuth;
         this.oAuth1_0Information = oAuth1_0Information;
-
     }
+
     /// <summary>
     /// Returns the current state of the websocket
     /// </summary>
@@ -416,20 +435,32 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
     {
         return state;
     }
+
     #endregion
+
     #region EVENTS
+
     /// <summary>
     /// OnMessage is called when a message is received from the client
     /// </summary>
     /// <param name="msg"></param>
-    public virtual void OnMessage(Message msg) { }
+    public virtual void OnMessage(Message msg)
+    {
+    }
+
     /// <summary>
     /// OnOpen is called after a connection request is received from the client
     /// </summary>
-    public virtual void OnOpen() { }
+    public virtual void OnOpen()
+    {
+    }
+
     /// <summary>
     /// OnClose is called after a close request is received from the client, to directly close the connection use Close()
     /// </summary>
-    public virtual void OnClose() { }
+    public virtual void OnClose()
+    {
+    }
+
     #endregion
 }

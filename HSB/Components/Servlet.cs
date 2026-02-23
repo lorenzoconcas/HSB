@@ -146,7 +146,7 @@ public class Servlet
                 }
                 if (CustomMethodsMap.ContainsKey(req.RawMethod.ToUpper()))
                 {
-                    Terminal.INFO($"Custom method requested for route '{req.Url}'", true);
+                    Terminal.Info($"Custom method requested for route '{req.Url}'", true);
                     CustomMethodsMap[req.RawMethod].DynamicInvoke(req, res);
                     return;
                 }
@@ -157,7 +157,7 @@ public class Servlet
                     return;
                 }
 
-                Terminal.ERROR($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}",
+                Terminal.Error($"Can't process request, unknown HTTP method or malformed request : {req.GetRawRequest}",
                     true);
                 res.SendCode(HttpCodes.METHOD_NOT_ALLOWED);
                 break;

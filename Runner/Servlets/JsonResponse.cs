@@ -1,6 +1,6 @@
 ﻿using System;
 using HSB;
-using Runner.RunnerModels;
+using Runner.Models;
 
 namespace Runner
 {

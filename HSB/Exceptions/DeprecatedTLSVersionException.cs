@@ -7,7 +7,7 @@ public class DeprecatedTLSVersionException : Exception
 {
     public DeprecatedTLSVersionException(TLSVersion version)
     {
-        Terminal.ERROR($"Deprecated TLS version -> {version}");
+        Terminal.Error($"Deprecated TLS version -> {version}");
     }
 
 }

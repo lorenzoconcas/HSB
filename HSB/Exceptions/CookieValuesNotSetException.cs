@@ -4,6 +4,6 @@ public class CookieValuesNotSetException : Exception
 {
     public CookieValuesNotSetException()
     {
-        Terminal.ERROR("Cookie values not set!");
+        Terminal.Error("Cookie values not set!");
     }
 }

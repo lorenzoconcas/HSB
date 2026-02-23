@@ -7,11 +7,11 @@ public static class CliUtils
     public static void PrintLogo()
     {
         Terminal.Write("Welcome to ");
-        Terminal.Write("H", BgColor.DEFAULT, FgColor.RED);
-        Terminal.Write("S", BgColor.DEFAULT, FgColor.GREEN);
-        Terminal.Write("B", BgColor.DEFAULT, FgColor.BLUE);
-        Terminal.Write("-", BgColor.DEFAULT, FgColor.WHITE);
-        Terminal.Write("#", BgColor.DEFAULT, FgColor.YELLOW);
+        Terminal.Write("H", BgColor.Default, FgColor.Red);
+        Terminal.Write("S", BgColor.Default, FgColor.Green);
+        Terminal.Write("B", BgColor.Default, FgColor.Blue);
+        Terminal.Write("-", BgColor.Default, FgColor.White);
+        Terminal.Write("#", BgColor.Default, FgColor.Yellow);
         Terminal.Write(" (Http Server Boxed)");
         Terminal.Write($" v{Assembly.GetExecutingAssembly().GetName().Version}");
         Terminal.WriteLine($" - PID {Environment.ProcessId}");

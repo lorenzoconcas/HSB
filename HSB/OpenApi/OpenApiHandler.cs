@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Reflection;
 using HSB.OpenApi.Attributes;
 using HSB.OpenApi.models;
@@ -7,51 +6,11 @@ using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB.OpenApi;
 
-public class OpenApiBuilder(Configuration configuration, List<Map> routes)
+public static class OpenApiBuilder
 {
-    public void Init()
-    {
-        switch (configuration.OpenApiSettings.Mode)
-        {
-            case Mode.Disabled: return;
-            case Mode.SwaggerOnly:
-                BuildOpenApiYaml();
-                SetEndpoints();
-                break;
-            case Mode.FileOnly:
-                BuildOpenApiYaml();
-                File.WriteAllText(configuration.OpenApiSettings.FilePath,
-                    configuration.GetSharedObject("openapi.json") as string);
-                break;
-            case Mode.Full:
-                BuildOpenApiYaml();
-                SetEndpoints();
-                File.WriteAllText(configuration.OpenApiSettings.FilePath,
-                    configuration.GetSharedObject("openapi.json") as string);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+    
 
-    private void SetEndpoints()
-    {
-        configuration.Get("/openapi.json", (Request request, Response res) =>
-        {
-            var openApiJson = configuration.GetSharedObject("openapi.json");
-            res.SendObject(openApiJson, "openapi.json", 200, "application/json");
-            //send the openapi.yaml file
-            //res.SendFile("openapi.json", "application/json");
-        });
-        configuration.Get(configuration.OpenApiSettings.Path, (Request Request, HSB.Response res) =>
-        {
-            var page = ResourceUtils.LoadResource<string>("swagger_ui.html") ??
-                       throw new Exception("Resource not found");
-            res.SendHTMLContent(page);
-        });
-    }
-
-    private Dictionary<string, PathItem> GetPaths()
+    private static Dictionary<string, PathItem> GetPaths(List<Map> routes)
     {
         var paths = new Dictionary<string, PathItem>();
 
@@ -95,7 +54,7 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
         return paths;
     }
 
-    private Dictionary<string, Schema> CollectAllResponseModels()
+    private static Dictionary<string, Schema> CollectAllResponseModels()
     {
         string[] excludeList = ["System", "Microsoft", "Internal", "HSB"];
         var assemblies = AppDomain.CurrentDomain.GetAssemblies()
@@ -175,13 +134,13 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
     }
 
 
-    private void BuildOpenApiYaml()
+    public static void BuildOpenApiYaml(Configuration configuration, List<Map> routes)
     {
         var api = new models.OpenApi("3.0.0")
         {
             Info = configuration.OpenApiSettings.Info,
             Servers = [],
-            Paths = GetPaths(),
+            Paths = GetPaths(routes),
             Components = new models.Components(CollectAllResponseModels()),
         };
 
@@ -192,7 +151,8 @@ public class OpenApiBuilder(Configuration configuration, List<Map> routes)
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
             });
 
-
+        
         configuration.AddSharedObject("openapi.json", json);
     }
 }
+

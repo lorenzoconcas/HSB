@@ -4,7 +4,6 @@ namespace HSB.Utils;
 
 public static class DebugUtils
 {
-    
     public static void PrintLoadedAssemblies(bool filter = true)
     {
         var currentDomain = AppDomain.CurrentDomain;
@@ -22,6 +21,22 @@ public static class DebugUtils
 
             foreach (var c in classes)
                 Terminal.WriteLine(c.FullName, BgColor.White, FgColor.Blue);
+        }
+    }
+
+    public static void PrintList<T>(List<T> list)
+    {
+        foreach (var item in list)
+        {
+            Terminal.Info(item!.ToString());
+        }
+    }
+
+    public static void PrintDictionary(Dictionary<string, string> dict)
+    {
+        foreach (var item in dict)
+        {
+            Terminal.Info(item.Key + ": " + item.Value);
         }
     }
 }

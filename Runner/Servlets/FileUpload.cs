@@ -16,24 +16,24 @@ public class FileUpload(Request req, Response res) : Servlet(req, res)
         switch (req.Url)
         {
             case "/fileupload.html":
-                res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
+                res.SendHtmlContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
                                     "<input type=\"text\" name=\"value1\" id=\"value1\"></input>" +
                                     "<input type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\">" +
                                     "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
                                     "</form>");
                 break;
             case "/fileupload":
-                res.SendHTMLContent("<h1>File Uploaded</h1>");
+                res.SendHtmlContent("<h1>File Uploaded</h1>");
                 break;
             case "/fileuploadmulti.html":
-                res.SendHTMLContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
+                res.SendHtmlContent("<form action=\"/fileupload\" method=\"post\" enctype=\"multipart/form-data\">" +
                                     "<input type=\"file\" name=\"fileToUpload\" id=\"fileToUpload\">" +
                                     "<input type=\"file\" name=\"fileToUpload2\" id=\"fileToUpload2\">" +
                                     "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
                                     "</form>");
                 break;
             default:
-                res.SendHTMLContent("<h1>404 Not Found</h1>");
+                res.SendHtmlContent("<h1>404 Not Found</h1>");
                 break;
         }
     }

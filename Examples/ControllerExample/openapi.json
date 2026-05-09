@@ -1,0 +1,232 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Controller Example",
+    "description": "An example of a controller"
+  },
+  "servers": [],
+  "paths": {
+    "/controller": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "Get root endpoint",
+        "description": "Used when called the root of this controller, returns a simple message.",
+        "operationId": "GetRoot",
+        "parameters": [],
+        "responses": {}
+      },
+      "post": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "An example of a POST route",
+        "description": "Used when called with a POST request, returns a simple message.",
+        "operationId": "Post",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "$ref": "#/components/schemas/"
+          }
+        }
+      }
+    },
+    "/controller/sub/:id": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "An example of a route with a parameter",
+        "description": "Used when called with an id parameter, returns a simple message with the id.",
+        "operationId": "GetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The id parameter from the route",
+            "required": true,
+            "schema": {
+              "type": "int"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "$ref": "#/components/schemas/IResponse"
+          }
+        }
+      }
+    },
+    "/controller/sub/:id/ter": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "An example of a route with a parameter",
+        "description": "Used when called with an id parameter, returns a simple message with the id.",
+        "operationId": "GetByIdBis",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The id parameter from the route",
+            "required": true,
+            "schema": {
+              "type": "int"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "$ref": "#/components/schemas/IResponse"
+          }
+        }
+      }
+    },
+    "/controller/sub/:id/ter/:name": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "An example of a route with a parameter",
+        "description": "Used when called with an id parameter, returns a simple message with the id.",
+        "operationId": "GetByIdAndName",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The id parameter from the route",
+            "required": true,
+            "schema": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name parameter from the route",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "$ref": "#/components/schemas/IResponse"
+          },
+          "400": {
+            "description": "Missing parameter response",
+            "$ref": "#/components/schemas/IResponse"
+          }
+        }
+      }
+    },
+    "/controller/param": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "An example of a route with a parameter",
+        "description": "Used when called with an id parameter, returns a simple message with the id.",
+        "operationId": "GetByParamId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The id parameter from the route",
+            "required": true,
+            "schema": {
+              "type": "int"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "$ref": "#/components/schemas/IResponse"
+          }
+        }
+      }
+    },
+    "/controller/custom": {
+      "summary": "",
+      "description": "",
+      "put": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "An example of a custom route with PUT method",
+        "description": "Used when called with a PUT request to /custom, returns a simple message.",
+        "operationId": "CustomRoute",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "$ref": "#/components/schemas/"
+          }
+        }
+      }
+    },
+    "/controller/test": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "Example Controller"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "TestClassReqAndRes",
+        "parameters": [],
+        "responses": {}
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IResponse": {
+        "title": "IResponse",
+        "properties": {
+          "Message": {
+            "type": "string"
+          }
+        }
+      },
+      "IComplexResponse": {
+        "title": "IComplexResponse",
+        "properties": {
+          "Message": {
+            "type": "string"
+          },
+          "Data": {
+            "type": "Object"
+          }
+        }
+      }
+    },
+    "responses": {},
+    "parameters": {},
+    "examples": {},
+    "requestBodies": {},
+    "headers": {},
+    "securitySchemes": {},
+    "links": {},
+    "callbacks": {}
+  }
+}

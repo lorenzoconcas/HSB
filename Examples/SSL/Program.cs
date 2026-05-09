@@ -8,7 +8,7 @@
 var sslConfig = new SslConfiguration
 {
     UseDebugCertificate = true, // Uses OpenSSL to generate/load debug cert
-    SslHandler = SslHandler.HSB,
+    SslHandler = SslHandler.Hsb,
     UpgradeUnsecureRequests = false,
     SslPort = 8443
 };

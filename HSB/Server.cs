@@ -1,18 +1,19 @@
 ﻿using HSB.Components.WebSockets;
 using HSB.Constants;
 using HSB.Constants.TLS;
-using HSB.DefaultPages;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using HSB.Components.Attributes;
 using HSB.Components.Controller;
 using HSB.Constants.TLS.Manual;
-using HSB.OpenApi;
+using HSB.Exceptions;
+using HSB.Components;
 using HSB.Utils;
 using Index = HSB.DefaultPages.Index;
 
@@ -31,7 +32,7 @@ public class Server
     private X509Certificate2? _serverCertificate;
 
     //routing-related variables
-    private List<Map> _routes = [];
+    private List<Map> routes = [];
 
     public static void Main()
     {
@@ -202,7 +203,7 @@ public class Server
 
         _config.ExpressRouteAdded += (r) =>
         {
-            _routes.Add(new Map()
+            routes.Add(new Map()
             {
                 Path = r.Path,
                 SubRoutes =
@@ -231,10 +232,80 @@ public class Server
         MapRoutes();
         PrintFinalInfo();
 
-        //the class will automatically set according to configuration
-        new OpenApiBuilder(config, _routes).Init();
+
+        //init modules
+
+
+        _config.SetRoutes(routes);
+
+        ExecuteModule(ModuleType.Global, _config);
+        ExecuteModule(ModuleType.Service, _config);
+
+
+        /*//the class will automatically set according to configuration
+        new OpenApiBuilder(config, Routes).Init();*/
 
         //end of the server initialization
+    }
+
+    private static bool ExecuteModule(ModuleType type, Configuration config, Request? req = null, Response? res = null,
+        MethodInfo? @delegate = null)
+    {
+        foreach (var m in InstanceManager<ModuleManager>.GetInstance().GetModules(type, config.EnabledModules))
+        {
+            //    var r = m.InvokeMember("Process", BindingFlags., null, null, [req, res]);
+
+            var method = m.method;
+            var parameters = method.GetParameters();
+            List<object> callingParams = [];
+
+            foreach (var field in parameters)
+            {
+                var parameterType = field.ParameterType;
+
+                if (parameterType.IsByRef)
+                {
+                    parameterType = parameterType.GetElementType()!;
+                }
+
+                if (parameterType == typeof(Request))
+                {
+                    callingParams.Add(req!);
+                }
+                else if (parameterType == typeof(Response))
+                {
+                    callingParams.Add(res!);
+                }
+                else if (parameterType == typeof(Configuration))
+                {
+                    callingParams.Add(config);
+                }
+                else if (parameterType == typeof(MethodInfo))
+                {
+                    callingParams.Add(@delegate!);
+                }
+            }
+
+            var instance = Activator.CreateInstance(m.type);
+            var result = method.Invoke(instance, callingParams.ToArray());
+            if (result is not ModuleExitCode r)
+            {
+                throw new InvalidModuleResponseException(m);
+            }
+
+            switch (r)
+            {
+                case ModuleExitCode.Reject: return false;
+                case ModuleExitCode.Error:
+                    Terminal.Info($"An error occured with module {m.name}");
+                    return true;
+                default:
+                case ModuleExitCode.Success:
+                case ModuleExitCode.Continue: return true;
+            }
+        }
+
+        return true;
     }
 
     public void Start(bool openInBrowser = false)
@@ -315,7 +386,7 @@ public class Server
 
         if (sslMode)
         {
-            if (_config.SslSettings.SslHandler == SslHandler.HSB)
+            if (_config.SslSettings.SslHandler == SslHandler.Hsb)
             {
                 // Manual TLS Implementation (POC)
                 try
@@ -330,7 +401,7 @@ public class Server
                 }
                 catch (Exception e)
                 {
-                    sslOk = false;
+                    //sslOk = false;
                     _config.Debug.ERROR($"Manual TLS Handshake/Read Failed: {e.Message}");
                     socket.Close();
                     return;
@@ -445,38 +516,9 @@ public class Server
         }
     }
 
-    /*private bool RunIfExpressMapping(Request req, Response res)
-    {
-        var route = _config.ExpressRoutes.Find(e => e.Item1 == req.Url && e.Item2.Item1 == req.Method);
-        //regex routes are the ones that starts with /` (slash and backtick)
-        var regexRoutes = _config.ExpressRoutes.FindAll(e => e.Item1.StartsWith("/`") && e.Item2.Item1 == req.Method);
-
-        //regex paths have priority
-        if (regexRoutes.Count > 0)
-        {
-            var regexRoute = regexRoutes.Find(r =>
-                new Regex(r.Item1[2..])
-                    .IsMatch(req.Url)
-            );
-
-            if (regexRoute != null)
-            {
-                regexRoute.Item2.Item2.DynamicInvoke(req, res);
-                return true;
-            }
-        }
-
-
-        if (route == null) return false;
-
-        route.Item2.Item2.DynamicInvoke(req, res);
-        return true;
-    }*/
-
-
     private object? GetInstance(Request req)
     {
-        var candidateControllers = _routes.Where(map => req.Url.StartsWith(map.Path)).ToArray();
+        var candidateControllers = routes.Where(map => req.Url.StartsWith(map.Path)).ToArray();
 
         foreach (var map in candidateControllers)
         {
@@ -527,41 +569,6 @@ public class Server
         return null;
     }
 
-    /// <summary>
-    /// Check if the request is blocked by a blocking rule
-    /// </summary>
-    /// <param name="req"></param>
-    /// <returns>True if request is blocked</returns>
-    private bool Filter(Request req)
-    {
-        var blockMode = _config.BlockMode;
-        switch (blockMode)
-        {
-            case BLOCK_MODE.NONE: return false; //no blocking
-            case BLOCK_MODE.BANLIST:
-                if (_config.PermanentIpList.Any(ip => ip == req.ClientIp))
-                {
-                    return true; //blocked request
-                }
-
-                if (!File.Exists("./banned_ips.txt")) return true;
-                var bannedIps = File.ReadAllLines("./banned_ips.txt");
-                return bannedIps.Contains(req.ClientIp) || true; //blocked request
-            case BLOCK_MODE.OKLIST:
-                if (_config.PermanentIpList.Any(ip => ip == req.ClientIp))
-                {
-                    return false; //allowed request
-                }
-
-                if (!File.Exists("./allowed_ips.txt"))
-                    return false; //no allowed_ips.txt file found, so we allow all requests
-                var allowedIps = File.ReadAllLines("./allowed_ips.txt");
-                return !allowedIps.Contains(req.ClientIp);
-            default:
-                return false;
-        }
-    }
-
 
     private void ProcessRequest(Request req, Response res)
     {
@@ -575,17 +582,22 @@ public class Server
                 return;
             }
 
-            //check if there is a filter that blocks the request
-            if (Filter(req)) return;
 
+            if (!ExecuteModule(ModuleType.RequestInterceptor, _config, req, res))
+            {
+                return;
+            }
+
+            /*
             //check if server is launched with --listFiles
             if (_config.GetRawArguments().Contains("--listFiles"))
             {
-                if (CheckSafePath(req.Url, req, res)) return;
+                if (PathUtils.SafeRequestOrBan(_config, req, res)) return;
 
                 new FileList(req, res, _config).Get();
                 return;
             }
+            */
 
 
             //if global CORS are set in configuration, check if the request is allowed
@@ -640,9 +652,15 @@ public class Server
                             }
                         }
 
+
+                        if (!ExecuteModule(ModuleType.RequestHandlerInterceptor, _config, req, res,
+                                route.Delegate!.Method))
+                        {
+                            return;
+                        }
+
                         route.Delegate!.DynamicInvoke(callingParams.ToArray());
                         return;
-
                     case (Type tipo, RoutableMethod route):
                         if (route.Type != RoutableMethodType.Method)
                         {
@@ -671,7 +689,7 @@ public class Server
 
                         _config.Debug.INFO($"HTTP Request | {req.Method} {req.Url}");
                         //try automatically inject parameters from request to the method
-                        //method must use decorator to specify the parameters to inject, for example [FromQuery] or [FromBody]
+                        //it must use decorator to specify the parameters to inject, for example [FromQuery] or [FromBody]
                         //try collect parameters
                         var methodParameters = route.MethodInfo.GetParameters()
                             .Where(p => p.GetCustomAttribute<NamedParameter>() != null);
@@ -682,21 +700,42 @@ public class Server
                         {
                             var paramAttributes = methodParameter.GetCustomAttribute<NamedParameter>();
 
-                            if ((!req.Parameters.ContainsKey(paramAttributes!.Name) ||
-                                 req.Parameters[paramAttributes!.Name] == "") && paramAttributes.Required)
+                            if (paramAttributes == null) break;
+                            if (paramAttributes.Body)
                             {
-                                new Error(res,
-                                        _config,
-                                        $"Missing value for parameter {paramAttributes!.Name}",
-                                        HttpCodes.BAD_REQUEST)
-                                    .Throw();
-                                return;
+                                var deserializedBody = JsonSerializer.Deserialize<Dictionary<string, object>>(req.Body);
+                                if (deserializedBody == null || !deserializedBody.ContainsKey(paramAttributes.Name))
+                                {
+                                    new Error(res,
+                                            _config,
+                                            $"Missing value for parameter {paramAttributes!.Name}",
+                                            HttpCodes.BAD_REQUEST)
+                                        .Throw();
+                                    return;
+                                }
+                                //parameters must be collected in order to be applied
+                                var paramValue = deserializedBody[paramAttributes.Name] as string;
+                                var parsedType = TypeUtils.ConvertToType(paramValue!, methodParameter.ParameterType);
+                                injectionParameters.Add(parsedType);
                             }
+                            else
+                            {
+                                if ((!req.Parameters.ContainsKey(paramAttributes.Name) ||
+                                     req.Parameters[paramAttributes.Name] == "") && paramAttributes.Required)
+                                {
+                                    new Error(res,
+                                            _config,
+                                            $"Missing value for parameter {paramAttributes!.Name}",
+                                            HttpCodes.BAD_REQUEST)
+                                        .Throw();
+                                    return;
+                                }
 
-                            //parameters must be collected in order to be applied
-                            var paramValue = req.Parameters[paramAttributes!.Name];
-                            var parsedType = TypeUtils.ConvertToType(paramValue, methodParameter.ParameterType);
-                            injectionParameters.Add(parsedType);
+                                //parameters must be collected in order to be applied
+                                var paramValue = req.Parameters[paramAttributes!.Name];
+                                var parsedType = TypeUtils.ConvertToType(paramValue, methodParameter.ParameterType);
+                                injectionParameters.Add(parsedType);
+                            }
                         }
 
                         if (parameters.Length != methodParameters.Count())
@@ -704,7 +743,6 @@ public class Server
                             //method has parameters that are not noted by decorators, we will try to inject req and res if those are needed
                             foreach (var parameter in parameters)
                             {
-                             
                                 if (parameter.ParameterType == typeof(Request))
                                 {
                                     injectionParameters.Add(req);
@@ -720,6 +758,11 @@ public class Server
                             }
                         }
 
+                        if (!ExecuteModule(ModuleType.RequestHandlerInterceptor, _config, req, res, route.MethodInfo))
+                        {
+                            return;
+                        }
+
                         switch (parameters.Length)
                         {
                             case 0:
@@ -731,63 +774,60 @@ public class Server
                         }
 
                         return;
-
                     default:
                         Console.WriteLine(o.GetType());
                         throw new Exception($"Developer tried to map an invalid object to a route -> {o.GetType()}");
                 }
             }
-            else
+
+            //the client searched for a route that is not mapped by any servlet
+            //so we do some other checks like root page or static resource
+            //if no root page is set we search for and index.html file, else we show the default home page
+            if (req.Url == "/")
             {
-                //the client searched for a route that is not mapped by any servlet
-                //so we do some other checks like root page or static resource
-                //if no root page is set we search for and index.html file, else we show the default home page
-                if (req.Url == "/")
+                //if the client is requesting the root file, we check if there is an index.html file
+                //if not, we use the default servlet
+                if (File.Exists(_config.StaticFolderPath + "/index.html"))
                 {
-                    //if the client is requesting the root file, we check if there is an index.html file
-                    //if not, we use the default servlet
-                    if (File.Exists(_config.StaticFolderPath + "/index.html"))
-                    {
-                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200");
-                        res.SendHTMLFile(_config.StaticFolderPath + "/index.html");
-                    }
-                    else
-                    {
-                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Default Index Page)");
-                        new Index(res, _config).Get();
-                    }
+                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200");
+                    res.SendHtmlFile(_config.StaticFolderPath + "/index.html");
                 }
                 else
                 {
-                    //we check if the client is requesting a resource, else 404 not found
-                    //to check if the path is safe we use the same regex used in send.js
-                    //see: https://github.com/pillarjs/send/blob/master/index.js#L63
-                    if (CheckSafePath(req.Url, req, res))
-                    {
-                        return;
-                    }
+                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Default Index Page)");
+                    new Index(res, _config).Get();
+                }
+            }
+            else
+            {
+                //we check if the client is requesting a resource, else 404 not found
+                //to check if the path is safe we use the same regex used in send.js
+                //see: https://github.com/pillarjs/send/blob/master/index.js#L63
+                if (PathUtils.SafeRequestOrBan(_config, req, res))
+                {
+                    return;
+                }
 
-                    //if the path is safe, the static folder is set and the file exists, we send it
-                    if (_config.StaticFolderPath != "" && File.Exists(_config.StaticFolderPath + "/" + req.Url))
-                    {
-                        //config.debug.INFO($"Static file found, serving '{req.URL}'");
-                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Static file)");
-                        res.SendFile(_config.StaticFolderPath + "/" + req.Url);
-                    }
-                    else if (_config.ServeEmbeddedResource &&
-                             ResourceUtils.IsEmbeddedResource(req.Url, _config.EmbeddedResourcePrefix))
-                    {
-                        _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Embedded resource)");
-                        object resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix) ??
-                                          throw new Exception("Resource not found");
-                        res.SendObject(resource, req.Url);
-                    }
-                    else
-                    {
-                        //if no servlet or static file found, send 404
-                        _config.Debug.INFO($"{req.Method} '{req.Url}' 404 (Resource not found)");
-                        new Error(res, _config, "Page not found", HttpCodes.NOT_FOUND).Throw();
-                    }
+                //if the path is safe, the static folder is set and the file exists, we send it
+                if (_config.StaticFolderPath != "" && File.Exists(_config.StaticFolderPath + "/" + req.Url))
+                {
+                    //config.debug.INFO($"Static file found, serving '{req.URL}'");
+                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Static file)");
+                    res.SendFile(_config.StaticFolderPath + "/" + req.Url);
+                }
+                else if (_config.ServeEmbeddedResource &&
+                         ResourceUtils.IsEmbeddedResource(req.Url, _config.EmbeddedResourcePrefix))
+                {
+                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Embedded resource)");
+                    var resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix) ??
+                                   throw new Exception("Resource not found");
+                    res.SendObject(resource, req.Url);
+                }
+                else
+                {
+                    //if no servlet or static file found, send 404
+                    _config.Debug.INFO($"{req.Method} '{req.Url}' 404 (Resource not found)");
+                    new Error(res, _config, "Page not found", HttpCodes.NOT_FOUND).Throw();
                 }
             }
         }
@@ -800,24 +840,6 @@ public class Server
         }
     }
 
-    private bool CheckSafePath(string path, Request req, Response res)
-    {
-        if (!PathUtils.IsUnsafePath(path)) return false;
-
-        _config.Debug.WARNING($"{req.Method} '{req.Url}' 200 (Requested unsafe path, ignoring request)");
-        new Error(res, _config, "", HttpCodes.NOT_FOUND).Throw();
-
-        if (!_config.IpAutoblock) return true;
-
-        _config.Debug.WARNING($"Autoblocking IP {req.ClientIp}");
-
-        if (File.Exists("./banned_ips.txt"))
-            File.AppendAllText("./banned_ips.txt", req.ClientIp + "\n");
-        else
-            File.WriteAllText("./banned_ips.txt", req.ClientIp + "\n");
-
-        return true;
-    }
 
     private void MapRoutes()
     {
@@ -826,9 +848,8 @@ public class Server
 
         _config.Debug.INFO("Collecting routes...");
 
-
         //express routes are now treated equally to controller routes
-        _routes.AddRange(_config.ExpressRoutes.Select(r => new Map()
+        routes.AddRange(_config.ExpressRoutes.Select(r => new Map()
         {
             Path = r.Path,
             SubRoutes =
@@ -843,16 +864,7 @@ public class Server
         }));
 
 
-        string[] excludeList = ["System", "Microsoft", "Internal", "HSB"];
-
-        var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => !excludeList.Any(e => a.FullName!.StartsWith(e)));
-
-        var classes = assemblies.SelectMany(assembly => assembly.GetTypes(), (assembly, type) => new {assembly, type})
-            .Where(@t => @t.type.IsClass)
-            .Select(@t => @t.type)
-            .Where(@t => @t.GetCustomAttribute<Controller>() != null)
-            .ToList();
+        var classes = ClassUtils.GetClassesWithAttribute<Controller>();
 
 
         foreach (var c in classes)
@@ -888,14 +900,14 @@ public class Server
                 });
             }
 
-            _routes.Add(map);
+            routes.Add(map);
         }
     }
 
 
     public List<Map> GetRoutes()
     {
-        return _routes;
+        return routes;
     }
 
     public Configuration GetConfiguration()

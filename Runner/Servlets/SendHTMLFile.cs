@@ -11,7 +11,7 @@ namespace Runner
 
         public override void GET()
         {
-            res.SendHTMLFile("./static/main.html");
+            res.SendHtmlFile("./static/main.html");
         }
     }
 }

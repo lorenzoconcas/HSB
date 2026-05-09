@@ -15,6 +15,6 @@ public class Index(Response res, Configuration config)
         res.AddAttribute("footer", PageBuilder.GetFooterString(config));
       
 
-        res.SendHTMLContent(page, true);
+        res.SendHtmlContent(page, true);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using HSB.Constants;
 using HSB.OpenApi;
+using HSB.Utils;
 using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB;
@@ -168,6 +169,15 @@ public class Configuration
     /// also a documentation page will be served at OpenApiSettings.Path
     /// </summary>
     public OpenApiSettings OpenApiSettings = new();
+    
+    public List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.Modules");
+    
+    //Server related vars only used for modules
+    private List<Map> routes = [];
+
+    public List<Map> GetDetectedRoutes() => routes;
+
+    public void SetRoutes(List<Map> r) => routes = r;
 
     /// <summary>
     /// Creates a default fail-safe configuration (still, the port could be in use)
@@ -232,13 +242,14 @@ public class Configuration
             DefaultSessionExpirationTime = root.GetProperty("DefaultSessionExpirationTime").GetUInt64();
             lastProp = "GlobalCORS";
             GlobalCors = Cors.FromJson(root);
+            lastProp = "ModulesList";
+            EnabledModules = root.GetProperty("EnabledModules").EnumerateArray().Select(item => item.GetString())
+                .OfType<string>().ToList();
             lastProp = "PermanentIPList";
 
-            foreach (var v in root.GetProperty("PermanentIPList").EnumerateArray().Select(item => item.GetString())
-                         .OfType<string>())
-            {
-                PermanentIpList.Add(v);
-            }
+            PermanentIpList = root.GetProperty("PermanentIPList").EnumerateArray().Select(item => item.GetString())
+                .OfType<string>().ToList();
+            
         }
         catch (Exception e)
         {
@@ -275,6 +286,7 @@ public class Configuration
         //default one day
         DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong) TimeSpan.FromDays(1).Ticks;
         SslSettings = sslConfiguration ?? new SslConfiguration();
+        
     }
 
     /// <summary>

@@ -14,12 +14,12 @@ namespace Runner
 
         public override void GET()
         {
-            res.JSON(new SimpleObject());
+            res.Json(new SimpleObject());
         }
 
         public override void POST()
         {
-            res.JSON("{'success':true}");
+            res.Json<string>("{'success':true}");
         }
 
 

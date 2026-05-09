@@ -1,0 +1,16 @@
+{
+  "openapi": "3.0.0",
+  "servers": [],
+  "paths": {},
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "parameters": {},
+    "examples": {},
+    "requestBodies": {},
+    "headers": {},
+    "securitySchemes": {},
+    "links": {},
+    "callbacks": {}
+  }
+}

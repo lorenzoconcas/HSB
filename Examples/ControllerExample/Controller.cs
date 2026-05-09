@@ -37,7 +37,7 @@ public class ExampleController
     [ApiDescription("Used when called the root of this controller, returns a simple message.")]
     protected void GetRoot()
     {
-        res.JSON(new
+        res.Json(new
         {
             message = "Hello from the controller!"
         });
@@ -50,7 +50,7 @@ public class ExampleController
     [ApiResponse(HttpCodes.OK, "Successful response", typeof(IResponse))]
     private void GetById([NamedParameter("id", true)] int id)
     {
-        res.JSON(new
+        res.Json(new
         {
             message = $"Hello from the controller with id {id}!"
         });
@@ -63,7 +63,7 @@ public class ExampleController
     [ApiResponse(HttpCodes.OK, "Successful response", typeof(IResponse))]
     private void GetByIdBis([NamedParameter("id", true)] int id)
     {
-        res.JSON(new
+        res.Json(new
         {
             message = $"Hello from the controller with id {id} (ter)!"
         });
@@ -78,7 +78,7 @@ public class ExampleController
     [ApiResponse(HttpCodes.BAD_REQUEST, "Missing parameter response", typeof(IResponse))]
     private void GetByIdAndName([NamedParameter("id", true)] int id, [NamedParameter("name", true)] string name)
     {
-        res.JSON(new
+        res.Json(new
         {
             message = $"Hello from the controller with id {id} with name {name}!"
         });
@@ -91,7 +91,7 @@ public class ExampleController
     [ApiResponse(HttpCodes.OK, "Successful response", typeof(IResponse))]
     private void GetByParamId([NamedParameter("id", true)] int id)
     {
-        res.JSON(new
+        res.Json(new
         {
             message = $"Hello from the controller with id {id}!"
         });
@@ -103,7 +103,7 @@ public class ExampleController
     [ApiResponse(HttpCodes.OK, "Successful response")]
     private void Post()
     {
-        res.JSON(new
+        res.Json(new
         {
             message = "Hello, this is a POST request!",
         });
@@ -115,7 +115,7 @@ public class ExampleController
     [ApiResponse(HttpCodes.OK, "Successful response")]
     private void CustomRoute()
     {
-        res.JSON(new
+        res.Json(new
         {
             message = "Hello, this is a custom route with PUT method!",
         });
@@ -125,7 +125,7 @@ public class ExampleController
     private void TestClassReqAndRes()
     {
         Terminal.Info(res);
-        res?.JSON(new
+        res?.Json(new
         {
             message = "Hello, this is a custom route with PUT method!",
         });

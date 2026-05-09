@@ -10,7 +10,7 @@ public class HelloWorld(Request req, Response res) : Servlet(req, res)
     public override void GET()
     {
         //reply to request with an hello world
-        res.SendHTMLContent("<h1>Hello world</h1>");
+        res.SendHtmlContent("<h1>Hello world</h1>");
     }
 
 

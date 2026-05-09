@@ -131,7 +131,7 @@ c.Get("/", (Request req, Response res) =>
         html += "<button onclick=\"ws.send(document.getElementById('message').value); document.getElementById('messages').value += 'client: '+ document.getElementById('message').value + '\\n';\">Send</button>\n";
         html += "</body>";
 
-        res.SendHTMLContent(html);
+        res.SendHtmlContent(html);
 
     }
 

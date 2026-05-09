@@ -12,12 +12,12 @@ namespace Runner
         //example : http://localhost:8080/parameters?param1=1&param2=2&param3=3
         public override void GET()
         {
-            res.SendHTMLContent($"<h1>Prova GET -> {req.Url}</h1>\nParams : {req.Parameters.DictToString()}");
+            res.SendHtmlContent($"<h1>Prova GET -> {req.Url}</h1>\nParams : {req.Parameters.DictToString()}");
         }
 
         public override void POST()
         {
-            res.JSON(req.Parameters);
+            res.Json(req.Parameters);
 
             // res.Send($"<h1>Prova POST -> {req.URL}</h1>", mimeType: MimeType.TEXT_HTML);
         }

@@ -11,7 +11,7 @@ public class ExampleController
     [Get("/")]
     protected void GetRoot(Request req, Response res)
     {
-        res.JSON(new {
+        res.Json(new {
             message = "Hello from the controller!"
         });
     }
@@ -19,7 +19,7 @@ public class ExampleController
     [Get("/:id")]
     private void GetById(Request req, Response res)
     {
-        res.JSON(new {
+        res.Json(new {
             message = $"Hello from the controller with id {req.Parameters["id"]}!"
         });
     }
@@ -27,7 +27,7 @@ public class ExampleController
     [Post("/")]
     private void Post(Request req, Response res)
     {
-        res.JSON(new
+        res.Json(new
         {
             message = "Hello, this is a POST request!",
         });
@@ -36,7 +36,7 @@ public class ExampleController
     [Route("/custom", HttpMethod.Put)]
     private void CustomRoute(Request req, Response res)
     {
-        res.JSON(new
+        res.Json(new
         {
             message = "Hello, this is a custom route with PUT method!",
         });

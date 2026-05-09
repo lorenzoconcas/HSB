@@ -123,7 +123,7 @@ const string htmlPage = """
 c.Get("/", (Request req, Response res) =>
 {
     //reply to request with an hello world
-    res.SendHTMLContent(htmlPage);
+    res.SendHtmlContent(htmlPage);
 });
 
 

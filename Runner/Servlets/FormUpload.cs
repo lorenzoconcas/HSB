@@ -19,14 +19,14 @@ public class Form : Servlet
         if (req.Url == "/form.html")
         {
 
-            res.SendHTMLContent("<form action=\"/formupload\" method=\"post\">" +
+            res.SendHtmlContent("<form action=\"/formupload\" method=\"post\">" +
             "<input type=\"text\" name=\"name\" id=\"name\" placeholder=\"Your name\"></input><br>" +
             "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
             "</form>");
         }
         else
         {
-            res.SendHTMLContent("<h1>404 Not Found</h1>");
+            res.SendHtmlContent("<h1>404 Not Found</h1>");
         }
     }
 
@@ -48,7 +48,7 @@ public class Form : Servlet
                 res.Send(HttpCodes.INTERNAL_SERVER_ERROR);
                 return;
             }
-            res.SendHTMLContent($"<h1>Hello {f.Get("name")}</h1>");
+            res.SendHtmlContent($"<h1>Hello {f.Get("name")}</h1>");
 
         }
         else

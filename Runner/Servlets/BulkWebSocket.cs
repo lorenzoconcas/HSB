@@ -49,7 +49,7 @@ public class BulkWSPage(Request req, Response res) : Servlet(req, res)
                             <h1>Websocket Test</h1>
                         </body>
                     </html>";
-        res.SendHTMLContent(html);
+        res.SendHtmlContent(html);
     }
 }
 

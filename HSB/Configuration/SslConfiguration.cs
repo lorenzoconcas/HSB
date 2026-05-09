@@ -16,19 +16,19 @@ namespace HSB;
 
 public enum SslHandler
 {
-    NATIVE, //DOTNET NATIVE SSL HANDLER
-    HSB
+    Native, //DOTNET NATIVE SSL HANDLER
+    Hsb
 }
 
 public class SslConfiguration
 {
-    private static readonly string DEBUG_CERT_FOLDER_PATH =
+    private static readonly string DebugCertFolderPath =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "HSB");
 
-    private static readonly string DEBUG_CERT_PASSWORD = "HSB_DEV_CERT_PASSWORD";
-    private static readonly string DEBUG_CERT_P12_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.p12");
-    private static readonly string DEBUG_CERT_CRT_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.crt");
-    private static readonly string DEBUG_CERT_KEY_PATH = Path.Combine(DEBUG_CERT_FOLDER_PATH, "HSB_DEV_CERT.key");
+    private static readonly string DebugCertPassword = "HSB_DEV_CERT_PASSWORD";
+    private static readonly string DebugCertP12Path = Path.Combine(DebugCertFolderPath, "HSB_DEV_CERT.p12");
+    private static readonly string DebugCertCrtPath = Path.Combine(DebugCertFolderPath, "HSB_DEV_CERT.crt");
+    private static readonly string DebugCertKeyPath = Path.Combine(DebugCertFolderPath, "HSB_DEV_CERT.key");
 
     //TODO -> add support for loading certificates from store
 
@@ -39,9 +39,9 @@ public class SslConfiguration
 
     public bool UpgradeUnsecureRequests = true;
 
-    public SslHandler SslHandler = SslHandler.NATIVE;
+    public SslHandler SslHandler = SslHandler.Native;
 
-    public string? CertificatePath;
+    private string? CertificatePath;
 
     /// <summary>
     /// When set, a developer certificate valid only for 1 month and for localhost will be created (if doesn't exist or is expired) and used.
@@ -49,9 +49,9 @@ public class SslConfiguration
     /// </summary>
     public bool UseDebugCertificate = false;
 
-    [JsonIgnore] public byte[]? CertificateBytes;
-    public string? CertificatePassword;
-    public List<TLSVersion> TLSVersions;
+    [JsonIgnore] private byte[]? CertificateBytes;
+    private string? CertificatePassword;
+    private List<TLSVersion> TLSVersions;
     public bool CheckCertificateRevocation = true;
     public bool ValidateClientCertificate = true;
     public bool ClientCertificateRequired = false;
@@ -255,21 +255,21 @@ public class SslConfiguration
     private static bool PrepareFolders()
     {
         //if old certificate exists, delete it
-        if (Directory.Exists(DEBUG_CERT_FOLDER_PATH))
+        if (Directory.Exists(DebugCertFolderPath))
         {
-            if (File.Exists(DEBUG_CERT_P12_PATH))
+            if (File.Exists(DebugCertP12Path))
             {
-                File.Delete(DEBUG_CERT_P12_PATH);
+                File.Delete(DebugCertP12Path);
             }
 
-            if (File.Exists(DEBUG_CERT_CRT_PATH))
+            if (File.Exists(DebugCertCrtPath))
             {
-                File.Delete(DEBUG_CERT_CRT_PATH);
+                File.Delete(DebugCertCrtPath);
             }
 
-            if (File.Exists(DEBUG_CERT_KEY_PATH))
+            if (File.Exists(DebugCertKeyPath))
             {
-                File.Delete(DEBUG_CERT_KEY_PATH);
+                File.Delete(DebugCertKeyPath);
             }
         }
         else //create folder if not exists
@@ -277,7 +277,7 @@ public class SslConfiguration
             Terminal.Debug("Creating debug certificate folder", true);
             try
             {
-                DirectoryInfo dirInfo = Directory.CreateDirectory(DEBUG_CERT_FOLDER_PATH);
+                DirectoryInfo dirInfo = Directory.CreateDirectory(DebugCertFolderPath);
 
                 Terminal.Debug($"Debug certificate folder created at {dirInfo.FullName}", true);
             }
@@ -322,14 +322,14 @@ public class SslConfiguration
         [
             //command 1
             $"req -x509 -newkey rsa:4096 -sha256 -days 30 -nodes -subj \"/CN=localhost/C=US\" " +
-            $"-keyout \"{DEBUG_CERT_KEY_PATH}\" " +
-            $"-out \"{DEBUG_CERT_CRT_PATH}\"",
+            $"-keyout \"{DebugCertKeyPath}\" " +
+            $"-out \"{DebugCertCrtPath}\"",
             //command 2
             $"pkcs12 -export " +
-            $"-out \"{DEBUG_CERT_P12_PATH}\" " +
-            $"-inkey \"{DEBUG_CERT_KEY_PATH}\" " +
-            $"-in \"{DEBUG_CERT_CRT_PATH}\" " +
-            $"-passout pass:\"{DEBUG_CERT_PASSWORD}\""
+            $"-out \"{DebugCertP12Path}\" " +
+            $"-inkey \"{DebugCertKeyPath}\" " +
+            $"-in \"{DebugCertCrtPath}\" " +
+            $"-passout pass:\"{DebugCertPassword}\""
         ];
 
         Process process;
@@ -362,7 +362,7 @@ public class SslConfiguration
     {
         c?.Debug.DEBUG("Loading debug certificate");
 
-        if (!File.Exists(DEBUG_CERT_P12_PATH))
+        if (!File.Exists(DebugCertP12Path))
         {
             if (create)
             {
@@ -382,20 +382,20 @@ public class SslConfiguration
 
         //workaround  to avoid error if path contains spaces
         //use the new certificate loader as the old method is deprecated
-        var cert = X509CertificateLoader.LoadPkcs12FromFile(DEBUG_CERT_P12_PATH, DEBUG_CERT_PASSWORD);
+        var cert = X509CertificateLoader.LoadPkcs12FromFile(DebugCertP12Path, DebugCertPassword);
         /*var bytes = File.ReadAllBytes(DEBUG_CERT_P12_PATH);
         cert = new X509Certificate2(bytes, DEBUG_CERT_PASSWORD);*/
         //if expired, delete and create again
         if (cert.NotAfter < DateTime.Now)
         {
-            File.Delete(DEBUG_CERT_P12_PATH);
+            File.Delete(DebugCertP12Path);
             if (!CreateDebugCertificate())
             {
                 c?.Debug.DEBUG("Cannot load debug certificate, file not found");
                 return null;
             }
 
-            cert = X509CertificateLoader.LoadPkcs12FromFile(DEBUG_CERT_P12_PATH, DEBUG_CERT_PASSWORD);
+            cert = X509CertificateLoader.LoadPkcs12FromFile(DebugCertP12Path, DebugCertPassword);
         }
 
         c?.Debug.DEBUG("Debug certificate loaded. Remember to trust it in your system!");

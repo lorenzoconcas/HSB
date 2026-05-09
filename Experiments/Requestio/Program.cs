@@ -17,7 +17,7 @@ c.Get("/json", (Request req, Response res) =>
         { "key1", "value1" },
         { "key2", "value2" }
     };
-    res.JSON(obj);
+    res.Json(obj);
 });
 
 //act as redirect

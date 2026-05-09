@@ -4,10 +4,10 @@ var c2 = new Configuration()
     Port = 8082
 };
 
-c2.Get("/", (Request req, Response res) =>
+c2.Get("/", (Response res) =>
 {
-    //an html page that make a fetch request to http://localhost:8081
-    res.SendHTMLContent(
+    //an HTML page that make a fetch request to http://localhost:8081
+    res.SendHtmlContent(
         @"<html>
             <head></head>
             <body>
@@ -43,7 +43,7 @@ var c1 = new Configuration()
 
 c1.Get("/", (Request req, Response res) =>
 {
-    res.SetCORS(serverCors);
+    res.SetCors(serverCors);
     //developer should decide if the request should be completed or if it should be rejected
     //How?
     var reject = serverCors.IsRequestAllowed(req);
@@ -51,7 +51,7 @@ c1.Get("/", (Request req, Response res) =>
         res.E404();
         return;
     }
-    res.JSON(new
+    res.Json(new
     {
         message = "Hello World!"
     });

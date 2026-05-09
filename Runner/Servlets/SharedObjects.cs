@@ -13,7 +13,7 @@ namespace Runner
         public override void GET()
         {
             int item = (int)configuration.GetSharedObject("test");
-            res.SendHTMLContent($"<h1>Prova SharedObjects -> {item}</h1>");
+            res.SendHtmlContent($"<h1>Prova SharedObjects -> {item}</h1>");
         }
 
     }

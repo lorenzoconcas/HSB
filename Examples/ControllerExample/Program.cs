@@ -10,6 +10,10 @@ var c = new Configuration
         Mode = Mode.Full,
         Path = "/swagger/index.html",
         Info = new Info("Controller Example", "An example of a controller")
+    },
+    GlobalCors = new Cors()
+    {
+        AllowedOrigins = ["*"]
     }
 };
 

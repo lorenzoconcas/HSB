@@ -49,7 +49,7 @@ public class Runner
 
 
         c.Get("/500",
-            (Request req, Response res) =>
+            () =>
             {
                 throw new Exception("\nThis is a test exception, should only be visible when compiled in debug mode\n");
             });
@@ -58,9 +58,9 @@ public class Runner
             1996); //this object is available to all servlets, and accessed by "Servlets/SharedObjects.cs" 
 
         //redirect example
-        c.Get("/redirect", (Request req, Response res) => { res.Redirect("/"); });
+        c.Get("/redirect", (Response res) => { res.Redirect("/"); });
 
-        c.Get("/websocketpage", (Request req, Response res) =>
+        c.Get("/websocketpage", (Response res) =>
         {
             //return a page to test websocket
             // a text showing the connection status
@@ -106,12 +106,12 @@ public class Runner
 
             </script>
             </body></html>";
-            res.SendHTMLContent(html);
+            res.SendHtmlContent(html);
         });
 
         c.Get("/", (Request req, Response res) =>
         {
-            //return an html page with all the routes and a link
+            //return an HTML page with all the routes and a link
 
             var html = "</head><body><h1>Runner HomePage</h1><h3>Available routes:</h3>";
             var routes = server
@@ -123,10 +123,10 @@ public class Runner
             //print a table with route link and method
             foreach (var route in routes)
             {
-                foreach (var subRoute in route.SubRoutes)
-                {
-                    html += $"<tr><td><a href=\"{PathUtils.JoinPath(route.Path, subRoute.Path)}\">{route.Path}</a></td><td>{subRoute.HttpMethod}</td></tr>";
-                }
+                html = route.SubRoutes.Aggregate(html,
+                    (current, subRoute) =>
+                        current +
+                        $"<tr><td><a href=\"{PathUtils.JoinPath(route.Path, subRoute.Path)}\">{route.Path}</a></td><td>{subRoute.HttpMethod}</td></tr>");
             }
 
             html += "</tbody></table>";
@@ -137,11 +137,9 @@ public class Runner
             {
                 html += "<h3>Available static files:</h3>";
                 html += "<table><thead><tr><th>Static files</th></tr></thead><tbody>";
-                foreach (var file in Directory.GetFiles(staticFilePath))
-                {
-                    var filePath = file.Replace(staticFilePath, "");
-                    html += $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>";
-                }
+                html = Directory.GetFiles(staticFilePath).Select(file => file.Replace(staticFilePath, ""))
+                    .Aggregate(html,
+                        (current, filePath) => current + $"<tr><td><a href=\"{filePath}\">{filePath}</a></td></tr>");
             }
 
             html += "</tbody></table>";
@@ -182,11 +180,11 @@ public class Runner
             html += "<script> console.log(window.location.href)</script>";
             html += "</body></html>";
             html = "<html><head>" + favicon + html;
-            res.SendHTMLContent(html);
+            res.SendHtmlContent(html);
         });
 
 
-        c.Get("/favicon.ico", (Request req, Response res) =>
+        c.Get("/favicon.ico", (Response res) =>
         {
             var resource = ResourceUtils.LoadResource<byte[]?>("favicon.png");
 
@@ -198,7 +196,7 @@ public class Runner
 
             res.SendFile(resource, "image/x-icon");
         });
-        c.Get("/favicon_ssl.ico", (Request req, Response res) =>
+        c.Get("/favicon_ssl.ico", (Response res) =>
         {
             var resource = ResourceUtils.LoadResource<byte[]?>("favicon_ssl.ico");
 
@@ -210,7 +208,7 @@ public class Runner
 
             res.SendFile(resource, "image/x-icon");
         });
-        c.Get("/favicon_non_ssl.ico", (Request req, Response res) =>
+        c.Get("/favicon_non_ssl.ico", (Response res) =>
         {
             var resource = ResourceUtils.LoadResource<byte[]?>("favicon_nonssl.ico");
             if (resource == null)
@@ -237,7 +235,7 @@ public class Runner
 
     private static void PrintHeaders(Request req, Response res)
     {
-        res.JSON(req.Headers);
+        res.Json(req.Headers);
     }
 
 

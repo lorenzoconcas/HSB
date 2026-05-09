@@ -205,11 +205,11 @@ public class Request
             else
             {
 
-                session = new()
+                session = new Session()
                 {
                     ExpirationTime = DateTime.Now.AddTicks((long)config.DefaultSessionExpirationTime).Ticks
                 };
-                string sessionToken = SessionManager.GetInstance().CreateSession(session);
+                var sessionToken = SessionManager.GetInstance().CreateSession(session);
 
                 Cookie c = new()
                 {

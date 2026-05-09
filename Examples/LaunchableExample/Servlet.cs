@@ -11,7 +11,7 @@ namespace Test
 
         public override void GET()
         {
-            res.SendHTMLContent("<h1>Hello there</h1>");
+            res.SendHtmlContent("<h1>Hello there</h1>");
         }
 
     }

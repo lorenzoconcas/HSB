@@ -14,7 +14,7 @@ Configuration c = new()
 c.Get("/", (Request req, Response res) =>
 {
     //reply to request with an hello world
-    res.SendHTMLContent("<h1>Hello world</h1>");
+    res.SendHtmlContent("<h1>Hello world</h1>");
 });
 
 

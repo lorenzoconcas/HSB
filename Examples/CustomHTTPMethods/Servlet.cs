@@ -11,6 +11,6 @@ class Servlet : HSB.Servlet
 
     private void ProcessMyCustomHTTPMethod()
     {
-        res.SendHTMLContent("<h1>Hello</h1>");
+        res.SendHtmlContent("<h1>Hello</h1>");
     }
 }

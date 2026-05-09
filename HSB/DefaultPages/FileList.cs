@@ -82,7 +82,7 @@ public class FileList(Request req, Response res, Configuration configuration)
                 );
 
 
-                res.SendHTMLContent(builder.Render());
+                res.SendHtmlContent(builder.Render());
                 
             }
 

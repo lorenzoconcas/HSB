@@ -16,7 +16,7 @@ public class Error(Response res, Configuration config, string errorMessage, int 
         
         builder.AddCard(errorCode.ToString(), errorMessage,  PageBuilder.GetFooterString(config));
         
-        res.SendHTMLContent(builder.Render(), statusCode: errorCode);
+        res.SendHtmlContent(builder.Render(), statusCode: errorCode);
         return;
         
         
@@ -79,6 +79,6 @@ public class Error(Response res, Configuration config, string errorMessage, int 
         res.AddAttribute("title", title);
         res.AddAttribute("errorMsg", msg);
         res.AddAttribute("errID", errId);
-        res.SendHTMLContent(page, true, statusCode: statusCode);
+        res.SendHtmlContent(page, true, statusCode: statusCode);
     }
 }

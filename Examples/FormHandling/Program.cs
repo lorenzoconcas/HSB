@@ -12,7 +12,7 @@ c.Get("/", (Request req, Response res) =>
                "<input type='submit' value='send' />" +
                "</form>" +
                "</body></html>";
-    res.SendHTMLContent(html);
+    res.SendHtmlContent(html);
 });
 
 c.Post("/form", (Request req, Response res) =>
@@ -31,7 +31,7 @@ c.Post("/form", (Request req, Response res) =>
     //read form data
     var name = form.Get("name");
     var surname = form.Get("surname");
-    res.SendHTMLContent($"<h1>Hello {name} {surname}</h1>");
+    res.SendHtmlContent($"<h1>Hello {name} {surname}</h1>");
 });
 
 

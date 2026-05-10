@@ -238,7 +238,7 @@ public class Server
 
         _config.SetRoutes(routes);
 
-        ExecuteModule(ModuleType.Global, _config);
+        ExecuteModule(ModuleType.Global, _config); 
         ExecuteModule(ModuleType.Service, _config);
 
 

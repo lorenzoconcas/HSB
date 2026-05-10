@@ -172,10 +172,6 @@ public class Response(
         data.CopyTo(responseBytes, headersBytes.Length);
 
         Send(responseBytes);
-        //clear memory after sending
-        data = [];
-        headersBytes = [];
-        responseBytes = [];
     }
 
     /// <summary>

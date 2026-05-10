@@ -44,7 +44,7 @@ public enum ModuleType
     Global, //modules like Debugger
     RequestInterceptor, //CORS, Filter. Attached in Server.ProcessRequest(Request, Response)
     RequestHandlerInterceptor, //Authentication checker
-    ResponseInterceptor, //Response Shaper, attached to Send(byte[], bool) method
+   // ResponseInterceptor, //Response Shaper, attached to Send(byte[], bool) method
     Service, //Swagger/OpenApi, File List Page, Index Page
 }
 

@@ -49,9 +49,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingResponse", "Exampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerExample", "Examples\ControllerExample\ControllerExample.csproj", "{BF0D3026-AA3B-4CD8-A0FC-42099BFB7B8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modules", "Examples\Modules\Modules.csproj", "{960350B4-32E4-47FB-910E-2FDEC83C2430}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomModules", "Examples\CustomModules\CustomModules.csproj", "{960350B4-32E4-47FB-910E-2FDEC83C2430}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuth", "Examples\JwtAuth\JwtAuth.csproj", "{0642FC13-4C5D-4ADF-BC0E-1B027948040F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenAuthentication", "Examples\TokenAuthentication\TokenAuthentication.csproj", "{0642FC13-4C5D-4ADF-BC0E-1B027948040F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

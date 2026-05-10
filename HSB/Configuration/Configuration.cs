@@ -170,7 +170,7 @@ public class Configuration
     /// </summary>
     public OpenApiSettings OpenApiSettings = new();
     
-    public List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.Modules");
+    public List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.CustomModules");
     
     //Server related vars only used for modules
     private List<Map> routes = [];

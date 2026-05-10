@@ -115,9 +115,10 @@ class AuthenticationExample
             }, HttpCodes.BAD_REQUEST);
             return;
         }
-        
-        
-        Authentication.AddToken("Bearer IMAFAKEBEARER");
+
+        //your login logic
+
+        AuthenticationManager.Instance.AddBearerToken("IMAFAKEBEARER");
         
         res.Json(new
         {

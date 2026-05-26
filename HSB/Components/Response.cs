@@ -30,6 +30,8 @@ public class Response(
     private readonly Request request = request;
     private readonly Configuration config = c;
     readonly Dictionary<string, string> attributes = [];
+    private readonly List<string> responseCookies = [];
+    private volatile bool streamClosed;
 
     private Cors? cors;
 
@@ -75,7 +77,7 @@ public class Response(
                     var sent = socket.Send(data, totalSent, data.Length - totalSent, SocketFlags.None);
                     if (sent <= 0)
                     {
-                        throw new SocketException((int)SocketError.ConnectionReset);
+                        throw new SocketException((int) SocketError.ConnectionReset);
                     }
 
                     totalSent += sent;
@@ -478,6 +480,19 @@ public class Response(
         return attributes.GetValueOrDefault(name, string.Empty);
     }
 
+    /// <summary>
+    /// Adds a Set-Cookie header to the current response.
+    /// Thread-safe because cookies are snapshotted during header generation.
+    /// </summary>
+    /// <param name="cookie"></param>
+    public void AddCookie(string cookie)
+    {
+        lock (responseCookies)
+        {
+            responseCookies.Add(cookie);
+        }
+    }
+
     #endregion
 
     #region Utils
@@ -516,13 +531,30 @@ public class Response(
         CultureInfo ci = new("en-US");
 
         customHeaders = customHeaders != null
-            ? new Dictionary<string, string>(customHeaders)
+            ? new Dictionary<string, string>(customHeaders, StringComparer.OrdinalIgnoreCase)
             : null;
 
         var globalHeadersSnapshot = config.CustomGlobalHeaders.ToArray();
         var globalCookiesSnapshot = config.CustomGlobalCookies.ToArray();
+
+        string[] responseCookiesSnapshot;
+        lock (responseCookies)
+        {
+            responseCookiesSnapshot = responseCookies.ToArray();
+        }
+
         var globalCorsOriginsSnapshot = config.GlobalCors?.AllowedOrigins?.ToArray();
         var corsOriginsSnapshot = cors?.AllowedOrigins?.ToArray();
+
+        var hasTransferEncodingHeader =
+            (customHeaders?.ContainsKey("Transfer-Encoding") ?? false) ||
+            globalHeadersSnapshot.Any(x =>
+                x.Key.Equals("Transfer-Encoding", StringComparison.OrdinalIgnoreCase));
+
+        var hasContentTypeHeader =
+            (customHeaders?.ContainsKey("Content-Type") ?? false) ||
+            globalHeadersSnapshot.Any(x =>
+                x.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase));
 
         var currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss ", ci) + "GMT";
 
@@ -537,13 +569,20 @@ public class Response(
 
         if (responseCode is < 300 or > 399)
         {
-            headers += $"Content-Length: {size}{NewLine}";
-            headers += $"Content-Type: {contentType}{NewLine}";
+            if (!hasTransferEncodingHeader)
+            {
+                headers += $"Content-Length: {size}{NewLine}";
+            }
+
+            if (!hasContentTypeHeader)
+            {
+                headers += $"Content-Type: {contentType}{NewLine}";
+            }
         }
 
         if (customHeaders != null)
         {
-            foreach (var h in customHeaders.ToArray())
+            foreach (var h in customHeaders)
             {
                 headers += $"{h.Key}: {h.Value}{NewLine}";
             }
@@ -571,6 +610,14 @@ public class Response(
             }
         }
 
+        if (responseCookiesSnapshot.Length != 0)
+        {
+            foreach (var cookie in responseCookiesSnapshot)
+            {
+                headers += $"Set-Cookie: {cookie}{NewLine}";
+            }
+        }
+
         //CORS
         if (globalCorsOriginsSnapshot != null)
         {
@@ -595,11 +642,21 @@ public class Response(
            else
            {*/
         //visit https://httpwg.org/specs/rfc9113.html#ConnectionSpecific, p8.2.2 (27-Jun-23)
-        if (request.Protocol == HttpProtocol.HTTP1_0 || request.Protocol == HttpProtocol.HTTP1_1)
-            headers += "Connection: Close";
+        var hasConnectionHeader =
+            (customHeaders?.ContainsKey("Connection") ?? false) ||
+            globalHeadersSnapshot.Any(x =>
+                x.Key.Equals("Connection", StringComparison.OrdinalIgnoreCase));
+
+        if ((request.Protocol == HttpProtocol.HTTP1_0 ||
+             request.Protocol == HttpProtocol.HTTP1_1) &&
+            !hasConnectionHeader)
+
+        {
+            headers += $"Connection: Close{NewLine}";
+        }
 
         //}
-        headers += NewLine + NewLine;
+        headers += NewLine;
         return headers;
     }
 
@@ -668,7 +725,11 @@ public class Response(
     /// </summary>
     public async Task EndStream()
     {
+        if (streamClosed)
+            return;
+
         await WriteRaw(Encoding.UTF8.GetBytes("0\r\n\r\n"));
+        streamClosed = true;
     }
 
     /// <summary>
@@ -677,6 +738,8 @@ public class Response(
     /// </summary>
     private async Task WriteRaw(byte[] data)
     {
+        if (streamClosed)
+            return;
         try
         {
             if (_tlsHandler != null)
@@ -705,8 +768,24 @@ public class Response(
                 }
             }
         }
+        catch (SocketException ex) when (
+            ex.SocketErrorCode == SocketError.ConnectionReset ||
+            ex.SocketErrorCode == SocketError.Shutdown ||
+            ex.SocketErrorCode == SocketError.ConnectionAborted)
+        {
+            streamClosed = true;
+        }
+        catch (IOException)
+        {
+            streamClosed = true;
+        }
+        catch (ObjectDisposedException)
+        {
+            streamClosed = true;
+        }
         catch (Exception e)
         {
+            streamClosed = true;
             Terminal.Error("Errore durante WriteRaw: " + e);
         }
     }

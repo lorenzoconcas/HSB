@@ -893,12 +893,16 @@ public class Server
         bytes = requestData.ToArray();
 
         Request req = new(bytes, socket, _config, sslOk);
-
         if (req.IsValidRequest)
         {
             Response res = new(socket, req, _config, sslStream, hsbTls);
 
-            ProcessRequest(req, res);
+            foreach (var cookie in req.ResponseCookies)
+            {
+                res.AddCookie(cookie.ToString());
+            }
+
+            await ProcessRequestAsync(req, res);
         }
         else
         {
@@ -969,7 +973,7 @@ public class Server
     }
 
 
-    private void ProcessRequest(Request req, Response res)
+    private async Task ProcessRequestAsync(Request req, Response res)
     {
         try
         {
@@ -1042,7 +1046,7 @@ public class Server
                     }
 
                     endpoint.Add(connection);
-                    connection.Runtime.ProcessAsync(() => endpoint.ConfigureAsync(connection)).GetAwaiter().GetResult();
+                    await connection.Runtime.ProcessAsync(() => endpoint.ConfigureAsync(connection));
                 }
                 finally
                 {

@@ -17,7 +17,11 @@ public static class WebSocketHandler
 
             socket.OnOpen(() =>
             {
-                Clients.TryAdd(clientId, socket);
+                if (!Clients.TryAdd(clientId, socket))
+                {
+                    socket.Close();
+                    return;
+                }
 
                 Terminal.Info(
                     $"WebSocket connected: {clientId} | Total: {Clients.Count}"
@@ -46,20 +50,31 @@ public static class WebSocketHandler
                     clients = Clients.Count
                 });
 
-                foreach (var client in Clients.Values.ToArray())
+                foreach (var pair in Clients)
                 {
+                    var targetClientId = pair.Key;
+                    var client = pair.Value;
+
                     if (!client.IsOpen)
                     {
-                        Clients.TryRemove(client.Id, out _);
+                        Clients.TryRemove(targetClientId, out _);
                         continue;
                     }
 
-                    client.Send(payload);
+                    try
+                    {
+                        client.Send(payload);
+                    }
+                    catch
+                    {
+                        Clients.TryRemove(targetClientId, out _);
+                    }
                 }
             });
 
             socket.OnClose(() =>
             {
+                socket.OnMessage(null);
                 Clients.TryRemove(clientId, out _);
 
                 Terminal.Info(

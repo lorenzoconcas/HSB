@@ -27,6 +27,7 @@ public class Request
     readonly Dictionary<string, string> parameters = new(StringComparer.OrdinalIgnoreCase);
     readonly List<string> rawHeaders = [];
     readonly Dictionary<string, Cookie> cookies = new(StringComparer.OrdinalIgnoreCase);
+    readonly List<Cookie> responseCookies = [];
     public readonly bool IsTls;
 
     //Auth structs
@@ -365,7 +366,7 @@ public class Request
             priority = Cookie.CookiePriority.HIGH
         };
 
-        config.AddCustomGlobalCookie(c);
+        responseCookies.Add(c);
     }
 
     private void ExtractBody()
@@ -465,6 +466,7 @@ public class Request
     /// </summary>
     /// <returns></returns>
     public Session GetSession() => session;
+    public IReadOnlyList<Cookie> ResponseCookies => responseCookies;
     public Tuple<string, string>? GetBasicAuthInformation() => basicAuth;
     public OAuth10Information? GetOAuth1_0Information() => oAuth10Information;
 

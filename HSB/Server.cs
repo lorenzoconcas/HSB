@@ -2,6 +2,7 @@
 using HSB.Constants;
 using HSB.Constants.TLS;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -376,17 +377,65 @@ public class Server
     {
         while (true)
         {
-            await Process(listener, sslMode);
+            var socket = await listener.AcceptAsync();
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await Process(socket, sslMode);
+                }
+                catch (Exception e)
+                {
+                    _config.Debug.ERROR(e);
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                }
+            });
         }
     }
 
-    private async Task Process(Socket listener, bool sslMode)
+    private async Task Process(Socket socket, bool sslMode)
     {
-        var socket = await listener.AcceptAsync();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(30000);
+
+                if (socket.Connected)
+                {
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+        });
 
         socket.NoDelay = true;
-        socket.ReceiveTimeout = 5000;
-        socket.SendTimeout = 5000;
+        socket.ReceiveTimeout = 0;
+        socket.SendTimeout = 0;
 
         const int MAX_HEADER_SIZE = 8192;
         const int MAX_REQUEST_LINE_SIZE = 4096;
@@ -419,7 +468,7 @@ public class Server
                     {
                         try
                         {
-                            bytesRec = hsbTls.Read(bytes, 0, bytes.Length);
+                            bytesRec = await Task.Run(() => hsbTls.Read(bytes, 0, bytes.Length));
                         }
                         catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
                         {
@@ -474,10 +523,9 @@ public class Server
 
                         if (requestData.Count >= 4)
                         {
-                            var requestArray = requestData.ToArray();
-                            bool headersComplete = requestArray
-                                .AsSpan()
+                            bool headersComplete = CollectionsMarshal.AsSpan(requestData)
                                 .IndexOf(headerDelimiter) >= 0;
+
                             if (!headersComplete)
                             {
                                 continue;
@@ -539,7 +587,7 @@ public class Server
                         {
                             try
                             {
-                                bytesRec = sslStream.Read(bytes);
+                                bytesRec = await sslStream.ReadAsync(bytes);
                             }
                             catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
                             {
@@ -600,10 +648,9 @@ public class Server
 
                             if (requestData.Count >= 4)
                             {
-                                var requestArray = requestData.ToArray();
-                                bool headersComplete = requestArray
-                                    .AsSpan()
+                                bool headersComplete = CollectionsMarshal.AsSpan(requestData)
                                     .IndexOf(headerDelimiter) >= 0;
+
                                 if (!headersComplete)
                                 {
                                     continue;
@@ -728,7 +775,7 @@ public class Server
             {
                 try
                 {
-                    bytesRec = socket.Receive(bytes);
+                    bytesRec = await socket.ReceiveAsync(bytes, SocketFlags.None);
                 }
                 catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
                 {
@@ -784,9 +831,7 @@ public class Server
 
                 if (requestData.Count >= 4)
                 {
-                    var requestArray = requestData.ToArray();
-                    bool headersComplete = requestArray
-                        .AsSpan()
+                    bool headersComplete = CollectionsMarshal.AsSpan(requestData)
                         .IndexOf(headerDelimiter) >= 0;
                     if (!headersComplete)
                     {
@@ -799,7 +844,7 @@ public class Server
                 }
 
                 string headerText =
-                    System.Text.Encoding.UTF8.GetString(requestData.ToArray());
+                    System.Text.Encoding.UTF8.GetString(CollectionsMarshal.AsSpan(requestData));
 
                 string[] headerLines =
                     headerText.Split("\r\n", StringSplitOptions.None);
@@ -853,7 +898,7 @@ public class Server
         {
             Response res = new(socket, req, _config, sslStream, hsbTls);
 
-            _ = Task.Run(() => ProcessRequest(req, res));
+            ProcessRequest(req, res);
         }
         else
         {

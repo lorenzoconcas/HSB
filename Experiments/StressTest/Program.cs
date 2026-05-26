@@ -12,6 +12,7 @@ public static class Program
         Configuration config = new()
         {
             Port = 8080,
+            RequestMaxSize = 100 * HSB.Configuration.MEGABYTE
             //Address = "0.0.0.0"
         };
 
@@ -213,6 +214,21 @@ public static class Program
             }
 
             res.Send("done");
+        });
+
+        config.Post("/upload", (Request req, Response res) =>
+        {
+            var bodySize = req.Body?.Length ?? 0;
+
+            res.Send(
+                JsonSerializer.Serialize(new
+                {
+                    success = true,
+                    receivedBytes = bodySize,
+                    timestamp = DateTime.UtcNow
+                }),
+                "application/json"
+            );
         });
 
         

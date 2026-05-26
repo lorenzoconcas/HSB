@@ -504,21 +504,46 @@ public class Server
 
                         requestData.AddRange(bytes[..bytesRec]);
 
-                        if (requestData.Count > MAX_HEADER_SIZE)
+                        if (requestData.Count >= 4)
                         {
-                            _config.Debug.WARNING("Closing connection: header size limit exceeded");
+                            var currentSpan = CollectionsMarshal.AsSpan(requestData);
+                            var currentHeaderEnd = currentSpan.IndexOf(headerDelimiter);
 
-                            try
+                            // Header not complete yet: enforce max header buffer size.
+                            if (currentHeaderEnd < 0 && requestData.Count > MAX_HEADER_SIZE)
                             {
-                                socket.Shutdown(SocketShutdown.Both);
-                            }
-                            catch
-                            {
-                                // ignored
+                                _config.Debug.WARNING("Closing connection: header size limit exceeded");
+
+                                try
+                                {
+                                    socket.Shutdown(SocketShutdown.Both);
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+
+                                socket.Close();
+                                return;
                             }
 
-                            socket.Close();
-                            return;
+                            // Header complete: validate actual header size only.
+                            if (currentHeaderEnd >= 0 && currentHeaderEnd > MAX_HEADER_SIZE)
+                            {
+                                _config.Debug.WARNING("Closing connection: header size limit exceeded");
+
+                                try
+                                {
+                                    socket.Shutdown(SocketShutdown.Both);
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+
+                                socket.Close();
+                                return;
+                            }
                         }
 
                         if (requestData.Count >= 4)
@@ -627,23 +652,50 @@ public class Server
 
                             requestData.AddRange(bytes[..bytesRec]);
 
-                            if (requestData.Count > MAX_HEADER_SIZE)
+                            if (requestData.Count >= 4)
                             {
-                                _config.Debug.WARNING("Closing connection: header size limit exceeded");
+                                var currentSpan = CollectionsMarshal.AsSpan(requestData);
+                                var currentHeaderEnd = currentSpan.IndexOf(headerDelimiter);
 
-                                sslStream.Dispose();
-
-                                try
+                                // Header not complete yet: enforce max header buffer size.
+                                if (currentHeaderEnd < 0 && requestData.Count > MAX_HEADER_SIZE)
                                 {
-                                    socket.Shutdown(SocketShutdown.Both);
-                                }
-                                catch
-                                {
-                                    // ignored
+                                    _config.Debug.WARNING("Closing connection: header size limit exceeded");
+
+                                    sslStream.Dispose();
+
+                                    try
+                                    {
+                                        socket.Shutdown(SocketShutdown.Both);
+                                    }
+                                    catch
+                                    {
+                                        // ignored
+                                    }
+
+                                    socket.Close();
+                                    return;
                                 }
 
-                                socket.Close();
-                                return;
+                                // Header complete: validate actual header size only.
+                                if (currentHeaderEnd >= 0 && currentHeaderEnd > MAX_HEADER_SIZE)
+                                {
+                                    _config.Debug.WARNING("Closing connection: header size limit exceeded");
+
+                                    sslStream.Dispose();
+
+                                    try
+                                    {
+                                        socket.Shutdown(SocketShutdown.Both);
+                                    }
+                                    catch
+                                    {
+                                        // ignored
+                                    }
+
+                                    socket.Close();
+                                    return;
+                                }
                             }
 
                             if (requestData.Count >= 4)
@@ -811,22 +863,48 @@ public class Server
 
                 requestData.AddRange(bytes[..bytesRec]);
 
-                if (requestData.Count > MAX_HEADER_SIZE)
+                if (requestData.Count >= 4)
                 {
-                    _config.Debug.WARNING(
-                        "Closing connection: header size limit exceeded");
+                    var currentSpan = CollectionsMarshal.AsSpan(requestData);
+                    var currentHeaderEnd = currentSpan.IndexOf(headerDelimiter);
 
-                    try
+                    // Header not complete yet: enforce max header buffer size.
+                    if (currentHeaderEnd < 0 && requestData.Count > MAX_HEADER_SIZE)
                     {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
+                        _config.Debug.WARNING(
+                            "Closing connection: header size limit exceeded");
+
+                        try
+                        {
+                            socket.Shutdown(SocketShutdown.Both);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        socket.Close();
+                        return;
                     }
 
-                    socket.Close();
-                    return;
+                    // Header complete: validate actual header size only.
+                    if (currentHeaderEnd >= 0 && currentHeaderEnd > MAX_HEADER_SIZE)
+                    {
+                        _config.Debug.WARNING(
+                            "Closing connection: header size limit exceeded");
+
+                        try
+                        {
+                            socket.Shutdown(SocketShutdown.Both);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        socket.Close();
+                        return;
+                    }
                 }
 
                 if (requestData.Count >= 4)
@@ -843,8 +921,118 @@ public class Server
                     continue;
                 }
 
+                // --- BEGIN: Read full request body if present ---
+                var requestSpan = CollectionsMarshal.AsSpan(requestData);
+                var headerEndIndex = requestSpan.IndexOf(headerDelimiter);
+
+                if (headerEndIndex < 0)
+                {
+                    continue;
+                }
+
+                var bodyStart = headerEndIndex + headerDelimiter.Length;
+                var headersOnly = System.Text.Encoding.UTF8.GetString(requestSpan[..headerEndIndex]);
+
+                var contentLength = 0;
+
+                foreach (var line in headersOnly.Split("\r\n", StringSplitOptions.RemoveEmptyEntries))
+                {
+                    if (!line.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    var value = line["Content-Length:".Length..].Trim();
+                    int.TryParse(value, out contentLength);
+                    break;
+                }
+
+                if (contentLength > 0)
+                {
+                    var expectedTotalSize = bodyStart + contentLength;
+
+                    if (expectedTotalSize > _config.RequestMaxSize)
+                    {
+                        _config.Debug.WARNING("Closing connection: request body too large");
+
+                        try
+                        {
+                            socket.Shutdown(SocketShutdown.Both);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        socket.Close();
+                        return;
+                    }
+
+                    while (requestData.Count < expectedTotalSize)
+                    {
+                        try
+                        {
+                            bytesRec = await socket.ReceiveAsync(bytes, SocketFlags.None);
+                        }
+                        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                        {
+                            _config.Debug.WARNING("Closing connection: body receive timeout");
+
+                            try
+                            {
+                                socket.Shutdown(SocketShutdown.Both);
+                            }
+                            catch
+                            {
+                                // ignored
+                            }
+
+                            socket.Close();
+                            return;
+                        }
+
+                        if (bytesRec <= 0)
+                        {
+                            try
+                            {
+                                socket.Shutdown(SocketShutdown.Both);
+                            }
+                            catch
+                            {
+                                // ignored
+                            }
+
+                            socket.Close();
+                            return;
+                        }
+
+                        requestData.AddRange(bytes[..bytesRec]);
+                    }
+                }
+                // --- END: Read full request body if present ---
+
+                var finalSpan = CollectionsMarshal.AsSpan(requestData);
+                var finalHeaderEnd = finalSpan.IndexOf(headerDelimiter);
+
+                if (finalHeaderEnd < 0)
+                {
+                    _config.Debug.WARNING("Closing connection: malformed request headers");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                    return;
+                }
+
                 string headerText =
-                    System.Text.Encoding.UTF8.GetString(CollectionsMarshal.AsSpan(requestData));
+                    System.Text.Encoding.UTF8.GetString(finalSpan[..finalHeaderEnd]);
 
                 string[] headerLines =
                     headerText.Split("\r\n", StringSplitOptions.None);

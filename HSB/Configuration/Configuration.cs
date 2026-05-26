@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using HSB.Components.WebSockets;
 using HSB.Constants;
 using HSB.OpenApi;
 using HSB.Utils;
@@ -16,6 +17,7 @@ public class Configuration
         new() {WriteIndented = true, IncludeFields = true};
     
     public event Action<ExpressMap>? ExpressRouteAdded;
+    public event Action<WebSocketEndpoint>? WebSocketRouteAdded;
     /// <summary>
     /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address)
     /// </summary>
@@ -95,6 +97,7 @@ public class Configuration
     /// Expressjs-like routing (es in Express.js you map pages and path like : app.get(path, (req, res){})
     /// </summary>
     private readonly List<ExpressMap> expressMapping = [];
+    private readonly WebSocketRouter webSocketRouter = new();
 
     /// <summary>
     /// When set, the server will use this name instead of the default one (default is: HSB-#/assembly_version (os_version))
@@ -169,6 +172,7 @@ public class Configuration
     /// also a documentation page will be served at OpenApiSettings.Path
     /// </summary>
     public OpenApiSettings OpenApiSettings = new();
+    public WebSocketOptions WebSocketOptions = new();
     
     public List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.CustomModules");
     
@@ -195,6 +199,7 @@ public class Configuration
         DefaultSessionExpirationTime = (ulong) TimeSpan.FromDays(1).Ticks;
         SslSettings = new SslConfiguration();
         GlobalCors = null;
+        WebSocketOptions = new WebSocketOptions();
     }
 
     /// <summary>
@@ -249,6 +254,16 @@ public class Configuration
 
             PermanentIpList = root.GetProperty("PermanentIPList").EnumerateArray().Select(item => item.GetString())
                 .OfType<string>().ToList();
+
+            if (root.TryGetProperty(nameof(WebSocketOptions), out var webSocketOptions))
+            {
+                lastProp = nameof(WebSocketOptions);
+                WebSocketOptions = WebSocketOptions.FromJson(webSocketOptions);
+            }
+            else
+            {
+                WebSocketOptions = new WebSocketOptions();
+            }
             
         }
         catch (Exception e)
@@ -286,6 +301,7 @@ public class Configuration
         //default one day
         DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong) TimeSpan.FromDays(1).Ticks;
         SslSettings = sslConfiguration ?? new SslConfiguration();
+        WebSocketOptions = new WebSocketOptions();
         
     }
 
@@ -319,6 +335,7 @@ public class Configuration
     }
 
     protected internal List<ExpressMap> ExpressRoutes => expressMapping;
+    public WebSocketRouter WebSocketRouter => webSocketRouter;
 
     /// <summary>
     /// Map a function to a path that will reply with a GET response 
@@ -382,6 +399,20 @@ public class Configuration
     /// <param name="path">Mapping</param>
     /// <param name="func">Function that will handle the request</param>
     public void Connect(string path, Delegate func) => AddExpressMapping(path, HttpMethod.Connect, func);
+
+    public WebSocketEndpoint WebSocket(string path, Action<WebSocketConnection> handler)
+    {
+        var endpoint = webSocketRouter.Map(path, handler);
+        WebSocketRouteAdded?.Invoke(endpoint);
+        return endpoint;
+    }
+
+    public WebSocketEndpoint WebSocket(string path, Func<WebSocketConnection, Task> handler)
+    {
+        var endpoint = webSocketRouter.Map(path, handler);
+        WebSocketRouteAdded?.Invoke(endpoint);
+        return endpoint;
+    }
 
     /// <summary>
     /// Add an object shared between all servlet

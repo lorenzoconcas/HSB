@@ -222,6 +222,12 @@ public class Server
                 $"Route |{Terminal.FG_TO_STRING(FgColor.Green)}{r.HttpMethod}{Terminal.RESET} -> {r.Path} (Delegate)");
         };
 
+        _config.WebSocketRouteAdded += endpoint =>
+        {
+            _config.Debug.INFO(
+                $"WebSocket | {Terminal.FG_TO_STRING(FgColor.Green)}WS{Terminal.RESET} -> {endpoint.Path} (Delegate)");
+        };
+
 
         config.Debug.INFO("Starting logging...");
 
@@ -238,7 +244,7 @@ public class Server
 
         _config.SetRoutes(routes);
 
-        ExecuteModule(ModuleType.Global, _config); 
+        ExecuteModule(ModuleType.Global, _config);
         ExecuteModule(ModuleType.Service, _config);
 
 
@@ -377,32 +383,129 @@ public class Server
     private void Process(Socket listener, bool sslMode)
     {
         var socket = listener.Accept();
+
+        socket.NoDelay = true;
+        socket.ReceiveTimeout = 5000;
+        socket.SendTimeout = 5000;
+
+        const int MAX_HEADER_SIZE = 8192;
+        const int MAX_REQUEST_LINE_SIZE = 4096;
+        const int MAX_HEADERS_COUNT = 100;
+
         var bytes = new byte[_config.RequestMaxSize];
+        var requestData = new List<byte>(_config.RequestMaxSize);
+
         var bytesRec = 0;
         var sslOk = false;
 
         SslStream? sslStream = null;
         Tls12Handler? hsbTls = null;
 
+        byte[] headerDelimiter = "\r\n\r\n"u8.ToArray();
+
         if (sslMode)
         {
             if (_config.SslSettings.SslHandler == SslHandler.Hsb)
             {
-                // Manual TLS Implementation (POC)
                 try
                 {
-                    if (_serverCertificate == null) throw new Exception("Server certificate is null");
+                    if (_serverCertificate == null)
+                        throw new Exception("Server certificate is null");
 
                     hsbTls = new Tls12Handler(socket, _serverCertificate);
                     hsbTls.PerformHandshake();
 
-                    bytesRec = hsbTls.Read(bytes, 0, bytes.Length);
+                    while (true)
+                    {
+                        try
+                        {
+                            bytesRec = hsbTls.Read(bytes, 0, bytes.Length);
+                        }
+                        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                        {
+                            _config.Debug.WARNING("Closing TLS connection: header receive timeout");
+
+                            try
+                            {
+                                socket.Shutdown(SocketShutdown.Both);
+                            }
+                            catch
+                            {
+                                // ignored
+                            }
+
+                            socket.Close();
+                            return;
+                        }
+
+                        if (bytesRec <= 0)
+                        {
+                            try
+                            {
+                                socket.Shutdown(SocketShutdown.Both);
+                            }
+                            catch
+                            {
+                                // ignored
+                            }
+
+                            socket.Close();
+                            return;
+                        }
+
+                        requestData.AddRange(bytes[..bytesRec]);
+
+                        if (requestData.Count > MAX_HEADER_SIZE)
+                        {
+                            _config.Debug.WARNING("Closing connection: header size limit exceeded");
+
+                            try
+                            {
+                                socket.Shutdown(SocketShutdown.Both);
+                            }
+                            catch
+                            {
+                                // ignored
+                            }
+
+                            socket.Close();
+                            return;
+                        }
+
+                        if (requestData.Count >= 4)
+                        {
+                            var requestArray = requestData.ToArray();
+                            bool headersComplete = requestArray
+                                .AsSpan()
+                                .IndexOf(headerDelimiter) >= 0;
+                            if (!headersComplete)
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        break;
+                    }
+
                     sslOk = true;
                 }
                 catch (Exception e)
                 {
-                    //sslOk = false;
                     _config.Debug.ERROR($"Manual TLS Handshake/Read Failed: {e.Message}");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     socket.Close();
                     return;
                 }
@@ -412,6 +515,16 @@ public class Server
                 if (_tlsConnection == null)
                 {
                     _config.Debug.ERROR("SSL Mode requested but TlsConnection is not initialized");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     socket.Close();
                     return;
                 }
@@ -422,21 +535,113 @@ public class Server
                 {
                     try
                     {
-                        bytesRec = sslStream.Read(bytes);
+                        while (true)
+                        {
+                            try
+                            {
+                                bytesRec = sslStream.Read(bytes);
+                            }
+                            catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+                            {
+                                _config.Debug.WARNING("Closing SSL connection: header receive timeout");
+
+                                sslStream.Dispose();
+
+                                try
+                                {
+                                    socket.Shutdown(SocketShutdown.Both);
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+
+                                socket.Close();
+                                return;
+                            }
+
+                            if (bytesRec <= 0)
+                            {
+                                sslStream.Dispose();
+
+                                try
+                                {
+                                    socket.Shutdown(SocketShutdown.Both);
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+
+                                socket.Close();
+                                return;
+                            }
+
+                            requestData.AddRange(bytes[..bytesRec]);
+
+                            if (requestData.Count > MAX_HEADER_SIZE)
+                            {
+                                _config.Debug.WARNING("Closing connection: header size limit exceeded");
+
+                                sslStream.Dispose();
+
+                                try
+                                {
+                                    socket.Shutdown(SocketShutdown.Both);
+                                }
+                                catch
+                                {
+                                    // ignored
+                                }
+
+                                socket.Close();
+                                return;
+                            }
+
+                            if (requestData.Count >= 4)
+                            {
+                                var requestArray = requestData.ToArray();
+                                bool headersComplete = requestArray
+                                    .AsSpan()
+                                    .IndexOf(headerDelimiter) >= 0;
+                                if (!headersComplete)
+                                {
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                continue;
+                            }
+
+                            break;
+                        }
+
                         sslOk = true;
                     }
                     catch (Exception e)
                     {
                         _config.Debug.DEBUG(e);
+
                         sslStream.Dispose();
-                        // Error reading from stream after auth
+
+                        try
+                        {
+                            socket.Shutdown(SocketShutdown.Both);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        socket.Close();
+                        return;
                     }
                 }
             }
 
             if (!sslOk)
             {
-                //if auth fails or read fails, the behavior depends on the configuration
                 sslStream?.Dispose();
 
                 if (_config.SslSettings.UpgradeUnsecureRequests)
@@ -455,6 +660,16 @@ public class Server
                     {
                         _config.Debug.WARNING(
                             "Cannot initialize redirect endpoint, closing connection");
+
+                        try
+                        {
+                            socket.Shutdown(SocketShutdown.Both);
+                        }
+                        catch
+                        {
+                            // ignored
+                        }
+
                         socket.Close();
                         return;
                     }
@@ -464,6 +679,16 @@ public class Server
                 else
                 {
                     _config.Debug.WARNING("SSL authentication failed, closing connection");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
                     socket.Close();
                 }
 
@@ -472,18 +697,18 @@ public class Server
         }
         else
         {
-            if (_config.SslSettings.IsEnabled() && _config.SslSettings.UpgradeUnsecureRequests)
+            if (_config.SslSettings.IsEnabled() &&
+                _config.SslSettings.UpgradeUnsecureRequests)
             {
                 _config.Debug.WARNING("Unsecure request received, redirecting to SSL");
-                //attempt redirect
+
                 Request rq = new(bytes, socket, _config, sslOk);
                 Response res = new(socket, rq, _config, null);
 
-                //the endpoint varies if by the port mode
-                //if the port mode is dual port, we redirect to the ssl port
-                var redirectEndpoint = _config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
-                    ? _sslLocalEndPoint!
-                    : _localEndPoint;
+                var redirectEndpoint =
+                    _config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
+                        ? _sslLocalEndPoint!
+                        : _localEndPoint;
 
                 if (redirectEndpoint == null)
                 {
@@ -491,27 +716,156 @@ public class Server
                     return;
                 }
 
+                res.Redirect(
+                    "https://" + redirectEndpoint,
+                    HttpCodes.MOVED_PERMANENTLY
+                );
 
-                res.Redirect("https://" + redirectEndpoint, HttpCodes.MOVED_PERMANENTLY);
                 return;
             }
 
-            bytesRec = socket.Receive(bytes);
+            while (true)
+            {
+                try
+                {
+                    bytesRec = socket.Receive(bytes);
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                {
+                    _config.Debug.WARNING("Closing connection: header receive timeout");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                    return;
+                }
+
+                if (bytesRec <= 0)
+                {
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                    return;
+                }
+
+                requestData.AddRange(bytes[..bytesRec]);
+
+                if (requestData.Count > MAX_HEADER_SIZE)
+                {
+                    _config.Debug.WARNING(
+                        "Closing connection: header size limit exceeded");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                    return;
+                }
+
+                if (requestData.Count >= 4)
+                {
+                    var requestArray = requestData.ToArray();
+                    bool headersComplete = requestArray
+                        .AsSpan()
+                        .IndexOf(headerDelimiter) >= 0;
+                    if (!headersComplete)
+                    {
+                        continue;
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+
+                string headerText =
+                    System.Text.Encoding.UTF8.GetString(requestData.ToArray());
+
+                string[] headerLines =
+                    headerText.Split("\r\n", StringSplitOptions.None);
+
+                if (headerLines.Length > 0 &&
+                    headerLines[0].Length > MAX_REQUEST_LINE_SIZE)
+                {
+                    _config.Debug.WARNING(
+                        "Closing connection: request line too large");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                    return;
+                }
+
+                if (headerLines.Length > MAX_HEADERS_COUNT)
+                {
+                    _config.Debug.WARNING(
+                        "Closing connection: too many headers");
+
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                    return;
+                }
+
+                break;
+            }
         }
 
-        bytes = bytes[..bytesRec]; //trim the array to the actual size of the request
+        bytes = requestData.ToArray();
 
-        //parse the request
         Request req = new(bytes, socket, _config, sslOk);
-        //if is valid we process it
+
         if (req.IsValidRequest)
         {
             Response res = new(socket, req, _config, sslStream, hsbTls);
-            new Task(() => ProcessRequest(req, res)).Start();
+
+            Task.Run(() => ProcessRequest(req, res));
         }
         else
         {
-            //abort if the request is not valid
+            try
+            {
+                socket.Shutdown(SocketShutdown.Both);
+            }
+            catch
+            {
+                // ignored
+            }
+
             socket.Close();
         }
     }
@@ -614,6 +968,45 @@ public class Server
             //if dev has used the express mapping, we run the mapped function
             //if (RunIfExpressMapping(req, res)) return;
 
+            if (req.IsWebSocket())
+            {
+                var endpoint = _config.WebSocketRouter.Match(req.Url);
+                if (endpoint == null)
+                {
+                    _config.Debug.WARNING($"WebSocket '{req.Url}' {HttpCodes.NOT_FOUND} (Route not found)");
+                    new Error(res, _config, "WebSocket route not found", HttpCodes.NOT_FOUND).Throw();
+                    return;
+                }
+
+                var connection = new WebSocketConnection(req, res, _config, endpoint);
+
+                try
+                {
+                    if (_config.WebSocketRouter.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsTotal)
+                    {
+                        _config.Debug.WARNING($"WebSocket '{req.Url}' {HttpCodes.SERVICE_UNAVAILABLE} (Global connection limit reached)");
+                        new Error(res, _config, "WebSocket global connection limit reached", HttpCodes.SERVICE_UNAVAILABLE).Throw();
+                        return;
+                    }
+
+                    if (endpoint.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsPerEndpoint)
+                    {
+                        _config.Debug.WARNING($"WebSocket '{req.Url}' {HttpCodes.TOO_MANY_REQUESTS} (Endpoint connection limit reached)");
+                        new Error(res, _config, "WebSocket endpoint connection limit reached", HttpCodes.TOO_MANY_REQUESTS).Throw();
+                        return;
+                    }
+
+                    endpoint.Add(connection);
+                    connection.Runtime.ProcessAsync(() => endpoint.ConfigureAsync(connection)).GetAwaiter().GetResult();
+                }
+                finally
+                {
+                    endpoint.Remove(connection);
+                }
+
+                return;
+            }
+
             //We check if the route requested is handled by any servlet
             var o = GetInstance(req);
 
@@ -622,15 +1015,6 @@ public class Server
                 ParameterInfo[] parameters;
                 switch (o)
                 {
-                    //we check if the object is a servlet or a websocket
-                    case WebSocket when !req.IsWebSocket():
-                        _config.Debug.WARNING(
-                            $"{req.Method} '{req.Url}' {HttpCodes.METHOD_NOT_ALLOWED} (Invalid Request) ");
-                        new Error(res, _config, "Invalid Request", HttpCodes.METHOD_NOT_ALLOWED).Throw();
-                        return;
-                    case WebSocket ws:
-                        ws.Process();
-                        return;
                     case (null, RoutableMethod route):
                         if (route.Type != RoutableMethodType.Delegate)
                         {
@@ -713,6 +1097,7 @@ public class Server
                                         .Throw();
                                     return;
                                 }
+
                                 //parameters must be collected in order to be applied
                                 var paramValue = deserializedBody[paramAttributes.Name] as string;
                                 var parsedType = TypeUtils.ConvertToType(paramValue!, methodParameter.ParameterType);
@@ -750,6 +1135,10 @@ public class Server
                                 else if (parameter.ParameterType == typeof(Response))
                                 {
                                     injectionParameters.Add(res);
+                                }
+                                else if (parameter.ParameterType == typeof(Configuration))
+                                {
+                                    injectionParameters.Add(_config);
                                 }
                                 else
                                 {
@@ -897,6 +1286,71 @@ public class Server
                     Path = routeAttr.Path,
                     HttpMethod = routeAttr.Method,
                     MethodInfo = m
+                });
+            }
+
+            var webSocketMethods = c.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(m => m.GetCustomAttribute<Ws>(false) != null);
+
+            foreach (var m in webSocketMethods)
+            {
+                var wsAttr = m.GetCustomAttribute<Ws>(true);
+                if (wsAttr == null) continue;
+
+                var fullPath = WebSocketRouter.CombinePaths(attr.Path, wsAttr.Path);
+                _config.WebSocket(fullPath, socket =>
+                {
+                    var instance = Activator.CreateInstance(c);
+                    if (instance == null)
+                    {
+                        throw new Exception($"Cannot create controller instance for {c.FullName}");
+                    }
+
+                    var fields = c
+                        .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Where(fi => fi.FieldType == typeof(Request) || fi.FieldType == typeof(Response));
+
+                    foreach (var field in fields)
+                    {
+                        if (field.FieldType == typeof(Request))
+                        {
+                            field.SetValue(instance, socket.Request);
+                        }
+                        else if (field.FieldType == typeof(Response))
+                        {
+                            field.SetValue(instance, socket.Response);
+                        }
+                    }
+
+                    var methodParameters = m.GetParameters();
+                    var callingParams = methodParameters.Select<ParameterInfo, object>(parameter =>
+                    {
+                        if (parameter.ParameterType == typeof(WebSocketConnection))
+                        {
+                            return socket;
+                        }
+
+                        if (parameter.ParameterType == typeof(Request))
+                        {
+                            return socket.Request;
+                        }
+
+                        if (parameter.ParameterType == typeof(Response))
+                        {
+                            return socket.Response;
+                        }
+
+                        if (parameter.ParameterType == typeof(Configuration))
+                        {
+                            return _config;
+                        }
+
+                        throw new Exception(
+                            $"Unsupported WebSocket controller parameter {parameter.Name} on {c.Name}.{m.Name}");
+                    }).ToArray();
+
+                    var result = m.Invoke(instance, callingParams);
+                    return result is Task task ? task : Task.CompletedTask;
                 });
             }
 

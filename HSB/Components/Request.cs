@@ -23,10 +23,10 @@ public class Request
     //Request variables
     public bool ValidRequest;
     private string body = "";
-    readonly Dictionary<string, string> headers = [];
-    readonly Dictionary<string, string> parameters = [];
+    readonly Dictionary<string, string> headers = new(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string, string> parameters = new(StringComparer.OrdinalIgnoreCase);
     readonly List<string> rawHeaders = [];
-    readonly Dictionary<string, Cookie> cookies = [];
+    readonly Dictionary<string, Cookie> cookies = new(StringComparer.OrdinalIgnoreCase);
     public readonly bool IsTls;
 
     //Auth structs
@@ -86,7 +86,7 @@ public class Request
             return;
         }
         // reqText = Encoding.UTF8.GetString(data);
-        requestContent = [.. reqText.Split("\r\n")];
+        requestContent = [.. reqText.Split("\r\n", StringSplitOptions.None)];
         ParseRequest();
 
 
@@ -94,7 +94,7 @@ public class Request
 
     private void ParseRequest()
     {
-        if (reqText == "")
+        if (string.IsNullOrWhiteSpace(reqText))
         {
             //empty request
             Url = "/";
@@ -109,73 +109,59 @@ public class Request
 
         try
         {
-            string[] firstLine = requestContent.First().Split(" ");
+            if (requestContent.Count == 0 || string.IsNullOrWhiteSpace(requestContent[0]))
+            {
+                MarkInvalidRequest("Missing request line");
+                return;
+            }
+
+            string[] firstLine = requestContent[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (firstLine.Length != 3)
+            {
+                MarkInvalidRequest($"Malformed request line: {requestContent[0]}");
+                return;
+            }
+
             Method = HttpUtils.GetMethod(firstLine[0]);
-            Url = firstLine[1].Split("?")[0];
+
+            if (Method == HttpMethod.Unknown)
+            {
+                MarkInvalidRequest($"Unsupported HTTP method: {firstLine[0]}");
+                return;
+            }
+
+            string rawTarget = firstLine[1];
+
+            if (string.IsNullOrWhiteSpace(rawTarget))
+            {
+                MarkInvalidRequest("Missing request target");
+                return;
+            }
+
+            string[] targetParts = rawTarget.Split('?', 2);
+            Url = targetParts[0];
+
+            if (string.IsNullOrWhiteSpace(Url))
+            {
+                Url = "/";
+            }
+
             if (!Url.StartsWith('/') && Url.EndsWith('/'))
             {
                 //delete last "/" if url is like "example.com/"
                 Url = Url[..^1];
             }
+
             Protocol = HttpUtils.GetProtocol(firstLine[2]);
 
-            //collect parameters
-            if (firstLine[1].Replace(Url, "") != "")
+            if (targetParts.Length == 2)
             {
-                List<string> requestParameters = [.. firstLine[1].Split("?")[1].Split("&")];
-
-                foreach (var p in requestParameters)
-                {
-                    if (p != "" && !parameters.ContainsKey(p)) //skip empty parameters and no duplicates
-                        parameters.Add(p.Split("=")[0], p.Split("=")[1]);
-                }
+                ParseQueryString(targetParts[1]);
             }
 
-
-            //collect headers
-            foreach (string r in requestContent)
-            {
-                //skip if first element
-                if (r == requestContent.First())
-                    continue;
-                if (r == "")
-                {
-                    break;
-                }
-
-                rawHeaders.Add(r);
-                string[] header = r.Split(": ");
-                if (header.Length == 2)
-                    headers.Add(header[0], header[1]);
-                else headers.Add(r, "");
-
-            }
-
-            //auth data collection
-            //basic auth
-            if (headers.TryGetValue("Authorization", out string? value))
-            {
-                var requestAuth = value;
-                try
-                {
-                    requestAuth = Encoding.UTF8.GetString(Convert.FromBase64String(requestAuth));
-                    var x = requestAuth.Split(":");
-                    if (requestAuth.Length == 2)
-                    {
-                        basicAuth = new Tuple<string, string>(x[0], x[1]);
-                    }
-
-                }
-                catch (Exception)
-                {
-                    if (requestAuth.Contains("Bearer"))
-                    {
-                        oAuth20Token = value;
-                    }
-                }
-            }
-
-            //oAuth1.0 information
+            ParseHeaders();
+            ExtractAuthData();
             TryExtractAndSetOAuth1_0();
 
             //oAuth2.0 token 
@@ -184,69 +170,244 @@ public class Request
                 oAuth20Token = tkn;
             }
 
+            ParseCookies();
+            ResolveSession();
+            ExtractBody();
 
-            //parse cookies
-            if (headers.TryGetValue("Cookie", out string? val))
+            if (IsFileUpload() && headers.TryGetValue("Content-Type", out string? contentType))
             {
+                string[] contentTypeParts = contentType.Split("boundary=", 2, StringSplitOptions.None);
 
-                var strings = val.Split("; ");
-                foreach (var s in strings)
+                if (contentTypeParts.Length == 2 && !string.IsNullOrWhiteSpace(contentTypeParts[1]))
                 {
-
-                    cookies.Add(s.Split("=")[0], new Cookie(s));
+                    multiPartFormData = new MultiPartFormData(rawBody, contentTypeParts[1]);
                 }
             }
 
-            //search for a session token
-            if (cookies.TryGetValue("hsbst", out Cookie? cookie) && SessionManager.GetInstance().IsValidSession(cookie.value))
-            {
-                session = SessionManager.GetInstance().GetSession(cookie.value);
-            }
-            else
-            {
-
-                session = new Session()
-                {
-                    ExpirationTime = DateTime.Now.AddTicks((long)config.DefaultSessionExpirationTime).Ticks
-                };
-                var sessionToken = SessionManager.GetInstance().CreateSession(session);
-
-                Cookie c = new()
-                {
-                    name = "hsbst",
-                    value = sessionToken,
-                    expiration = DateTime.Now.AddTicks((long)config.DefaultSessionExpirationTime),
-                    path = "/",
-                    priority = Cookie.CookiePriority.HIGH
-                };
-
-                config.AddCustomGlobalCookie(c);
-            }
-
-            //extract body, which is the remaining part of the request text
-
-            var offset = rawData.IndexOf("\r\n\r\n"u8.ToArray()) + 4;
-            rawBody = rawData[offset..];
-            body = Encoding.UTF8.GetString(rawBody);
-
-            if (IsFileUpload())
-            {
-                multiPartFormData = new MultiPartFormData(rawBody, headers["Content-Type"].Split("boundary=")[1]);
-            }
             if (IsFormUpload())
             {
                 form = new Form(body);
             }
 
             ValidRequest = true;
-
         }
         catch (Exception e)
         {
-            Terminal.WriteLine("Invalid request, reason : " + e.Message, BgColor.Black, FgColor.Red);
-            ValidRequest = false;
+            MarkInvalidRequest(e.Message);
+        }
+    }
+
+    private void MarkInvalidRequest(string reason)
+    {
+        Terminal.WriteLine("Invalid request, reason : " + reason, BgColor.Black, FgColor.Red);
+        ValidRequest = false;
+        IsValidRequest = false;
+    }
+
+    private void ParseQueryString(string queryString)
+    {
+        if (string.IsNullOrWhiteSpace(queryString))
+        {
+            return;
         }
 
+        string[] requestParameters = queryString.Split('&', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var p in requestParameters)
+        {
+            if (p.Length > 2048)
+            {
+                continue;
+            }
+            string[] pair = p.Split('=', 2);
+            string key = SafeUrlDecode(pair[0]);
+            string value = pair.Length == 2 ? SafeUrlDecode(pair[1]) : string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                parameters[key] = value;
+            }
+        }
+    }
+
+    private void ParseHeaders()
+    {
+        for (int i = 1; i < requestContent.Count; i++)
+        {
+            string r = requestContent[i];
+
+            if (r == "")
+            {
+                break;
+            }
+
+            if (r.Length > 4096)
+            {
+                continue;
+            }
+            rawHeaders.Add(r);
+
+            int separatorIndex = r.IndexOf(':');
+
+            if (separatorIndex <= 0)
+            {
+                headers[r] = string.Empty;
+                continue;
+            }
+
+            string key = r[..separatorIndex].Trim();
+            string value = r[(separatorIndex + 1)..].Trim();
+
+            if (!string.IsNullOrWhiteSpace(key))
+            {
+                headers[key] = value;
+            }
+        }
+    }
+
+    private void ExtractAuthData()
+    {
+        if (!headers.TryGetValue("Authorization", out string? value) || string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        if (value.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
+        {
+            string base64Credentials = value[6..].Trim();
+
+            try
+            {
+                string decodedCredentials = Encoding.UTF8.GetString(Convert.FromBase64String(base64Credentials));
+                string[] credentials = decodedCredentials.Split(':', 2);
+
+                if (credentials.Length == 2)
+                {
+                    basicAuth = new Tuple<string, string>(credentials[0], credentials[1]);
+                }
+            }
+            catch
+            {
+                // Invalid basic auth payload. Ignore it and keep request parsing alive.
+            }
+
+            return;
+        }
+
+        if (value.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        {
+            oAuth20Token = value[7..].Trim();
+        }
+    }
+
+    private void ParseCookies()
+    {
+        if (!headers.TryGetValue("Cookie", out string? val) || string.IsNullOrWhiteSpace(val))
+        {
+            return;
+        }
+
+        var cookieValues = val.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var rawCookie in cookieValues)
+        {
+            if (rawCookie.Length > 4096)
+            {
+                continue;
+            }
+            string cookieText = rawCookie.Trim();
+
+            if (string.IsNullOrWhiteSpace(cookieText) || !cookieText.Contains('='))
+            {
+                continue;
+            }
+
+            string[] pair = cookieText.Split('=', 2);
+            string cookieName = pair[0].Trim();
+
+            if (string.IsNullOrWhiteSpace(cookieName))
+            {
+                continue;
+            }
+
+            try
+            {
+                cookies[cookieName] = new Cookie(cookieText);
+            }
+            catch
+            {
+                // Invalid cookie format. Ignore single malformed cookie.
+            }
+        }
+    }
+
+    private void ResolveSession()
+    {
+        if (cookies.TryGetValue("hsbst", out Cookie? cookie) && SessionManager.GetInstance().IsValidSession(cookie.value))
+        {
+            session = SessionManager.GetInstance().GetSession(cookie.value);
+            return;
+        }
+
+        session = new Session()
+        {
+            ExpirationTime = DateTime.Now.AddTicks((long)config.DefaultSessionExpirationTime).Ticks
+        };
+
+        var sessionToken = SessionManager.GetInstance().CreateSession(session);
+
+        Cookie c = new()
+        {
+            name = "hsbst",
+            value = sessionToken,
+            expiration = DateTime.Now.AddTicks((long)config.DefaultSessionExpirationTime),
+            path = "/",
+            priority = Cookie.CookiePriority.HIGH
+        };
+
+        config.AddCustomGlobalCookie(c);
+    }
+
+    private void ExtractBody()
+    {
+        var delimiter = "\r\n\r\n"u8.ToArray();
+        int headerEndIndex = rawData.IndexOf(delimiter);
+
+        if (headerEndIndex < 0)
+        {
+            rawBody = [];
+            body = string.Empty;
+            return;
+        }
+
+        int offset = headerEndIndex + delimiter.Length;
+
+        if (offset >= rawData.Length)
+        {
+            rawBody = [];
+            body = string.Empty;
+            return;
+        }
+
+        rawBody = rawData[offset..];
+        body = Encoding.UTF8.GetString(rawBody);
+    }
+
+    private static string SafeUrlDecode(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        try
+        {
+            return Uri.UnescapeDataString(value.Replace("+", " "));
+        }
+        catch
+        {
+            return value;
+        }
     }
 
     /// <summary>
@@ -312,7 +473,7 @@ public class Request
     /// Test if a request contains a JSON document in the body
     /// </summary>
     /// <returns></returns>
-    public bool IsJson() => headers["Content-Type"].StartsWith("application/json");
+    public bool IsJson() => headers.TryGetValue("Content-Type", out string? contentType) && contentType.StartsWith("application/json", StringComparison.OrdinalIgnoreCase);
     /// <summary>
     /// Returns if the request is an ajax request
     /// </summary>
@@ -324,19 +485,19 @@ public class Request
     public bool IsWebSocket()
     {
         return
-        headers.ContainsKey("Connection") && headers["Connection"].Equals("upgrade", StringComparison.CurrentCultureIgnoreCase) &&
-        headers.ContainsKey("Upgrade") && headers["Upgrade"].Equals("websocket", StringComparison.CurrentCultureIgnoreCase);
+            headers.TryGetValue("Connection", out string? connection) && connection.Contains("upgrade", StringComparison.OrdinalIgnoreCase) &&
+            headers.TryGetValue("Upgrade", out string? upgrade) && upgrade.Equals("websocket", StringComparison.OrdinalIgnoreCase);
     }
     /// <summary>
     /// Returns true if the request is a file upload
     /// </summary>
     /// <returns></returns>
-    public bool IsFileUpload() => headers.ContainsKey("Content-Type") && headers["Content-Type"].StartsWith("multipart/form-data");
+    public bool IsFileUpload() => headers.TryGetValue("Content-Type", out string? contentType) && contentType.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase);
     /// <summary>
     /// Returns true if the request is a form upload
     /// </summary>
     /// <returns></returns>
-    public bool IsFormUpload() => headers.ContainsKey("Content-Type") && headers["Content-Type"].StartsWith("application/x-www-form-urlencoded");
+    public bool IsFormUpload() => headers.TryGetValue("Content-Type", out string? contentType) && contentType.StartsWith("application/x-www-form-urlencoded", StringComparison.OrdinalIgnoreCase);
     /// <summary>
     /// Returns the form data if the request is a multipart form data upload, else null
     /// </summary>
@@ -362,7 +523,9 @@ public class Request
         File.WriteAllText(path, body);
     }
     internal string GetRawRequest => reqText;
-    internal string RawMethod => requestContent.First().Split(" ")[0];
+    internal string RawMethod => requestContent.Count == 0
+        ? string.Empty
+        : requestContent[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
 
     //utilities functions
     public void FullPrint()
@@ -440,7 +603,7 @@ public static class HttpUtils
         "HTTP/1.1" => HttpProtocol.HTTP1_1,
         "HTTP/2.0" => HttpProtocol.HTTP2_0,
         "HTTP/3.0" => HttpProtocol.HTTP3_0,
-        _ => throw new Exception("Unsupported HTTP Protocol")
+        _ => HttpProtocol.UNKNOWN
     };
 
 }

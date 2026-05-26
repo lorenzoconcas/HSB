@@ -1,20 +1,14 @@
-﻿using System;
 using HSB;
 
-namespace Runner.Servlets
-{
-    [Binding(@"/`\/.*\/*regex.")]
-    public class RegexBinding : Servlet
-    {
-        public RegexBinding(Request req, Response res) : base(req, res)
-        {
-        }
+namespace Runner.Servlets;
 
-        public override void GET()
+public static class RegexRoute
+{
+    public static void Register(Configuration config)
+    {
+        config.Get("/regex", (Request req, Response res) =>
         {
-         
-            res.Send($@"<h1>Hi</h1><h4> you used regex /`\/.*\/*regex. to match {req.Url}</h4>", "text/html");
-        }
+            res.Send($@"<h1>Hi</h1><h4> regex-style route migrated to /regex, matched {req.Url}</h4>", "text/html");
+        });
     }
 }
-

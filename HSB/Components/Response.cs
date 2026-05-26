@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Collections.Immutable;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Text.Json;
 using HSB.Constants;
@@ -41,6 +43,16 @@ public class Response(
     /// <param name="disconnect"></param>
     public void Send(byte[] data, bool disconnect = true)
     {
+        SendInternal(data, disconnect, throwOnError: false);
+    }
+
+    internal void SendOrThrow(byte[] data, bool disconnect = true)
+    {
+        SendInternal(data, disconnect, throwOnError: true);
+    }
+
+    private void SendInternal(byte[] data, bool disconnect, bool throwOnError)
+    {
         try
         {
             if (_tlsHandler != null)
@@ -57,16 +69,78 @@ public class Response(
             }
             else
             {
-                socket.Send(data);
+                var totalSent = 0;
+                while (totalSent < data.Length)
+                {
+                    var sent = socket.Send(data, totalSent, data.Length - totalSent, SocketFlags.None);
+                    if (sent <= 0)
+                    {
+                        throw new SocketException((int)SocketError.ConnectionReset);
+                    }
+
+                    totalSent += sent;
+                }
+
                 if (disconnect)
-                    socket.Disconnect(disconnect);
+                {
+                    try
+                    {
+                        socket.Shutdown(SocketShutdown.Both);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    socket.Close();
+                }
             }
 
             //data = [];
         }
         catch (Exception e)
         {
+            if (throwOnError)
+            {
+                ExceptionDispatchInfo.Capture(e).Throw();
+            }
+
             Terminal.Error($"Error sending data ->\n {e}");
+        }
+    }
+
+    internal int Read(byte[] buffer, int offset, int count)
+    {
+        if (_tlsHandler != null)
+        {
+            return _tlsHandler.Read(buffer, offset, count);
+        }
+
+        if (sslStream != null)
+        {
+            return sslStream.Read(buffer, offset, count);
+        }
+
+        return socket.Receive(buffer, offset, count, SocketFlags.None);
+    }
+
+    internal void SetReadTimeout(int timeoutMilliseconds)
+    {
+        socket.ReceiveTimeout = timeoutMilliseconds;
+
+        if (sslStream != null)
+        {
+            sslStream.ReadTimeout = timeoutMilliseconds;
+        }
+    }
+
+    internal void SetWriteTimeout(int timeoutMilliseconds)
+    {
+        socket.SendTimeout = timeoutMilliseconds;
+
+        if (sslStream != null)
+        {
+            sslStream.WriteTimeout = timeoutMilliseconds;
         }
     }
 
@@ -82,9 +156,16 @@ public class Response(
     {
         var mime = mimeType;
 
-        var resp = GetHeaders(statusCode, Encoding.UTF8.GetBytes(data).Length, mime, customHeaders) + data;
+        byte[] bodyBytes = Encoding.UTF8.GetBytes(data);
+        var resp = GetHeaders(statusCode, bodyBytes.Length, mime, customHeaders);
 
-        Send(Encoding.UTF8.GetBytes(resp));
+        byte[] headerBytes = Encoding.UTF8.GetBytes(resp);
+        byte[] responseBytes = new byte[headerBytes.Length + bodyBytes.Length];
+
+        Buffer.BlockCopy(headerBytes, 0, responseBytes, 0, headerBytes.Length);
+        Buffer.BlockCopy(bodyBytes, 0, responseBytes, headerBytes.Length, bodyBytes.Length);
+
+        Send(responseBytes);
     }
 
     /// <summary>
@@ -147,8 +228,8 @@ public class Response(
         var headersBytes = Encoding.UTF8.GetBytes(headers);
         var responseBytes = new byte[data.Length + headersBytes.Length];
 
-        headersBytes.CopyTo(responseBytes, 0);
-        data.CopyTo(responseBytes, headersBytes.Length);
+        Buffer.BlockCopy(headersBytes, 0, responseBytes, 0, headersBytes.Length);
+        Buffer.BlockCopy(data, 0, responseBytes, headersBytes.Length, data.Length);
 
         Send(responseBytes);
     }
@@ -168,8 +249,8 @@ public class Response(
         var headersBytes = Encoding.UTF8.GetBytes(headers);
         var responseBytes = new byte[data.Length + headersBytes.Length];
 
-        headersBytes.CopyTo(responseBytes, 0);
-        data.CopyTo(responseBytes, headersBytes.Length);
+        Buffer.BlockCopy(headersBytes, 0, responseBytes, 0, headersBytes.Length);
+        Buffer.BlockCopy(data, 0, responseBytes, headersBytes.Length, data.Length);
 
         Send(responseBytes);
     }
@@ -262,18 +343,6 @@ public class Response(
 
         Send(Encoding.UTF8.GetBytes(response));
     }
-
-    /*
-    /// <summary>
-    /// Redirects to a given servlet
-    /// </summary>
-    /// <param name="s"></param>
-    /// <param name="statusCode"></param>
-    public void Redirect(Servlet s, int statusCode = HTTP_CODES.FOUND)
-    {
-        Redirect(s.GetRoute(), statusCode);
-    }
-    */
 
     #endregion
 
@@ -406,7 +475,7 @@ public class Response(
     /// <param name="name">Name of the attribute</param>
     public string GetAttribute(string name)
     {
-        return attributes[name];
+        return attributes.GetValueOrDefault(name, string.Empty);
     }
 
     #endregion
@@ -424,7 +493,7 @@ public class Response(
     /// <param name="content">Name of the attribute</param>
     private string ProcessContent(string content)
     {
-        foreach (var attr in attributes)
+        foreach (var attr in attributes.ToArray())
         {
             content = content.Replace($"#{{{attr.Key}}}", attr.Value);
         }
@@ -446,6 +515,15 @@ public class Response(
     {
         CultureInfo ci = new("en-US");
 
+        customHeaders = customHeaders != null
+            ? new Dictionary<string, string>(customHeaders)
+            : null;
+
+        var globalHeadersSnapshot = config.CustomGlobalHeaders.ToArray();
+        var globalCookiesSnapshot = config.CustomGlobalCookies.ToArray();
+        var globalCorsOriginsSnapshot = config.GlobalCors?.AllowedOrigins?.ToArray();
+        var corsOriginsSnapshot = cors?.AllowedOrigins?.ToArray();
+
         var currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss ", ci) + "GMT";
 
         var headers = $"{HttpUtils.ProtocolAsString(request.Protocol)} {responseCode} {request.Url} {NewLine}";
@@ -465,7 +543,7 @@ public class Response(
 
         if (customHeaders != null)
         {
-            foreach (var h in customHeaders)
+            foreach (var h in customHeaders.ToArray())
             {
                 headers += $"{h.Key}: {h.Value}{NewLine}";
             }
@@ -477,28 +555,38 @@ public class Response(
             }
         }
 
-        if (config.CustomGlobalHeaders.Count != 0)
+        if (globalHeadersSnapshot.Length != 0)
         {
-            foreach (var h in config.CustomGlobalHeaders)
+            foreach (var h in globalHeadersSnapshot)
             {
                 headers += $"{h.Key}: {h.Value}{NewLine}";
             }
         }
 
-        if (config.CustomGlobalCookies.Count != 0)
+        if (globalCookiesSnapshot.Length != 0)
         {
-            foreach (var c in config.CustomGlobalCookies)
+            foreach (var c in globalCookiesSnapshot)
             {
                 headers += $"Set-Cookie: {c.Value}{NewLine}";
             }
         }
 
         //CORS
-        config.GlobalCors?.AllowedOrigins.ForEach(origin =>
+        if (globalCorsOriginsSnapshot != null)
         {
-            headers += $"Access-Control-Allow-Origin: {origin}{NewLine}";
-        });
-        cors?.AllowedOrigins.ForEach(origin => { headers += $"Access-Control-Allow-Origin: {origin}{NewLine}"; });
+            foreach (var origin in globalCorsOriginsSnapshot)
+            {
+                headers += $"Access-Control-Allow-Origin: {origin}{NewLine}";
+            }
+        }
+
+        if (corsOriginsSnapshot != null)
+        {
+            foreach (var origin in corsOriginsSnapshot)
+            {
+                headers += $"Access-Control-Allow-Origin: {origin}{NewLine}";
+            }
+        }
 
         /*   if (request.GetHeaders["Connection"] != null)
            {
@@ -538,7 +626,7 @@ public class Response(
     public async Task InitStream(string mimeType = "text/plain", int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
-        var headers = new Dictionary<string, string>
+        var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             {"Transfer-Encoding", "chunked"},
             {"Content-Type", mimeType},
@@ -562,9 +650,16 @@ public class Response(
     public async Task AddStreamChunk(string data)
     {
         byte[] chunkBytes = Encoding.UTF8.GetBytes(data);
-        string chunkSize = chunkBytes.Length.ToString("X"); // dimensione in esadecimale
-        string chunk = $"{chunkSize}\r\n{data}\r\n";
-        await WriteRaw(Encoding.UTF8.GetBytes(chunk));
+        byte[] sizeBytes = Encoding.ASCII.GetBytes($"{chunkBytes.Length:X}\r\n");
+        byte[] endBytes = Encoding.ASCII.GetBytes("\r\n");
+
+        byte[] finalChunk = new byte[sizeBytes.Length + chunkBytes.Length + endBytes.Length];
+
+        Buffer.BlockCopy(sizeBytes, 0, finalChunk, 0, sizeBytes.Length);
+        Buffer.BlockCopy(chunkBytes, 0, finalChunk, sizeBytes.Length, chunkBytes.Length);
+        Buffer.BlockCopy(endBytes, 0, finalChunk, sizeBytes.Length + chunkBytes.Length, endBytes.Length);
+
+        await WriteRaw(finalChunk);
     }
 
     /// <summary>
@@ -593,9 +688,22 @@ public class Response(
             }
 
             if (sslStream != null)
+            {
                 await sslStream.WriteAsync(data);
+                await sslStream.FlushAsync();
+            }
             else
-                await socket.SendAsync(data, SocketFlags.None);
+            {
+                int sent = 0;
+
+                while (sent < data.Length)
+                {
+                    sent += await socket.SendAsync(
+                        data.AsMemory(sent),
+                        SocketFlags.None
+                    );
+                }
+            }
         }
         catch (Exception e)
         {

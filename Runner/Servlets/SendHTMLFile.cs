@@ -1,17 +1,16 @@
-﻿using HSB;
+using HSB;
+using HSB.Components.Controller;
 
-namespace Runner
+namespace Runner;
+
+[Controller("/htmlfromdisk")]
+public class SendHTMLFile
 {
-    [Binding("/htmlfromdisk")]
-    public class SendHTMLFile : Servlet
-    {
-        public SendHTMLFile(Request req, Response res) : base(req, res)
-        {
-        }
+    private Response res = null!;
 
-        public override void GET()
-        {
-            res.SendHtmlFile("./static/main.html");
-        }
+    [Get("/")]
+    private void Get()
+    {
+        res.SendHtmlFile("./static/main.html");
     }
 }

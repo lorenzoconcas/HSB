@@ -16,6 +16,11 @@ public class Program
             StaticFolderPath = "./static"
         };
 
+        c.Get("/launcher", (HSB.Response res) =>
+        {
+            res.SendHtmlContent("<h1>Hello there</h1>");
+        });
+
         new HSB.Server(c).Start();
 
     }

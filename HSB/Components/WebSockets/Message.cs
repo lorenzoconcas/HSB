@@ -4,38 +4,27 @@ using HSB.Constants.WebSocket;
 
 namespace HSB.Components.WebSockets;
 
+[Obsolete("Use WebSocketMessage with WebSocketConnection endpoint handlers instead.", false)]
 public class Message
 {
-
-    private static readonly JsonSerializerOptions jsonSerializerOptions = new()
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         IncludeFields = true,
     };
 
-
     public byte[] data;
-
     public string _text;
 
     public Message(byte[]? data, string str)
     {
-        if (data == null)
-        {
-            this.data = Encoding.UTF8.GetBytes(str);
-        }
-        else
-        {
-            this.data = data;
-        }
+        this.data = data ?? Encoding.UTF8.GetBytes(str);
         _text = str;
     }
 
     public Message(Frame f)
     {
         data = f.GetPayload();
-        if (f.GetOpcode() == Opcode.TEXT)
-            _text = Encoding.UTF8.GetString(f.GetPayload());
-        else _text = "";
+        _text = f.GetOpcode() == Opcode.TEXT ? Encoding.UTF8.GetString(f.GetPayload()) : "";
     }
 
     public string GetMessage()
@@ -50,14 +39,12 @@ public class Message
 
     public object GetJSON()
     {
-        return JsonSerializer.Deserialize<object>(_text, jsonSerializerOptions) ?? new object();
+        return JsonSerializer.Deserialize<object>(_text, JsonSerializerOptions) ?? new object();
     }
-
 
     public void Dispose()
     {
         data = [];
         _text = "";
     }
-
 }

@@ -1,15 +1,17 @@
 //this class is used to handle a lot of websocket connections
 
 using HSB;
-using HSB.Components.WebSockets;
+using HSB.Components.Controller;
 
 namespace Runner.Servlets;
 
-[Binding("/bulk_ws.html")]
-public class BulkWSPage(Request req, Response res) : Servlet(req, res)
+[Controller("/bulk_ws.html")]
+public class BulkWSPage
 {
+    private Response res = null!;
 
-    public override void GET()
+    [Get("/")]
+    private void Get()
     {
         //returns and html page that spawns 20 websockets connections
         //and send a message to the server every 2 seconds
@@ -50,26 +52,5 @@ public class BulkWSPage(Request req, Response res) : Servlet(req, res)
                         </body>
                     </html>";
         res.SendHtmlContent(html);
-    }
-}
-
-//web socket handler
-[Binding("/ws_bulk")]
-public class BulkWebSocket(Request req, Response res, Configuration c) : WebSocket(req, res, c)
-{
-
-    public override void OnOpen()
-    {
-        Console.WriteLine("opened");
-    }
-
-    public override void OnMessage(Message message)
-    {
-        Console.WriteLine(message.GetMessage());
-    }
-
-    public override void OnClose()
-    {
-        Console.WriteLine("closed");
     }
 }

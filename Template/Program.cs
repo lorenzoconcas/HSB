@@ -5,4 +5,9 @@ Configuration c = new()
     StaticFolderPath = "./static"
 };
 
+c.Get("/", (Response res) =>
+{
+    res.SendHtmlContent("<h1>Hello from HSB</h1>");
+});
+
 new Server(c).Start();

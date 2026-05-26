@@ -1,46 +1,31 @@
-using System.Collections.Immutable;
+using System.IO;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using HSB.Constants;
 using HSB.Constants.WebSocket;
 
 namespace HSB.Components.WebSockets;
 
-public class WebSocket(Request req, Response res, Configuration? c = null)
+internal sealed class WebSocket(
+    Request req,
+    Response res,
+    Configuration c,
+    WebSocketConnection connection)
 {
-    private static JsonSerializerOptions jo = new()
-    {
-        MaxDepth = 0
-    };
+    private const ushort CloseNormalClosure = 1000;
+    private const ushort CloseProtocolError = 1002;
+    private const ushort CloseMessageTooBig = 1009;
+    private const ushort CloseInternalServerError = 1011;
 
-    //todo -> add multiframe support
-    protected Response res = res;
-    protected Request req = req;
     private readonly Socket socket = req.GetSocket();
-    protected Configuration? c = c;
+    private readonly SemaphoreSlim writeLock = new(1, 1);
+    private readonly WebSocketOptions options = c.WebSocketOptions;
+    private int state = (int)WebSocketState.CLOSED;
+    private int closeDispatched;
+    private int errorDispatched;
 
-    private WebSocketState state = WebSocketState.CLOSED;
-
-    #region Acceptance Requirements
-
-    Dictionary<string, string> requiredHeaders = [];
-    Dictionary<string, string> requiredParams = [];
-    string bearerToken = "";
-    string oAuth2Token = "";
-    Tuple<string, string>? basicAuth = null;
-    OAuth10Information? oAuth1_0Information = null;
-
-    #endregion
-
-    private byte[] messageSentOnOpen = [];
-
-    /// <summary>
-    /// Returns the Base64 string of the SecWebSocketKey+WS_GUID
-    /// </summary>
-    /// <param name="key"></param>
-    /// <returns></returns>
     private static string DigestKey(string key)
     {
         return Convert.ToBase64String(
@@ -49,418 +34,517 @@ public class WebSocket(Request req, Response res, Configuration? c = null)
             ));
     }
 
-    /// <summary>
-    /// Accept the ws connection request
-    /// </summary>
-    /// <returns></returns>
+    internal async Task ProcessAsync(Func<Task> configureConnectionAsync)
+    {
+        if (!Accept())
+        {
+            return;
+        }
+
+        try
+        {
+            await configureConnectionAsync();
+            await connection.DispatchOpenAsync();
+            await MessageLoopAsync();
+        }
+        catch (Exception e)
+        {
+            await HandleFailureAsync(e, CloseInternalServerError);
+        }
+        finally
+        {
+            MarkClosed();
+            CloseSocket();
+            await DispatchCloseOnceAsync();
+        }
+    }
+
+    internal Task SendFrameAsync(byte[] payload, Opcode opcode)
+    {
+        var frame = new Frame(opcode: opcode);
+        frame.SetPayload(payload);
+        return SendFrameAsync(frame);
+    }
+
+    internal Task CloseAsync()
+    {
+        return CloseAsync(CloseNormalClosure);
+    }
+
+    internal async Task FailAsync(Exception exception)
+    {
+        await HandleFailureAsync(exception, CloseInternalServerError);
+    }
+
     private bool Accept()
     {
-        if (!req.IsWebSocket()) //not a websocket request, we cannot do anything here
+        if (!req.IsWebSocket())
         {
-            c?.Debug.WARNING("Not a websocket request, this code should never be reached");
+            c.Debug.WARNING("Not a websocket request, this code should never be reached");
             res.SendCode(HttpCodes.BAD_REQUEST);
             return false;
         }
-
 
         var headers = req.Headers;
-        //those two values are required, if they are missing -> 400
-        if (!headers.ContainsKey("Sec-WebSocket-Key") && !headers.ContainsKey("Sec-WebSocket-Version"))
+        if (!headers.ContainsKey("Sec-WebSocket-Key") || !headers.ContainsKey("Sec-WebSocket-Version"))
         {
-            c?.Debug.WARNING("Missing Sec-WebSocket-Key or Sec-WebSocket-Version, malformed request");
+            c.Debug.WARNING("Missing Sec-WebSocket-Key or Sec-WebSocket-Version, malformed request");
             res.SendCode(HttpCodes.BAD_REQUEST);
             return false;
         }
 
-        //check if request contains all the required headers
-        if (requiredHeaders.Count > 0)
+        if (!headers["Sec-WebSocket-Version"].Equals("13", StringComparison.Ordinal))
         {
-            foreach (var header in requiredHeaders)
-            {
-                if (!headers.TryGetValue(header.Key, out string? value) || value != header.Value)
-                {
-                    c?.Debug.WARNING($"Missing required header {header.Key} or value is not correct");
-                    res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
-                    return false;
-                }
-            }
+            c.Debug.WARNING("Unsupported websocket version");
+            res.SendCode(HttpCodes.UPGRADE_REQUIRED);
+            return false;
         }
 
-        //same for parameters
-        if (requiredParams.Count > 0)
+        if (!TryValidateKey(headers["Sec-WebSocket-Key"]))
         {
-            foreach (var param in requiredParams)
-            {
-                if (!req.Parameters.TryGetValue(param.Key, out string? value) || value != param.Value)
-                {
-                    c?.Debug.WARNING($"Missing required parameter {param.Key} or value is not correct");
-                    res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
-                    return false;
-                }
-            }
+            c.Debug.WARNING("Malformed Sec-WebSocket-Key");
+            res.SendCode(HttpCodes.BAD_REQUEST);
+            return false;
         }
 
-        //if an authentication method is set, check if it is correct
-        if (bearerToken != "")
+        if (options.ValidateOriginWithCors &&
+            headers.TryGetValue("Origin", out var origin) &&
+            c.GlobalCors != null &&
+            !c.GlobalCors.IsOriginAllowed(origin))
         {
-            if (!headers.TryGetValue("Authorization", out var value) || value != $"Bearer {bearerToken}")
-            {
-                c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
-                return false;
-            }
+            c.Debug.WARNING($"Rejected websocket origin '{origin}'");
+            res.SendCode(HttpCodes.FORBIDDEN);
+            return false;
         }
 
-        if (oAuth2Token != "")
-        {
-            if (!headers.TryGetValue("Authorization", out string? value) || value != $"OAuth {oAuth2Token}")
-            {
-                c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
-                return false;
-            }
-        }
+        res.SetReadTimeout(options.ReceivePollTimeoutMilliseconds);
+        res.SetWriteTimeout(options.ReceivePollTimeoutMilliseconds);
 
-        if (basicAuth != null)
-        {
-            var bAuth = req.GetBasicAuthInformation();
-            if (bAuth == null || bAuth.Item1 != basicAuth.Item1 || bAuth.Item2 != basicAuth.Item2)
-            {
-                c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
-                return false;
-            }
-        }
+        SetState(WebSocketState.CONNECTING);
 
-        if (oAuth1_0Information != null)
-        {
-            var oAuth1 = req.GetOAuth1_0Information();
-            if (oAuth1 == null)
-            {
-                c?.Debug.WARNING($"Missing or incorrect Authorization header");
-                res.SendCode(HttpCodes.BAD_REQUEST); //is this correct?
-                return false;
-            }
-        }
-
-
-        state = WebSocketState.CONNECTING;
-
-        var clientKey = headers["Sec-WebSocket-Key"];
-        var clientVersion = headers["Sec-WebSocket-Version"];
-
-        var key = DigestKey(clientKey);
+        var key = DigestKey(headers["Sec-WebSocket-Key"]);
         List<string> response =
         [
             "HTTP/1.1 101 Switching Protocols\r\n",
             "Upgrade: websocket\r\n",
             "Connection: Upgrade\r\n",
             "Sec-WebSocket-Accept: " + key + "\r\n",
-            "Sec-WebSocket-Version: " + clientVersion + "\r\n",
         ];
 
-        //to-do add protocol support via decorator
+        if (headers.TryGetValue("Sec-WebSocket-Protocol", out var protocolHeader))
+        {
+            var protocol = protocolHeader
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .FirstOrDefault();
 
-        var protocol = headers.GetValueOrDefault("Sec-WebSocket-Protocol", "");
-
-        if (protocol != "") //if the protocol is not empty, add it to the response
-            response.Add("Sec-WebSocket-Protocol: " + protocol + "\r\n");
+            if (!string.IsNullOrWhiteSpace(protocol))
+            {
+                response.Add("Sec-WebSocket-Protocol: " + protocol + "\r\n");
+            }
+        }
 
         response.Add("\r\n");
 
-        socket?.Send(Encoding.UTF8.GetBytes(string.Join("", response)));
+        res.SendOrThrow(Encoding.UTF8.GetBytes(string.Join("", response)), false);
 
-        state = WebSocketState.OPEN;
-
-
-        if (messageSentOnOpen.Length > 0)
-        {
-            Send(messageSentOnOpen);
-        }
-
-
-        new Task(() => { OnOpen(); }).Start();
-
+        SetState(WebSocketState.OPEN);
+        connection.MarkOpen();
         return true;
     }
 
-    private void MessageLoop()
+    private async Task MessageLoopAsync()
     {
-        //todo add error loop detection
-        var errorCount = 0;
-        var buffer = new byte[Configuration.KILOBYTE * 32];
+        var buffer = new byte[options.ReceiveChunkSize];
+        var pending = new List<byte>(options.ReceiveChunkSize * 2);
+        var fragmentedPayload = new List<byte>();
+        Opcode? fragmentedOpcode = null;
+        var lastReceiveAt = DateTime.UtcNow;
 
-        //  while (state == WebSocketState.OPEN && errorCount < 10)
-        // {
-        try
+        while (GetState() == WebSocketState.OPEN)
         {
-            if (state == WebSocketState.OPEN)
-                socket?.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((IAsyncResult ar) =>
+            int received;
+            try
+            {
+                received = res.Read(buffer, 0, buffer.Length);
+            }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+            {
+                if (DateTime.UtcNow - lastReceiveAt >= TimeSpan.FromMilliseconds(options.IdleTimeoutMilliseconds))
                 {
-                    var socket = (Socket?) ar.AsyncState;
-                    if (socket == null)
+                    await CloseAsync(CloseNormalClosure);
+                    return;
+                }
+
+                continue;
+            }
+            catch (IOException ex) when (ex.InnerException is SocketException sockEx &&
+                                         sockEx.SocketErrorCode == SocketError.TimedOut)
+            {
+                if (DateTime.UtcNow - lastReceiveAt >= TimeSpan.FromMilliseconds(options.IdleTimeoutMilliseconds))
+                {
+                    await CloseAsync(CloseNormalClosure);
+                    return;
+                }
+
+                continue;
+            }
+            catch (Exception ex) when (IsExpectedDisconnect(ex))
+            {
+                await HandleFailureAsync(ex, CloseNormalClosure, dispatchError: false);
+                return;
+            }
+
+            if (received <= 0)
+            {
+                await CloseAsync(CloseNormalClosure, sendCloseFrame: false);
+                return;
+            }
+
+            lastReceiveAt = DateTime.UtcNow;
+            pending.EnsureCapacity(pending.Count + received);
+            for (var i = 0; i < received; i++)
+            {
+                pending.Add(buffer[i]);
+            }
+
+            while (pending.Count > 0)
+            {
+                if (!Frame.TryRead(CollectionsMarshal.AsSpan(pending), options.MaxFramePayloadBytes, out var frame, out var consumed, out var error))
+                {
+                    if (error != null)
                     {
-                        Terminal.Debug("socket is null??");
-                        errorCount++;
+                        await CloseAsync(
+                            error.Contains("limit", StringComparison.OrdinalIgnoreCase)
+                                ? CloseMessageTooBig
+                                : CloseProtocolError);
                         return;
                     }
 
-                    int received = 0;
-                    try
-                    {
-                        received = socket.EndReceive(ar);
-                    }
-                    catch (Exception e)
-                    {
-                        Terminal.Debug("WS Exception " + e.Message);
+                    break;
+                }
+
+                pending.RemoveRange(0, consumed);
+
+                if (frame == null)
+                {
+                    continue;
+                }
+
+                if (!frame.GetMask())
+                {
+                    await CloseAsync(CloseProtocolError);
+                    return;
+                }
+
+                switch (frame.GetOpcode())
+                {
+                    case Opcode.CLOSE:
+                        await CloseAsync(CloseNormalClosure);
                         return;
-                    }
-
-                    if (received < 2)
+                    case Opcode.PING:
+                        await SendControlFrameAsync(Opcode.PONG, frame.GetPayload());
+                        break;
+                    case Opcode.PONG:
+                        break;
+                    case Opcode.TEXT:
+                    case Opcode.BINARY:
                     {
-                        //Terminal.DEBUG("wrong data length?? -> " + received);
-                        errorCount++;
-                        return;
-                    }
-
-                    Frame f = new(buffer[..received]);
-                    Opcode opcode = f.GetOpcode();
-
-                    switch (f.GetOpcode())
-                    {
-                        case Opcode.CLOSE:
-                            this.Close();
-                            state = WebSocketState.CLOSED;
-                            return;
-                        //todo -> check Ping e Pong correctness
-                        case Opcode.PING:
-                            Frame pong = new();
-                            pong.SetOpcode(Opcode.PONG);
-                            socket.Send(pong.Build());
-                            break;
-                        case Opcode.PONG:
-                            Frame ping = new();
-                            ping.SetOpcode(Opcode.PING);
-                            socket.Send(ping.Build());
-                            break;
-                        case Opcode.TEXT:
-                        case Opcode.BINARY:
+                        if (fragmentedOpcode != null)
                         {
-                            OnMessage(new(f));
+                            await CloseAsync(CloseProtocolError);
+                            return;
+                        }
+
+                        if (frame.GetFIN())
+                        {
+                            if (!await DispatchMessageAsync(frame.GetOpcode(), frame.GetPayload()))
+                            {
+                                return;
+                            }
+
                             break;
                         }
-                        case Opcode.CONTINUATION:
-                        default:
-                            break;
-                        //ignore
+
+                        fragmentedOpcode = frame.GetOpcode();
+                        fragmentedPayload.Clear();
+                        fragmentedPayload.AddRange(frame.GetPayload());
+                        if (fragmentedPayload.Count > options.MaxMessagePayloadBytes)
+                        {
+                            await CloseAsync(CloseMessageTooBig);
+                            return;
+                        }
+
+                        break;
                     }
+                    case Opcode.CONTINUATION:
+                    {
+                        if (fragmentedOpcode == null)
+                        {
+                            await CloseAsync(CloseProtocolError);
+                            return;
+                        }
 
-                    MessageLoop(); //speriamo che lo stack regga
-                }), socket);
+                        fragmentedPayload.AddRange(frame.GetPayload());
+                        if (fragmentedPayload.Count > options.MaxMessagePayloadBytes)
+                        {
+                            await CloseAsync(CloseMessageTooBig);
+                            return;
+                        }
+
+                        if (!frame.GetFIN())
+                        {
+                            break;
+                        }
+
+                        var completedOpcode = fragmentedOpcode.Value;
+                        var payload = fragmentedPayload.ToArray();
+                        fragmentedOpcode = null;
+                        fragmentedPayload.Clear();
+
+                        if (!await DispatchMessageAsync(completedOpcode, payload))
+                        {
+                            return;
+                        }
+
+                        break;
+                    }
+                    default:
+                        await CloseAsync(CloseProtocolError);
+                        return;
+                }
+
+                frame.Dispose();
+            }
         }
-        catch (Exception)
-        {
-            state = WebSocketState.CLOSED;
-            socket?.Close();
-        }
-        //  }
     }
 
-
-    //this should be use only by HSB/Server.cs or HSB/Configuration.cs
-    internal void Process()
+    private async Task<bool> DispatchMessageAsync(Opcode opcode, byte[] payload)
     {
-        var frame = new System.Diagnostics.StackTrace().GetFrame(1);
-        var method = frame?.GetMethod();
-        var rfn = method?.ReflectedType?.Name ?? "";
-        var callerName = method?.Name ?? "";
-        if (rfn != "Server" && callerName != "ProcessRequest")
+        try
         {
-            throw new Exception("This function must be called ONLY by the server process");
+            await connection.DispatchMessageAsync(new WebSocketMessage(payload, opcode == Opcode.TEXT));
+            return true;
         }
-
-        if (Accept())
+        catch (Exception e)
         {
-            new Thread(MessageLoop).Start();
+            await HandleFailureAsync(e, CloseInternalServerError);
+            return false;
         }
     }
 
-    #region PUBLIC METHODS
-
-    /// <summary>
-    /// Sets a message to be sent to the client when the connection is open
-    /// </summary>
-    /// <param name="data"></param>
-    public void SetMessageSentOnOpen(byte[] data)
+    private async Task SendFrameAsync(Frame frame)
     {
-        messageSentOnOpen = data;
-    }
+        await writeLock.WaitAsync();
+        try
+        {
+            if (GetState() is WebSocketState.CLOSED or WebSocketState.CLOSING)
+            {
+                throw new InvalidOperationException("WebSocket is not connected");
+            }
 
-    /// <summary>
-    /// Sends a message to the client when the connection is open
-    /// </summary>
-    /// <param name="data"></param>
-    /// <exception cref="Exception">If connection is not opened</exception>
-    public void Send(byte[] data)
-    {
-        if (state == WebSocketState.OPEN)
-        {
-            Frame f = new();
-            f.SetPayload(data);
-            socket?.Send(f.Build());
+            res.SendOrThrow(frame.Build(), false);
         }
-        else
+        catch (Exception ex) when (IsExpectedDisconnect(ex))
         {
-            throw new Exception("WebSocket is not connected");
+            await HandleFailureAsync(ex, CloseNormalClosure, dispatchError: false);
+            throw;
         }
-    }
-
-    /// <summary>
-    /// Sends a message to the client when the connection is open
-    /// </summary>
-    /// <param name="message"></param>
-    /// <exception cref="Exception"></exception>
-    public void Send(string message)
-    {
-        if (state == WebSocketState.OPEN)
+        finally
         {
-            Frame f = new();
-            f.SetPayload(message);
-            socket?.Send(f.Build());
-            //destroy frame
-            f.Dispose();
-        }
-        else
-        {
-            throw new Exception("WebSocket is not connected");
+            writeLock.Release();
+            frame.Dispose();
         }
     }
 
-    public void Send(Message msg)
+    private Task SendControlFrameAsync(Opcode opcode, byte[] payload)
     {
-        if (state == WebSocketState.OPEN)
+        var frame = new Frame(opcode: opcode);
+        frame.SetPayload(payload);
+        return SendFrameAsync(frame);
+    }
+
+    private async Task CloseAsync(ushort closeCode, bool sendCloseFrame = true)
+    {
+        var previousState = TransitionToClosing();
+        if (previousState == WebSocketState.CLOSED)
         {
-            Frame f = new();
-            if (msg.GetMessage() != "")
-                f.SetPayload(msg.GetMessage());
-            else if (msg.GetMessageBytes() != "")
-                f.SetPayload(msg.GetMessageBytes());
-            socket?.Send(f.Build());
-            //destroy frame
-            f.Dispose();
+            return;
         }
-        else
+
+        connection.MarkClosed();
+
+        if (sendCloseFrame && previousState == WebSocketState.OPEN)
         {
-            throw new Exception("WebSocket is not connected");
+            var frame = new Frame(opcode: Opcode.CLOSE);
+            frame.SetPayload(BuildClosePayload(closeCode));
+
+            try
+            {
+                await writeLock.WaitAsync();
+                try
+                {
+                    res.SendOrThrow(frame.Build(), false);
+                }
+                finally
+                {
+                    writeLock.Release();
+                }
+            }
+            catch (Exception ex) when (IsExpectedDisconnect(ex))
+            {
+                if (!options.SuppressExpectedDisconnectErrors)
+                {
+                    c.Debug.DEBUG($"WebSocket close write failed: {ex.Message}");
+                }
+            }
+            finally
+            {
+                frame.Dispose();
+            }
         }
+
+        MarkClosed();
     }
 
-    /// <summary>
-    /// Sends an object to the client as a json string
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="includeFields"></param>
-    /// <exception cref="Exception"></exception>
-    public void Send<T>(T obj, bool includeFields = true)
+    private static byte[] BuildClosePayload(ushort closeCode)
     {
-        if (state == WebSocketState.OPEN)
+        var payload = new byte[2];
+        payload[0] = (byte)(closeCode >> 8);
+        payload[1] = (byte)(closeCode & 0xFF);
+        return payload;
+    }
+
+    private async Task HandleFailureAsync(Exception exception, ushort closeCode, bool dispatchError = true)
+    {
+        if (dispatchError &&
+            !(options.SuppressExpectedDisconnectErrors && IsExpectedDisconnect(exception)) &&
+            Interlocked.Exchange(ref errorDispatched, 1) == 0)
         {
-            Frame f = new();
-            //serialize object to json, with fields
-            jo.IncludeFields = includeFields;
-            f.SetPayload(JsonSerializer.SerializeToUtf8Bytes(obj, jo));
-            socket?.Send(f.Build());
-            //destroy frame
-            f.Dispose();
+            await DispatchErrorAsync(exception);
         }
-        else
+
+        await CloseAsync(closeCode, sendCloseFrame: closeCode != CloseNormalClosure || !IsExpectedDisconnect(exception));
+    }
+
+    private void CloseSocket()
+    {
+        try
         {
-            throw new Exception("WebSocket is not connected");
+            socket.Shutdown(SocketShutdown.Both);
         }
-    }
-
-    /// <summary>
-    /// Closes the websocket connection
-    /// </summary>
-    /// <exception cref="Exception"></exception>
-    public void Close()
-    {
-        if (state == WebSocketState.OPEN)
+        catch
         {
-            Frame f = new();
-            f.SetOpcode(Opcode.CLOSE);
-            socket?.Send(f.Build());
-            socket?.Close();
-            f.Dispose();
-            OnClose();
+            // ignored
         }
-        else
+
+        try
         {
-            throw new Exception("WebSocket is not connected, cannot close");
+            socket.Close();
+        }
+        catch
+        {
+            // ignored
         }
     }
 
-    /// <summary>
-    /// Set requirements to accept the connection request
-    /// </summary>
-    /// <param name="requiredHeaders"></param>
-    /// <param name="requiredParams"></param>
-    /// <param name="bearerToken"></param>
-    /// <param name="oAuth2Token"></param>
-    /// <param name="basicAuth"></param>
-    /// <param name="oAuth1_0Information"></param>
-    public void SetConnectionRequirements(
-        Dictionary<string, string> requiredHeaders,
-        Dictionary<string, string> requiredParams,
-        string bearerToken = "",
-        string oAuth2Token = "",
-        Tuple<string, string>? basicAuth = null,
-        OAuth10Information? oAuth1_0Information = null
-    )
+    private async Task DispatchErrorAsync(Exception exception)
     {
-        //todo -> accept only one auth type
-        this.requiredHeaders = requiredHeaders;
-        this.requiredParams = requiredParams;
-        this.bearerToken = bearerToken;
-        this.oAuth2Token = oAuth2Token;
-        this.basicAuth = basicAuth;
-        this.oAuth1_0Information = oAuth1_0Information;
+        try
+        {
+            await connection.DispatchErrorAsync(exception);
+        }
+        catch (Exception e)
+        {
+            c.Debug.ERROR($"WebSocket error handler failed: {e}");
+        }
     }
 
-    /// <summary>
-    /// Returns the current state of the websocket
-    /// </summary>
-    /// <returns></returns>
-    public WebSocketState GetState()
+    private async Task DispatchCloseOnceAsync()
     {
-        return state;
+        if (Interlocked.Exchange(ref closeDispatched, 1) == 1)
+        {
+            return;
+        }
+
+        try
+        {
+            await connection.DispatchCloseAsync();
+        }
+        catch (Exception e)
+        {
+            await DispatchErrorAsync(e);
+        }
     }
 
-    #endregion
-
-    #region EVENTS
-
-    /// <summary>
-    /// OnMessage is called when a message is received from the client
-    /// </summary>
-    /// <param name="msg"></param>
-    public virtual void OnMessage(Message msg)
+    private WebSocketState GetState()
     {
+        return (WebSocketState)Volatile.Read(ref state);
     }
 
-    /// <summary>
-    /// OnOpen is called after a connection request is received from the client
-    /// </summary>
-    public virtual void OnOpen()
+    private void SetState(WebSocketState newState)
     {
+        Volatile.Write(ref state, (int)newState);
     }
 
-    /// <summary>
-    /// OnClose is called after a close request is received from the client, to directly close the connection use Close()
-    /// </summary>
-    public virtual void OnClose()
+    private WebSocketState TransitionToClosing()
     {
+        while (true)
+        {
+            var current = GetState();
+            if (current is WebSocketState.CLOSED or WebSocketState.CLOSING)
+            {
+                return current;
+            }
+
+            if (Interlocked.CompareExchange(ref state, (int)WebSocketState.CLOSING, (int)current) == (int)current)
+            {
+                return current;
+            }
+        }
     }
 
-    #endregion
+    private void MarkClosed()
+    {
+        SetState(WebSocketState.CLOSED);
+        connection.MarkClosed();
+    }
+
+    private static bool TryValidateKey(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return false;
+        }
+
+        try
+        {
+            return Convert.FromBase64String(key).Length == 16;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static bool IsExpectedDisconnect(Exception exception)
+    {
+        return exception switch
+        {
+            ObjectDisposedException => true,
+            IOException { InnerException: SocketException inner } => IsExpectedSocketError(inner.SocketErrorCode),
+            SocketException socketException => IsExpectedSocketError(socketException.SocketErrorCode),
+            _ => false
+        };
+    }
+
+    private static bool IsExpectedSocketError(SocketError socketError)
+    {
+        return socketError is
+            SocketError.ConnectionAborted or
+            SocketError.ConnectionReset or
+            SocketError.Shutdown or
+            SocketError.NotConnected or
+            SocketError.TimedOut or
+            SocketError.OperationAborted;
+    }
 }

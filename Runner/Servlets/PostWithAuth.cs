@@ -1,29 +1,23 @@
-﻿using System;
-using System.Text.Unicode;
 using HSB;
+using HSB.Components.Controller;
 using HSB.Constants;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace Runner.TestRunnerClasses
+namespace Runner.TestRunnerClasses;
+
+[Controller("/auth")]
+public class PostWithAuth
 {
-    [Binding("/auth")]
+    private Response res = null!;
 
-    public class PostWithAuth : Servlet
+    [Get("/")]
+    private void Get()
     {
-        public PostWithAuth(Request req, Response res) : base(req, res)
-        {
-        }
+        res.Send(HttpCodes.NOT_IMPLEMENTED);
+    }
 
-        public override void GET()
-        {
-            //todo
-            res.Send(HttpCodes.NOT_IMPLEMENTED);
-        }
-
-        public override void POST()
-        {
-            res.Send(HttpCodes.NOT_IMPLEMENTED);
-        }
+    [Post("/")]
+    private void Post()
+    {
+        res.Send(HttpCodes.NOT_IMPLEMENTED);
     }
 }
-

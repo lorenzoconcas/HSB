@@ -1,20 +1,17 @@
-﻿using HSB;
+using HSB;
+using HSB.Components.Controller;
 
-namespace Runner
+namespace Runner;
+
+[Controller("/sharedobjects")]
+public class SharedObjects
 {
-    [Binding("/sharedobjects")]
-    public class SharedObjects : Servlet
+    private Response res = null!;
+
+    [Get("/")]
+    private void Get(Configuration configuration)
     {
-        public SharedObjects(Request req, Response res, Configuration c) : base(req, res, c)
-        {
-
-        }
-
-        public override void GET()
-        {
-            int item = (int)configuration.GetSharedObject("test");
-            res.SendHtmlContent($"<h1>Prova SharedObjects -> {item}</h1>");
-        }
-
+        int item = (int)configuration.GetSharedObject("test");
+        res.SendHtmlContent($"<h1>Prova SharedObjects -> {item}</h1>");
     }
 }

@@ -1,30 +1,24 @@
-﻿using System;
 using HSB;
+using HSB.Components.Controller;
 using HSB.Utils;
-namespace Runner
+
+namespace Runner;
+
+[Controller("/single1")]
+public class SingleBinding
 {
-    [Binding("/single1")]
-    public class SingleBinding : Servlet
+    private Request req = null!;
+    private Response res = null!;
+
+    [Get("/")]
+    private void Get()
     {
-        public SingleBinding(Request req, Response res) : base(req, res)
-        {
+        res.SendHtmlContent($"<h1>Prova GET -> {req.Url}</h1>\nParams:{req.Parameters.DictToString()}");
+    }
 
-        }
-
-        public override void GET()
-        {
-            res.SendHtmlContent($"<h1>Prova GET -> {req.Url}</h1>\nParams:{req.Parameters.DictToString()}");
-        }
-
-        public override void POST()
-        {
-            res.SendHtmlContent($"<h1>Prova POST -> {req.Url}</h1>");
-        }
-
-
-
+    [Post("/")]
+    private void Post()
+    {
+        res.SendHtmlContent($"<h1>Prova POST -> {req.Url}</h1>");
     }
 }
-
-
-

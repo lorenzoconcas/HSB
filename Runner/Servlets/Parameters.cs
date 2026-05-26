@@ -1,30 +1,25 @@
-﻿using HSB;
+using HSB;
+using HSB.Components.Controller;
 using HSB.Utils;
-namespace Runner
+
+namespace Runner;
+
+[Controller("/parameters")]
+public class Parameters
 {
-    [Binding("/parameters")]
-    public class Parameters : Servlet
+    private Request req = null!;
+    private Response res = null!;
+
+    //example : http://localhost:8080/parameters?param1=1&param2=2&param3=3
+    [Get("/")]
+    private void Get()
     {
-        public Parameters(Request req, Response res) : base(req, res)
-        {
+        res.SendHtmlContent($"<h1>Prova GET -> {req.Url}</h1>\nParams : {req.Parameters.DictToString()}");
+    }
 
-        }
-        //example : http://localhost:8080/parameters?param1=1&param2=2&param3=3
-        public override void GET()
-        {
-            res.SendHtmlContent($"<h1>Prova GET -> {req.Url}</h1>\nParams : {req.Parameters.DictToString()}");
-        }
-
-        public override void POST()
-        {
-            res.Json(req.Parameters);
-
-            // res.Send($"<h1>Prova POST -> {req.URL}</h1>", mimeType: MimeType.TEXT_HTML);
-        }
-
-
+    [Post("/")]
+    private void Post()
+    {
+        res.Json(req.Parameters);
     }
 }
-
-
-

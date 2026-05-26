@@ -1,88 +1,42 @@
-## Servlet class
+# Servlet Removal
 
-The servlet is the core of the server, inside is defined the logic of the pages
+The servlet-style API has been removed.
 
-The simplest servlet looks like this:
+Use modern controller routes:
 
 ```cs
-using HSB;
+using HSB.Components.Controller;
 
-namespace Example
+[Controller("/")]
+public class HomeController
 {
-    [Binding("/")] //route the root page
-    public class HelloWorld : Servlet
+    private Response res = null!;
+
+    [Get("/")]
+    private void Home()
     {
-        public HelloWorld(Request req, Response res) : base(req, res)
-        {
-        }
-
-        //we override the function that handle the GET response processing
-        public override void ProcessGet()
-        {
-            res.SendHTMLContent("<h1>Hello world</h1>");
-        }
-
+        res.SendHtmlContent("<h1>Hello world</h1>");
     }
 }
 ```
 
-This example prints an "Hello World" message when the root page is visited
-Every method defined in HTTP_METHODS has an ovveridable event, for custom method the `AddCustomMethodHandler` must be used
-
-### Events
-
-| Name             | Trigger by which HTTP_METHOD |
-| ---------------- | ---------------------------- |
-| ProcessGet()     | GET                          |
-| ProcessPOST()    | POST                         |
-| ProcessDelete()  | DELETE                       |
-| ProcessPut()     | PUT                          |
-| ProcessHead()    | HEAD                         |
-| ProcessPatch()   | PATCH                        |
-| ProcessOptions() | OPTIONS                      |
-| ProcessTrace()   | TRACE                        |
-| ProcessConnect() | CONNECT                      |
-
-By default, if a method is not overridden, it response `HTTP_CODES.METHOD_NOT_ALLOWED` (405)
-
-### Custom Methods
-
-| Name                                     | Description                                               |
-| ---------------------------------------- | --------------------------------------------------------- |
-| AddCustomMethodHandler(string, Delegate) | Defines an handler for the custom method passed as string |
-| RemoveCustomMethodHandler(string)        | Remove a previously defined handler                       |
-
-At the moment is possibile to specify only ONE custom method handler
-
-### Attributes
-#### BindingAttribute
-To be mapped the servlet must use the `Binding Attribute`
+Or use configuration routes:
 
 ```cs
-[BindingAttribute(string path, bool startsWith = false)]
+var config = new Configuration();
+
+config.Get("/", (Response res) =>
+{
+    res.SendHtmlContent("<h1>Hello world</h1>");
+});
 ```
-Without this the servlet won't be served because there is no route!
-The second paramter indicates if all the routes that start with the path must be catched, else only the exact path will respond.
-Example 
 
-if startsWith == false and path == "/route"
+Removed APIs:
 
-"/route" -> served 
-"/route/2" -> not served 
-
-if startsWith == true and path = "/route"
-
-"/route" -> served 
-"/route/2" -> served 
-
-----
-#### AssociatedFile
-This attributes makes the servlet behave like a static file, for example
-if path is set to "index.html", when the this path is requested the servlet is called instead of serving (if enabled) a static file 
-
-```cs
-[AssociatedFile(string path, HTTP_METHOD method = HTTP_METHOD.GET)]
-[AssociatedFile(string path, HTTP_METHOD[] method)]
-[AssociatedFile(string path, string customMethod)]
-[AssociatedFile(string path, string[] customMethod)]
-```
+| Removed | Replacement |
+| ------- | ----------- |
+| `Servlet` inheritance | Controller classes or `Configuration` routes |
+| `[Binding]` | `[Controller]` + `[Get]`, `[Post]`, ... |
+| `GET()` / `POST()` overrides | Controller methods with route attributes |
+| `AddCustomMethodHandler` | Explicit route registration for supported HTTP methods |
+| `AssociateFile` | `Response.SendHtmlFile(...)` inside a route handler |

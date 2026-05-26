@@ -1,31 +1,23 @@
-﻿using System;
 using HSB;
+using HSB.Components.Controller;
 using Runner.Models;
 
-namespace Runner
+namespace Runner;
+
+[Controller("/json")]
+public class JsonResponse
 {
-    [Binding("/json")]
-    public class JsonResponse : Servlet
+    private Response res = null!;
+
+    [Get("/")]
+    private void Get()
     {
-        public JsonResponse(Request req, Response res) : base(req, res)
-        {
+        res.Json(new SimpleObject());
+    }
 
-        }
-
-        public override void GET()
-        {
-            res.Json(new SimpleObject());
-        }
-
-        public override void POST()
-        {
-            res.Json<string>("{'success':true}");
-        }
-
-
-
+    [Post("/")]
+    private void Post()
+    {
+        res.Json<string>("{'success':true}");
     }
 }
-
-
-

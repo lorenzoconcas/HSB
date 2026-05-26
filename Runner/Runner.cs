@@ -2,6 +2,7 @@
 using HSB.Constants;
 using HSB.OpenApi;
 using HSB.Utils;
+using Runner.Servlets;
 
 namespace Runner;
 
@@ -35,11 +36,17 @@ public class Runner
 
         var c = server.GetConfiguration();
 
+        c.WebSocket("/ws_bulk", socket =>
+        {
+            socket.OnOpen(() => Console.WriteLine("opened"));
+            socket.OnMessage(message => Console.WriteLine(message.Text));
+            socket.OnClose(() => Console.WriteLine("closed"));
+        });
+
+        RegexRoute.Register(c);
+
         //test expressjs-like routing
-        //note that these are controlled first, so eventual servlet
-        //with same routing will be ignored if they respond to that http method
-        //ex a Servlet that responds to the GET call of route "/test" will be ignored
-        //but a POST call to the same route will be handled by the servlet
+        //direct configuration routes are collected alongside controller routes
 
         c.Get("/expressget", TestExpressRoutingGet);
         c.Post("/expresspost", TestExpressRoutingPost);

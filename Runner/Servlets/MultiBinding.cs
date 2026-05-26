@@ -1,26 +1,45 @@
-﻿using HSB;
-namespace Runner
+using HSB;
+using HSB.Components.Controller;
+
+namespace Runner;
+
+[Controller("")]
+public class MultiBinding
 {
-    [Binding("/multi1")]
-    [Binding("/multi2")]
-    public class MultiBinding : Servlet
+    private Request req = null!;
+    private Response res = null!;
+
+    [Get("/multi1")]
+    private void GetMulti1()
     {
-        public MultiBinding(Request req, Response res) : base(req, res)
-        {
+        SendGet();
+    }
 
-        }
+    [Get("/multi2")]
+    private void GetMulti2()
+    {
+        SendGet();
+    }
 
-        public override void GET()
-        { 
-            res.SendHtmlContent($"<h1>Hello GET -> {req.Url}</h1>");
-        }
+    [Post("/multi1")]
+    private void PostMulti1()
+    {
+        SendPost();
+    }
 
-        public override void POST()
-        {
-            res.SendHtmlContent($"<h1>Hello POST -> {req.Url}</h1>");
-        }
+    [Post("/multi2")]
+    private void PostMulti2()
+    {
+        SendPost();
+    }
 
+    private void SendGet()
+    {
+        res.SendHtmlContent($"<h1>Hello GET -> {req.Url}</h1>");
+    }
 
+    private void SendPost()
+    {
+        res.SendHtmlContent($"<h1>Hello POST -> {req.Url}</h1>");
     }
 }
-

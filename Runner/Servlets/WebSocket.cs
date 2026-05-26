@@ -1,27 +1,23 @@
 using HSB;
+using HSB.Components.Controller;
 using HSB.Components.WebSockets;
 
 namespace Runner;
 
-[Binding("/websocket")]
-public class WebSocketHandler(Request req, Response res, Configuration c) : WebSocket(req, res, c)
+[Controller("")]
+public class WebSocketController
 {
-    public override void OnOpen()
+    [Ws("/websocket")]
+    private void Echo(WebSocketConnection socket)
     {
-        Terminal.Info("New websocket connection opened");
-    }
+        socket.OnOpen(() => Terminal.Info("New websocket connection opened"));
 
-    public override void OnMessage(Message msg)
-    {
-        //echo the message
-        Terminal.Debug($"Got message : {msg.GetMessage()}");
-        Send(msg.GetMessage());
-    }
+        socket.OnMessage(msg =>
+        {
+            Terminal.Debug($"Got message : {msg.Text}");
+            socket.Send(msg.Text);
+        });
 
-    public override void OnClose()
-    {
-        Terminal.Info("Websocket disconnected");
+        socket.OnClose(() => Terminal.Info("Websocket disconnected"));
     }
-
 }
-

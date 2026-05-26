@@ -1,72 +1,110 @@
 # WebSockets
 
-WebSockets are instantiated like servlets, but instead of extending the Servlet class, they need to extend `HSB.Components.WebSockets.WebSocket`
+HSB maps WebSockets as endpoint handlers. A WebSocket route can be registered directly on
+`Configuration` or declared inside a controller with `[Ws]`.
 
-The following example specifies a websocket mapped to `/websocket`, note that you still need to provide an html and javascript code for the user
+## Configuration style
 
 ```cs
 using HSB;
+
+var config = new Configuration();
+
+config.WebSocket("/ws", socket =>
+{
+    socket.OnOpen(() => socket.Send("connected"));
+
+    socket.OnMessage(msg =>
+    {
+        socket.Send("echo:" + msg.Text);
+    });
+
+    socket.OnClose(() =>
+    {
+        Console.WriteLine("closed");
+    });
+});
+```
+
+## Controller style
+
+```cs
+using HSB.Components.Controller;
 using HSB.Components.WebSockets;
 
-
-[Binding("/websocket")]
-public class WebSocketHandler : WebSocket
+[Controller("/realtime")]
+public class RealtimeController
 {
-    public WebSocketHandler(Request req, Response res, Configuration c) : base(req, res, c){}
-
-    public override void OnOpen()
+    [Ws("/chat")]
+    public void Chat(WebSocketConnection socket)
     {
-        Terminal.INFO("New websocket connection opened");
-    }
+        socket.OnOpen(() => socket.Send("connected"));
 
-    public override void OnMessage(Message msg)
-    {
-        Terminal.DEBUG($"Got message : {msg.GetMessage()}");
-        //echo the message
-        Send(msg);
-
-    }
-
-    public override void OnClose()
-    {
-        Terminal.INFO("Websocket disconnected");
+        socket.OnMessage(msg =>
+        {
+            socket.Send("echo:" + msg.Text);
+        });
     }
 }
 ```
 
-### Send methods
+Controller paths are combined with the WebSocket path. The example above maps
+`/realtime/chat`.
 
-| Name                           | Description                                                                          |
-| ------------------------------ | ------------------------------------------------------------------------------------ |
-| `SetMessageSentOnOpen(byte[])` | Set a message that will be sent to the client once the connection is opened          |
-| `Send(byte[])`                 | Sends a binary message to the client                                                 |
-| `Send(string)`                 | Send a string message to the client                                                  |
-| `Send(Message)`                | Sends a message to the client based on the `HSB.Components.WebSockets.Message` class |
-| `Send<T>(T, bool)`             | Sends a C# object to the client that will be serialized as JSON                      |
+## Async handlers
 
-### Connection control methods
+```cs
+config.WebSocket("/events", socket =>
+{
+    socket.OnMessage(async msg =>
+    {
+        await socket.SendAsync("received:" + msg.Text);
+    });
+});
+```
 
-| Name                             | Return Type      | Description                                         |
-| -------------------------------- | ---------------- | --------------------------------------------------- |
-| `Close()`                        | `void`           | Close the websocket                                 |
-| `SetConnectionRequirements(...)` | `void`           | Sets requirements to accept the connection requests |
-| `GetState()`                     | `WebSocketState` | Return the current state of the websocket           |
+The setup delegate itself can also be async:
 
-#### SetConnectionRequirements parameters
+```cs
+config.WebSocket("/ws", async socket =>
+{
+    await Task.Yield();
 
-| Parameter             | Type                         | Description                                                                         |
-| --------------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
-| `requiredHeaders`     | `Dictionary<string, string>` | Sets the headers that must be present in the initial request                        |
-| `requiredParameter`   | `Dictionary<string, string>` | Like requiredHeaders                                                                |
-| `bearerToken`         | `string`                     | If set, a bearer token is required to estabilish the websocket connection           |
-| `oAuth2Token`         | `string`                     | If set, an oAuth2.0 token is required to estabilish the websocket connection        |
-| `basicAuth`           | `Tuple<string, string>?`     | If set, a basic auth information is required to estabilish the websocket connection |
-| `oAuth1_0Information` | `OAuth1_0Information?`       | If set, a oAuth1.0 information is required to estabilish the websocket connection   |
+    socket.OnMessage(async msg =>
+    {
+        await socket.SendAsync("echo:" + msg.Text);
+    });
+});
+```
 
-### Events
+## WebSocketConnection
 
-| Name                 | Description                                             |
-| -------------------- | ------------------------------------------------------- |
-| `OnMessage(Message)` | It's called when a messages is received from the client |
-| `OnOpen()`           | It's triggered when the connection opens                |
-| `OnClose()`          | Triggered after a close request is received             |
+`WebSocketConnection` exposes the connection state, request context and lifecycle hooks:
+
+| Member | Description |
+| ------ | ----------- |
+| `Id` | Unique connection id |
+| `Path` | Requested WebSocket path |
+| `Request` / `Response` | HSB request and response objects |
+| `Headers` | Request headers snapshot |
+| `Query` | Query string parameters snapshot |
+| `IsOpen` | Whether the connection is open |
+| `Send(...)` / `SendAsync(...)` | Send text or binary data |
+| `Close()` / `CloseAsync()` | Close the connection |
+| `OnOpen(...)` | Register open handlers |
+| `OnMessage(...)` | Register message handlers |
+| `OnClose(...)` | Register close handlers |
+| `OnError(...)` | Register error handlers |
+| `Broadcast(...)` | Send to all connections on the same route |
+| `BroadcastExceptSelf(...)` | Send to all other connections on the same route |
+
+## WebSocketMessage
+
+Incoming messages are wrapped in `WebSocketMessage`:
+
+| Member | Description |
+| ------ | ----------- |
+| `Text` | UTF-8 text for text frames |
+| `Raw` | Raw payload bytes |
+| `IsText` | True for text frames |
+| `IsBinary` | True for binary frames |

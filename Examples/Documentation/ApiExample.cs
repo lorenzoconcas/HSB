@@ -1,22 +1,22 @@
-﻿using HSB;
-using HSB.Components.Attributes;
+using HSB;
+using HSB.Components.Controller;
 
 namespace Documentation;
 
-
-[Binding("/api")]
-[Binding("/api/example")]
-public class ApiExample(Request req, Response res) : Servlet(req, res)
+[Controller("/api")]
+public class ApiExample
 {
+    private Response res = null!;
 
-    override public void GET()
+    [Get("/")]
+    private void Get()
     {
-        res.SendJSON("{}");
+        res.SendJson("{}");
     }
-}
 
-[Binding()]
-public class Autobind(Request req, Response res) : Servlet(req, res)
-{
-
+    [Get("/example")]
+    private void GetExample()
+    {
+        res.SendJson("{}");
+    }
 }

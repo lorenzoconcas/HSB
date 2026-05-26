@@ -1,60 +1,40 @@
 using HSB;
-using HSB.Components;
+using HSB.Components.Controller;
 using HSB.Constants;
+
 namespace Runner;
 
-
-[Binding("/form.html")]
-[Binding("/formupload")]
-public class Form : Servlet
+[Controller("")]
+public class Form
 {
-    private const string savePath = "./uploaded";
-    public Form(Request req, Response res) : base(req, res)
-    {
+    private Request req = null!;
+    private Response res = null!;
 
+    [Get("/form.html")]
+    private void GetForm()
+    {
+        res.SendHtmlContent("<form action=\"/formupload\" method=\"post\">" +
+                            "<input type=\"text\" name=\"name\" id=\"name\" placeholder=\"Your name\"></input><br>" +
+                            "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
+                            "</form>");
     }
 
-    public override void GET()
+    [Post("/formupload")]
+    private void Upload()
     {
-        if (req.Url == "/form.html")
-        {
-
-            res.SendHtmlContent("<form action=\"/formupload\" method=\"post\">" +
-            "<input type=\"text\" name=\"name\" id=\"name\" placeholder=\"Your name\"></input><br>" +
-            "<input type=\"submit\" value=\"Upload\" name=\"submit\">" +
-            "</form>");
-        }
-        else
-        {
-            res.SendHtmlContent("<h1>404 Not Found</h1>");
-        }
-    }
-
-    public override void POST()
-    {
-        if (req.Url == "/formupload" && req.IsFormUpload())
-        {
-            //note that only the first element with a given name is stored inside the FormData
-            //  for example a form like this
-            //  <form ...>
-            //      <input type="text" name="name" id="name" placeholder="Your name"></input>
-            //      <input type="text" name="name" id="surname" placeholder="Your surname"></input>
-            //  </form>
-            // will result in Form containing only
-            // {name: "value of name"}
-            var f = req.GetFormData();
-            if (f == null)
-            {
-                res.Send(HttpCodes.INTERNAL_SERVER_ERROR);
-                return;
-            }
-            res.SendHtmlContent($"<h1>Hello {f.Get("name")}</h1>");
-
-        }
-        else
+        if (!req.IsFormUpload())
         {
             res.SendCode(HttpCodes.FORBIDDEN);
+            return;
         }
 
+        var form = req.GetFormData();
+        if (form == null)
+        {
+            res.Send(HttpCodes.INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        res.SendHtmlContent($"<h1>Hello {form.Get("name")}</h1>");
     }
 }

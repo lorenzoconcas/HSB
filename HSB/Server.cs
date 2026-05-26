@@ -326,7 +326,7 @@ public class Server
         try
         {
             _listener.Bind(_localEndPoint);
-            _listener.Listen(_config.MaxConnections);
+            _listener.Listen(Math.Max(8192, Convert.ToInt32(_config.MaxConnections)));
 
             var sslConf = _config.SslSettings;
 
@@ -336,7 +336,7 @@ public class Server
                 if (_sslListener != null)
                 {
                     _sslListener!.Bind(_sslLocalEndPoint!);
-                    _sslListener.Listen(100);
+                    _sslListener.Listen(8192);
                 }
             }
 
@@ -346,22 +346,14 @@ public class Server
             //this makes the second port listen to SSL requests
             if ((sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) && sslConf.PortMode == SSL_PORT_MODE.DUAL_PORT)
             {
-                new Task(() =>
-                {
-                    while (true)
-                        Process(_sslListener!, true);
-                }).Start();
+                _ = Task.Run(() => AcceptLoopAsync(_sslListener!, true));
             }
 
             //since the base port is always listening this is always executed
-            while (true)
-            {
-                //if ssl is enabled and single port is used
-                var sslMode = (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) &&
-                              sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
+            var sslMode = (sslConf.IsEnabled() || sslConf.IsDebugModeEnabled()) &&
+                          sslConf.PortMode == SSL_PORT_MODE.SINGLE_PORT;
 
-                Process(_listener, sslMode);
-            }
+            AcceptLoopAsync(_listener, sslMode).GetAwaiter().GetResult();
         }
         catch (Exception e)
         {
@@ -380,9 +372,17 @@ public class Server
         System.Diagnostics.Process.Start(psi);
     }
 
-    private void Process(Socket listener, bool sslMode)
+    private async Task AcceptLoopAsync(Socket listener, bool sslMode)
     {
-        var socket = listener.Accept();
+        while (true)
+        {
+            await Process(listener, sslMode);
+        }
+    }
+
+    private async Task Process(Socket listener, bool sslMode)
+    {
+        var socket = await listener.AcceptAsync();
 
         socket.NoDelay = true;
         socket.ReceiveTimeout = 5000;
@@ -853,7 +853,7 @@ public class Server
         {
             Response res = new(socket, req, _config, sslStream, hsbTls);
 
-            Task.Run(() => ProcessRequest(req, res));
+            _ = Task.Run(() => ProcessRequest(req, res));
         }
         else
         {

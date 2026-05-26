@@ -1,6 +1,5 @@
 using System.IO;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using HSB.Constants;
@@ -118,7 +117,7 @@ internal sealed class WebSocket(
         }
 
         res.SetReadTimeout(options.ReceivePollTimeoutMilliseconds);
-        res.SetWriteTimeout(options.ReceivePollTimeoutMilliseconds);
+        res.SetWriteTimeout(options.IdleTimeoutMilliseconds);
 
         SetState(WebSocketState.CONNECTING);
 
@@ -155,8 +154,9 @@ internal sealed class WebSocket(
     private async Task MessageLoopAsync()
     {
         var buffer = new byte[options.ReceiveChunkSize];
-        var pending = new List<byte>(options.ReceiveChunkSize * 2);
-        var fragmentedPayload = new List<byte>();
+        var pending = new byte[options.ReceiveChunkSize * 2];
+        var pendingCount = 0;
+        var fragmentedPayload = new List<byte>(options.ReceiveChunkSize * 2);
         Opcode? fragmentedOpcode = null;
         var lastReceiveAt = DateTime.UtcNow;
 
@@ -201,15 +201,13 @@ internal sealed class WebSocket(
             }
 
             lastReceiveAt = DateTime.UtcNow;
-            pending.EnsureCapacity(pending.Count + received);
-            for (var i = 0; i < received; i++)
-            {
-                pending.Add(buffer[i]);
-            }
+            pending = EnsurePendingCapacity(pending, pendingCount + received);
+            Buffer.BlockCopy(buffer, 0, pending, pendingCount, received);
+            pendingCount += received;
 
-            while (pending.Count > 0)
+            while (pendingCount > 0)
             {
-                if (!Frame.TryRead(CollectionsMarshal.AsSpan(pending), options.MaxFramePayloadBytes, out var frame, out var consumed, out var error))
+                if (!Frame.TryRead(pending.AsSpan(0, pendingCount), options.MaxFramePayloadBytes, out var frame, out var consumed, out var error))
                 {
                     if (error != null)
                     {
@@ -223,7 +221,7 @@ internal sealed class WebSocket(
                     break;
                 }
 
-                pending.RemoveRange(0, consumed);
+                pendingCount = CompactPendingBuffer(pending, pendingCount, consumed);
 
                 if (frame == null)
                 {
@@ -318,6 +316,39 @@ internal sealed class WebSocket(
         }
     }
 
+    private static byte[] EnsurePendingCapacity(byte[] pending, int requiredCapacity)
+    {
+        if (pending.Length >= requiredCapacity)
+        {
+            return pending;
+        }
+
+        var newCapacity = pending.Length;
+        while (newCapacity < requiredCapacity)
+        {
+            newCapacity *= 2;
+        }
+
+        Array.Resize(ref pending, newCapacity);
+        return pending;
+    }
+
+    private static int CompactPendingBuffer(byte[] pending, int pendingCount, int consumed)
+    {
+        if (consumed <= 0)
+        {
+            return pendingCount;
+        }
+
+        var remaining = pendingCount - consumed;
+        if (remaining > 0)
+        {
+            Buffer.BlockCopy(pending, consumed, pending, 0, remaining);
+        }
+
+        return remaining;
+    }
+
     private async Task<bool> DispatchMessageAsync(Opcode opcode, byte[] payload)
     {
         try
@@ -383,7 +414,10 @@ internal sealed class WebSocket(
                 await writeLock.WaitAsync();
                 try
                 {
-                    res.SendOrThrow(frame.Build(), false);
+                    if (previousState == WebSocketState.OPEN)
+                    {
+                        res.SendOrThrow(frame.Build(), false);
+                    }
                 }
                 finally
                 {

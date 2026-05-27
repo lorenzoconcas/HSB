@@ -100,7 +100,7 @@ Previous version.
 - New controllers do not inherit from `Servlet`.
 - New code should use controller attributes instead of `[Binding]`.
 - Old servlet-style WebSocket examples no longer represent the preferred model.
-- The core project target is `net1## 0.0`; consumers of the library should align SDK/runtime versions.
+- The core project target is `net10.0`; consumers of the library should align SDK/runtime versions.
 ### Migration notes
 #### Servlet -> Controller
 Before:
@@ -174,7 +174,7 @@ Intermediate release/refactor reconstructed from repository changes.
 * Fixes for global header and global cookie handling.
 * Fixes for routes and base parameter injection.
 
-## 0.0.15
+0.0.15
 
 Intermediate release/refactor reconstructed from current features.
 
@@ -194,7 +194,7 @@ Intermediate release/refactor reconstructed from current features.
 
 * Conceptual deprecation of the Servlet model for new projects began.
 
-## 0.0.14
+0.0.14
 
 ### Added
 
@@ -212,25 +212,25 @@ Intermediate release/refactor reconstructed from current features.
 * Fixes for invalid requests.
 * Fixes for malformed cookies and abnormal headers.
 
-## 0.0.13
+0.0.13
 
-Added
+### Added
 
 * SSL/TLS improvements.
 * Extended support for .p12/.pkcs12 certificates.
 * Preparation for local certificate debugging.
 
-Changed
+### Changed
 
 * SslConfiguration became the central point for HTTPS configuration.
 * Consolidated HTTP -> HTTPS redirect handling.
 
-Security
+### Security
 
 * Obsolete TLS versions considered deprecated.
 * Support for revocation checks and client certificate settings.
 
-## 0.0.12
+0.0.12
 
 ### Added
 
@@ -248,28 +248,28 @@ Security
 * Improved stability under load.
 * Reduced race conditions in the request/response path.
 
-## 0.0.11
+0.0.11
 
-Release available in Releases/ as HSB_v## 0.0.11_ALPHA.
+Release available in Releases/ as HSB_v0.0.11_ALPHA.
 
-Added
+### Added
 
 * Initial SSL/TLS support.
 * SslConfiguration.
 * Dual-port HTTP/HTTPS mode.
 * Optional redirect for insecure requests.
 
-Changed
+### Changed
 
 * TLS integration into the connection accept cycle.
 
-Known limitations
+### Known limitations
 
 * The old roadmap indicated the custom TLS implementation was still a work in progress.
 
-## 0.0.10
+0.0.10
 
-Release available in Releases/ as HSB_v## 0.0.10.
+### Release available in Releases/ as HSB_v0.0.10.
 
 ### Added
 
@@ -280,11 +280,11 @@ Release available in Releases/ as HSB_v## 0.0.10.
 
 * Extended the server beyond simple HTTP request/response.
 
-### Deprecated later
+Deprecated later
 
 * The original WebSocket model has been replaced by the WebSocketConnection system.
 
-## 0.0.9
+0.0.9
 
 ### Added
 
@@ -296,7 +296,7 @@ Release available in Releases/ as HSB_v## 0.0.10.
 
 * Request gained broader functionality for body parsing and uploads.
 
-## 0.0.8
+0.0.8
 
 ### Added
 
@@ -304,7 +304,7 @@ Release available in Releases/ as HSB_v## 0.0.10.
 * Basic/Bearer auth support and authentication components.
 * Authentication examples.
 
-## 0.0.7
+0.0.7
 
 ### Changed
 
@@ -314,21 +314,21 @@ Release available in Releases/ as HSB_v## 0.0.10.
 
 * The previous roadmap indicated that this version could potentially be skipped.
 
-## 0.0.6
+0.0.6
 
 ### Added
 
 * HTTP session implementation.
 * Cookie/session token handling.
 
-## 0.0.5 / ## 0.0.5 RC
+0.0.5 / 0.0.5 RC
 
 ### Added
 
 * Improved debugging.
 * Initial development and diagnostic utilities.
 
-## 0.0.1 - ## 0.0.4
+0.0.1 - 0.0.4
 
 ### Added
 
@@ -349,7 +349,7 @@ Versioning roadmap
 * Consistent manual documentation in Documentation/ aligned with README and VERSIONS.md; docs/ remains generated Doxygen output.
 * Compatibility and target framework policies.
 
-Towards 1.0
+### Towards 1.0
 
 Before a 1.0 release, the project should define:
 

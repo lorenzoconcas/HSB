@@ -64,13 +64,15 @@ public class Request : IDisposable
         string? bodyFilePath,
         Socket socket,
         Configuration config,
-        bool isTls = false)
+        bool isTls = false,
+        MultiPartFormData? providedMultiPartFormData = null)
     {
         connectionSocket = socket;
         rawData = headerData;
         rawBody = bodyData;
         rawBodyFilePath = bodyFilePath;
         this.config = config;
+        multiPartFormData = providedMultiPartFormData;
         requestContent = [];
         IsTls = isTls;
 
@@ -207,7 +209,7 @@ public class Request : IDisposable
 
                 if (contentTypeParts.Length == 2 && !string.IsNullOrWhiteSpace(contentTypeParts[1]))
                 {
-                    multiPartFormData = rawBodyFilePath != null
+                    multiPartFormData ??= rawBodyFilePath != null
                         ? new MultiPartFormData(rawBodyFilePath, contentTypeParts[1], config.Upload, config.Http)
                         : new MultiPartFormData(rawBody, contentTypeParts[1], config.Upload, config.Http);
                 }

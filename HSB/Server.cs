@@ -16,6 +16,7 @@ using HSB.Components.Controller;
 using HSB.Constants.TLS.Manual;
 using HSB.Exceptions;
 using HSB.Components;
+using HSB.Http;
 using HSB.Utils;
 using Index = HSB.DefaultPages.Index;
 
@@ -501,13 +502,21 @@ public class Server
 
         try
         {
-            envelope = await ReadRequestEnvelopeAsync(socket, sslStream, hsbTls);
+            using var transport = TransportConnectionFactory.Create(socket, sslStream, hsbTls);
+            envelope = await ReadRequestEnvelopeAsync(transport);
             if (envelope == null)
             {
                 return;
             }
 
-            req = new Request(envelope.HeaderBytes, envelope.BodyBytes, envelope.BodyTempFilePath, socket, _config, sslMode);
+            req = new Request(
+                envelope.HeaderBytes,
+                envelope.BodyBytes,
+                envelope.BodyTempFilePath,
+                socket,
+                _config,
+                sslMode,
+                envelope.MultipartFormData);
             Response res = new(socket, req, _config, sslStream, hsbTls);
 
             foreach (var cookie in req.ResponseCookies)
@@ -530,412 +539,237 @@ public class Server
         }
     }
 
-    private async Task<RequestEnvelope?> ReadRequestEnvelopeAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler)
+    private async Task<RequestEnvelope?> ReadRequestEnvelopeAsync(ITransportConnection transport)
     {
-        var headerReadResult = await ReadHeadersAsync(socket, sslStream, tlsHandler);
-        if (headerReadResult == null)
+        HttpRequestReadResult? requestReadResult;
+        try
+        {
+            requestReadResult = await new HttpRequestReader(_config.Http).ReadAsync(transport);
+        }
+        catch (HttpRequestRejectedException ex)
+        {
+            _config.Debug.WARNING($"Closing connection: {ex.Message}");
+            await SendSimpleResponseAsync(transport, ex.StatusCode, ex.Message);
+            return null;
+        }
+        catch (Exception ex) when (IsExpectedDisconnect(ex))
+        {
+            transport.Close();
+            return null;
+        }
+
+        if (requestReadResult == null)
         {
             return null;
         }
 
-        if (!TryParseRequestHead(headerReadResult.HeaderBytes, out var headInfo, out var rejectionStatusCode, out var rejectionReason))
+        using (requestReadResult)
         {
-            await SendSimpleResponseAsync(socket, sslStream, tlsHandler, rejectionStatusCode, rejectionReason);
-            return null;
-        }
+            var headInfo = requestReadResult.Head;
 
-        if (headInfo.IsMultipartUpload && headInfo.HasChunkedTransferEncoding)
-        {
-            await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.NOT_IMPLEMENTED,
-                "Streaming upload mode is postponed");
-            return null;
-        }
-
-        if (headInfo.ContentLength > _config.Http.MaxBodySizeBytes)
-        {
-            await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.PAYLOAD_TOO_LARGE,
-                "Request body too large");
-            return null;
-        }
-
-        if (headInfo.ContentLength <= 0)
-        {
-            return new RequestEnvelope(headerReadResult.HeaderBytes, [], null, null);
-        }
-
-        if (headInfo.IsMultipartUpload)
-        {
-            if (!await _uploadConcurrencyLimiter.WaitAsync(0))
+            if (headInfo.ContentLength is > 0 && headInfo.ContentLength > _config.Http.MaxBodySizeBytes)
             {
-                var remoteIp = socket.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
-                _config.Debug.WARNING($"[UPLOAD][ERROR] client={remoteIp} reason=too_many_uploads");
-                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.TOO_MANY_REQUESTS,
-                    "Too many uploads");
+                await SendSimpleResponseAsync(transport, HttpCodes.PAYLOAD_TOO_LARGE,
+                    "Request body too large");
                 return null;
             }
 
-            var uploadLease = new SemaphoreLease(_uploadConcurrencyLimiter);
-            try
+            var hasRequestBody = headInfo.HasChunkedTransferEncoding || headInfo.ContentLength is > 0;
+            if (!hasRequestBody)
             {
-                var tempBodyPath = await BufferRequestBodyToTempFileAsync(socket, sslStream, tlsHandler, headInfo, headerReadResult.BufferedBodyBytes);
-                if (tempBodyPath == null)
+                return new RequestEnvelope(requestReadResult.HeaderBytes, [], null, null);
+            }
+
+            if (headInfo.IsMultipartUpload)
+            {
+                if (!await _uploadConcurrencyLimiter.WaitAsync(0))
                 {
-                    uploadLease.Dispose();
+                    var remoteIp = transport.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
+                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={remoteIp} reason=too_many_uploads");
+                    await SendSimpleResponseAsync(transport, HttpCodes.TOO_MANY_REQUESTS, "Too many uploads");
                     return null;
                 }
 
-                return new RequestEnvelope(headerReadResult.HeaderBytes, [], tempBodyPath, uploadLease);
-            }
-            catch
-            {
-                uploadLease.Dispose();
-                throw;
-            }
-        }
+                var uploadLease = new SemaphoreLease(_uploadConcurrencyLimiter);
+                try
+                {
+                    var multipartFormData = await ParseMultipartRequestAsync(
+                        requestReadResult.BodyStream,
+                        requestReadResult.HeaderBytes,
+                        headInfo,
+                        transport);
+                    if (multipartFormData == null)
+                    {
+                        uploadLease.Dispose();
+                        return null;
+                    }
 
-        var bodyBytes = await ReadRequestBodyIntoMemoryAsync(socket, sslStream, tlsHandler, headInfo, headerReadResult.BufferedBodyBytes);
-        return bodyBytes == null ? null : new RequestEnvelope(headerReadResult.HeaderBytes, bodyBytes, null, null);
+                    return new RequestEnvelope(requestReadResult.HeaderBytes, [], null, uploadLease, multipartFormData);
+                }
+                catch
+                {
+                    uploadLease.Dispose();
+                    throw;
+                }
+            }
+
+            var bodyBytes = await ReadRequestBodyIntoMemoryAsync(requestReadResult.BodyStream, headInfo, transport);
+            return bodyBytes == null ? null : new RequestEnvelope(requestReadResult.HeaderBytes, bodyBytes, null, null);
+        }
     }
 
-    private async Task<HeaderReadResult?> ReadHeadersAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler)
+    private async Task<byte[]?> ReadRequestBodyIntoMemoryAsync(Stream bodyStream, HttpRequestHead headInfo,
+        ITransportConnection transport)
     {
-        SetTransportTimeouts(socket, sslStream, _config.Http.HeaderReadTimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
+        transport.SetTimeouts(_config.Http.BodyReadTimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
 
-        var buffer = new byte[_config.Http.ReadBufferSizeBytes];
-        var headerBuffer = new List<byte>(_config.Http.ReadBufferSizeBytes);
-        var headerDelimiter = "\r\n\r\n"u8.ToArray();
+        var readBuffer = new byte[_config.Http.ReadBufferSizeBytes];
+        var expectedLength = headInfo.ContentLength;
+        var initialCapacity = expectedLength.HasValue && expectedLength.Value > 0 && expectedLength.Value <= int.MaxValue
+            ? (int)expectedLength.Value
+            : _config.Http.ReadBufferSizeBytes;
+        await using var memory = new MemoryStream(initialCapacity);
+        long totalRead = 0;
 
         while (true)
         {
             int read;
             try
             {
-                read = await ReadFromTransportAsync(socket, sslStream, tlsHandler, buffer);
+                read = await bodyStream.ReadAsync(readBuffer);
             }
-            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+            catch (HttpRequestRejectedException ex)
             {
-                _config.Debug.WARNING("Closing connection: header receive timeout");
-                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Header receive timeout");
+                await SendSimpleResponseAsync(transport, ex.StatusCode, ex.Message);
                 return null;
-            }
-            catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
-            {
-                _config.Debug.WARNING("Closing connection: header receive timeout");
-                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Header receive timeout");
-                return null;
-            }
-            catch (Exception ex) when (IsExpectedDisconnect(ex))
-            {
-                CloseTransport(socket, sslStream);
-                return null;
-            }
-
-            if (read <= 0)
-            {
-                CloseTransport(socket, sslStream);
-                return null;
-            }
-
-            headerBuffer.AddRange(buffer[..read]);
-
-            if (headerBuffer.Count > _config.Http.MaxHeaderSizeBytes)
-            {
-                _config.Debug.WARNING("Closing connection: header size limit exceeded");
-                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_HEADER_FIELDS_TOO_LARGE,
-                    "Header size limit exceeded");
-                return null;
-            }
-
-            var headerEndIndex = CollectionsMarshal.AsSpan(headerBuffer).IndexOf(headerDelimiter);
-            if (headerEndIndex < 0)
-            {
-                continue;
-            }
-
-            var headerLength = headerEndIndex + headerDelimiter.Length;
-            var headerBytes = headerBuffer[..headerLength].ToArray();
-            var bufferedBodyBytes = headerBuffer.Count > headerLength
-                ? headerBuffer[headerLength..].ToArray()
-                : [];
-            return new HeaderReadResult(headerBytes, bufferedBodyBytes);
-        }
-    }
-
-    private bool TryParseRequestHead(byte[] headerBytes, out RequestHeadInfo headInfo, out int rejectionStatusCode, out string rejectionReason)
-    {
-        var headerText = Encoding.UTF8.GetString(headerBytes);
-        var headerLines = headerText.Split("\r\n", StringSplitOptions.None);
-
-        if (headerLines.Length == 0 || string.IsNullOrWhiteSpace(headerLines[0]))
-        {
-            headInfo = RequestHeadInfo.Empty;
-            rejectionStatusCode = HttpCodes.BAD_REQUEST;
-            rejectionReason = "Missing request line";
-            return false;
-        }
-
-        if (headerLines[0].Length > _config.Http.MaxRequestLineSizeBytes)
-        {
-            headInfo = RequestHeadInfo.Empty;
-            rejectionStatusCode = HttpCodes.URI_TOO_LONG;
-            rejectionReason = "Request line too large";
-            return false;
-        }
-
-        var parsedHeaderCount = 0;
-        foreach (var line in headerLines.Skip(1))
-        {
-            if (string.IsNullOrEmpty(line))
-            {
-                break;
-            }
-
-            parsedHeaderCount++;
-        }
-
-        if (parsedHeaderCount > _config.Http.MaxHeaders)
-        {
-            headInfo = RequestHeadInfo.Empty;
-            rejectionStatusCode = HttpCodes.REQUEST_HEADER_FIELDS_TOO_LARGE;
-            rejectionReason = "Too many headers";
-            return false;
-        }
-
-        var requestLineParts = headerLines[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (requestLineParts.Length != 3)
-        {
-            headInfo = RequestHeadInfo.Empty;
-            rejectionStatusCode = HttpCodes.BAD_REQUEST;
-            rejectionReason = "Malformed request line";
-            return false;
-        }
-
-        long contentLength = 0;
-        var contentType = string.Empty;
-        var transferEncoding = string.Empty;
-
-        foreach (var line in headerLines.Skip(1))
-        {
-            if (string.IsNullOrEmpty(line))
-            {
-                break;
-            }
-
-            var separatorIndex = line.IndexOf(':');
-            if (separatorIndex <= 0)
-            {
-                headInfo = RequestHeadInfo.Empty;
-                rejectionStatusCode = HttpCodes.BAD_REQUEST;
-                rejectionReason = "Malformed request header";
-                return false;
-            }
-
-            var headerName = line[..separatorIndex].Trim();
-            var headerValue = line[(separatorIndex + 1)..].Trim();
-
-            if (headerName.Equals("Content-Length", StringComparison.OrdinalIgnoreCase) &&
-                !long.TryParse(headerValue, out contentLength))
-            {
-                headInfo = RequestHeadInfo.Empty;
-                rejectionStatusCode = HttpCodes.BAD_REQUEST;
-                rejectionReason = "Invalid Content-Length";
-                return false;
-            }
-
-            if (headerName.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
-            {
-                contentType = headerValue;
-            }
-
-            if (headerName.Equals("Transfer-Encoding", StringComparison.OrdinalIgnoreCase))
-            {
-                transferEncoding = headerValue;
-            }
-        }
-
-        if (contentLength < 0)
-        {
-            headInfo = RequestHeadInfo.Empty;
-            rejectionStatusCode = HttpCodes.BAD_REQUEST;
-            rejectionReason = "Invalid Content-Length";
-            return false;
-        }
-
-        var isMultipart = contentType.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase);
-        var hasChunkedTransferEncoding = transferEncoding.Contains("chunked", StringComparison.OrdinalIgnoreCase);
-
-        if (hasChunkedTransferEncoding)
-        {
-            headInfo = RequestHeadInfo.Empty;
-            rejectionStatusCode = HttpCodes.NOT_IMPLEMENTED;
-            rejectionReason = "Chunked request bodies are not supported";
-            return false;
-        }
-
-        headInfo = new RequestHeadInfo(contentLength, contentType, isMultipart, hasChunkedTransferEncoding);
-        rejectionStatusCode = 0;
-        rejectionReason = string.Empty;
-        return true;
-    }
-
-    private async Task<byte[]?> ReadRequestBodyIntoMemoryAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler,
-        RequestHeadInfo headInfo,
-        byte[] bufferedBodyBytes)
-    {
-        SetTransportTimeouts(socket, sslStream, _config.Http.BodyReadTimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
-
-        var remaining = headInfo.ContentLength;
-        var bodyBytes = new byte[remaining];
-        var readBuffer = new byte[_config.Http.ReadBufferSizeBytes];
-        var offset = 0;
-
-        var initialBodyBytes = bufferedBodyBytes.Length > remaining
-            ? bufferedBodyBytes[..(int)remaining]
-            : bufferedBodyBytes;
-
-        if (initialBodyBytes.Length > 0)
-        {
-            Buffer.BlockCopy(initialBodyBytes, 0, bodyBytes, 0, initialBodyBytes.Length);
-            offset += initialBodyBytes.Length;
-            remaining -= initialBodyBytes.Length;
-        }
-
-        while (remaining > 0)
-        {
-            var chunkSize = (int)Math.Min(readBuffer.Length, remaining);
-            int read;
-            try
-            {
-                read = await ReadFromTransportAsync(socket, sslStream, tlsHandler, readBuffer.AsMemory(0, chunkSize));
             }
             catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
             {
                 _config.Debug.WARNING("Closing connection: body receive timeout");
-                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
+                await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
                 return null;
             }
             catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
             {
                 _config.Debug.WARNING("Closing connection: body receive timeout");
-                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
+                await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
                 return null;
             }
             catch (Exception ex) when (IsExpectedDisconnect(ex))
             {
-                CloseTransport(socket, sslStream);
+                transport.Close();
                 return null;
             }
 
             if (read <= 0)
             {
-                CloseTransport(socket, sslStream);
+                if (expectedLength.HasValue && totalRead < expectedLength.Value)
+                {
+                    transport.Close();
+                    return null;
+                }
+
+                break;
+            }
+
+            totalRead += read;
+            if (totalRead > _config.Http.MaxBodySizeBytes)
+            {
+                await SendSimpleResponseAsync(transport, HttpCodes.PAYLOAD_TOO_LARGE, "Request body too large");
                 return null;
             }
 
-            Buffer.BlockCopy(readBuffer, 0, bodyBytes, offset, read);
-            offset += read;
-            remaining -= read;
+            await memory.WriteAsync(readBuffer.AsMemory(0, read));
         }
 
-        return bodyBytes;
+        return memory.ToArray();
     }
 
-    private async Task<string?> BufferRequestBodyToTempFileAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler,
-        RequestHeadInfo headInfo,
-        byte[] bufferedBodyBytes)
+    private async Task<MultiPartFormData?> ParseMultipartRequestAsync(
+        Stream bodyStream,
+        byte[] headerBytes,
+        HttpRequestHead headInfo,
+        ITransportConnection transport)
     {
-        var tempRoot = Path.GetFullPath(_config.Upload.TempPath);
-        Directory.CreateDirectory(tempRoot);
-        var tempBodyPath = Path.Combine(tempRoot, $"{Guid.NewGuid():N}.upload");
+        if (!TryExtractMultipartBoundary(headerBytes, out var boundary))
+        {
+            await SendSimpleResponseAsync(transport, HttpCodes.BAD_REQUEST, "Missing multipart boundary");
+            return null;
+        }
 
-        SetTransportTimeouts(socket, sslStream, _config.Upload.TimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
+        transport.SetTimeouts(_config.Upload.TimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
 
-        var clientIp = socket.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
+        var clientIp = transport.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
         var startedAt = Stopwatch.StartNew();
-        _config.Debug.INFO($"[UPLOAD][START] client={clientIp} size={headInfo.ContentLength} mime=\"{headInfo.ContentType}\"");
-
-        long remaining = headInfo.ContentLength;
         long received = 0;
         long nextProgressThreshold = 64L * 1024L * 1024L;
-        var readBuffer = new byte[_config.Http.ReadBufferSizeBytes];
+        var uploadSizeLabel = headInfo.ContentLength?.ToString() ?? "chunked";
+
+        _config.Debug.INFO($"[UPLOAD][START] client={clientIp} size={uploadSizeLabel} mime=\"{headInfo.ContentType}\"");
+
+        using var trackedStream = new ProgressTrackingReadStream(bodyStream, bytesRead =>
+        {
+            received += bytesRead;
+            if (received >= nextProgressThreshold)
+            {
+                if (headInfo.ContentLength.HasValue)
+                {
+                    var remaining = Math.Max(0, headInfo.ContentLength.Value - received);
+                    _config.Debug.INFO($"[UPLOAD][PROGRESS] client={clientIp} received={received} remaining={remaining}");
+                }
+                else
+                {
+                    _config.Debug.INFO($"[UPLOAD][PROGRESS] client={clientIp} received={received}");
+                }
+
+                nextProgressThreshold += 64L * 1024L * 1024L;
+            }
+        });
 
         try
         {
-            await using var fileStream = new FileStream(
-                tempBodyPath,
-                FileMode.Create,
-                FileAccess.Write,
-                FileShare.None,
-                64 * 1024,
-                FileOptions.Asynchronous | FileOptions.SequentialScan);
+            var multipart = MultiPartFormData.Parse(
+                trackedStream,
+                boundary,
+                _config.Upload,
+                _config.Http,
+                leaveSourceStreamOpen: true);
 
-            var initialBodyBytes = bufferedBodyBytes.Length > remaining
-                ? bufferedBodyBytes[..(int)remaining]
-                : bufferedBodyBytes;
-
-            if (initialBodyBytes.Length > 0)
-            {
-                await fileStream.WriteAsync(initialBodyBytes);
-                received += initialBodyBytes.Length;
-                remaining -= initialBodyBytes.Length;
-            }
-
-            while (remaining > 0)
-            {
-                var chunkSize = (int)Math.Min(readBuffer.Length, remaining);
-                int read;
-                try
-                {
-                    read = await ReadFromTransportAsync(socket, sslStream, tlsHandler, readBuffer.AsMemory(0, chunkSize));
-                }
-                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
-                {
-                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=timeout");
-                    await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
-                    return null;
-                }
-                catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
-                {
-                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=timeout");
-                    await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
-                    return null;
-                }
-                catch (Exception ex) when (IsExpectedDisconnect(ex))
-                {
-                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=client_disconnect");
-                    return null;
-                }
-
-                if (read <= 0)
-                {
-                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=client_disconnect");
-                    return null;
-                }
-
-                await fileStream.WriteAsync(readBuffer.AsMemory(0, read));
-                received += read;
-                remaining -= read;
-
-                if (received >= nextProgressThreshold || remaining == 0)
-                {
-                    _config.Debug.INFO($"[UPLOAD][PROGRESS] client={clientIp} received={received} remaining={remaining}");
-                    nextProgressThreshold += 64L * 1024L * 1024L;
-                }
-            }
-
-            await fileStream.FlushAsync();
+            _config.Debug.INFO($"[UPLOAD][DONE] client={clientIp} size={received} durationMs={startedAt.ElapsedMilliseconds}");
+            return multipart;
         }
-        catch
+        catch (MultipartParseException ex)
         {
-            TryDeleteFile(tempBodyPath);
-            throw;
+            _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason={SanitizeLogToken(ex.Message)}");
+            await SendSimpleResponseAsync(transport, ex.StatusCode, ex.Message);
+            return null;
         }
-
-        _config.Debug.INFO($"[UPLOAD][DONE] client={clientIp} size={received} durationMs={startedAt.ElapsedMilliseconds}");
-        return tempBodyPath;
+        catch (HttpRequestRejectedException ex)
+        {
+            _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason={SanitizeLogToken(ex.Message)}");
+            await SendSimpleResponseAsync(transport, ex.StatusCode, ex.Message);
+            return null;
+        }
+        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+        {
+            _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=timeout");
+            await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
+            return null;
+        }
+        catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+        {
+            _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=timeout");
+            await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
+            return null;
+        }
+        catch (Exception ex) when (IsExpectedDisconnect(ex))
+        {
+            _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=client_disconnect");
+            return null;
+        }
     }
 
-    private async Task SendSimpleResponseAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, int statusCode, string message)
+    private async Task SendSimpleResponseAsync(ITransportConnection transport, int statusCode, string message)
     {
         try
         {
@@ -946,10 +780,10 @@ public class Server
                 $"Content-Length: {payload.Length}\r\n" +
                 "Connection: Close\r\n\r\n");
 
-            await WriteToTransportAsync(socket, sslStream, tlsHandler, response);
+            await transport.WriteAsync(response);
             if (payload.Length > 0)
             {
-                await WriteToTransportAsync(socket, sslStream, tlsHandler, payload);
+                await transport.WriteAsync(payload);
             }
         }
         catch
@@ -958,68 +792,7 @@ public class Server
         }
         finally
         {
-            CloseTransport(socket, sslStream);
-        }
-    }
-
-    private static async Task<int> ReadFromTransportAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, byte[] buffer)
-    {
-        return await ReadFromTransportAsync(socket, sslStream, tlsHandler, buffer.AsMemory());
-    }
-
-    private static async Task<int> ReadFromTransportAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, Memory<byte> buffer)
-    {
-        if (tlsHandler != null)
-        {
-            var tempBuffer = new byte[buffer.Length];
-            var read = await Task.Run(() => tlsHandler.Read(tempBuffer, 0, tempBuffer.Length));
-            if (read > 0)
-            {
-                tempBuffer.AsMemory(0, read).CopyTo(buffer);
-            }
-
-            return read;
-        }
-
-        if (sslStream != null)
-        {
-            return await sslStream.ReadAsync(buffer);
-        }
-
-        return await socket.ReceiveAsync(buffer, SocketFlags.None);
-    }
-
-    private static async Task WriteToTransportAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, byte[] buffer)
-    {
-        if (tlsHandler != null)
-        {
-            await Task.Run(() => tlsHandler.Write(buffer, 0, buffer.Length));
-            return;
-        }
-
-        if (sslStream != null)
-        {
-            await sslStream.WriteAsync(buffer);
-            await sslStream.FlushAsync();
-            return;
-        }
-
-        var sent = 0;
-        while (sent < buffer.Length)
-        {
-            sent += await socket.SendAsync(buffer.AsMemory(sent), SocketFlags.None);
-        }
-    }
-
-    private static void SetTransportTimeouts(Socket socket, SslStream? sslStream, int receiveTimeoutMilliseconds, int sendTimeoutMilliseconds)
-    {
-        socket.ReceiveTimeout = receiveTimeoutMilliseconds;
-        socket.SendTimeout = sendTimeoutMilliseconds;
-
-        if (sslStream != null)
-        {
-            sslStream.ReadTimeout = receiveTimeoutMilliseconds;
-            sslStream.WriteTimeout = sendTimeoutMilliseconds;
+            transport.Close();
         }
     }
 
@@ -1075,6 +848,44 @@ public class Server
             SocketError.TimedOut;
     }
 
+    private static bool TryExtractMultipartBoundary(byte[] headerBytes, out string boundary)
+    {
+        boundary = string.Empty;
+        var headerText = Encoding.UTF8.GetString(headerBytes);
+        var lines = headerText.Split("\r\n", StringSplitOptions.None);
+
+        foreach (var line in lines)
+        {
+            if (!line.StartsWith("Content-Type:", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var value = line["Content-Type:".Length..].Trim();
+            var contentTypeParts = value.Split("boundary=", 2, StringSplitOptions.None);
+            if (contentTypeParts.Length != 2 || string.IsNullOrWhiteSpace(contentTypeParts[1]))
+            {
+                return false;
+            }
+
+            boundary = contentTypeParts[1].Trim().Trim('"');
+            return !string.IsNullOrWhiteSpace(boundary);
+        }
+
+        return false;
+    }
+
+    private static string SanitizeLogToken(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "unknown";
+        }
+
+        var sanitized = Regex.Replace(value, @"\s+", "_");
+        return sanitized.Length > 80 ? sanitized[..80] : sanitized;
+    }
+
     private static void TryDeleteFile(string path)
     {
         try
@@ -1090,25 +901,25 @@ public class Server
         }
     }
 
-    private sealed class RequestEnvelope(byte[] headerBytes, byte[] bodyBytes, string? bodyTempFilePath, SemaphoreLease? uploadLease) : IDisposable
+    private sealed class RequestEnvelope(
+        byte[] headerBytes,
+        byte[] bodyBytes,
+        string? bodyTempFilePath,
+        SemaphoreLease? uploadLease,
+        MultiPartFormData? multipartFormData = null) : IDisposable
     {
         public byte[] HeaderBytes { get; } = headerBytes;
         public byte[] BodyBytes { get; } = bodyBytes;
         public string? BodyTempFilePath { get; } = bodyTempFilePath;
+        public MultiPartFormData? MultipartFormData { get; } = multipartFormData;
         private SemaphoreLease? UploadLease { get; } = uploadLease;
 
         public void Dispose()
         {
+            MultipartFormData?.Dispose();
             UploadLease?.Dispose();
         }
     }
-
-    private sealed record RequestHeadInfo(long ContentLength, string ContentType, bool IsMultipartUpload, bool HasChunkedTransferEncoding)
-    {
-        public static RequestHeadInfo Empty { get; } = new(0, string.Empty, false, false);
-    }
-
-    private sealed record HeaderReadResult(byte[] HeaderBytes, byte[] BufferedBodyBytes);
 
     private sealed class SemaphoreLease(SemaphoreSlim semaphore) : IDisposable
     {

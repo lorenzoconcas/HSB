@@ -1,8 +1,37 @@
 # HSB Versions
 This file documents the evolution of the HSB framework. Recent versions are described in detail to support migrations and maintenance; historical versions are summarized from the information available in the repository, examples, and previous roadmap.
 HSB is still pre-1.0: until a stable release, APIs may change. The "Breaking changes" and "Migration notes" sections should always be checked before upgrading.
-## 0.0.19
+## 0.0.20
 Versione corrente indicata in `HSB/Properties/AssemblyInfo.cs`.
+### Focus
+- Release dedicata al primo passaggio verso una vera architettura streaming.
+- Il server usa ora una singola pipeline HTTP moderna invece di mantenere il vecchio doppio percorso di lettura body.
+- Il parsing dei request body chunked e' ora supportato nel parser moderno, inclusi gli upload multipart.
+### Added
+- Astrazione transport unificata per socket plain, `SslStream` e handler TLS manuale.
+- Reader HTTP streaming con astrazione dedicata per il request body.
+- Decoder per request body chunked con enforcement dei limiti e consumo dei trailer.
+- Entry point multipart basati su `Stream`, cosi' il parser puo' essere riusato oltre i body temp-file-backed.
+- Test di regressione per:
+  - lettura buffered body prefix
+  - lettura body chunked
+  - lettura multipart chunked
+  - rifiuto di `Content-Length` in conflitto con `Transfer-Encoding: chunked`
+### Changed
+- Gli upload multipart nel percorso moderno vengono parsati direttamente dallo stream in ingresso senza fare prima lo spool completo del request body su un temp file intermedio.
+- `Request` puo' ora ricevere un `MultiPartFormData` gia' costruito dalla pipeline server.
+- Il parser HTTP tratta `Content-Length` come opzionale quando e' presente `Transfer-Encoding: chunked`.
+- Le utility legacy duplicate di lettura request in `Server` sono state rimosse a favore della pipeline unificata reader/transport.
+### Fixed
+- Corretto il caso dei body a lunghezza fissa troncati: un disconnect a meta' lettura non viene piu' accettato silenziosamente come richiesta completa.
+- Corretta la validazione del request reader per header non ripetibili duplicati e semantiche di transfer in conflitto.
+- Migliorato il cleanup degli upload multipart parzialmente parsati quando il parsing fallisce a meta' stream.
+### Known limitations
+- Il backpressure lato request resta ancora coarse-grained e si basa sul semaphore upload invece che su uno scheduler streaming piu' profondo.
+- Lo streaming response supporta gia' output chunked, ma gli interni del transport response non sono ancora completamente migrati all'astrazione condivisa.
+- Stress test e benchmark pesanti esterni devono ancora essere rieseguiti fuori dalla sandbox del repository.
+## 0.0.19
+Versione precedente.
 ### Focus
 - Release dedicata alla stabilita' di HTTP/WebSocket e all'hardening dell'upload multipart classico.
 - Nessuna nuova feature lato utente e' stata introdotta in questa release.

@@ -10,6 +10,8 @@ public sealed class MultiPartFormData : IDisposable
     private readonly string boundary;
     private readonly byte[]? inMemoryBody;
     private readonly string? tempBodyPath;
+    private readonly Stream? sourceBodyStream;
+    private readonly bool leaveSourceStreamOpen;
     private readonly UploadOptions uploadOptions;
     private readonly HttpOptions httpOptions;
     private bool parsed;
@@ -33,6 +35,20 @@ public sealed class MultiPartFormData : IDisposable
     }
 
     internal MultiPartFormData(
+        Stream bodyStream,
+        string boundary,
+        UploadOptions uploadOptions,
+        HttpOptions httpOptions,
+        bool leaveSourceStreamOpen)
+    {
+        sourceBodyStream = bodyStream;
+        this.boundary = boundary.Trim('"');
+        this.uploadOptions = uploadOptions;
+        this.httpOptions = httpOptions;
+        this.leaveSourceStreamOpen = leaveSourceStreamOpen;
+    }
+
+    internal MultiPartFormData(
         string tempBodyPath,
         string boundary,
         UploadOptions uploadOptions,
@@ -43,6 +59,26 @@ public sealed class MultiPartFormData : IDisposable
         this.boundary = boundary.Trim('"');
         this.uploadOptions = uploadOptions;
         this.httpOptions = httpOptions;
+    }
+
+    internal static MultiPartFormData Parse(
+        Stream bodyStream,
+        string boundary,
+        UploadOptions uploadOptions,
+        HttpOptions httpOptions,
+        bool leaveSourceStreamOpen = false)
+    {
+        var formData = new MultiPartFormData(bodyStream, boundary, uploadOptions, httpOptions, leaveSourceStreamOpen);
+        try
+        {
+            formData.EnsureParsed();
+            return formData;
+        }
+        catch
+        {
+            formData.Dispose();
+            throw;
+        }
     }
 
     public List<FormPart> GetParts()
@@ -82,10 +118,37 @@ public sealed class MultiPartFormData : IDisposable
 
         parsed = true;
 
-        using Stream bodyStream = tempBodyPath != null
-            ? new FileStream(tempBodyPath, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024, FileOptions.SequentialScan)
-            : new MemoryStream(inMemoryBody ?? [], writable: false);
+        Stream bodyStream;
+        if (sourceBodyStream != null)
+        {
+            bodyStream = sourceBodyStream;
+        }
+        else if (tempBodyPath != null)
+        {
+            bodyStream = new FileStream(tempBodyPath, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024, FileOptions.SequentialScan);
+        }
+        else
+        {
+            bodyStream = new MemoryStream(inMemoryBody ?? [], writable: false);
+        }
 
+        try
+        {
+            ParseBodyStream(bodyStream);
+        }
+        finally
+        {
+            if (sourceBodyStream == null || !leaveSourceStreamOpen)
+            {
+                bodyStream.Dispose();
+            }
+
+            CleanupBodyTempFile();
+        }
+    }
+
+    private void ParseBodyStream(Stream bodyStream)
+    {
         var reader = new MultipartReader(boundary, bodyStream)
         {
             BodyLengthLimit = httpOptions.MaxBodySizeBytes,
@@ -98,8 +161,6 @@ public sealed class MultiPartFormData : IDisposable
         {
             ParseSection(section);
         }
-
-        CleanupBodyTempFile();
     }
 
     private void ParseSection(MultipartSection section)

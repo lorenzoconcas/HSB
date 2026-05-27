@@ -1,54 +1,259 @@
-﻿using System.Text;
-using HSB.Utils;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Net.Http.Headers;
+
 namespace HSB.Components;
 
-public class MultiPartFormData(byte[] body, string boundary)
+public sealed class MultiPartFormData : IDisposable
 {
     private readonly List<FormPart> parts = [];
-    private byte[] body = body;
-    private readonly string Boundary = boundary;
+    private readonly List<FilePart> fileParts = [];
+    private readonly string boundary;
+    private readonly byte[]? inMemoryBody;
+    private readonly string? tempBodyPath;
+    private readonly UploadOptions uploadOptions;
+    private readonly HttpOptions httpOptions;
+    private bool parsed;
+    private bool disposed;
 
-    private void ExtractParts()
+    public MultiPartFormData(byte[] body, string boundary)
+        : this(body, boundary, new UploadOptions(), new HttpOptions())
     {
-        var boundaryBytes = Encoding.UTF8.GetBytes("--" + Boundary);
-
-        body = body[..^2];//remove last \r\n
-        body = body[..^2]; //remove last "--"
-        body = body[..^boundaryBytes.Length]; //remove trailing boundary 
-
-        var partsData = body.Split(boundaryBytes);
-        partsData.RemoveAt(0);//skip first byte array, it's empty
-        foreach (var part in partsData)
-        {
-            parts.Add(FormPart.Build(part[2..])); //remove \r\n at start
-        }
-
-        body = [];
-
     }
-    /// <summary>
-    /// Returns all parts of the forms which are not files
-    /// </summary>
-    /// <returns></returns>
+
+    internal MultiPartFormData(
+        byte[] body,
+        string boundary,
+        UploadOptions uploadOptions,
+        HttpOptions httpOptions)
+    {
+        inMemoryBody = body;
+        this.boundary = boundary.Trim('"');
+        this.uploadOptions = uploadOptions;
+        this.httpOptions = httpOptions;
+    }
+
+    internal MultiPartFormData(
+        string tempBodyPath,
+        string boundary,
+        UploadOptions uploadOptions,
+        HttpOptions httpOptions)
+    {
+        tempBodyPath = Path.GetFullPath(tempBodyPath);
+        this.tempBodyPath = tempBodyPath;
+        this.boundary = boundary.Trim('"');
+        this.uploadOptions = uploadOptions;
+        this.httpOptions = httpOptions;
+    }
+
     public List<FormPart> GetParts()
     {
-        if (body.Length > 0)
-            ExtractParts();
-        return parts
-        .Where(p => p is not FilePart)
-        .ToList();
+        EnsureParsed();
+        return parts.Where(p => p is not FilePart).ToList();
     }
 
     public List<FilePart> GetFiles()
     {
-        if (body.Length > 0)
-            ExtractParts();
-        return
-            parts
-            .Where(p => p is FilePart)
-            .Select(p => (FilePart)p) //filter and cast to FilePart 
-            .ToList();
+        EnsureParsed();
+        return fileParts.ToList();
     }
 
+    public void Dispose()
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        disposed = true;
+        foreach (var file in fileParts)
+        {
+            file.Cleanup();
+        }
+
+        CleanupBodyTempFile();
+    }
+
+    private void EnsureParsed()
+    {
+        if (parsed)
+        {
+            return;
+        }
+
+        parsed = true;
+
+        using Stream bodyStream = tempBodyPath != null
+            ? new FileStream(tempBodyPath, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024, FileOptions.SequentialScan)
+            : new MemoryStream(inMemoryBody ?? [], writable: false);
+
+        var reader = new MultipartReader(boundary, bodyStream)
+        {
+            BodyLengthLimit = httpOptions.MaxBodySizeBytes,
+            HeadersCountLimit = httpOptions.MaxHeaders,
+            HeadersLengthLimit = httpOptions.MaxHeaderSizeBytes
+        };
+
+        MultipartSection? section;
+        while ((section = reader.ReadNextSectionAsync().GetAwaiter().GetResult()) != null)
+        {
+            ParseSection(section);
+        }
+
+        CleanupBodyTempFile();
+    }
+
+    private void ParseSection(MultipartSection section)
+    {
+        if (!ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition))
+        {
+            throw new MultipartParseException("Invalid multipart content disposition", Constants.HttpCodes.BAD_REQUEST);
+        }
+
+        var name = HeaderUtilities.RemoveQuotes(contentDisposition.Name).Value ?? string.Empty;
+        var contentDispositionValue = section.ContentDisposition ?? string.Empty;
+
+        if (contentDisposition.IsFileDisposition())
+        {
+            var fileName = HeaderUtilities.RemoveQuotes(contentDisposition.FileNameStar).Value
+                           ?? HeaderUtilities.RemoveQuotes(contentDisposition.FileName).Value
+                           ?? "upload.bin";
+
+            var mimeType = NormalizeMimeType(section.ContentType);
+            var tempFilePath = CreateTempFilePath(fileName);
+            long written = 0;
+
+            using (var target = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 64 * 1024, FileOptions.SequentialScan))
+            {
+                var buffer = new byte[64 * 1024];
+                while (true)
+                {
+                    var read = section.Body.Read(buffer, 0, buffer.Length);
+                    if (read <= 0)
+                    {
+                        break;
+                    }
+
+                    written += read;
+                    if (written > uploadOptions.MaxFileSizeBytes)
+                    {
+                        target.Dispose();
+                        TryDeleteFile(tempFilePath);
+                        throw new MultipartParseException("Multipart file exceeds configured limit", Constants.HttpCodes.PAYLOAD_TOO_LARGE);
+                    }
+
+                    target.Write(buffer, 0, read);
+                }
+            }
+
+            var filePart = new FilePart(
+                name,
+                contentDispositionValue,
+                fileName,
+                mimeType,
+                tempFilePath,
+                written,
+                ownsTempFile: true);
+
+            fileParts.Add(filePart);
+            parts.Add(filePart);
+            return;
+        }
+
+        if (!contentDisposition.IsFormDisposition())
+        {
+            throw new MultipartParseException("Unsupported multipart section disposition", Constants.HttpCodes.BAD_REQUEST);
+        }
+
+        using var memory = new MemoryStream();
+        var fieldBuffer = new byte[16 * 1024];
+        long total = 0;
+
+        while (true)
+        {
+            var read = section.Body.Read(fieldBuffer, 0, fieldBuffer.Length);
+            if (read <= 0)
+            {
+                break;
+            }
+
+            total += read;
+            if (total > uploadOptions.MaxFormFieldSizeBytes)
+            {
+                throw new MultipartParseException("Multipart form field exceeds configured limit", Constants.HttpCodes.PAYLOAD_TOO_LARGE);
+            }
+
+            memory.Write(fieldBuffer, 0, read);
+        }
+
+        parts.Add(new FormPart(contentDispositionValue, name, memory.ToArray()));
+    }
+
+    private string NormalizeMimeType(string? rawMimeType)
+    {
+        if (string.IsNullOrWhiteSpace(rawMimeType))
+        {
+            return Constants.MimeTypeUtils.APPLICATION_OCTET;
+        }
+
+        var normalized = rawMimeType.Split(';', 2, StringSplitOptions.TrimEntries)[0];
+        if (!uploadOptions.RejectInvalidMimeType)
+        {
+            return normalized;
+        }
+
+        var slashIndex = normalized.IndexOf('/');
+        if (slashIndex <= 0 || slashIndex == normalized.Length - 1)
+        {
+            throw new MultipartParseException("Invalid multipart file mime type", Constants.HttpCodes.UNSUPPORTED_MEDIA_TYPE);
+        }
+
+        foreach (var ch in normalized)
+        {
+            if (char.IsControl(ch) || char.IsWhiteSpace(ch))
+            {
+                throw new MultipartParseException("Invalid multipart file mime type", Constants.HttpCodes.UNSUPPORTED_MEDIA_TYPE);
+            }
+        }
+
+        return normalized;
+    }
+
+    private string CreateTempFilePath(string originalFileName)
+    {
+        var root = Path.GetFullPath(uploadOptions.TempPath);
+        Directory.CreateDirectory(root);
+        var safeName = Path.GetFileName(originalFileName);
+        var extension = Path.GetExtension(safeName);
+        return Path.Combine(root, $"{Guid.NewGuid():N}{extension}");
+    }
+
+    private void CleanupBodyTempFile()
+    {
+        if (tempBodyPath == null)
+        {
+            return;
+        }
+
+        TryDeleteFile(tempBodyPath);
+    }
+
+    private static void TryDeleteFile(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        catch
+        {
+            // Best effort cleanup.
+        }
+    }
 }
 
+internal sealed class MultipartParseException(string message, int statusCode) : Exception(message)
+{
+    public int StatusCode { get; } = statusCode;
+}

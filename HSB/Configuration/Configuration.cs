@@ -31,7 +31,7 @@ public class Configuration
     /// <summary>
     /// The max number of concurrent connections, by default is 100
     /// </summary>
-    public ushort MaxConnections = 100;
+    public readonly ushort MaxConnections = 100;
 
     /// <summary>
     /// When this field is set, it will be used for Unsecure SSL requests upgrade 
@@ -76,22 +76,22 @@ public class Configuration
     /// <summary>
     /// Useful to share objects between servlets without using the singleton technique
     /// </summary>
-    protected Dictionary<string, object> SharedObjects = [];
+    private readonly Dictionary<string, object> SharedObjects = [];
 
     /// <summary>
     /// headers added to ANY response
     /// </summary>
-    protected Dictionary<string, string> customGlobalHeaders = [];
+    private readonly Dictionary<string, string> customGlobalHeaders = [];
 
     /// <summary>
     /// Cookies added to ANY response
     /// </summary>
-    protected Dictionary<string, Cookie> customGlobalCookies = [];
+    private readonly Dictionary<string, Cookie> customGlobalCookies = [];
 
     /// <summary>
     /// Sets the expiration time of the session
     /// </summary>
-    public ulong DefaultSessionExpirationTime;
+    public readonly ulong DefaultSessionExpirationTime;
 
     /// <summary>
     /// Expressjs-like routing (es in Express.js you map pages and path like : app.get(path, (req, res){})
@@ -103,18 +103,18 @@ public class Configuration
     /// When set, the server will use this name instead of the default one (default is: HSB-#/assembly_version (os_version))
     /// This value will also override the server name inside the error pages
     /// </summary>
-    public string? CustomServerName;
+    public readonly string? CustomServerName;
 
     /// <summary>
     /// If this is set, the server will block the IP of the client if they try to access unsafe paths
     /// </summary>
-    public bool IpAutoblock = false;
+    public readonly bool IpAutoblock;
 
     /// <summary>
     /// Setting this to BlockMode.WhiteList will make the server accept only requests from ip presents in ip_whitelist.txt
     /// if set to BlockMode.BlackList will ban requests from ip presents in ip_blacklist.txt
     /// </summary>
-    public BLOCK_MODE BlockMode = BLOCK_MODE.NONE;
+    public readonly BLOCK_MODE BlockMode = BLOCK_MODE.NONE;
 
     /// <summary>
     /// This list contains all the IP addresses that will be allowed/denied to access the server, it's behavior depends on the blockMode
@@ -122,20 +122,20 @@ public class Configuration
     /// If BlockMode is set to BlockMode.BANLIST, the IP addresses in this list will be banned from accessing the server
     /// </summary>
     /// <remarks>Note that IPv6 and IPv4 are considered different ips!</remarks>
-    public List<string> PermanentIpList = [];
+    public readonly List<string> PermanentIpList = [];
 
     /// <summary>
     /// If set to true, the server will try to search for the requested resource in the assembly resources
     /// if fails to find it, the usual chain of execution will be followed
     /// </summary>
-    public bool ServeEmbeddedResource;
+    public readonly bool ServeEmbeddedResource;
 
     /// <summary>
     /// If ServeEmbeddedResource is set to true, this will be prepended to the requested resource
     /// ex: if the requested resource is /index.html and the prefix is set to "www"
     /// the server will search for the resource in the assembly resources at www/index.html
     /// </summary>
-    public string EmbeddedResourcePrefix = "";
+    public readonly string EmbeddedResourcePrefix = "";
 
     /// <summary>
     /// If this is not empty the server will map any embedded resource with the prefix in this list as paths
@@ -172,9 +172,11 @@ public class Configuration
     /// also a documentation page will be served at OpenApiSettings.Path
     /// </summary>
     public OpenApiSettings OpenApiSettings = new();
-    public WebSocketOptions WebSocketOptions = new();
+    public readonly WebSocketOptions WebSocketOptions = new();
+    public readonly HttpOptions Http = new();
+    public readonly UploadOptions Upload = new();
     
-    public List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.CustomModules");
+    public readonly List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.CustomModules");
     
     //Server related vars only used for modules
     private List<Map> routes = [];
@@ -200,6 +202,8 @@ public class Configuration
         SslSettings = new SslConfiguration();
         GlobalCors = null;
         WebSocketOptions = new WebSocketOptions();
+        Http = new HttpOptions();
+        Upload = new UploadOptions();
     }
 
     /// <summary>
@@ -228,7 +232,7 @@ public class Configuration
             lastProp = "SslSettings";
             SslSettings = SslConfiguration.FromJSON(root.GetProperty("SslSettings"));
             lastProp = "RequestMaxSize";
-            RequestMaxSize = root.GetProperty("Port").GetInt32();
+            RequestMaxSize = root.GetProperty("RequestMaxSize").GetInt32();
             lastProp = "BlockMode";
             BlockMode = (BLOCK_MODE) root.GetProperty("BlockMode").GetInt32();
             lastProp = "HideBranding";
@@ -263,6 +267,27 @@ public class Configuration
             else
             {
                 WebSocketOptions = new WebSocketOptions();
+            }
+
+            if (TryGetProperty(root, "http", out var httpOptions))
+            {
+                lastProp = nameof(Http);
+                Http = HttpOptions.FromJson(httpOptions, RequestMaxSize);
+            }
+            else
+            {
+                Http = new HttpOptions();
+                Http.ApplyLegacyRequestMaxSize(RequestMaxSize);
+            }
+
+            if (TryGetProperty(root, "upload", out var uploadOptions))
+            {
+                lastProp = nameof(Upload);
+                Upload = UploadOptions.FromJson(uploadOptions);
+            }
+            else
+            {
+                Upload = new UploadOptions();
             }
             
         }
@@ -302,7 +327,9 @@ public class Configuration
         DefaultSessionExpirationTime = defaultSessionExpirationTime ?? (ulong) TimeSpan.FromDays(1).Ticks;
         SslSettings = sslConfiguration ?? new SslConfiguration();
         WebSocketOptions = new WebSocketOptions();
-        
+        Http = new HttpOptions();
+        Http.ApplyLegacyRequestMaxSize(RequestMaxSize);
+        Upload = new UploadOptions();
     }
 
     /// <summary>
@@ -517,5 +544,11 @@ public class Configuration
         }*/
 
         return str;
+    }
+
+    private static bool TryGetProperty(JsonElement json, string camelName, out JsonElement value)
+    {
+        var pascalName = char.ToUpperInvariant(camelName[0]) + camelName[1..];
+        return json.TryGetProperty(camelName, out value) || json.TryGetProperty(pascalName, out value);
     }
 }

@@ -8,6 +8,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HSB.Components.Attributes;
@@ -29,6 +30,7 @@ public class Server
     private Socket _listener;
     private Socket? _sslListener;
     private TlsConnection? _tlsConnection;
+    private readonly SemaphoreSlim _uploadConcurrencyLimiter;
 
     private X509Certificate2? _serverCertificate;
 
@@ -188,6 +190,7 @@ public class Server
         _sslListener = null;
         _tlsConnection = null;
         _serverCertificate = null;
+        _uploadConcurrencyLimiter = new SemaphoreSlim(1, 1);
 
         config ??= new Configuration();
 
@@ -201,6 +204,9 @@ public class Server
         }
 
         _config = config;
+        _config.Http.ApplyLegacyRequestMaxSize(_config.RequestMaxSize);
+        _config.Upload.Clamp();
+        _uploadConcurrencyLimiter = new SemaphoreSlim(_config.Upload.MaxConcurrentUploads, _config.Upload.MaxConcurrentUploads);
 
         _config.ExpressRouteAdded += (r) =>
         {
@@ -406,51 +412,14 @@ public class Server
 
     private async Task Process(Socket socket, bool sslMode)
     {
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(30000);
-
-                if (socket.Connected)
-                {
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-        });
-
         socket.NoDelay = true;
-        socket.ReceiveTimeout = 0;
-        socket.SendTimeout = 0;
-
-        const int MAX_HEADER_SIZE = 8192;
-        const int MAX_REQUEST_LINE_SIZE = 4096;
-        const int MAX_HEADERS_COUNT = 100;
-
-        var bytes = new byte[_config.RequestMaxSize];
-        var requestData = new List<byte>(_config.RequestMaxSize);
-
-        var bytesRec = 0;
-        var sslOk = false;
+        socket.ReceiveTimeout = _config.Http.HeaderReadTimeoutSeconds * 1000;
+        socket.SendTimeout = _config.Http.KeepAliveTimeoutSeconds * 1000;
 
         SslStream? sslStream = null;
         Tls12Handler? hsbTls = null;
-
-        byte[] headerDelimiter = "\r\n\r\n"u8.ToArray();
+        Request? req = null;
+        RequestEnvelope? envelope = null;
 
         if (sslMode)
         {
@@ -463,123 +432,11 @@ public class Server
 
                     hsbTls = new Tls12Handler(socket, _serverCertificate);
                     hsbTls.PerformHandshake();
-
-                    while (true)
-                    {
-                        try
-                        {
-                            bytesRec = await Task.Run(() => hsbTls.Read(bytes, 0, bytes.Length));
-                        }
-                        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
-                        {
-                            _config.Debug.WARNING("Closing TLS connection: header receive timeout");
-
-                            try
-                            {
-                                socket.Shutdown(SocketShutdown.Both);
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-
-                            socket.Close();
-                            return;
-                        }
-
-                        if (bytesRec <= 0)
-                        {
-                            try
-                            {
-                                socket.Shutdown(SocketShutdown.Both);
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-
-                            socket.Close();
-                            return;
-                        }
-
-                        requestData.AddRange(bytes[..bytesRec]);
-
-                        if (requestData.Count >= 4)
-                        {
-                            var currentSpan = CollectionsMarshal.AsSpan(requestData);
-                            var currentHeaderEnd = currentSpan.IndexOf(headerDelimiter);
-
-                            // Header not complete yet: enforce max header buffer size.
-                            if (currentHeaderEnd < 0 && requestData.Count > MAX_HEADER_SIZE)
-                            {
-                                _config.Debug.WARNING("Closing connection: header size limit exceeded");
-
-                                try
-                                {
-                                    socket.Shutdown(SocketShutdown.Both);
-                                }
-                                catch
-                                {
-                                    // ignored
-                                }
-
-                                socket.Close();
-                                return;
-                            }
-
-                            // Header complete: validate actual header size only.
-                            if (currentHeaderEnd >= 0 && currentHeaderEnd > MAX_HEADER_SIZE)
-                            {
-                                _config.Debug.WARNING("Closing connection: header size limit exceeded");
-
-                                try
-                                {
-                                    socket.Shutdown(SocketShutdown.Both);
-                                }
-                                catch
-                                {
-                                    // ignored
-                                }
-
-                                socket.Close();
-                                return;
-                            }
-                        }
-
-                        if (requestData.Count >= 4)
-                        {
-                            bool headersComplete = CollectionsMarshal.AsSpan(requestData)
-                                .IndexOf(headerDelimiter) >= 0;
-
-                            if (!headersComplete)
-                            {
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            continue;
-                        }
-
-                        break;
-                    }
-
-                    sslOk = true;
                 }
                 catch (Exception e)
                 {
                     _config.Debug.ERROR($"Manual TLS Handshake/Read Failed: {e.Message}");
-
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
+                    CloseTransport(socket, sslStream);
                     return;
                 }
             }
@@ -608,481 +465,49 @@ public class Server
                 {
                     try
                     {
-                        while (true)
-                        {
-                            try
-                            {
-                                bytesRec = await sslStream.ReadAsync(bytes);
-                            }
-                            catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
-                            {
-                                _config.Debug.WARNING("Closing SSL connection: header receive timeout");
-
-                                sslStream.Dispose();
-
-                                try
-                                {
-                                    socket.Shutdown(SocketShutdown.Both);
-                                }
-                                catch
-                                {
-                                    // ignored
-                                }
-
-                                socket.Close();
-                                return;
-                            }
-
-                            if (bytesRec <= 0)
-                            {
-                                sslStream.Dispose();
-
-                                try
-                                {
-                                    socket.Shutdown(SocketShutdown.Both);
-                                }
-                                catch
-                                {
-                                    // ignored
-                                }
-
-                                socket.Close();
-                                return;
-                            }
-
-                            requestData.AddRange(bytes[..bytesRec]);
-
-                            if (requestData.Count >= 4)
-                            {
-                                var currentSpan = CollectionsMarshal.AsSpan(requestData);
-                                var currentHeaderEnd = currentSpan.IndexOf(headerDelimiter);
-
-                                // Header not complete yet: enforce max header buffer size.
-                                if (currentHeaderEnd < 0 && requestData.Count > MAX_HEADER_SIZE)
-                                {
-                                    _config.Debug.WARNING("Closing connection: header size limit exceeded");
-
-                                    sslStream.Dispose();
-
-                                    try
-                                    {
-                                        socket.Shutdown(SocketShutdown.Both);
-                                    }
-                                    catch
-                                    {
-                                        // ignored
-                                    }
-
-                                    socket.Close();
-                                    return;
-                                }
-
-                                // Header complete: validate actual header size only.
-                                if (currentHeaderEnd >= 0 && currentHeaderEnd > MAX_HEADER_SIZE)
-                                {
-                                    _config.Debug.WARNING("Closing connection: header size limit exceeded");
-
-                                    sslStream.Dispose();
-
-                                    try
-                                    {
-                                        socket.Shutdown(SocketShutdown.Both);
-                                    }
-                                    catch
-                                    {
-                                        // ignored
-                                    }
-
-                                    socket.Close();
-                                    return;
-                                }
-                            }
-
-                            if (requestData.Count >= 4)
-                            {
-                                bool headersComplete = CollectionsMarshal.AsSpan(requestData)
-                                    .IndexOf(headerDelimiter) >= 0;
-
-                                if (!headersComplete)
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                continue;
-                            }
-
-                            break;
-                        }
-
-                        sslOk = true;
                     }
                     catch (Exception e)
                     {
                         _config.Debug.DEBUG(e);
-
-                        sslStream.Dispose();
-
-                        try
-                        {
-                            socket.Shutdown(SocketShutdown.Both);
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        socket.Close();
+                        CloseTransport(socket, sslStream);
                         return;
                     }
                 }
-            }
-
-            if (!sslOk)
-            {
-                sslStream?.Dispose();
-
-                if (_config.SslSettings.UpgradeUnsecureRequests)
-                {
-                    _config.Debug.WARNING(
-                        "SSL authentication failed or read error, redirecting (if possible) or closing");
-
-                    Request rq = new(bytes, socket, _config);
-                    Response res = new(socket, rq, _config, null);
-
-                    var redirectEndpoint = _config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
-                        ? _sslLocalEndPoint
-                        : _localEndPoint;
-
-                    if (redirectEndpoint == null)
-                    {
-                        _config.Debug.WARNING(
-                            "Cannot initialize redirect endpoint, closing connection");
-
-                        try
-                        {
-                            socket.Shutdown(SocketShutdown.Both);
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        socket.Close();
-                        return;
-                    }
-
-                    res.Redirect("https://" + redirectEndpoint, HttpCodes.MOVED_PERMANENTLY);
-                }
-                else
-                {
-                    _config.Debug.WARNING("SSL authentication failed, closing connection");
-
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
-                }
-
-                return;
             }
         }
-        else
+        else if (_config.SslSettings.IsEnabled() &&
+                 _config.SslSettings.UpgradeUnsecureRequests)
         {
-            if (_config.SslSettings.IsEnabled() &&
-                _config.SslSettings.UpgradeUnsecureRequests)
+            _config.Debug.WARNING("Unsecure request received, redirecting to SSL");
+
+            Request rq = new([], socket, _config, false);
+            Response res = new(socket, rq, _config, null);
+
+            var redirectEndpoint =
+                _config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
+                    ? _sslLocalEndPoint!
+                    : _localEndPoint;
+
+            if (redirectEndpoint == null)
             {
-                _config.Debug.WARNING("Unsecure request received, redirecting to SSL");
-
-                Request rq = new(bytes, socket, _config, sslOk);
-                Response res = new(socket, rq, _config, null);
-
-                var redirectEndpoint =
-                    _config.SslSettings.PortMode == SSL_PORT_MODE.DUAL_PORT
-                        ? _sslLocalEndPoint!
-                        : _localEndPoint;
-
-                if (redirectEndpoint == null)
-                {
-                    _config.Debug.WARNING("Cannot set redirect endpoint");
-                    return;
-                }
-
-                res.Redirect(
-                    "https://" + redirectEndpoint,
-                    HttpCodes.MOVED_PERMANENTLY
-                );
-
+                _config.Debug.WARNING("Cannot set redirect endpoint");
+                CloseTransport(socket, sslStream);
                 return;
             }
 
-            while (true)
-            {
-                try
-                {
-                    bytesRec = await socket.ReceiveAsync(bytes, SocketFlags.None);
-                }
-                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
-                {
-                    _config.Debug.WARNING("Closing connection: header receive timeout");
-
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
-                    return;
-                }
-
-                if (bytesRec <= 0)
-                {
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
-                    return;
-                }
-
-                requestData.AddRange(bytes[..bytesRec]);
-
-                if (requestData.Count >= 4)
-                {
-                    var currentSpan = CollectionsMarshal.AsSpan(requestData);
-                    var currentHeaderEnd = currentSpan.IndexOf(headerDelimiter);
-
-                    // Header not complete yet: enforce max header buffer size.
-                    if (currentHeaderEnd < 0 && requestData.Count > MAX_HEADER_SIZE)
-                    {
-                        _config.Debug.WARNING(
-                            "Closing connection: header size limit exceeded");
-
-                        try
-                        {
-                            socket.Shutdown(SocketShutdown.Both);
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        socket.Close();
-                        return;
-                    }
-
-                    // Header complete: validate actual header size only.
-                    if (currentHeaderEnd >= 0 && currentHeaderEnd > MAX_HEADER_SIZE)
-                    {
-                        _config.Debug.WARNING(
-                            "Closing connection: header size limit exceeded");
-
-                        try
-                        {
-                            socket.Shutdown(SocketShutdown.Both);
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        socket.Close();
-                        return;
-                    }
-                }
-
-                if (requestData.Count >= 4)
-                {
-                    bool headersComplete = CollectionsMarshal.AsSpan(requestData)
-                        .IndexOf(headerDelimiter) >= 0;
-                    if (!headersComplete)
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    continue;
-                }
-
-                // --- BEGIN: Read full request body if present ---
-                var requestSpan = CollectionsMarshal.AsSpan(requestData);
-                var headerEndIndex = requestSpan.IndexOf(headerDelimiter);
-
-                if (headerEndIndex < 0)
-                {
-                    continue;
-                }
-
-                var bodyStart = headerEndIndex + headerDelimiter.Length;
-                var headersOnly = System.Text.Encoding.UTF8.GetString(requestSpan[..headerEndIndex]);
-
-                var contentLength = 0;
-
-                foreach (var line in headersOnly.Split("\r\n", StringSplitOptions.RemoveEmptyEntries))
-                {
-                    if (!line.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    var value = line["Content-Length:".Length..].Trim();
-                    int.TryParse(value, out contentLength);
-                    break;
-                }
-
-                if (contentLength > 0)
-                {
-                    var expectedTotalSize = bodyStart + contentLength;
-
-                    if (expectedTotalSize > _config.RequestMaxSize)
-                    {
-                        _config.Debug.WARNING("Closing connection: request body too large");
-
-                        try
-                        {
-                            socket.Shutdown(SocketShutdown.Both);
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                        socket.Close();
-                        return;
-                    }
-
-                    while (requestData.Count < expectedTotalSize)
-                    {
-                        try
-                        {
-                            bytesRec = await socket.ReceiveAsync(bytes, SocketFlags.None);
-                        }
-                        catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
-                        {
-                            _config.Debug.WARNING("Closing connection: body receive timeout");
-
-                            try
-                            {
-                                socket.Shutdown(SocketShutdown.Both);
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-
-                            socket.Close();
-                            return;
-                        }
-
-                        if (bytesRec <= 0)
-                        {
-                            try
-                            {
-                                socket.Shutdown(SocketShutdown.Both);
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-
-                            socket.Close();
-                            return;
-                        }
-
-                        requestData.AddRange(bytes[..bytesRec]);
-                    }
-                }
-                // --- END: Read full request body if present ---
-
-                var finalSpan = CollectionsMarshal.AsSpan(requestData);
-                var finalHeaderEnd = finalSpan.IndexOf(headerDelimiter);
-
-                if (finalHeaderEnd < 0)
-                {
-                    _config.Debug.WARNING("Closing connection: malformed request headers");
-
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
-                    return;
-                }
-
-                string headerText =
-                    System.Text.Encoding.UTF8.GetString(finalSpan[..finalHeaderEnd]);
-
-                string[] headerLines =
-                    headerText.Split("\r\n", StringSplitOptions.None);
-
-                if (headerLines.Length > 0 &&
-                    headerLines[0].Length > MAX_REQUEST_LINE_SIZE)
-                {
-                    _config.Debug.WARNING(
-                        "Closing connection: request line too large");
-
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
-                    return;
-                }
-
-                if (headerLines.Length > MAX_HEADERS_COUNT)
-                {
-                    _config.Debug.WARNING(
-                        "Closing connection: too many headers");
-
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
-                    return;
-                }
-
-                break;
-            }
+            res.Redirect("https://" + redirectEndpoint, HttpCodes.MOVED_PERMANENTLY);
+            return;
         }
 
-        bytes = requestData.ToArray();
-
-        Request req = new(bytes, socket, _config, sslOk);
-        if (req.IsValidRequest)
+        try
         {
+            envelope = await ReadRequestEnvelopeAsync(socket, sslStream, hsbTls);
+            if (envelope == null)
+            {
+                return;
+            }
+
+            req = new Request(envelope.HeaderBytes, envelope.BodyBytes, envelope.BodyTempFilePath, socket, _config, sslMode);
             Response res = new(socket, req, _config, sslStream, hsbTls);
 
             foreach (var cookie in req.ResponseCookies)
@@ -1090,20 +515,613 @@ public class Server
                 res.AddCookie(cookie.ToString());
             }
 
+            if (!req.IsValidRequest)
+            {
+                new Error(res, _config, req.InvalidReason, req.InvalidStatusCode).Throw();
+                return;
+            }
+
             await ProcessRequestAsync(req, res);
         }
-        else
+        finally
         {
+            req?.Dispose();
+            envelope?.Dispose();
+        }
+    }
+
+    private async Task<RequestEnvelope?> ReadRequestEnvelopeAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler)
+    {
+        var headerReadResult = await ReadHeadersAsync(socket, sslStream, tlsHandler);
+        if (headerReadResult == null)
+        {
+            return null;
+        }
+
+        if (!TryParseRequestHead(headerReadResult.HeaderBytes, out var headInfo, out var rejectionStatusCode, out var rejectionReason))
+        {
+            await SendSimpleResponseAsync(socket, sslStream, tlsHandler, rejectionStatusCode, rejectionReason);
+            return null;
+        }
+
+        if (headInfo.IsMultipartUpload && headInfo.HasChunkedTransferEncoding)
+        {
+            await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.NOT_IMPLEMENTED,
+                "Streaming upload mode is postponed");
+            return null;
+        }
+
+        if (headInfo.ContentLength > _config.Http.MaxBodySizeBytes)
+        {
+            await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.PAYLOAD_TOO_LARGE,
+                "Request body too large");
+            return null;
+        }
+
+        if (headInfo.ContentLength <= 0)
+        {
+            return new RequestEnvelope(headerReadResult.HeaderBytes, [], null, null);
+        }
+
+        if (headInfo.IsMultipartUpload)
+        {
+            if (!await _uploadConcurrencyLimiter.WaitAsync(0))
+            {
+                var remoteIp = socket.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
+                _config.Debug.WARNING($"[UPLOAD][ERROR] client={remoteIp} reason=too_many_uploads");
+                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.TOO_MANY_REQUESTS,
+                    "Too many uploads");
+                return null;
+            }
+
+            var uploadLease = new SemaphoreLease(_uploadConcurrencyLimiter);
             try
             {
-                socket.Shutdown(SocketShutdown.Both);
+                var tempBodyPath = await BufferRequestBodyToTempFileAsync(socket, sslStream, tlsHandler, headInfo, headerReadResult.BufferedBodyBytes);
+                if (tempBodyPath == null)
+                {
+                    uploadLease.Dispose();
+                    return null;
+                }
+
+                return new RequestEnvelope(headerReadResult.HeaderBytes, [], tempBodyPath, uploadLease);
             }
             catch
             {
-                // ignored
+                uploadLease.Dispose();
+                throw;
+            }
+        }
+
+        var bodyBytes = await ReadRequestBodyIntoMemoryAsync(socket, sslStream, tlsHandler, headInfo, headerReadResult.BufferedBodyBytes);
+        return bodyBytes == null ? null : new RequestEnvelope(headerReadResult.HeaderBytes, bodyBytes, null, null);
+    }
+
+    private async Task<HeaderReadResult?> ReadHeadersAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler)
+    {
+        SetTransportTimeouts(socket, sslStream, _config.Http.HeaderReadTimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
+
+        var buffer = new byte[_config.Http.ReadBufferSizeBytes];
+        var headerBuffer = new List<byte>(_config.Http.ReadBufferSizeBytes);
+        var headerDelimiter = "\r\n\r\n"u8.ToArray();
+
+        while (true)
+        {
+            int read;
+            try
+            {
+                read = await ReadFromTransportAsync(socket, sslStream, tlsHandler, buffer);
+            }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+            {
+                _config.Debug.WARNING("Closing connection: header receive timeout");
+                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Header receive timeout");
+                return null;
+            }
+            catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+            {
+                _config.Debug.WARNING("Closing connection: header receive timeout");
+                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Header receive timeout");
+                return null;
+            }
+            catch (Exception ex) when (IsExpectedDisconnect(ex))
+            {
+                CloseTransport(socket, sslStream);
+                return null;
             }
 
+            if (read <= 0)
+            {
+                CloseTransport(socket, sslStream);
+                return null;
+            }
+
+            headerBuffer.AddRange(buffer[..read]);
+
+            if (headerBuffer.Count > _config.Http.MaxHeaderSizeBytes)
+            {
+                _config.Debug.WARNING("Closing connection: header size limit exceeded");
+                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_HEADER_FIELDS_TOO_LARGE,
+                    "Header size limit exceeded");
+                return null;
+            }
+
+            var headerEndIndex = CollectionsMarshal.AsSpan(headerBuffer).IndexOf(headerDelimiter);
+            if (headerEndIndex < 0)
+            {
+                continue;
+            }
+
+            var headerLength = headerEndIndex + headerDelimiter.Length;
+            var headerBytes = headerBuffer[..headerLength].ToArray();
+            var bufferedBodyBytes = headerBuffer.Count > headerLength
+                ? headerBuffer[headerLength..].ToArray()
+                : [];
+            return new HeaderReadResult(headerBytes, bufferedBodyBytes);
+        }
+    }
+
+    private bool TryParseRequestHead(byte[] headerBytes, out RequestHeadInfo headInfo, out int rejectionStatusCode, out string rejectionReason)
+    {
+        var headerText = Encoding.UTF8.GetString(headerBytes);
+        var headerLines = headerText.Split("\r\n", StringSplitOptions.None);
+
+        if (headerLines.Length == 0 || string.IsNullOrWhiteSpace(headerLines[0]))
+        {
+            headInfo = RequestHeadInfo.Empty;
+            rejectionStatusCode = HttpCodes.BAD_REQUEST;
+            rejectionReason = "Missing request line";
+            return false;
+        }
+
+        if (headerLines[0].Length > _config.Http.MaxRequestLineSizeBytes)
+        {
+            headInfo = RequestHeadInfo.Empty;
+            rejectionStatusCode = HttpCodes.URI_TOO_LONG;
+            rejectionReason = "Request line too large";
+            return false;
+        }
+
+        var parsedHeaderCount = 0;
+        foreach (var line in headerLines.Skip(1))
+        {
+            if (string.IsNullOrEmpty(line))
+            {
+                break;
+            }
+
+            parsedHeaderCount++;
+        }
+
+        if (parsedHeaderCount > _config.Http.MaxHeaders)
+        {
+            headInfo = RequestHeadInfo.Empty;
+            rejectionStatusCode = HttpCodes.REQUEST_HEADER_FIELDS_TOO_LARGE;
+            rejectionReason = "Too many headers";
+            return false;
+        }
+
+        var requestLineParts = headerLines[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (requestLineParts.Length != 3)
+        {
+            headInfo = RequestHeadInfo.Empty;
+            rejectionStatusCode = HttpCodes.BAD_REQUEST;
+            rejectionReason = "Malformed request line";
+            return false;
+        }
+
+        long contentLength = 0;
+        var contentType = string.Empty;
+        var transferEncoding = string.Empty;
+
+        foreach (var line in headerLines.Skip(1))
+        {
+            if (string.IsNullOrEmpty(line))
+            {
+                break;
+            }
+
+            var separatorIndex = line.IndexOf(':');
+            if (separatorIndex <= 0)
+            {
+                headInfo = RequestHeadInfo.Empty;
+                rejectionStatusCode = HttpCodes.BAD_REQUEST;
+                rejectionReason = "Malformed request header";
+                return false;
+            }
+
+            var headerName = line[..separatorIndex].Trim();
+            var headerValue = line[(separatorIndex + 1)..].Trim();
+
+            if (headerName.Equals("Content-Length", StringComparison.OrdinalIgnoreCase) &&
+                !long.TryParse(headerValue, out contentLength))
+            {
+                headInfo = RequestHeadInfo.Empty;
+                rejectionStatusCode = HttpCodes.BAD_REQUEST;
+                rejectionReason = "Invalid Content-Length";
+                return false;
+            }
+
+            if (headerName.Equals("Content-Type", StringComparison.OrdinalIgnoreCase))
+            {
+                contentType = headerValue;
+            }
+
+            if (headerName.Equals("Transfer-Encoding", StringComparison.OrdinalIgnoreCase))
+            {
+                transferEncoding = headerValue;
+            }
+        }
+
+        if (contentLength < 0)
+        {
+            headInfo = RequestHeadInfo.Empty;
+            rejectionStatusCode = HttpCodes.BAD_REQUEST;
+            rejectionReason = "Invalid Content-Length";
+            return false;
+        }
+
+        var isMultipart = contentType.StartsWith("multipart/form-data", StringComparison.OrdinalIgnoreCase);
+        var hasChunkedTransferEncoding = transferEncoding.Contains("chunked", StringComparison.OrdinalIgnoreCase);
+
+        if (hasChunkedTransferEncoding)
+        {
+            headInfo = RequestHeadInfo.Empty;
+            rejectionStatusCode = HttpCodes.NOT_IMPLEMENTED;
+            rejectionReason = "Chunked request bodies are not supported";
+            return false;
+        }
+
+        headInfo = new RequestHeadInfo(contentLength, contentType, isMultipart, hasChunkedTransferEncoding);
+        rejectionStatusCode = 0;
+        rejectionReason = string.Empty;
+        return true;
+    }
+
+    private async Task<byte[]?> ReadRequestBodyIntoMemoryAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler,
+        RequestHeadInfo headInfo,
+        byte[] bufferedBodyBytes)
+    {
+        SetTransportTimeouts(socket, sslStream, _config.Http.BodyReadTimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
+
+        var remaining = headInfo.ContentLength;
+        var bodyBytes = new byte[remaining];
+        var readBuffer = new byte[_config.Http.ReadBufferSizeBytes];
+        var offset = 0;
+
+        var initialBodyBytes = bufferedBodyBytes.Length > remaining
+            ? bufferedBodyBytes[..(int)remaining]
+            : bufferedBodyBytes;
+
+        if (initialBodyBytes.Length > 0)
+        {
+            Buffer.BlockCopy(initialBodyBytes, 0, bodyBytes, 0, initialBodyBytes.Length);
+            offset += initialBodyBytes.Length;
+            remaining -= initialBodyBytes.Length;
+        }
+
+        while (remaining > 0)
+        {
+            var chunkSize = (int)Math.Min(readBuffer.Length, remaining);
+            int read;
+            try
+            {
+                read = await ReadFromTransportAsync(socket, sslStream, tlsHandler, readBuffer.AsMemory(0, chunkSize));
+            }
+            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+            {
+                _config.Debug.WARNING("Closing connection: body receive timeout");
+                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
+                return null;
+            }
+            catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+            {
+                _config.Debug.WARNING("Closing connection: body receive timeout");
+                await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
+                return null;
+            }
+            catch (Exception ex) when (IsExpectedDisconnect(ex))
+            {
+                CloseTransport(socket, sslStream);
+                return null;
+            }
+
+            if (read <= 0)
+            {
+                CloseTransport(socket, sslStream);
+                return null;
+            }
+
+            Buffer.BlockCopy(readBuffer, 0, bodyBytes, offset, read);
+            offset += read;
+            remaining -= read;
+        }
+
+        return bodyBytes;
+    }
+
+    private async Task<string?> BufferRequestBodyToTempFileAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler,
+        RequestHeadInfo headInfo,
+        byte[] bufferedBodyBytes)
+    {
+        var tempRoot = Path.GetFullPath(_config.Upload.TempPath);
+        Directory.CreateDirectory(tempRoot);
+        var tempBodyPath = Path.Combine(tempRoot, $"{Guid.NewGuid():N}.upload");
+
+        SetTransportTimeouts(socket, sslStream, _config.Upload.TimeoutSeconds * 1000, _config.Http.KeepAliveTimeoutSeconds * 1000);
+
+        var clientIp = socket.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
+        var startedAt = Stopwatch.StartNew();
+        _config.Debug.INFO($"[UPLOAD][START] client={clientIp} size={headInfo.ContentLength} mime=\"{headInfo.ContentType}\"");
+
+        long remaining = headInfo.ContentLength;
+        long received = 0;
+        long nextProgressThreshold = 64L * 1024L * 1024L;
+        var readBuffer = new byte[_config.Http.ReadBufferSizeBytes];
+
+        try
+        {
+            await using var fileStream = new FileStream(
+                tempBodyPath,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                64 * 1024,
+                FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+            var initialBodyBytes = bufferedBodyBytes.Length > remaining
+                ? bufferedBodyBytes[..(int)remaining]
+                : bufferedBodyBytes;
+
+            if (initialBodyBytes.Length > 0)
+            {
+                await fileStream.WriteAsync(initialBodyBytes);
+                received += initialBodyBytes.Length;
+                remaining -= initialBodyBytes.Length;
+            }
+
+            while (remaining > 0)
+            {
+                var chunkSize = (int)Math.Min(readBuffer.Length, remaining);
+                int read;
+                try
+                {
+                    read = await ReadFromTransportAsync(socket, sslStream, tlsHandler, readBuffer.AsMemory(0, chunkSize));
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                {
+                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=timeout");
+                    await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
+                    return null;
+                }
+                catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+                {
+                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=timeout");
+                    await SendSimpleResponseAsync(socket, sslStream, tlsHandler, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
+                    return null;
+                }
+                catch (Exception ex) when (IsExpectedDisconnect(ex))
+                {
+                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=client_disconnect");
+                    return null;
+                }
+
+                if (read <= 0)
+                {
+                    _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=client_disconnect");
+                    return null;
+                }
+
+                await fileStream.WriteAsync(readBuffer.AsMemory(0, read));
+                received += read;
+                remaining -= read;
+
+                if (received >= nextProgressThreshold || remaining == 0)
+                {
+                    _config.Debug.INFO($"[UPLOAD][PROGRESS] client={clientIp} received={received} remaining={remaining}");
+                    nextProgressThreshold += 64L * 1024L * 1024L;
+                }
+            }
+
+            await fileStream.FlushAsync();
+        }
+        catch
+        {
+            TryDeleteFile(tempBodyPath);
+            throw;
+        }
+
+        _config.Debug.INFO($"[UPLOAD][DONE] client={clientIp} size={received} durationMs={startedAt.ElapsedMilliseconds}");
+        return tempBodyPath;
+    }
+
+    private async Task SendSimpleResponseAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, int statusCode, string message)
+    {
+        try
+        {
+            var payload = Encoding.UTF8.GetBytes(message);
+            var response = Encoding.UTF8.GetBytes(
+                $"HTTP/1.1 {statusCode} {HttpUtils.StatusCodeAsString(statusCode)}\r\n" +
+                $"Content-Type: text/plain; charset=utf-8\r\n" +
+                $"Content-Length: {payload.Length}\r\n" +
+                "Connection: Close\r\n\r\n");
+
+            await WriteToTransportAsync(socket, sslStream, tlsHandler, response);
+            if (payload.Length > 0)
+            {
+                await WriteToTransportAsync(socket, sslStream, tlsHandler, payload);
+            }
+        }
+        catch
+        {
+            // ignored
+        }
+        finally
+        {
+            CloseTransport(socket, sslStream);
+        }
+    }
+
+    private static async Task<int> ReadFromTransportAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, byte[] buffer)
+    {
+        return await ReadFromTransportAsync(socket, sslStream, tlsHandler, buffer.AsMemory());
+    }
+
+    private static async Task<int> ReadFromTransportAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, Memory<byte> buffer)
+    {
+        if (tlsHandler != null)
+        {
+            var tempBuffer = new byte[buffer.Length];
+            var read = await Task.Run(() => tlsHandler.Read(tempBuffer, 0, tempBuffer.Length));
+            if (read > 0)
+            {
+                tempBuffer.AsMemory(0, read).CopyTo(buffer);
+            }
+
+            return read;
+        }
+
+        if (sslStream != null)
+        {
+            return await sslStream.ReadAsync(buffer);
+        }
+
+        return await socket.ReceiveAsync(buffer, SocketFlags.None);
+    }
+
+    private static async Task WriteToTransportAsync(Socket socket, SslStream? sslStream, Tls12Handler? tlsHandler, byte[] buffer)
+    {
+        if (tlsHandler != null)
+        {
+            await Task.Run(() => tlsHandler.Write(buffer, 0, buffer.Length));
+            return;
+        }
+
+        if (sslStream != null)
+        {
+            await sslStream.WriteAsync(buffer);
+            await sslStream.FlushAsync();
+            return;
+        }
+
+        var sent = 0;
+        while (sent < buffer.Length)
+        {
+            sent += await socket.SendAsync(buffer.AsMemory(sent), SocketFlags.None);
+        }
+    }
+
+    private static void SetTransportTimeouts(Socket socket, SslStream? sslStream, int receiveTimeoutMilliseconds, int sendTimeoutMilliseconds)
+    {
+        socket.ReceiveTimeout = receiveTimeoutMilliseconds;
+        socket.SendTimeout = sendTimeoutMilliseconds;
+
+        if (sslStream != null)
+        {
+            sslStream.ReadTimeout = receiveTimeoutMilliseconds;
+            sslStream.WriteTimeout = sendTimeoutMilliseconds;
+        }
+    }
+
+    private static void CloseTransport(Socket socket, SslStream? sslStream)
+    {
+        try
+        {
+            sslStream?.Dispose();
+        }
+        catch
+        {
+            // ignored
+        }
+
+        try
+        {
+            socket.Shutdown(SocketShutdown.Both);
+        }
+        catch
+        {
+            // ignored
+        }
+
+        try
+        {
             socket.Close();
+        }
+        catch
+        {
+            // ignored
+        }
+    }
+
+    private static bool IsExpectedDisconnect(Exception exception)
+    {
+        return exception switch
+        {
+            ObjectDisposedException => true,
+            IOException { InnerException: SocketException inner } => IsExpectedSocketError(inner.SocketErrorCode),
+            SocketException socketException => IsExpectedSocketError(socketException.SocketErrorCode),
+            _ => false
+        };
+    }
+
+    private static bool IsExpectedSocketError(SocketError socketError)
+    {
+        return socketError is
+            SocketError.ConnectionAborted or
+            SocketError.ConnectionReset or
+            SocketError.Shutdown or
+            SocketError.NotConnected or
+            SocketError.OperationAborted or
+            SocketError.TimedOut;
+    }
+
+    private static void TryDeleteFile(string path)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
+        catch
+        {
+            // ignored
+        }
+    }
+
+    private sealed class RequestEnvelope(byte[] headerBytes, byte[] bodyBytes, string? bodyTempFilePath, SemaphoreLease? uploadLease) : IDisposable
+    {
+        public byte[] HeaderBytes { get; } = headerBytes;
+        public byte[] BodyBytes { get; } = bodyBytes;
+        public string? BodyTempFilePath { get; } = bodyTempFilePath;
+        private SemaphoreLease? UploadLease { get; } = uploadLease;
+
+        public void Dispose()
+        {
+            UploadLease?.Dispose();
+        }
+    }
+
+    private sealed record RequestHeadInfo(long ContentLength, string ContentType, bool IsMultipartUpload, bool HasChunkedTransferEncoding)
+    {
+        public static RequestHeadInfo Empty { get; } = new(0, string.Empty, false, false);
+    }
+
+    private sealed record HeaderReadResult(byte[] HeaderBytes, byte[] BufferedBodyBytes);
+
+    private sealed class SemaphoreLease(SemaphoreSlim semaphore) : IDisposable
+    {
+        private int disposed;
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref disposed, 1) == 1)
+            {
+                return;
+            }
+
+            semaphore.Release();
         }
     }
 
@@ -1234,10 +1252,13 @@ public class Server
                     }
 
                     endpoint.Add(connection);
+                    _config.Debug.INFO($"[WS][CONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path}");
                     await connection.Runtime.ProcessAsync(() => endpoint.ConfigureAsync(connection));
                 }
                 finally
                 {
+                    var duration = DateTime.UtcNow - connection.ConnectedAtUtc;
+                    _config.Debug.INFO($"[WS][DISCONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path} durationMs={duration.TotalMilliseconds:0}");
                     endpoint.Remove(connection);
                 }
 

@@ -1,8 +1,54 @@
 # HSB Versions
 This file documents the evolution of the HSB framework. Recent versions are described in detail to support migrations and maintenance; historical versions are summarized from the information available in the repository, examples, and previous roadmap.
 HSB is still pre-1.0: until a stable release, APIs may change. The "Breaking changes" and "Migration notes" sections should always be checked before upgrading.
+## 0.0.19
+Versione corrente indicata in `HSB/Properties/AssemblyInfo.cs`.
+### Focus
+- Release dedicata alla stabilita' di HTTP/WebSocket e all'hardening dell'upload multipart classico.
+- Nessuna nuova feature lato utente e' stata introdotta in questa release.
+- Upload streaming avanzato, upload NDJSON e parsing upload chunked sperimentale sono rinviati alla 0.0.20+.
+### Added
+- Limiti centralizzati `Http`:
+  - dimensione massima body
+  - numero massimo header
+  - dimensione massima header
+  - dimensione request line
+  - timeout lettura header/body
+- Limiti centralizzati `Upload`:
+  - upload concorrenti massimi
+  - percorso temp
+  - dimensione massima file
+  - dimensione massima campi form
+  - timeout upload
+- Logging strutturato per upload e ciclo di vita WebSocket:
+  - `[UPLOAD][START]`
+  - `[UPLOAD][PROGRESS]`
+  - `[UPLOAD][DONE]`
+  - `[UPLOAD][ERROR]`
+  - `[WS][CONNECT]`
+  - `[WS][DISCONNECT]`
+  - `[WS][ERROR]`
+### Changed
+- Il parsing multipart ora usa buffering bounded e file temporanei invece di duplicare il payload interamente in RAM.
+- `Response.SendFile(...)` ora effettua streaming da disco invece di caricare l'intero file in memoria.
+- La lettura HTTP separa parsing header bounded e gestione body, con rifiuto anticipato di richieste invalide o troppo grandi.
+- Il parser request rifiuta header duplicati non ripetibili come `Content-Length`, `Connection`, `Upgrade` e gli header del handshake WebSocket.
+- La concorrenza upload usa backpressure server-side invece di buffering parallelo non limitato.
+- La gestione idle dei WebSocket include heartbeat ping/pong e controlli sui buffer pendenti.
+### Fixed
+- Ridotto il rumore da `Broken pipe` / disconnect sia nelle risposte HTTP sia nell'invio frame WebSocket.
+- Corretto il bug del parser di configurazione che leggeva `RequestMaxSize` dalla chiave `Port`.
+- Corrette le duplicazioni di header HTTP in risposta e la reason phrase della status line.
+- Migliorato il cleanup di file temporanei upload e risorse multipart request-scoped.
+### Security
+- Header invalidi o abusivi vengono rifiutati prima grazie a limiti piu' rigidi sul parser.
+- I body request chunked e le modalita' upload sperimentali rinviate vengono rifiutati invece di entrare in percorsi instabili.
+- La validazione MIME multipart puo' rifiutare valori malformati prima dell'esecuzione della route.
+### Validation
+- I test di regressione coprono framing WebSocket, parsing configurazione, rifiuto header duplicati, parsing multipart classico e MIME invalido.
+- I benchmark pesanti 1GB/2GB, 10/50 concorrenti e soak test 1h+ devono ancora essere rieseguiti fuori dalla sandbox del repository dopo questo aggiornamento.
 ## 0.0.18
-Current version indicated in `HSB/Properties/AssemblyInfo.cs`.
+Versione precedente.
 ### Breaking changes
 - Completely removed the servlet-style API:
   - `Servlet`
@@ -359,4 +405,3 @@ Before a 1.0 release, the project should define:
 * automated test suite;
 * reproducible benchmarks;
 * complete documentation for controllers, WebSocket, streaming, TLS, and modules.
-

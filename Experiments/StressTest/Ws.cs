@@ -74,7 +74,6 @@ public static class WebSocketHandler
 
             socket.OnClose(() =>
             {
-                socket.OnMessage(null);
                 Clients.TryRemove(clientId, out _);
 
                 Terminal.Info(

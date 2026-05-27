@@ -159,6 +159,8 @@ internal sealed class WebSocket(
         var fragmentedPayload = new List<byte>(options.ReceiveChunkSize * 2);
         Opcode? fragmentedOpcode = null;
         var lastReceiveAt = DateTime.UtcNow;
+        var lastPingAt = DateTime.MinValue;
+        var awaitingPong = false;
 
         while (GetState() == WebSocketState.OPEN)
         {
@@ -169,10 +171,20 @@ internal sealed class WebSocket(
             }
             catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
             {
-                if (DateTime.UtcNow - lastReceiveAt >= TimeSpan.FromMilliseconds(options.IdleTimeoutMilliseconds))
+                var idleFor = DateTime.UtcNow - lastReceiveAt;
+                if (idleFor >= TimeSpan.FromMilliseconds(options.IdleTimeoutMilliseconds))
                 {
                     await CloseAsync(CloseNormalClosure);
                     return;
+                }
+
+                if (!awaitingPong &&
+                    idleFor >= TimeSpan.FromMilliseconds(options.HeartbeatIntervalMilliseconds) &&
+                    DateTime.UtcNow - lastPingAt >= TimeSpan.FromMilliseconds(options.HeartbeatIntervalMilliseconds))
+                {
+                    await SendControlFrameAsync(Opcode.PING, []);
+                    awaitingPong = true;
+                    lastPingAt = DateTime.UtcNow;
                 }
 
                 continue;
@@ -180,10 +192,20 @@ internal sealed class WebSocket(
             catch (IOException ex) when (ex.InnerException is SocketException sockEx &&
                                          sockEx.SocketErrorCode == SocketError.TimedOut)
             {
-                if (DateTime.UtcNow - lastReceiveAt >= TimeSpan.FromMilliseconds(options.IdleTimeoutMilliseconds))
+                var idleFor = DateTime.UtcNow - lastReceiveAt;
+                if (idleFor >= TimeSpan.FromMilliseconds(options.IdleTimeoutMilliseconds))
                 {
                     await CloseAsync(CloseNormalClosure);
                     return;
+                }
+
+                if (!awaitingPong &&
+                    idleFor >= TimeSpan.FromMilliseconds(options.HeartbeatIntervalMilliseconds) &&
+                    DateTime.UtcNow - lastPingAt >= TimeSpan.FromMilliseconds(options.HeartbeatIntervalMilliseconds))
+                {
+                    await SendControlFrameAsync(Opcode.PING, []);
+                    awaitingPong = true;
+                    lastPingAt = DateTime.UtcNow;
                 }
 
                 continue;
@@ -201,9 +223,16 @@ internal sealed class WebSocket(
             }
 
             lastReceiveAt = DateTime.UtcNow;
+            awaitingPong = false;
             pending = EnsurePendingCapacity(pending, pendingCount + received);
             Buffer.BlockCopy(buffer, 0, pending, pendingCount, received);
             pendingCount += received;
+
+            if (pendingCount > options.MaxMessagePayloadBytes + 14)
+            {
+                await CloseAsync(CloseMessageTooBig);
+                return;
+            }
 
             while (pendingCount > 0)
             {
@@ -243,6 +272,7 @@ internal sealed class WebSocket(
                         await SendControlFrameAsync(Opcode.PONG, frame.GetPayload());
                         break;
                     case Opcode.PONG:
+                        awaitingPong = false;
                         break;
                     case Opcode.TEXT:
                     case Opcode.BINARY:
@@ -450,6 +480,11 @@ internal sealed class WebSocket(
 
     private async Task HandleFailureAsync(Exception exception, ushort closeCode, bool dispatchError = true)
     {
+        if (!(options.SuppressExpectedDisconnectErrors && IsExpectedDisconnect(exception)))
+        {
+            c.Debug.WARNING($"[WS][ERROR] id={connection.Id} ip={connection.RemoteIp} reason=\"{exception.Message}\"");
+        }
+
         if (dispatchError &&
             !(options.SuppressExpectedDisconnectErrors && IsExpectedDisconnect(exception)) &&
             Interlocked.Exchange(ref errorDispatched, 1) == 0)
@@ -565,6 +600,7 @@ internal sealed class WebSocket(
         return exception switch
         {
             ObjectDisposedException => true,
+            OperationCanceledException => true,
             IOException { InnerException: SocketException inner } => IsExpectedSocketError(inner.SocketErrorCode),
             SocketException socketException => IsExpectedSocketError(socketException.SocketErrorCode),
             _ => false

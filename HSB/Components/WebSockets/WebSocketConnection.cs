@@ -29,14 +29,17 @@ public sealed class WebSocketConnection
         Query = new Dictionary<string, string>(request.Parameters, StringComparer.OrdinalIgnoreCase);
         this.endpoint = endpoint;
         runtime = new WebSocket(request, response, configuration, this);
+        ConnectedAtUtc = DateTime.UtcNow;
     }
 
     public string Id { get; }
     public string Path { get; }
     public Request Request { get; }
     public Response Response { get; }
+    public DateTime ConnectedAtUtc { get; }
     public Dictionary<string, string> Headers { get; }
     public Dictionary<string, string> Query { get; }
+    public string RemoteIp => Request.ClientIp;
     public bool IsOpen => Volatile.Read(ref isOpen) == 1;
 
     internal WebSocket Runtime => runtime;

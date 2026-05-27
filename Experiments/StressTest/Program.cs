@@ -15,6 +15,9 @@ public static class Program
             RequestMaxSize = 100 * HSB.Configuration.MEGABYTE
             //Address = "0.0.0.0"
         };
+        config.Http.MaxBodySizeBytes = 2L * 1024 * 1024 * 1024;
+        config.Upload.MaxConcurrentUploads = 10;
+        config.Upload.TempPath = "./temp";
 
         // Healthcheck
         config.Get("/health", (Request req, Response res) =>
@@ -174,36 +177,6 @@ public static class Program
             );
         });
 
-        config.Get("/stream", async (Request req, Response res) =>
-        {
-            await res.InitStream("application/x-ndjson");
-
-            for (int i = 0; i < 100; i++)
-            {
-                var payload = JsonSerializer.Serialize(new
-                {
-                    type = "event",
-                    index = i,
-                    timestamp = DateTime.UtcNow,
-                    cpu = Random.Next(0, 100),
-                    ram = Random.Next(0, 32000)
-                });
-
-                await res.AddStreamChunk(payload + "\n");
-
-                await Task.Delay(50);
-            }
-
-            await res.AddStreamChunk(
-                JsonSerializer.Serialize(new
-                {
-                    type = "done"
-                }) + "\n"
-            );
-
-            await res.EndStream();
-        });
-        
         config.Get("/cpu-burn", (Request req, Response res) =>
         {
             double x = 0;

@@ -22,6 +22,15 @@ public class FormPart
 
     }
 
+    internal FormPart(string contentDisposition, string name, byte[] data)
+    {
+        ContentDisposition = contentDisposition;
+        Name = name;
+        Data = data;
+    }
+
+    public virtual long Length => Data.LongLength;
+
     public override string ToString()
     {
         return "FormPart : " + ContentDisposition;

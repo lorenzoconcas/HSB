@@ -7,6 +7,7 @@ public sealed class WebSocketOptions
     public int ReceiveChunkSize { get; set; } = Configuration.KILOBYTE * 4;
     public int ReceivePollTimeoutMilliseconds { get; set; } = 5000;
     public int IdleTimeoutMilliseconds { get; set; } = 60000;
+    public int HeartbeatIntervalMilliseconds { get; set; } = 15000;
     public int MaxFramePayloadBytes { get; set; } = Configuration.KILOBYTE * 64;
     public int MaxMessagePayloadBytes { get; set; } = Configuration.KILOBYTE * 256;
     public int MaxConnectionsPerEndpoint { get; set; } = 1000;
@@ -31,6 +32,11 @@ public sealed class WebSocketOptions
         if (json.TryGetProperty(nameof(IdleTimeoutMilliseconds), out var idleTimeoutMilliseconds))
         {
             options.IdleTimeoutMilliseconds = idleTimeoutMilliseconds.GetInt32();
+        }
+
+        if (json.TryGetProperty(nameof(HeartbeatIntervalMilliseconds), out var heartbeatIntervalMilliseconds))
+        {
+            options.HeartbeatIntervalMilliseconds = heartbeatIntervalMilliseconds.GetInt32();
         }
 
         if (json.TryGetProperty(nameof(MaxFramePayloadBytes), out var maxFramePayloadBytes))
@@ -72,6 +78,7 @@ public sealed class WebSocketOptions
         ReceiveChunkSize = Math.Max(256, ReceiveChunkSize);
         ReceivePollTimeoutMilliseconds = Math.Max(250, ReceivePollTimeoutMilliseconds);
         IdleTimeoutMilliseconds = Math.Max(ReceivePollTimeoutMilliseconds, IdleTimeoutMilliseconds);
+        HeartbeatIntervalMilliseconds = Math.Max(1000, Math.Min(HeartbeatIntervalMilliseconds, IdleTimeoutMilliseconds));
         MaxFramePayloadBytes = Math.Max(125, MaxFramePayloadBytes);
         MaxMessagePayloadBytes = Math.Max(MaxFramePayloadBytes, MaxMessagePayloadBytes);
         MaxConnectionsPerEndpoint = Math.Max(1, MaxConnectionsPerEndpoint);

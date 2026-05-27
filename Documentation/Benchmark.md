@@ -1,377 +1,129 @@
-HSB — Benchmark & Stability Report
+HSB 0.0.19 — Upload Stability & HTTP Hardening
 
-Current Stable Version: v0.0.18
-
-Upcoming Release: v0.0.19
-
-⸻
+Current Stable Version: v0.0.19
 
 Overview
 
-A large set of stress, stability and robustness tests were executed against the HSB infrastructure, focusing on:
+This release is intentionally limited to server stability work:
 
-* WebSocket handling
-* file uploads
-* streaming uploads
-* HTTP/header limits
-* high load behavior
-* server resiliency
-* memory pressure
-* socket robustness
+* HTTP parser hardening
+* multipart upload memory safety
+* upload concurrency backpressure
+* socket disconnect resilience
+* WebSocket idle cleanup and heartbeat
 
-The current stable release is:
+Advanced upload streaming is not part of this release.
 
-HSB v0.0.18
+Postponed to 0.0.20+
 
-The upcoming:
+* `/upload-resource-stream`
+* NDJSON upload
+* experimental chunked upload parsing
+* realtime upload parsing pipelines
 
-HSB v0.0.19
+Implemented Hardening in 0.0.19
 
-will introduce:
+HTTP
 
-* file upload streaming
-* networking improvements
-* better I/O handling
-* NDJSON streaming support
+* centralized request limits through `Configuration.Http`
+* maximum body size
+* maximum header count
+* maximum header size
+* request-line size validation
+* header/body timeout enforcement
+* early rejection for duplicate non-repeatable headers
+* explicit rejection of chunked request bodies
 
-⸻
+Uploads
 
-Testing Goals
+* classic `multipart/form-data` only
+* request body buffering split into:
+  * bounded header buffering in RAM
+  * file-backed multipart body storage on disk
+* temp-file-backed multipart file parts
+* maximum file size enforcement
+* maximum form-field size enforcement
+* upload timeout enforcement
+* automatic cleanup of request-scoped temp files
+* bounded concurrent upload gate with `429 Too Many Requests`
 
-The tests were designed to validate:
+Responses
 
-Area	Goal
-HTTP Core	Parser and routing stability
-WebSocket	Concurrent connection handling
-Uploads	Payload robustness
-Streaming	Continuous chunk processing
-Networking	Abrupt disconnect handling
-Security	Header abuse & flooding
-Memory	Stability under pressure
+* `Response.SendFile(...)` now streams from disk
+* reduced whole-file allocations during file responses
+* response header merging no longer duplicates single-value headers
+* HTTP status line now emits a valid reason phrase
 
-⸻
+WebSocket
 
-1. WebSocket Storm Test
+* heartbeat ping/pong during idle periods
+* bounded pending frame buffer growth
+* quieter handling of expected disconnects
+* structured lifecycle logging
 
-Description
+Structured Logging
 
-Simulation of:
+* `[UPLOAD][START]`
+* `[UPLOAD][PROGRESS]`
+* `[UPLOAD][DONE]`
+* `[UPLOAD][ERROR]`
+* `[WS][CONNECT]`
+* `[WS][DISCONNECT]`
+* `[WS][ERROR]`
 
-* many simultaneous WebSocket clients
-* rapid reconnect cycles
-* concurrent data transmission
-* clients disconnecting unexpectedly
+Validation Completed in Repository
 
-⸻
+Automated runtime tests currently verify:
 
-Results
+* WebSocket frame parsing and route registration
+* configuration parsing for `http` and `upload` limits
+* invalidation of duplicate `Content-Length` headers
+* classic multipart parsing for file + field payloads
+* rejection of invalid multipart MIME values
 
-Metric	Result
-Concurrent connections	~75+
-Server stability	OK
-Server crashes	None
-Disconnect handling	Partial
-Socket errors	Present
-Obvious memory leaks	Not detected
+Validation Still Required Outside This Workspace
 
-⸻
+The repository update does not include full heavy-load benchmark execution. The following matrix still needs to be run on a real target host after deployment of 0.0.19:
 
-Observed Errors
+Upload Tests
 
-System.Net.Sockets.SocketException (32): Broken pipe
+* single upload: 1GB
+* single upload: 2GB
+* concurrent uploads: 10
+* concurrent uploads: 50
 
-and:
+Mixed Stress
 
-operation cancelled
+* persistent WebSocket clients during uploads
+* uploads plus parallel API traffic
+* repeated abrupt client disconnects
 
-⸻
+Long-Running
 
-Analysis
+* 1h+ soak test
+* continuous upload loop
+* persistent WebSocket connections
 
-These errors mainly occur when:
-
-* clients disconnect before writes complete
-* the server writes to already closed sockets
-* async operations are cancelled during disconnect/shutdown
-
-The server:
-
-* does not crash
-* continues accepting new clients
-* keeps internal state consistent
-
-⸻
-
-Status
-
-Component	Status
-WebSocket accept loop	OK
-Concurrent clients	OK
-Disconnect handling	Needs improvement
-Exception noise	High
-
-⸻
-
-2. HTTP Header Abuse Test
-
-Goal
-
-Validate protections against:
-
-* oversized headers
-* header flooding
-* abusive requests
-
-⸻
-
-Initial Errors
-
-Closing connection: header size limit exceeded
-Closing connection: too many headers
-
-⸻
-
-Implemented Fixes
-
-The following protections were added:
-
-Protection	Status
-Header size limit	Implemented
-Header count limit	Implemented
-Early connection termination	Implemented
-
-⸻
-
-Benchmark Results
-
-Scenario	Before	After
-Oversized headers	Memory pressure	Connection rejected
-Header flooding	Potential abuse	Blocked
-Server stability	Risk of degradation	Stable
-
-⸻
-
-3. Upload & Routing Test
-
-Scenario
-
-Testing invalid endpoints and malformed upload requests.
-
-⸻
-
-Result
-
-POST '/upload' 404 (Resource not found)
-
-Correct behavior.
-
-⸻
-
-Routing Benchmark
-
-Test	Result
-Invalid route	Correct 404
-Server crash	None
-Dangerous fallback behavior	None
-
-⸻
-
-4. Heavy k6 Stress Test
-
-Scenario
-
-Extreme stress test using k6 with:
-
-* high connection counts
-* aggressive payloads
-* concurrent traffic bursts
-
-⸻
-
-Results
-
-Metric	Result
-RAM usage	~20GB
-Host machine stability	Unstable
-HSB crash	No
-System saturation	Yes
-Existing limits sufficient	No
-
-⸻
-
-Analysis
-
-The test highlighted several missing protections.
-
-⸻
-
-Current Limitations
-
-Area	Problem
-Rate limiting	Missing
-Payload limits	Partial
-Connection throttling	Missing
-Memory guardrails	Missing
-Backpressure handling	Limited
-
-⸻
-
-File Streaming Status (v0.0.19)
-
-The upcoming release introduces:
-
-POST /upload-resource-stream
-
-with:
-
-application/x-ndjson
-
-support.
-
-⸻
-
-Streaming Goals
-
-Feature	Status
-Upload streaming	In development
-NDJSON event streaming	Implemented
-Progress events	Implemented
-Chunked transfer	Implemented
-Full robustness	Not yet
-
-⸻
-
-Remaining Streaming Issues
-
-Problem	Status
-Backpressure handling	Needs improvement
-Slow clients	Not fully handled
-Long-running timeouts	Needs tuning
-Stream cleanup	Partial
-Retry strategies	Missing
-
-⸻
-
-General Benchmark Summary
-
-Area	Status	Notes
-HTTP parser	Good	Stable
-Routing	Good	No major issues
-WebSocket	Good	Disconnect noise remains
-Classic uploads	Good	Stable
-Streaming uploads	Beta	Needs stabilization
-Header protections	Good	Implemented
-Memory handling	Acceptable	Can improve
-Stress resilience	Medium	Missing guardrails
-
-⸻
-
-Remaining Work
-
-High Priority
-
-Networking
-
-* graceful disconnect handling
-* better socket cleanup
-* improved cancellation handling
-
-⸻
-
-Security & Protections
-
-* rate limiting
-* anti-flood protections
-* payload caps
-* configurable upload limits
-
-⸻
-
-Streaming
-
-* streaming pipeline stabilization
-* slow-client handling
-* smarter buffering
-* timeout improvements
-
-⸻
-
-Medium Priority
-
-Observability
-
-The following systems are still missing:
-
-Feature	Status
-Runtime metrics	Missing
-Memory metrics	Missing
-Connection dashboard	Missing
-Request tracing	Missing
-
-⸻
-
-Logging Improvements
-
-Improvement	Status
-Structured logs	Partial
-Noise reduction	Needed
-Error classification	Missing
-
-⸻
-
-Low Priority
-
-Performance Tuning
-
-* buffer pooling
-* allocation reduction
-* parser optimizations
-* WebSocket tuning
-
-⸻
-
-Current Overall Status
-
-HSB v0.0.18
-
-Considered:
-
-Area	Status
-Usable	Yes
-Stable	Reasonably
-Stress-tested	Yes
-Production-ready	Partially
-Hardened	Not fully
-
-⸻
-
-Target for v0.0.19
-
-The v0.0.19 release focuses mainly on:
-
-Feature	Status
-File streaming	Main feature
-NDJSON streaming	Yes
-Improved upload handling	Yes
-Better resiliency	In progress
-Socket stabilization	In progress
-
-⸻
-
-Conclusions
-
-HSB demonstrated:
-
-* good overall resiliency
-* a promising architecture
-* no critical crashes during realistic stress tests
-* solid concurrent connection handling
-
-The main weaknesses currently involve:
-
-* networking edge cases
-* anti-abuse protections
-* streaming stability under extreme load
-* aggressive memory pressure scenarios
-
-v0.0.19 will primarily focus on file streaming support and continued networking stabilization.
+Metrics to Capture
+
+* RAM usage
+* CPU usage
+* upload throughput
+* websocket latency
+* active connections
+* peak allocations
+
+Expected 0.0.19 Outcome
+
+* no full-request multipart buffering in RAM
+* bounded upload concurrency
+* bounded parser memory growth
+* cleaner disconnect handling
+* reduced `Broken pipe` log noise
+* no experimental upload streaming paths in active use
+
+Known Limitations
+
+* Full before/after benchmark numbers are pending rerun after these fixes.
+* Advanced upload streaming remains deferred.
+* HTTP request chunked transfer encoding remains intentionally unsupported in this release.

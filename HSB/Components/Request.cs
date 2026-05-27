@@ -1,5 +1,5 @@
-﻿using System.Net;
-
+﻿using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using HSB.Components;
@@ -9,14 +9,25 @@ using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB;
 
-public class Request
+public class Request : IDisposable
 {
+    private static readonly HashSet<string> NonRepeatableHeaders = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Host",
+        "Content-Length",
+        "Connection",
+        "Upgrade",
+        "Sec-WebSocket-Key",
+        "Sec-WebSocket-Version"
+    };
+
     //support-variables
     readonly string reqText = "";
     readonly List<string> requestContent;
     internal Socket connectionSocket;
     internal byte[] rawData;
     internal byte[] rawBody;
+    private readonly string? rawBodyFilePath;
     private readonly Configuration config;
 
 
@@ -39,16 +50,31 @@ public class Request
     private Form? form;
 
     public bool IsValidRequest = true;
+    public int InvalidStatusCode { get; private set; } = HttpCodes.BAD_REQUEST;
+    public string InvalidReason { get; private set; } = "Invalid Request";
+
     public Request(byte[] data, Socket socket, Configuration config, bool isTls = false)
+        : this(data, [], null, socket, config, isTls)
+    {
+    }
+
+    internal Request(
+        byte[] headerData,
+        byte[] bodyData,
+        string? bodyFilePath,
+        Socket socket,
+        Configuration config,
+        bool isTls = false)
     {
         connectionSocket = socket;
-        rawData = data;
-        rawBody = [];
+        rawData = headerData;
+        rawBody = bodyData;
+        rawBodyFilePath = bodyFilePath;
         this.config = config;
         requestContent = [];
         IsTls = isTls;
 
-        if (data.Length == 0)
+        if (headerData.Length == 0)
         {
             return;
         }
@@ -62,16 +88,16 @@ public class Request
             ClientIpVersion = rIEP.AddressFamily;
         }
 
-        switch (EncodingUtils.GetEncoding(data))
+        switch (EncodingUtils.GetEncoding(headerData))
         {
             case UTF8Encoding:
-                reqText = Encoding.UTF8.GetString(data);
+                reqText = Encoding.UTF8.GetString(headerData);
                 break;
             case UTF32Encoding:
-                reqText = Encoding.UTF32.GetString(data);
+                reqText = Encoding.UTF32.GetString(headerData);
                 break;
             case ASCIIEncoding:
-                reqText = Encoding.ASCII.GetString(data);
+                reqText = Encoding.ASCII.GetString(headerData);
                 break;
         }
 
@@ -173,7 +199,7 @@ public class Request
 
             ParseCookies();
             ResolveSession();
-            ExtractBody();
+            AttachBodyData();
 
             if (IsFileUpload() && headers.TryGetValue("Content-Type", out string? contentType))
             {
@@ -181,7 +207,14 @@ public class Request
 
                 if (contentTypeParts.Length == 2 && !string.IsNullOrWhiteSpace(contentTypeParts[1]))
                 {
-                    multiPartFormData = new MultiPartFormData(rawBody, contentTypeParts[1]);
+                    multiPartFormData = rawBodyFilePath != null
+                        ? new MultiPartFormData(rawBodyFilePath, contentTypeParts[1], config.Upload, config.Http)
+                        : new MultiPartFormData(rawBody, contentTypeParts[1], config.Upload, config.Http);
+                }
+                else
+                {
+                    MarkInvalidRequest("Missing multipart boundary", HttpCodes.BAD_REQUEST);
+                    return;
                 }
             }
 
@@ -192,17 +225,23 @@ public class Request
 
             ValidRequest = true;
         }
+        catch (MultipartParseException e)
+        {
+            MarkInvalidRequest(e.Message, e.StatusCode);
+        }
         catch (Exception e)
         {
             MarkInvalidRequest(e.Message);
         }
     }
 
-    private void MarkInvalidRequest(string reason)
+    private void MarkInvalidRequest(string reason, int statusCode = HttpCodes.BAD_REQUEST)
     {
-        Terminal.WriteLine("Invalid request, reason : " + reason, BgColor.Black, FgColor.Red);
+        config.Debug.WARNING($"Invalid request: {reason}");
         ValidRequest = false;
         IsValidRequest = false;
+        InvalidStatusCode = statusCode;
+        InvalidReason = string.IsNullOrWhiteSpace(reason) ? "Invalid Request" : reason;
     }
 
     private void ParseQueryString(string queryString)
@@ -252,16 +291,30 @@ public class Request
 
             if (separatorIndex <= 0)
             {
-                headers[r] = string.Empty;
-                continue;
+                throw new InvalidDataException($"Malformed header: {r}");
             }
 
             string key = r[..separatorIndex].Trim();
             string value = r[(separatorIndex + 1)..].Trim();
 
-            if (!string.IsNullOrWhiteSpace(key))
+            if (string.IsNullOrWhiteSpace(key) || !IsValidHeaderName(key))
             {
-                headers[key] = value;
+                throw new InvalidDataException($"Invalid header name: {key}");
+            }
+
+            if (value.Contains('\r') || value.Contains('\n') || value.Contains('\0'))
+            {
+                throw new InvalidDataException($"Invalid header value for {key}");
+            }
+
+            if (!headers.TryAdd(key, value))
+            {
+                if (NonRepeatableHeaders.Contains(key))
+                {
+                    throw new InvalidDataException($"Duplicate header not allowed: {key}");
+                }
+
+                headers[key] = CombineHeaderValues(key, headers[key], value);
             }
         }
     }
@@ -369,28 +422,21 @@ public class Request
         responseCookies.Add(c);
     }
 
-    private void ExtractBody()
+    private void AttachBodyData()
     {
-        var delimiter = "\r\n\r\n"u8.ToArray();
-        int headerEndIndex = rawData.IndexOf(delimiter);
-
-        if (headerEndIndex < 0)
+        if (rawBodyFilePath != null)
         {
             rawBody = [];
             body = string.Empty;
             return;
         }
 
-        int offset = headerEndIndex + delimiter.Length;
-
-        if (offset >= rawData.Length)
+        if (rawBody.Length == 0)
         {
-            rawBody = [];
             body = string.Empty;
             return;
         }
 
-        rawBody = rawData[offset..];
         body = Encoding.UTF8.GetString(rawBody);
     }
 
@@ -511,6 +557,28 @@ public class Request
     /// <returns></returns>
     public Form? GetFormData() => form;
 
+    public void Dispose()
+    {
+        multiPartFormData?.Dispose();
+
+        if (rawBodyFilePath == null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (File.Exists(rawBodyFilePath))
+            {
+                File.Delete(rawBodyFilePath);
+            }
+        }
+        catch
+        {
+            // Best effort cleanup.
+        }
+    }
+
     //Debug functions
 
     public Socket GetSocket() => connectionSocket;
@@ -557,6 +625,25 @@ public class Request
     {
         string str = Method.ToString() + " - " + Url + " - " + Protocol.ToString();
         return str;
+    }
+
+    private static bool IsValidHeaderName(string key)
+    {
+        foreach (var ch in key)
+        {
+            if (char.IsControl(ch) || char.IsWhiteSpace(ch))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string CombineHeaderValues(string key, string currentValue, string newValue)
+    {
+        var separator = key.Equals("Cookie", StringComparison.OrdinalIgnoreCase) ? "; " : ", ";
+        return string.Concat(currentValue, separator, newValue);
     }
 }
 
@@ -606,6 +693,37 @@ public static class HttpUtils
         "HTTP/2.0" => HttpProtocol.HTTP2_0,
         "HTTP/3.0" => HttpProtocol.HTTP3_0,
         _ => HttpProtocol.UNKNOWN
+    };
+
+    public static string StatusCodeAsString(int statusCode) => statusCode switch
+    {
+        HttpCodes.CONTINUE => "Continue",
+        HttpCodes.SWITCHING_PROTOCOLS => "Switching Protocols",
+        HttpCodes.OK => "OK",
+        HttpCodes.CREATED => "Created",
+        HttpCodes.ACCEPTED => "Accepted",
+        HttpCodes.NO_CONTENT => "No Content",
+        HttpCodes.MOVED_PERMANENTLY => "Moved Permanently",
+        HttpCodes.FOUND => "Found",
+        HttpCodes.SEE_OTHER => "See Other",
+        HttpCodes.NOT_MODIFIED => "Not Modified",
+        HttpCodes.BAD_REQUEST => "Bad Request",
+        HttpCodes.UNAUTHORIZED => "Unauthorized",
+        HttpCodes.FORBIDDEN => "Forbidden",
+        HttpCodes.NOT_FOUND => "Not Found",
+        HttpCodes.METHOD_NOT_ALLOWED => "Method Not Allowed",
+        HttpCodes.REQUEST_TIMEOUT => "Request Timeout",
+        HttpCodes.CONFLICT => "Conflict",
+        HttpCodes.LENGTH_REQUIRED => "Length Required",
+        HttpCodes.PAYLOAD_TOO_LARGE => "Payload Too Large",
+        HttpCodes.UNSUPPORTED_MEDIA_TYPE => "Unsupported Media Type",
+        HttpCodes.TOO_MANY_REQUESTS => "Too Many Requests",
+        HttpCodes.REQUEST_HEADER_FIELDS_TOO_LARGE => "Request Header Fields Too Large",
+        HttpCodes.INTERNAL_SERVER_ERROR => "Internal Server Error",
+        HttpCodes.NOT_IMPLEMENTED => "Not Implemented",
+        HttpCodes.SERVICE_UNAVAILABLE => "Service Unavailable",
+        HttpCodes.GATEWAY_TIMEOUT => "Gateway Timeout",
+        _ => "Status"
     };
 
 }

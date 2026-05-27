@@ -61,13 +61,13 @@ public class Response(
             {
                 _tlsHandler.Write(data, 0, data.Length);
                 if (disconnect)
-                    socket.Close(); // Or should we send Alert? For now Close.
+                    SafeCloseSocket();
             }
             else if (sslStream != null)
             {
                 sslStream.Write(data);
                 if (disconnect)
-                    sslStream.Close();
+                    SafeCloseSslStream();
             }
             else
             {
@@ -85,20 +85,13 @@ public class Response(
 
                 if (disconnect)
                 {
-                    try
-                    {
-                        socket.Shutdown(SocketShutdown.Both);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    socket.Close();
+                    SafeCloseSocket();
                 }
             }
-
-            //data = [];
+        }
+        catch (Exception e) when (!throwOnError && IsExpectedDisconnect(e))
+        {
+            streamClosed = true;
         }
         catch (Exception e)
         {
@@ -107,7 +100,8 @@ public class Response(
                 ExceptionDispatchInfo.Capture(e).Throw();
             }
 
-            Terminal.Error($"Error sending data ->\n {e}");
+            streamClosed = true;
+            config.Debug.WARNING($"HTTP response send failed: {e.Message}");
         }
     }
 
@@ -222,18 +216,10 @@ public class Response(
     public void SendFile(string absPath, string? mimeType = null, int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
-        var data = File.ReadAllBytes(absPath);
-
         var mime = mimeType ??
                    MimeTypeUtils.GetMimeType(Path.GetExtension(absPath)) ?? MimeTypeUtils.APPLICATION_OCTET;
-        var headers = GetHeaders(statusCode, data.Length, mime, customHeaders);
-        var headersBytes = Encoding.UTF8.GetBytes(headers);
-        var responseBytes = new byte[data.Length + headersBytes.Length];
-
-        Buffer.BlockCopy(headersBytes, 0, responseBytes, 0, headersBytes.Length);
-        Buffer.BlockCopy(data, 0, responseBytes, headersBytes.Length, data.Length);
-
-        Send(responseBytes);
+        using var stream = new FileStream(absPath, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024, FileOptions.SequentialScan);
+        SendStream(stream, stream.Length, mime, statusCode, customHeaders);
     }
 
     /// <summary>
@@ -299,7 +285,8 @@ public class Response(
     public void SendFile(FilePart filePart, int statusCode = HttpCodes.OK,
         Dictionary<string, string>? customHeaders = null)
     {
-        SendFile(filePart.GetBytes(), filePart.GetMimeType(), statusCode, customHeaders);
+        using var stream = filePart.OpenReadStream();
+        SendStream(stream, filePart.Length, filePart.GetMimeType(), statusCode, customHeaders);
     }
 
     /// <summary>
@@ -525,14 +512,10 @@ public class Response(
     /// <param name="contentType">Mimetype of the body</param>
     /// <param name="customHeaders">Optional headers</param>
     /// <returns></returns>
-    private string GetHeaders(int responseCode, int size, string contentType,
+    private string GetHeaders(int responseCode, long size, string contentType,
         Dictionary<string, string>? customHeaders = null)
     {
         CultureInfo ci = new("en-US");
-
-        customHeaders = customHeaders != null
-            ? new Dictionary<string, string>(customHeaders, StringComparer.OrdinalIgnoreCase)
-            : null;
 
         var globalHeadersSnapshot = config.CustomGlobalHeaders.ToArray();
         var globalCookiesSnapshot = config.CustomGlobalCookies.ToArray();
@@ -546,19 +529,26 @@ public class Response(
         var globalCorsOriginsSnapshot = config.GlobalCors?.AllowedOrigins?.ToArray();
         var corsOriginsSnapshot = cors?.AllowedOrigins?.ToArray();
 
-        var hasTransferEncodingHeader =
-            (customHeaders?.ContainsKey("Transfer-Encoding") ?? false) ||
-            globalHeadersSnapshot.Any(x =>
-                x.Key.Equals("Transfer-Encoding", StringComparison.OrdinalIgnoreCase));
+        var mergedHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var header in globalHeadersSnapshot)
+        {
+            mergedHeaders[header.Key] = header.Value;
+        }
 
-        var hasContentTypeHeader =
-            (customHeaders?.ContainsKey("Content-Type") ?? false) ||
-            globalHeadersSnapshot.Any(x =>
-                x.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase));
+        if (customHeaders != null)
+        {
+            foreach (var header in customHeaders)
+            {
+                mergedHeaders[header.Key] = header.Value;
+            }
+        }
+
+        var hasTransferEncodingHeader = mergedHeaders.ContainsKey("Transfer-Encoding");
+        var hasContentTypeHeader = mergedHeaders.ContainsKey("Content-Type");
 
         var currentTime = DateTime.Now.ToString("ddd, dd MMM yyy HH:mm:ss ", ci) + "GMT";
 
-        var headers = $"{HttpUtils.ProtocolAsString(request.Protocol)} {responseCode} {request.Url} {NewLine}";
+        var headers = $"{HttpUtils.ProtocolAsString(request.Protocol)} {responseCode} {HttpUtils.StatusCodeAsString(responseCode)}{NewLine}";
         headers += "Date: " + currentTime + NewLine;
         if (config.CustomServerName != "")
             headers += $"Server: {config.CustomServerName}{NewLine}";
@@ -580,26 +570,24 @@ public class Response(
             }
         }
 
-        if (customHeaders != null)
+        if (responseCode is >= 300 and <= 399 && !mergedHeaders.ContainsKey("Location"))
         {
-            foreach (var h in customHeaders)
-            {
-                headers += $"{h.Key}: {h.Value}{NewLine}";
-            }
-
-            //if it's a redirect "Location" header is a must
-            if (responseCode is >= 300 and <= 399 && !customHeaders.ContainsKey("Location"))
-            {
-                throw new InvalidRedirectRoute();
-            }
+            throw new InvalidRedirectRoute();
         }
 
-        if (globalHeadersSnapshot.Length != 0)
+        foreach (var header in mergedHeaders)
         {
-            foreach (var h in globalHeadersSnapshot)
+            if (header.Key.Equals("Content-Length", StringComparison.OrdinalIgnoreCase) && !hasTransferEncodingHeader)
             {
-                headers += $"{h.Key}: {h.Value}{NewLine}";
+                continue;
             }
+
+            if (header.Key.Equals("Content-Type", StringComparison.OrdinalIgnoreCase) && !hasContentTypeHeader)
+            {
+                continue;
+            }
+
+            headers += $"{header.Key}: {header.Value}{NewLine}";
         }
 
         if (globalCookiesSnapshot.Length != 0)
@@ -642,10 +630,7 @@ public class Response(
            else
            {*/
         //visit https://httpwg.org/specs/rfc9113.html#ConnectionSpecific, p8.2.2 (27-Jun-23)
-        var hasConnectionHeader =
-            (customHeaders?.ContainsKey("Connection") ?? false) ||
-            globalHeadersSnapshot.Any(x =>
-                x.Key.Equals("Connection", StringComparison.OrdinalIgnoreCase));
+        var hasConnectionHeader = mergedHeaders.ContainsKey("Connection");
 
         if ((request.Protocol == HttpProtocol.HTTP1_0 ||
              request.Protocol == HttpProtocol.HTTP1_1) &&
@@ -668,6 +653,92 @@ public class Response(
         }
 
         return Environment.OSVersion;
+    }
+
+    private void SendStream(Stream stream, long length, string mimeType, int statusCode,
+        Dictionary<string, string>? customHeaders = null)
+    {
+        var headers = GetHeaders(statusCode, length, mimeType, customHeaders);
+        SendInternal(Encoding.UTF8.GetBytes(headers), disconnect: false, throwOnError: false);
+
+        var buffer = new byte[64 * 1024];
+        while (!streamClosed)
+        {
+            var read = stream.Read(buffer, 0, buffer.Length);
+            if (read <= 0)
+            {
+                break;
+            }
+
+            if (read == buffer.Length)
+            {
+                SendInternal(buffer, disconnect: false, throwOnError: false);
+                continue;
+            }
+
+            var chunk = new byte[read];
+            Buffer.BlockCopy(buffer, 0, chunk, 0, read);
+            SendInternal(chunk, disconnect: false, throwOnError: false);
+        }
+
+        SafeCloseSslStream();
+    }
+
+    private void SafeCloseSocket()
+    {
+        try
+        {
+            socket.Shutdown(SocketShutdown.Both);
+        }
+        catch
+        {
+            // ignored
+        }
+
+        try
+        {
+            socket.Close();
+        }
+        catch
+        {
+            // ignored
+        }
+    }
+
+    private void SafeCloseSslStream()
+    {
+        try
+        {
+            sslStream?.Close();
+        }
+        catch
+        {
+            // ignored
+        }
+
+        SafeCloseSocket();
+    }
+
+    private static bool IsExpectedDisconnect(Exception exception)
+    {
+        return exception switch
+        {
+            IOException { InnerException: SocketException innerSocketException } => IsExpectedSocketError(innerSocketException.SocketErrorCode),
+            ObjectDisposedException => true,
+            SocketException socketException => IsExpectedSocketError(socketException.SocketErrorCode),
+            _ => false
+        };
+    }
+
+    private static bool IsExpectedSocketError(SocketError socketError)
+    {
+        return socketError is
+            SocketError.ConnectionAborted or
+            SocketError.ConnectionReset or
+            SocketError.Shutdown or
+            SocketError.NotConnected or
+            SocketError.OperationAborted or
+            SocketError.TimedOut;
     }
 
     #endregion
@@ -786,7 +857,7 @@ public class Response(
         catch (Exception e)
         {
             streamClosed = true;
-            Terminal.Error("Errore durante WriteRaw: " + e);
+            config.Debug.WARNING("Errore durante WriteRaw: " + e.Message);
         }
     }
 

@@ -1,4 +1,5 @@
 using System.Reflection;
+using HSB.Components.Controller;
 using HSB.OpenApi.Attributes;
 using HSB.OpenApi.models;
 using HSB.Utils;
@@ -14,12 +15,11 @@ public static class OpenApiBuilder
     {
         var paths = new Dictionary<string, PathItem>();
 
-        foreach (var route in routes.Where(r => r is {Class: not null}))
+        foreach (var route in routes)
         {
             //group subroutes by path
             var groups = route.SubRoutes.GroupBy(r => r.Path).ToArray();
-
-
+            
             foreach (var group in groups)
             {
                 var methods = group.ToList();
@@ -34,9 +34,8 @@ public static class OpenApiBuilder
                     Options = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Options)),
                     Head = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Head))
                 };
-
-
-                var suggestedTag = route.Class!.GetCustomAttribute<ApiTag>()?.Tag ?? route.Path;
+                
+                var suggestedTag = route.Class?.GetCustomAttribute<ApiTag>()?.Tag ?? "default";
 
                 pathItem.Get?.Tags = [suggestedTag];
                 pathItem.Post?.Tags = [suggestedTag];
@@ -50,7 +49,8 @@ public static class OpenApiBuilder
                 paths.Add(PathUtils.JoinPath(route.Path, group.Key), pathItem);
             }
         }
-
+        
+       
         return paths;
     }
 
@@ -100,13 +100,16 @@ public static class OpenApiBuilder
 
     private static Operation? GetOperation(RoutableMethod routableMethod)
     {
-        if (!routableMethod.IsValid) return null;
-        var method = routableMethod.MethodInfo!;
-        var summary = method.GetCustomAttribute<ApiSummary>()?.Summary ?? "No summary provided";
-        var description = method.GetCustomAttribute<ApiDescription>()?.Description ?? "No description provided";
-        var operationId = method.Name;
 
-        var parameters = method
+        if (routableMethod.MethodInfo is null && routableMethod.Delegate is null) return null;
+      
+        var method = routableMethod.MethodInfo;
+        var del = routableMethod.Delegate;
+        var summary = (del?.Method ?? method)?.GetCustomAttribute<ApiSummary>()?.Summary ??  "No summary provided";
+        var description = (del?.Method ?? method)?.GetCustomAttribute<ApiDescription>()?.Description ?? "No description provided";
+        var operationId = (del?.Method ?? method)?.Name ?? "No operation provided";
+
+        var parameters = (del?.Method ?? method)?
             .GetCustomAttributes<ApiParameter>()
             .Select(p => new Parameter(p.Name, p.Description)
             {
@@ -116,7 +119,7 @@ public static class OpenApiBuilder
             })
             .ToList();
 
-        var responses = method
+        var responses = method?
             .GetCustomAttributes<ApiResponse>()
             .ToDictionary(r => r.StatusCode.ToString(), r => new HSB.OpenApi.models.Response(r.Description)
             {
@@ -127,20 +130,20 @@ public static class OpenApiBuilder
             summary,
             description,
             operationId,
-            parameters,
-            responses
+            parameters ?? [],
+            responses ?? []
         );
         return operation;
     }
 
 
-    public static void BuildOpenApiYaml(Configuration configuration, List<Map> routes)
+    public static void BuildOpenApiYaml(Configuration configuration)
     {
         var api = new models.OpenApi("3.0.0")
         {
             Info = configuration.OpenApiSettings.Info,
             Servers = [],
-            Paths = GetPaths(routes),
+            Paths = GetPaths(configuration.GetDetectedRoutes()),
             Components = new models.Components(CollectAllResponseModels()),
         };
 

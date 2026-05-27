@@ -176,7 +176,7 @@ public class Configuration
     public readonly HttpOptions Http = new();
     public readonly UploadOptions Upload = new();
     
-    public readonly List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.CustomModules");
+    public readonly List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.Modules");
     
     //Server related vars only used for modules
     private List<Map> routes = [];

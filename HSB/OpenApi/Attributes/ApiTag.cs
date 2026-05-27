@@ -1,14 +1,8 @@
 namespace HSB.OpenApi.Attributes;
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public  class ApiTag : Attribute
+[AttributeUsage(AttributeTargets.All)]
+public class ApiTag(string tag) : Attribute
 {
     
-    public string Tag { get; }
-    
-    public ApiTag( string tag)
-    {
-        Tag = tag;
-    }
-
+    public string Tag { get; } = tag;
 }

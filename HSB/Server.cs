@@ -2,7 +2,6 @@
 using HSB.Constants;
 using HSB.Constants.TLS;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -143,14 +142,14 @@ public class Server
 
 
         if (sslConf.PortMode != SSL_PORT_MODE.DUAL_PORT) return;
-        _sslLocalEndPoint = new(_ipAddress!, _config.SslSettings.SslPort);
+        _sslLocalEndPoint = new IPEndPoint(_ipAddress!, _config.SslSettings.SslPort);
         if (_sslLocalEndPoint == null)
         {
             _config.Debug.ERROR("Cannot create SSL endpoint");
             Environment.Exit((int) ServerErrors.CannotCreateSslEndpoint);
         }
 
-        _sslListener = new(_ipAddress!.AddressFamily,
+        _sslListener = new Socket(_ipAddress!.AddressFamily,
             SocketType.Stream, ProtocolType.Tcp);
 
         if (_sslListener != null) return;
@@ -209,11 +208,12 @@ public class Server
         _config = config;
         _config.Http.ApplyLegacyRequestMaxSize(_config.RequestMaxSize);
         _config.Upload.Clamp();
-        _uploadConcurrencyLimiter = new SemaphoreSlim(_config.Upload.MaxConcurrentUploads, _config.Upload.MaxConcurrentUploads);
+        _uploadConcurrencyLimiter =
+            new SemaphoreSlim(_config.Upload.MaxConcurrentUploads, _config.Upload.MaxConcurrentUploads);
 
         _config.ExpressRouteAdded += (r) =>
         {
-            routes.Add(new Map()
+            var newMap = new Map()
             {
                 Path = r.Path,
                 SubRoutes =
@@ -225,8 +225,11 @@ public class Server
                         Path = "/"
                     }
                 ]
-            });
-
+            };
+            routes.Add(newMap);
+            _routesByMethod[r.HttpMethod].Add(newMap);
+            
+          
 
             _config.Debug.INFO(
                 $"Route |{Terminal.FG_TO_STRING(FgColor.Green)}{r.HttpMethod}{Terminal.RESET} -> {r.Path} (Delegate)");
@@ -247,27 +250,21 @@ public class Server
         SetSsl();
         MapRoutes();
         PrintFinalInfo();
-
-
-        //init modules
-
-
+        
         _config.SetRoutes(routes);
-
+        
+                
         ExecuteModule(ModuleType.Global, _config);
         ExecuteModule(ModuleType.Service, _config);
-
-
-        /*//the class will automatically set according to configuration
-        new OpenApiBuilder(config, Routes).Init();*/
-
+        
         //end of the server initialization
     }
 
     private static bool ExecuteModule(ModuleType type, Configuration config, Request? req = null, Response? res = null,
         MethodInfo? @delegate = null)
     {
-        foreach (var m in InstanceManager<ModuleManager>.GetInstance().GetModules(type, config.EnabledModules))
+        var modules = InstanceManager<ModuleManager>.GetInstance().GetModules(type, config.EnabledModules);
+        foreach (var m in modules)
         {
             //    var r = m.InvokeMember("Process", BindingFlags., null, null, [req, res]);
 
@@ -483,7 +480,7 @@ public class Server
         {
             _config.Debug.WARNING("Unsecure request received, redirecting to SSL");
 
-            Request rq = new([], socket, _config, false);
+            Request rq = new([], socket, _config);
             Response res = new(socket, rq, _config, null);
 
             var redirectEndpoint =
@@ -586,7 +583,9 @@ public class Server
             {
                 if (!await _uploadConcurrencyLimiter.WaitAsync(0))
                 {
-                    var remoteIp = transport.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
+                    var remoteIp = transport.RemoteEndPoint is IPEndPoint endpoint
+                        ? endpoint.Address.ToString()
+                        : "unknown";
                     _config.Debug.WARNING($"[UPLOAD][ERROR] client={remoteIp} reason=too_many_uploads");
                     await SendSimpleResponseAsync(transport, HttpCodes.TOO_MANY_REQUESTS, "Too many uploads");
                     return null;
@@ -637,7 +636,7 @@ public class Server
                 return null;
             }
 
-            var bodyBytes = new byte[(int)expectedLength.Value];
+            var bodyBytes = new byte[(int) expectedLength.Value];
             var totalReadFixed = 0;
 
             while (totalReadFixed < expectedLength.Value)
@@ -645,7 +644,7 @@ public class Server
                 int read;
                 try
                 {
-                    var chunkSize = Math.Min(readBuffer.Length, (int)(expectedLength.Value - totalReadFixed));
+                    var chunkSize = Math.Min(readBuffer.Length, (int) (expectedLength.Value - totalReadFixed));
                     read = await bodyStream.ReadAsync(readBuffer.AsMemory(0, chunkSize));
                 }
                 catch (HttpRequestRejectedException ex)
@@ -659,7 +658,7 @@ public class Server
                     await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
                     return null;
                 }
-                catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+                catch (IOException ex) when (ex.InnerException is SocketException {SocketErrorCode: SocketError.TimedOut})
                 {
                     _config.Debug.WARNING("Closing connection: body receive timeout");
                     await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
@@ -705,7 +704,7 @@ public class Server
                 await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
                 return null;
             }
-            catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+            catch (IOException ex) when (ex.InnerException is SocketException {SocketErrorCode: SocketError.TimedOut})
             {
                 _config.Debug.WARNING("Closing connection: body receive timeout");
                 await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
@@ -758,28 +757,27 @@ public class Server
         var clientIp = transport.RemoteEndPoint is IPEndPoint endpoint ? endpoint.Address.ToString() : "unknown";
         var startedAt = Stopwatch.StartNew();
         long received = 0;
-        long nextProgressThreshold = 64L * 1024L * 1024L;
+        var nextProgressThreshold = 64L * 1024L * 1024L;
         var uploadSizeLabel = headInfo.ContentLength?.ToString() ?? "chunked";
 
         _config.Debug.INFO($"[UPLOAD][START] client={clientIp} size={uploadSizeLabel} mime=\"{headInfo.ContentType}\"");
 
-        using var trackedStream = new ProgressTrackingReadStream(bodyStream, bytesRead =>
+        await using var trackedStream = new ProgressTrackingReadStream(bodyStream, bytesRead =>
         {
             received += bytesRead;
-            if (received >= nextProgressThreshold)
+            if (received < nextProgressThreshold) return;
+            if (headInfo.ContentLength.HasValue)
             {
-                if (headInfo.ContentLength.HasValue)
-                {
-                    var remaining = Math.Max(0, headInfo.ContentLength.Value - received);
-                    _config.Debug.INFO($"[UPLOAD][PROGRESS] client={clientIp} received={received} remaining={remaining}");
-                }
-                else
-                {
-                    _config.Debug.INFO($"[UPLOAD][PROGRESS] client={clientIp} received={received}");
-                }
-
-                nextProgressThreshold += 64L * 1024L * 1024L;
+                var remaining = Math.Max(0, headInfo.ContentLength.Value - received);
+                _config.Debug.INFO(
+                    $"[UPLOAD][PROGRESS] client={clientIp} received={received} remaining={remaining}");
             }
+            else
+            {
+                _config.Debug.INFO($"[UPLOAD][PROGRESS] client={clientIp} received={received}");
+            }
+
+            nextProgressThreshold += 64L * 1024L * 1024L;
         });
 
         try
@@ -791,7 +789,8 @@ public class Server
                 _config.Http,
                 leaveSourceStreamOpen: true);
 
-            _config.Debug.INFO($"[UPLOAD][DONE] client={clientIp} size={received} durationMs={startedAt.ElapsedMilliseconds}");
+            _config.Debug.INFO(
+                $"[UPLOAD][DONE] client={clientIp} size={received} durationMs={startedAt.ElapsedMilliseconds}");
             return multipart;
         }
         catch (MultipartParseException ex)
@@ -812,7 +811,7 @@ public class Server
             await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
             return null;
         }
-        catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+        catch (IOException ex) when (ex.InnerException is SocketException {SocketErrorCode: SocketError.TimedOut})
         {
             _config.Debug.WARNING($"[UPLOAD][ERROR] client={clientIp} reason=timeout");
             await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Upload timeout");
@@ -887,7 +886,7 @@ public class Server
         return exception switch
         {
             ObjectDisposedException => true,
-            IOException { InnerException: SocketException inner } => IsExpectedSocketError(inner.SocketErrorCode),
+            IOException {InnerException: SocketException inner} => IsExpectedSocketError(inner.SocketErrorCode),
             SocketException socketException => IsExpectedSocketError(socketException.SocketErrorCode),
             _ => false
         };
@@ -908,7 +907,7 @@ public class Server
     {
         boundary = string.Empty;
         var headerText = Encoding.UTF8.GetString(headerBytes);
-        var lines = headerText.Split("\r\n", StringSplitOptions.None);
+        var lines = headerText.Split("\r\n");
 
         foreach (var line in lines)
         {
@@ -918,7 +917,7 @@ public class Server
             }
 
             var value = line["Content-Type:".Length..].Trim();
-            var contentTypeParts = value.Split("boundary=", 2, StringSplitOptions.None);
+            var contentTypeParts = value.Split("boundary=", 2);
             if (contentTypeParts.Length != 2 || string.IsNullOrWhiteSpace(contentTypeParts[1]))
             {
                 return false;
@@ -1066,11 +1065,9 @@ public class Server
                         continue;
                     }
 
-                    if (!string.Equals(routePart, relativeParts[i], StringComparison.Ordinal))
-                    {
-                        matches = false;
-                        break;
-                    }
+                    if (string.Equals(routePart, relativeParts[i], StringComparison.Ordinal)) continue;
+                    matches = false;
+                    break;
                 }
 
                 if (!matches)
@@ -1157,26 +1154,32 @@ public class Server
                 {
                     if (_config.WebSocketRouter.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsTotal)
                     {
-                        _config.Debug.WARNING($"WebSocket '{req.Url}' {HttpCodes.SERVICE_UNAVAILABLE} (Global connection limit reached)");
-                        new Error(res, _config, "WebSocket global connection limit reached", HttpCodes.SERVICE_UNAVAILABLE).Throw();
+                        _config.Debug.WARNING(
+                            $"WebSocket '{req.Url}' {HttpCodes.SERVICE_UNAVAILABLE} (Global connection limit reached)");
+                        new Error(res, _config, "WebSocket global connection limit reached",
+                            HttpCodes.SERVICE_UNAVAILABLE).Throw();
                         return;
                     }
 
                     if (endpoint.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsPerEndpoint)
                     {
-                        _config.Debug.WARNING($"WebSocket '{req.Url}' {HttpCodes.TOO_MANY_REQUESTS} (Endpoint connection limit reached)");
-                        new Error(res, _config, "WebSocket endpoint connection limit reached", HttpCodes.TOO_MANY_REQUESTS).Throw();
+                        _config.Debug.WARNING(
+                            $"WebSocket '{req.Url}' {HttpCodes.TOO_MANY_REQUESTS} (Endpoint connection limit reached)");
+                        new Error(res, _config, "WebSocket endpoint connection limit reached",
+                            HttpCodes.TOO_MANY_REQUESTS).Throw();
                         return;
                     }
 
                     endpoint.Add(connection);
-                    _config.Debug.INFO($"[WS][CONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path}");
+                    _config.Debug.INFO(
+                        $"[WS][CONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path}");
                     await connection.Runtime.ProcessAsync(() => endpoint.ConfigureAsync(connection));
                 }
                 finally
                 {
                     var duration = DateTime.UtcNow - connection.ConnectedAtUtc;
-                    _config.Debug.INFO($"[WS][DISCONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path} durationMs={duration.TotalMilliseconds:0}");
+                    _config.Debug.INFO(
+                        $"[WS][DISCONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path} durationMs={duration.TotalMilliseconds:0}");
                     endpoint.Remove(connection);
                 }
 
@@ -1264,7 +1267,8 @@ public class Server
                             if (paramAttributes.Body)
                             {
                                 var deserializedBody = JsonSerializer.Deserialize<Dictionary<string, object>>(req.Body);
-                                if (deserializedBody == null || !deserializedBody.ContainsKey(paramAttributes.Name))
+                                
+                              if (deserializedBody == null || !deserializedBody.ContainsKey(paramAttributes.Name))
                                 {
                                     new Error(res,
                                             _config,
@@ -1542,7 +1546,8 @@ public class Server
         }
     }
 
-    private static RoutableMethod CreateRoutableMethod(string path, HttpMethod httpMethod, MethodInfo? methodInfo, Delegate? @delegate)
+    private static RoutableMethod CreateRoutableMethod(string path, HttpMethod httpMethod, MethodInfo? methodInfo,
+        Delegate? @delegate)
     {
         var normalizedPath = string.IsNullOrWhiteSpace(path) ? "/" : path;
         return new RoutableMethod

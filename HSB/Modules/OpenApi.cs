@@ -16,7 +16,7 @@ public class OpenApi
             return ModuleExitCode.Continue;
         }
 
-        OpenApiBuilder.BuildOpenApiYaml(config, config.GetDetectedRoutes());
+        OpenApiBuilder.BuildOpenApiYaml(config);
 
         if (config.OpenApiSettings.Mode is Mode.Full or Mode.FileOnly)
         {
@@ -24,6 +24,10 @@ public class OpenApi
                 config.GetSharedObject("openapi.json") as string);
         }
 
+        if (config.OpenApiSettings.Mode is Mode.SwaggerOnly or Mode.Full)
+        {
+            SetEndpoints(config);
+        }
 
         return ModuleExitCode.Continue;
     }

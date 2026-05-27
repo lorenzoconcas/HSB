@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Buffers;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -45,27 +46,36 @@ public class Response(
     /// <param name="disconnect"></param>
     public void Send(byte[] data, bool disconnect = true)
     {
-        SendInternal(data, disconnect, throwOnError: false);
+        SendInternal(data.AsMemory(), disconnect, throwOnError: false);
     }
 
     internal void SendOrThrow(byte[] data, bool disconnect = true)
     {
-        SendInternal(data, disconnect, throwOnError: true);
+        SendInternal(data.AsMemory(), disconnect, throwOnError: true);
     }
 
-    private void SendInternal(byte[] data, bool disconnect, bool throwOnError)
+    private void SendInternal(ReadOnlyMemory<byte> data, bool disconnect, bool throwOnError)
     {
         try
         {
             if (_tlsHandler != null)
             {
-                _tlsHandler.Write(data, 0, data.Length);
+                if (MemoryMarshal.TryGetArray(data, out var segment) && segment.Array != null)
+                {
+                    _tlsHandler.Write(segment.Array, segment.Offset, segment.Count);
+                }
+                else
+                {
+                    var bytes = data.ToArray();
+                    _tlsHandler.Write(bytes, 0, bytes.Length);
+                }
+
                 if (disconnect)
                     SafeCloseSocket();
             }
             else if (sslStream != null)
             {
-                sslStream.Write(data);
+                sslStream.Write(data.Span);
                 if (disconnect)
                     SafeCloseSslStream();
             }
@@ -74,7 +84,7 @@ public class Response(
                 var totalSent = 0;
                 while (totalSent < data.Length)
                 {
-                    var sent = socket.Send(data, totalSent, data.Length - totalSent, SocketFlags.None);
+                    var sent = socket.Send(data.Span[totalSent..], SocketFlags.None);
                     if (sent <= 0)
                     {
                         throw new SocketException((int) SocketError.ConnectionReset);
@@ -154,14 +164,8 @@ public class Response(
 
         byte[] bodyBytes = Encoding.UTF8.GetBytes(data);
         var resp = GetHeaders(statusCode, bodyBytes.Length, mime, customHeaders);
-
-        byte[] headerBytes = Encoding.UTF8.GetBytes(resp);
-        byte[] responseBytes = new byte[headerBytes.Length + bodyBytes.Length];
-
-        Buffer.BlockCopy(headerBytes, 0, responseBytes, 0, headerBytes.Length);
-        Buffer.BlockCopy(bodyBytes, 0, responseBytes, headerBytes.Length, bodyBytes.Length);
-
-        Send(responseBytes);
+        SendInternal(Encoding.UTF8.GetBytes(resp), disconnect: false, throwOnError: false);
+        SendInternal(bodyBytes, disconnect: true, throwOnError: false);
     }
 
     /// <summary>
@@ -234,13 +238,8 @@ public class Response(
     {
         var mime = mimeType;
         var headers = GetHeaders(statusCode, data.Length, mime, customHeaders);
-        var headersBytes = Encoding.UTF8.GetBytes(headers);
-        var responseBytes = new byte[data.Length + headersBytes.Length];
-
-        Buffer.BlockCopy(headersBytes, 0, responseBytes, 0, headersBytes.Length);
-        Buffer.BlockCopy(data, 0, responseBytes, headersBytes.Length, data.Length);
-
-        Send(responseBytes);
+        SendInternal(Encoding.UTF8.GetBytes(headers), disconnect: false, throwOnError: false);
+        SendInternal(data, disconnect: true, throwOnError: false);
     }
 
     /// <summary>
@@ -661,24 +660,23 @@ public class Response(
         var headers = GetHeaders(statusCode, length, mimeType, customHeaders);
         SendInternal(Encoding.UTF8.GetBytes(headers), disconnect: false, throwOnError: false);
 
-        var buffer = new byte[64 * 1024];
-        while (!streamClosed)
+        var buffer = ArrayPool<byte>.Shared.Rent(64 * 1024);
+        try
         {
-            var read = stream.Read(buffer, 0, buffer.Length);
-            if (read <= 0)
+            while (!streamClosed)
             {
-                break;
-            }
+                var read = stream.Read(buffer, 0, 64 * 1024);
+                if (read <= 0)
+                {
+                    break;
+                }
 
-            if (read == buffer.Length)
-            {
-                SendInternal(buffer, disconnect: false, throwOnError: false);
-                continue;
+                SendInternal(buffer.AsMemory(0, read), disconnect: false, throwOnError: false);
             }
-
-            var chunk = new byte[read];
-            Buffer.BlockCopy(buffer, 0, chunk, 0, read);
-            SendInternal(chunk, disconnect: false, throwOnError: false);
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
         }
 
         SafeCloseSslStream();
@@ -779,15 +777,9 @@ public class Response(
     {
         byte[] chunkBytes = Encoding.UTF8.GetBytes(data);
         byte[] sizeBytes = Encoding.ASCII.GetBytes($"{chunkBytes.Length:X}\r\n");
-        byte[] endBytes = Encoding.ASCII.GetBytes("\r\n");
-
-        byte[] finalChunk = new byte[sizeBytes.Length + chunkBytes.Length + endBytes.Length];
-
-        Buffer.BlockCopy(sizeBytes, 0, finalChunk, 0, sizeBytes.Length);
-        Buffer.BlockCopy(chunkBytes, 0, finalChunk, sizeBytes.Length, chunkBytes.Length);
-        Buffer.BlockCopy(endBytes, 0, finalChunk, sizeBytes.Length + chunkBytes.Length, endBytes.Length);
-
-        await WriteRaw(finalChunk);
+        await WriteRaw(sizeBytes);
+        await WriteRaw(chunkBytes);
+        await WriteRaw("\r\n"u8.ToArray());
     }
 
     /// <summary>
@@ -807,7 +799,7 @@ public class Response(
     /// Scrive direttamente byte sulla connessione attiva (SSL o socket).
     /// Utilizzato internamente da InitStream/AddStreamChunk/EndStream.
     /// </summary>
-    private async Task WriteRaw(byte[] data)
+    private async Task WriteRaw(ReadOnlyMemory<byte> data)
     {
         if (streamClosed)
             return;
@@ -815,9 +807,16 @@ public class Response(
         {
             if (_tlsHandler != null)
             {
-                // Async implementation of Write? 
-                // Tls12Handler.Write is sync for now.
-                _tlsHandler.Write(data, 0, data.Length);
+                if (MemoryMarshal.TryGetArray(data, out var segment) && segment.Array != null)
+                {
+                    _tlsHandler.Write(segment.Array, segment.Offset, segment.Count);
+                }
+                else
+                {
+                    var bytes = data.ToArray();
+                    _tlsHandler.Write(bytes, 0, bytes.Length);
+                }
+
                 return;
             }
 
@@ -833,7 +832,7 @@ public class Response(
                 while (sent < data.Length)
                 {
                     sent += await socket.SendAsync(
-                        data.AsMemory(sent),
+                        data[sent..],
                         SocketFlags.None
                     );
                 }

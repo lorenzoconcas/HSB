@@ -1,4 +1,6 @@
+using System.Buffers;
 using System.Globalization;
+using System.Text;
 
 namespace HSB.Http;
 
@@ -8,6 +10,8 @@ internal sealed class ChunkedRequestBodyStream : Stream
 
     private readonly ITransportConnection transport;
     private readonly long maxBodySizeBytes;
+    private readonly ArrayPool<byte> pool = ArrayPool<byte>.Shared;
+    private byte[] transportReadBuffer;
     private byte[] pendingBuffer;
     private int pendingOffset;
     private int pendingCount;
@@ -20,9 +24,11 @@ internal sealed class ChunkedRequestBodyStream : Stream
     {
         this.transport = transport;
         this.maxBodySizeBytes = maxBodySizeBytes;
-        pendingBuffer = bufferedPrefix.ToArray();
+        pendingBuffer = pool.Rent(Math.Max(256, bufferedPrefix.Length));
+        bufferedPrefix.Span.CopyTo(pendingBuffer);
         pendingOffset = 0;
-        pendingCount = pendingBuffer.Length;
+        pendingCount = bufferedPrefix.Length;
+        transportReadBuffer = pool.Rent(8 * 1024);
     }
 
     public override bool CanRead => !disposed;
@@ -116,7 +122,7 @@ internal sealed class ChunkedRequestBodyStream : Stream
 
     private async Task<string> ReadLineAsync(CancellationToken cancellationToken)
     {
-        var lineBuffer = new List<byte>(128);
+        using var lineBuffer = new PooledByteBuffer(128, pool);
 
         while (true)
         {
@@ -128,25 +134,24 @@ internal sealed class ChunkedRequestBodyStream : Stream
                 {
                     if (crlfIndex > 0)
                     {
-                        lineBuffer.AddRange(available[..crlfIndex].ToArray());
+                        lineBuffer.Append(available[..crlfIndex]);
                     }
 
                     AdvancePending(crlfIndex + CrLf.Length);
-                    return System.Text.Encoding.ASCII.GetString(lineBuffer.ToArray());
+                    return Encoding.ASCII.GetString(lineBuffer.WrittenSpan);
                 }
 
-                lineBuffer.AddRange(available.ToArray());
+                lineBuffer.Append(available);
                 AdvancePending(pendingCount);
             }
 
-            var tempBuffer = new byte[8 * 1024];
-            var read = await transport.ReadAsync(tempBuffer, cancellationToken);
+            var read = await transport.ReadAsync(transportReadBuffer.AsMemory(0, 8 * 1024), cancellationToken);
             if (read <= 0)
             {
                 throw HttpRequestRejectedException.BadRequest("Unexpected end of chunked body");
             }
 
-            AppendPending(tempBuffer.AsSpan(0, read));
+            AppendPending(transportReadBuffer.AsSpan(0, read));
         }
     }
 
@@ -204,20 +209,22 @@ internal sealed class ChunkedRequestBodyStream : Stream
     }
     private void AppendPending(ReadOnlySpan<byte> bytes)
     {
-        if (pendingCount == 0)
+        if (pendingCount == 0 && pendingOffset == 0 && pendingBuffer.Length >= bytes.Length)
         {
-            pendingBuffer = bytes.ToArray();
-            pendingOffset = 0;
-            pendingCount = pendingBuffer.Length;
+            bytes.CopyTo(pendingBuffer);
+            pendingCount = bytes.Length;
             return;
         }
 
-        var combined = new byte[pendingCount + bytes.Length];
-        pendingBuffer.AsSpan(pendingOffset, pendingCount).CopyTo(combined);
-        bytes.CopyTo(combined.AsSpan(pendingCount));
-        pendingBuffer = combined;
+        EnsurePendingCapacity(pendingCount + bytes.Length);
+        if (pendingCount > 0 && pendingOffset > 0)
+        {
+            pendingBuffer.AsSpan(pendingOffset, pendingCount).CopyTo(pendingBuffer);
+        }
+
+        bytes.CopyTo(pendingBuffer.AsSpan(pendingCount));
         pendingOffset = 0;
-        pendingCount = combined.Length;
+        pendingCount += bytes.Length;
     }
 
     private void AdvancePending(int count)
@@ -227,9 +234,26 @@ internal sealed class ChunkedRequestBodyStream : Stream
 
         if (pendingCount == 0)
         {
-            pendingBuffer = [];
             pendingOffset = 0;
         }
+    }
+
+    private void EnsurePendingCapacity(int requiredCapacity)
+    {
+        if (pendingBuffer.Length >= requiredCapacity)
+        {
+            return;
+        }
+
+        var newBuffer = pool.Rent(Math.Max(requiredCapacity, pendingBuffer.Length * 2));
+        if (pendingCount > 0)
+        {
+            pendingBuffer.AsSpan(pendingOffset, pendingCount).CopyTo(newBuffer);
+        }
+
+        pool.Return(pendingBuffer);
+        pendingBuffer = newBuffer;
+        pendingOffset = 0;
     }
 
     public override int ReadByte()
@@ -257,7 +281,10 @@ internal sealed class ChunkedRequestBodyStream : Stream
     protected override void Dispose(bool disposing)
     {
         disposed = true;
-        pendingBuffer = [];
+        pool.Return(pendingBuffer);
+        pool.Return(transportReadBuffer);
+        pendingBuffer = Array.Empty<byte>();
+        transportReadBuffer = Array.Empty<byte>();
         pendingOffset = 0;
         pendingCount = 0;
         currentChunkRemaining = 0;

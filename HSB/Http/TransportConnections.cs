@@ -1,6 +1,8 @@
+using System.Buffers;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using HSB.Constants.TLS.Manual;
 
 namespace HSB.Http;
@@ -186,21 +188,42 @@ internal sealed class ManualTlsTransportConnection : ITransportConnection
     public async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var tempBuffer = new byte[buffer.Length];
-        var read = await Task.Run(() => tlsHandler.Read(tempBuffer, 0, tempBuffer.Length), cancellationToken);
-        if (read > 0)
+        var rented = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        try
         {
-            tempBuffer.AsMemory(0, read).CopyTo(buffer);
-        }
+            var read = await Task.Run(() => tlsHandler.Read(rented, 0, buffer.Length), cancellationToken);
+            if (read > 0)
+            {
+                rented.AsMemory(0, read).CopyTo(buffer);
+            }
 
-        return read;
+            return read;
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(rented);
+        }
     }
 
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var bytes = buffer.ToArray();
-        await Task.Run(() => tlsHandler.Write(bytes, 0, bytes.Length), cancellationToken);
+        if (MemoryMarshal.TryGetArray(buffer, out var segment) && segment.Array != null)
+        {
+            await Task.Run(() => tlsHandler.Write(segment.Array, segment.Offset, segment.Count), cancellationToken);
+            return;
+        }
+
+        var rented = ArrayPool<byte>.Shared.Rent(buffer.Length);
+        try
+        {
+            buffer.CopyTo(rented);
+            await Task.Run(() => tlsHandler.Write(rented, 0, buffer.Length), cancellationToken);
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(rented);
+        }
     }
 
     public void SetTimeouts(int receiveTimeoutMilliseconds, int sendTimeoutMilliseconds)

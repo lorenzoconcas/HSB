@@ -1,5 +1,5 @@
+using System.Buffers;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using HSB.Constants;
 
@@ -23,54 +23,62 @@ internal sealed class HttpRequestReader(HttpOptions options)
     {
         transport.SetTimeouts(options.HeaderReadTimeoutSeconds * 1000, options.KeepAliveTimeoutSeconds * 1000);
 
-        var buffer = new byte[options.ReadBufferSizeBytes];
-        var headerBuffer = new List<byte>(options.ReadBufferSizeBytes);
+        var pool = ArrayPool<byte>.Shared;
+        var buffer = pool.Rent(options.ReadBufferSizeBytes);
+        using var headerBuffer = new PooledByteBuffer(options.ReadBufferSizeBytes, pool);
 
-        while (true)
+        try
         {
-            int read;
-            try
+            while (true)
             {
-                read = await transport.ReadAsync(buffer, cancellationToken);
-            }
-            catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
-            {
-                throw HttpRequestRejectedException.RequestTimeout("Header receive timeout");
-            }
-            catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
-            {
-                throw HttpRequestRejectedException.RequestTimeout("Header receive timeout");
-            }
+                int read;
+                try
+                {
+                    read = await transport.ReadAsync(buffer.AsMemory(0, options.ReadBufferSizeBytes), cancellationToken);
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                {
+                    throw HttpRequestRejectedException.RequestTimeout("Header receive timeout");
+                }
+                catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+                {
+                    throw HttpRequestRejectedException.RequestTimeout("Header receive timeout");
+                }
 
-            if (read <= 0)
-            {
-                transport.Close();
-                return null;
+                if (read <= 0)
+                {
+                    transport.Close();
+                    return null;
+                }
+
+                headerBuffer.Append(buffer.AsSpan(0, read));
+                if (headerBuffer.Length > options.MaxHeaderSizeBytes)
+                {
+                    throw HttpRequestRejectedException.HeaderTooLarge("Header size limit exceeded");
+                }
+
+                var headerEndIndex = headerBuffer.IndexOf(HeaderDelimiter);
+                if (headerEndIndex < 0)
+                {
+                    continue;
+                }
+
+                var headerLength = headerEndIndex + HeaderDelimiter.Length;
+                var headerBytes = headerBuffer.CopyRangeToArray(0, headerLength);
+                var initialBodyBytes = headerBuffer.Length > headerLength
+                    ? headerBuffer.CopyRangeToArray(headerLength, headerBuffer.Length - headerLength)
+                    : [];
+
+                var head = ParseHead(headerBytes);
+                Stream bodyStream = head.HasChunkedTransferEncoding
+                    ? new ChunkedRequestBodyStream(transport, initialBodyBytes, options.MaxBodySizeBytes)
+                    : new RequestBodyStream(transport, initialBodyBytes, head.ContentLength ?? 0);
+                return new HttpRequestReadResult(head, headerBytes, bodyStream);
             }
-
-            headerBuffer.AddRange(buffer[..read]);
-            if (headerBuffer.Count > options.MaxHeaderSizeBytes)
-            {
-                throw HttpRequestRejectedException.HeaderTooLarge("Header size limit exceeded");
-            }
-
-            var headerEndIndex = CollectionsMarshal.AsSpan(headerBuffer).IndexOf(HeaderDelimiter);
-            if (headerEndIndex < 0)
-            {
-                continue;
-            }
-
-            var headerLength = headerEndIndex + HeaderDelimiter.Length;
-            var headerBytes = headerBuffer[..headerLength].ToArray();
-            var initialBodyBytes = headerBuffer.Count > headerLength
-                ? headerBuffer[headerLength..].ToArray()
-                : [];
-
-            var head = ParseHead(headerBytes);
-            Stream bodyStream = head.HasChunkedTransferEncoding
-                ? new ChunkedRequestBodyStream(transport, initialBodyBytes, options.MaxBodySizeBytes)
-                : new RequestBodyStream(transport, initialBodyBytes, head.ContentLength ?? 0);
-            return new HttpRequestReadResult(head, headerBytes, bodyStream);
+        }
+        finally
+        {
+            pool.Return(buffer);
         }
     }
 

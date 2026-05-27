@@ -1,5 +1,7 @@
+using System.Buffers;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
+using HSB.Http;
 
 namespace HSB.Components;
 
@@ -182,13 +184,14 @@ public sealed class MultiPartFormData : IDisposable
             var mimeType = NormalizeMimeType(section.ContentType);
             var tempFilePath = CreateTempFilePath(fileName);
             long written = 0;
+            var buffer = ArrayPool<byte>.Shared.Rent(64 * 1024);
 
-            using (var target = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 64 * 1024, FileOptions.SequentialScan))
+            try
             {
-                var buffer = new byte[64 * 1024];
+                using var target = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 64 * 1024, FileOptions.SequentialScan);
                 while (true)
                 {
-                    var read = section.Body.Read(buffer, 0, buffer.Length);
+                    var read = section.Body.Read(buffer, 0, 64 * 1024);
                     if (read <= 0)
                     {
                         break;
@@ -204,6 +207,10 @@ public sealed class MultiPartFormData : IDisposable
 
                     target.Write(buffer, 0, read);
                 }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
             }
 
             var filePart = new FilePart(
@@ -225,25 +232,32 @@ public sealed class MultiPartFormData : IDisposable
             throw new MultipartParseException("Unsupported multipart section disposition", Constants.HttpCodes.BAD_REQUEST);
         }
 
-        using var memory = new MemoryStream();
-        var fieldBuffer = new byte[16 * 1024];
+        using var memory = new PooledByteBuffer(256);
+        var fieldBuffer = ArrayPool<byte>.Shared.Rent(16 * 1024);
         long total = 0;
 
-        while (true)
+        try
         {
-            var read = section.Body.Read(fieldBuffer, 0, fieldBuffer.Length);
-            if (read <= 0)
+            while (true)
             {
-                break;
-            }
+                var read = section.Body.Read(fieldBuffer, 0, 16 * 1024);
+                if (read <= 0)
+                {
+                    break;
+                }
 
-            total += read;
-            if (total > uploadOptions.MaxFormFieldSizeBytes)
-            {
-                throw new MultipartParseException("Multipart form field exceeds configured limit", Constants.HttpCodes.PAYLOAD_TOO_LARGE);
-            }
+                total += read;
+                if (total > uploadOptions.MaxFormFieldSizeBytes)
+                {
+                    throw new MultipartParseException("Multipart form field exceeds configured limit", Constants.HttpCodes.PAYLOAD_TOO_LARGE);
+                }
 
-            memory.Write(fieldBuffer, 0, read);
+                memory.Append(fieldBuffer.AsSpan(0, read));
+            }
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(fieldBuffer);
         }
 
         parts.Add(new FormPart(contentDispositionValue, name, memory.ToArray()));

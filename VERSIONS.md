@@ -1,8 +1,32 @@
 # HSB Versions
 This file documents the evolution of the HSB framework. Recent versions are described in detail to support migrations and maintenance; historical versions are summarized from the information available in the repository, examples, and previous roadmap.
 HSB is still pre-1.0: until a stable release, APIs may change. The "Breaking changes" and "Migration notes" sections should always be checked before upgrading.
-## 0.0.20
+## 0.0.21
 Current version indicated in `HSB/Properties/AssemblyInfo.cs`.
+### Focus
+- Release dedicated to memory discipline and internal performance cleanup on top of the 0.0.20 streaming architecture.
+- No new end-user features were introduced in this release.
+### Added
+- Shared pooled byte-buffer helper for internal hot paths.
+- Route dispatch indexing by HTTP method.
+- Route metadata caching for parameterized routes.
+### Changed
+- The HTTP request reader now uses pooled buffers for header accumulation and read scratch space.
+- The chunked request decoder now reuses internal buffers instead of allocating fresh arrays while parsing.
+- Multipart parsing now uses pooled buffers for file-copy and field-accumulation loops.
+- Manual TLS transport read/write bridges now avoid unnecessary per-call array allocations where possible.
+- Fixed-length request-body reads now reuse the direct-length fast path instead of always building through `MemoryStream`.
+- Response file/stream sending now reuses pooled buffers and avoids extra per-chunk copy allocations.
+- Route matching now avoids per-request LINQ pipelines and regex construction for parameterized path checks.
+### Fixed
+- Reduced allocation churn in request, upload, chunked, and response streaming paths.
+- Reduced avoidable copies in chunked output and streamed file responses.
+- Reduced route-dispatch overhead for larger controller/minimal-route sets.
+### Known limitations
+- The repository sandbox still does not provide full benchmark and soak-test evidence for the optimization claims.
+- Response transport internals still rely on the existing `Response` write path rather than the shared request transport abstraction.
+## 0.0.20
+Previous version.
 ### Focus
 - Release dedicated to the first true streaming architecture pass.
 - The server now uses a single modern HTTP request pipeline instead of maintaining the previous duplicated body-reading flow.

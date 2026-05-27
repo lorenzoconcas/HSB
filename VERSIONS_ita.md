@@ -1,8 +1,32 @@
 # HSB Versions
 This file documents the evolution of the HSB framework. Recent versions are described in detail to support migrations and maintenance; historical versions are summarized from the information available in the repository, examples, and previous roadmap.
 HSB is still pre-1.0: until a stable release, APIs may change. The "Breaking changes" and "Migration notes" sections should always be checked before upgrading.
-## 0.0.20
+## 0.0.21
 Versione corrente indicata in `HSB/Properties/AssemblyInfo.cs`.
+### Focus
+- Release dedicata alla disciplina della memoria e alla pulizia prestazionale interna sopra l'architettura streaming della 0.0.20.
+- Nessuna nuova feature lato utente e' stata introdotta in questa release.
+### Added
+- Helper interno condiviso per byte buffer pooled.
+- Indicizzazione del dispatch route per metodo HTTP.
+- Caching dei metadata route per i percorsi parametrizzati.
+### Changed
+- Il request reader HTTP usa ora buffer pooled per accumulare gli header e per lo scratch space di lettura.
+- Il decoder chunked riusa buffer interni invece di allocare array nuovi durante il parsing.
+- Il parsing multipart usa buffer pooled per i loop di copia file e accumulo campi form.
+- I bridge manual TLS in lettura/scrittura evitano quando possibile allocazioni array per chiamata.
+- Le letture body a lunghezza fissa riusano di nuovo il fast path diretto invece di passare sempre da `MemoryStream`.
+- L'invio di file/stream HTTP riusa buffer pooled ed evita copie extra per chunk.
+- Il route matching evita ora pipeline LINQ per request e costruzione regex per i percorsi parametrizzati.
+### Fixed
+- Ridotto il churn di allocazioni nei percorsi request, upload, chunked e response streaming.
+- Ridotte le copie evitabili nell'output chunked e nelle risposte file in streaming.
+- Ridotto l'overhead del dispatch route su set di route controller/minimal API piu' ampi.
+### Known limitations
+- La sandbox del repository non fornisce ancora prove complete con benchmark e soak test per confermare i miglioramenti prestazionali.
+- Gli interni transport delle response usano ancora il path di scrittura esistente di `Response` invece dell'astrazione transport condivisa delle request.
+## 0.0.20
+Versione precedente.
 ### Focus
 - Release dedicata al primo passaggio verso una vera architettura streaming.
 - Il server usa ora una singola pipeline HTTP moderna invece di mantenere il vecchio doppio percorso di lettura body.

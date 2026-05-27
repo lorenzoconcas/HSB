@@ -18,6 +18,7 @@ using HSB.Exceptions;
 using HSB.Components;
 using HSB.Http;
 using HSB.Utils;
+using HttpMethod = HSB.Constants.HttpMethod;
 using Index = HSB.DefaultPages.Index;
 
 namespace HSB;
@@ -32,6 +33,7 @@ public class Server
     private Socket? _sslListener;
     private TlsConnection? _tlsConnection;
     private readonly SemaphoreSlim _uploadConcurrencyLimiter;
+    private readonly Dictionary<HttpMethod, List<Map>> _routesByMethod = [];
 
     private X509Certificate2? _serverCertificate;
 
@@ -625,10 +627,64 @@ public class Server
 
         var readBuffer = new byte[_config.Http.ReadBufferSizeBytes];
         var expectedLength = headInfo.ContentLength;
-        var initialCapacity = expectedLength.HasValue && expectedLength.Value > 0 && expectedLength.Value <= int.MaxValue
-            ? (int)expectedLength.Value
-            : _config.Http.ReadBufferSizeBytes;
-        await using var memory = new MemoryStream(initialCapacity);
+
+        if (expectedLength.HasValue)
+        {
+            if (expectedLength.Value > int.MaxValue)
+            {
+                await SendSimpleResponseAsync(transport, HttpCodes.PAYLOAD_TOO_LARGE,
+                    "Request body too large for buffered read");
+                return null;
+            }
+
+            var bodyBytes = new byte[(int)expectedLength.Value];
+            var totalReadFixed = 0;
+
+            while (totalReadFixed < expectedLength.Value)
+            {
+                int read;
+                try
+                {
+                    var chunkSize = Math.Min(readBuffer.Length, (int)(expectedLength.Value - totalReadFixed));
+                    read = await bodyStream.ReadAsync(readBuffer.AsMemory(0, chunkSize));
+                }
+                catch (HttpRequestRejectedException ex)
+                {
+                    await SendSimpleResponseAsync(transport, ex.StatusCode, ex.Message);
+                    return null;
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                {
+                    _config.Debug.WARNING("Closing connection: body receive timeout");
+                    await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
+                    return null;
+                }
+                catch (IOException ex) when (ex.InnerException is SocketException sockEx && sockEx.SocketErrorCode == SocketError.TimedOut)
+                {
+                    _config.Debug.WARNING("Closing connection: body receive timeout");
+                    await SendSimpleResponseAsync(transport, HttpCodes.REQUEST_TIMEOUT, "Body receive timeout");
+                    return null;
+                }
+                catch (Exception ex) when (IsExpectedDisconnect(ex))
+                {
+                    transport.Close();
+                    return null;
+                }
+
+                if (read <= 0)
+                {
+                    transport.Close();
+                    return null;
+                }
+
+                Buffer.BlockCopy(readBuffer, 0, bodyBytes, totalReadFixed, read);
+                totalReadFixed += read;
+            }
+
+            return bodyBytes;
+        }
+
+        await using var memory = new MemoryStream(_config.Http.ReadBufferSizeBytes);
         long totalRead = 0;
 
         while (true)
@@ -938,10 +994,18 @@ public class Server
 
     private object? GetInstance(Request req)
     {
-        var candidateControllers = routes.Where(map => req.Url.StartsWith(map.Path)).ToArray();
+        if (!_routesByMethod.TryGetValue(req.Method, out var candidateControllers))
+        {
+            return null;
+        }
 
         foreach (var map in candidateControllers)
         {
+            if (!req.Url.StartsWith(map.Path, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
             if (map.SubRoutes.Count == 0)
             {
                 continue;
@@ -949,37 +1013,80 @@ public class Server
 
             //slice relative path, for example if the map path is "/api" and the request url is "/api/status", the relative path will be "/status"
             var relativePath = req.Url[map.Path.Length..];
-            var candidateMethods = map.SubRoutes.Where(r => r.HttpMethod == req.Method).ToList();
 
             //if the root is called, activate the first "/" subRoute if exists, else return 404
             if (relativePath == "")
             {
-                RoutableMethod? rootRoute = candidateMethods.Find(sr => sr.Path == "/");
-                if (!rootRoute.HasValue) return null;
-                //inject Request and Response in the class if there are any parameter with those types, this allows to avoid having to declare them in the route method
+                foreach (var subRoute in map.SubRoutes)
+                {
+                    if (subRoute.HttpMethod == req.Method && subRoute.Path == "/")
+                    {
+                        return (map.Class, subRoute);
+                    }
+                }
 
-                return (map.Class, rootRoute.Value); //activation is done in replacement of the Process() function call
+                return null;
             }
 
-            foreach (var route in candidateMethods)
+            foreach (var route in map.SubRoutes)
             {
-                //get public instance fields
+                if (route.HttpMethod != req.Method)
+                {
+                    continue;
+                }
 
                 if (route.Path == relativePath)
+                {
                     return (map.Class, route);
+                }
 
-                var pattern = "^" + Regex.Replace(route.Path, @":[^/]+", @"[^/]+") + "$";
+                if (!route.HasRouteParameters)
+                {
+                    continue;
+                }
 
-                if (!Regex.IsMatch(relativePath, pattern)) continue;
-                //we extract the parameters from the url and add them to the request parameters
-                var routeParts = route.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                var routeParts = route.PathSegments;
+                if (routeParts == null)
+                {
+                    continue;
+                }
+
                 var relativeParts = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                if (routeParts.Length != relativeParts.Length)
+                {
+                    continue;
+                }
+
+                var matches = true;
                 for (var i = 0; i < routeParts.Length; i++)
                 {
-                    if (!routeParts[i].StartsWith(':')) continue;
-                    var paramName = routeParts[i][1..];
-                    var paramValue = relativeParts[i];
-                    req.Parameters[paramName] = paramValue;
+                    var routePart = routeParts[i];
+                    if (routePart.StartsWith(':'))
+                    {
+                        continue;
+                    }
+
+                    if (!string.Equals(routePart, relativeParts[i], StringComparison.Ordinal))
+                    {
+                        matches = false;
+                        break;
+                    }
+                }
+
+                if (!matches)
+                {
+                    continue;
+                }
+
+                for (var i = 0; i < routeParts.Length; i++)
+                {
+                    var routePart = routeParts[i];
+                    if (!routePart.StartsWith(':'))
+                    {
+                        continue;
+                    }
+
+                    req.Parameters[routePart[1..]] = relativeParts[i];
                 }
 
                 return (map.Class, route);
@@ -1312,12 +1419,7 @@ public class Server
             Path = r.Path,
             SubRoutes =
             [
-                new RoutableMethod()
-                {
-                    Delegate = r.Delegate,
-                    HttpMethod = r.HttpMethod,
-                    Path = "/"
-                }
+                CreateRoutableMethod("/", r.HttpMethod, null, r.Delegate)
             ]
         }));
 
@@ -1350,12 +1452,7 @@ public class Server
                     $"ROUTE | {Terminal.FG_TO_STRING(FgColor.Green)}{routeAttr.Method}{Terminal.RESET} -> {Terminal.FG_TO_STRING(FgColor.Yellow)}{attr.Path}{routeAttr.Path}{Terminal.RESET} {m.Name}";
                 _config.Debug.INFO(logStr);
 
-                map.SubRoutes.Add(new RoutableMethod()
-                {
-                    Path = routeAttr.Path,
-                    HttpMethod = routeAttr.Method,
-                    MethodInfo = m
-                });
+                map.SubRoutes.Add(CreateRoutableMethod(routeAttr.Path, routeAttr.Method, m, null));
             }
 
             var webSocketMethods = c.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -1425,6 +1522,40 @@ public class Server
 
             routes.Add(map);
         }
+
+        routes = routes
+            .OrderByDescending(map => map.Path.Length)
+            .ToList();
+
+        _routesByMethod.Clear();
+        foreach (var method in Enum.GetValues<HttpMethod>())
+        {
+            if (method == HttpMethod.Unknown)
+            {
+                continue;
+            }
+
+            _routesByMethod[method] = routes
+                .Where(map => map.SubRoutes.Any(route => route.HttpMethod == method))
+                .OrderByDescending(map => map.Path.Length)
+                .ToList();
+        }
+    }
+
+    private static RoutableMethod CreateRoutableMethod(string path, HttpMethod httpMethod, MethodInfo? methodInfo, Delegate? @delegate)
+    {
+        var normalizedPath = string.IsNullOrWhiteSpace(path) ? "/" : path;
+        return new RoutableMethod
+        {
+            Path = normalizedPath,
+            HttpMethod = httpMethod,
+            MethodInfo = methodInfo,
+            Delegate = @delegate,
+            HasRouteParameters = normalizedPath.Contains(':'),
+            PathSegments = normalizedPath.Contains(':')
+                ? normalizedPath.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                : null
+        };
     }
 
 

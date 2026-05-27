@@ -25,6 +25,8 @@ public struct RoutableMethod
     public HttpMethod HttpMethod;
     public MethodInfo? MethodInfo;
     public Delegate? Delegate;
+    internal bool HasRouteParameters;
+    internal string[]? PathSegments;
 
     public bool IsValid => !string.IsNullOrEmpty(Path) && MethodInfo != null;
     public RoutableMethodType Type => MethodInfo != null ? RoutableMethodType.Method : RoutableMethodType.Delegate;

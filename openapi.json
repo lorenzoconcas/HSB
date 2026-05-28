@@ -1,0 +1,431 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "HSB Backoffice Demo",
+    "description": "A realistic backoffice demo built on HSB."
+  },
+  "servers": [],
+  "paths": {
+    "/api/customers": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "List",
+        "parameters": [],
+        "responses": {}
+      },
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Create",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/customers/:id": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "GetById",
+        "parameters": [],
+        "responses": {}
+      },
+      "put": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Update",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/customers/:id/orders": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Orders",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/dashboard/summary": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Summary",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/dashboard/sales": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Sales",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/dashboard/low-stock": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "LowStock",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/dashboard/recent-orders": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "RecentOrders",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/dashboard/activity": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Activity",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/inventory/adjustments": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Adjustments",
+        "parameters": [],
+        "responses": {}
+      },
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "CreateAdjustment",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/inventory/low-stock": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "LowStock",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/activity": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "List",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/products": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "List",
+        "parameters": [],
+        "responses": {}
+      },
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Create",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/products/:id": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "GetById",
+        "parameters": [],
+        "responses": {}
+      },
+      "put": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Update",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/products/:id/stock": {
+      "summary": "",
+      "description": "",
+      "patch": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "AdjustStock",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/products/:id/image": {
+      "summary": "",
+      "description": "",
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "UploadImage",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/health": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "\u003C\u003CMain\u003E$\u003Eb__0_0",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/orders": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "List",
+        "parameters": [],
+        "responses": {}
+      },
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Create",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/orders/:id": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "GetById",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/orders/:id/status": {
+      "summary": "",
+      "description": "",
+      "put": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "UpdateStatus",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/orders/:id/attachment": {
+      "summary": "",
+      "description": "",
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "UploadAttachment",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/orders/export.csv": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "ExportCsv",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/meta": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "\u003C\u003CMain\u003E$\u003Eb__0_1",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/auth/login": {
+      "summary": "",
+      "description": "",
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Login",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/auth/logout": {
+      "summary": "",
+      "description": "",
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Logout",
+        "parameters": [],
+        "responses": {}
+      }
+    },
+    "/api/auth/me": {
+      "summary": "",
+      "description": "",
+      "get": {
+        "tags": [
+          "default"
+        ],
+        "summary": "No summary provided",
+        "description": "No description provided",
+        "operationId": "Me",
+        "parameters": [],
+        "responses": {}
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "parameters": {},
+    "examples": {},
+    "requestBodies": {},
+    "headers": {},
+    "securitySchemes": {},
+    "links": {},
+    "callbacks": {}
+  }
+}

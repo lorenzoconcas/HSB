@@ -18,3 +18,5 @@ build/
 Tests/
 MultiplatformLauncher/CompileCode.sh
 server_log.txt
+Examples/BackofficeDemo/frontend/node_modules/
+Examples/BackofficeDemo/frontend/dist/

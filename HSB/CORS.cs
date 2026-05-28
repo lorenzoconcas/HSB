@@ -47,26 +47,57 @@ public class Cors
 
     public bool IsRequestAllowed(Request req)
     {
-        return IsOriginAllowed(req.Headers["Origin"])
-            || IsMethodAllowed(HttpUtils.MethodAsString(req.Method))
-            || IsHeaderAllowed(req, "Access-Control-Request-Headers")
-            || IsExposedHeaderAllowed(req, "Access-Control-Request-Method");
+        if (!req.Headers.TryGetValue("Origin", out string? origin) || string.IsNullOrWhiteSpace(origin))
+        {
+            // Requests without Origin are not cross-origin requests and should not be blocked.
+            return true;
+        }
+
+        if (!IsOriginAllowed(origin))
+        {
+            return false;
+        }
+
+        if (req.Headers.TryGetValue("Access-Control-Request-Method", out string? requestedMethod)
+            && !string.IsNullOrWhiteSpace(requestedMethod)
+            && !IsMethodAllowed(requestedMethod))
+        {
+            return false;
+        }
+
+        if (req.Headers.TryGetValue("Access-Control-Request-Headers", out string? requestedHeaders)
+            && !string.IsNullOrWhiteSpace(requestedHeaders))
+        {
+            foreach (string header in requestedHeaders.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                if (!IsHeaderAllowed(header))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public bool IsOriginAllowed(string origin)
     {
-        if (allowedOrigins.Contains("*"))
+        if (allowedOrigins.Count == 0 || allowedOrigins.Contains("*"))
             return true;
         return allowedOrigins.Contains(origin);
     }
 
     public bool IsMethodAllowed(string method)
     {
+        if (allowedMethods.Count == 0 || allowedMethods.Contains("*"))
+            return true;
         return allowedMethods.Contains(method);
     }
 
     public bool IsHeaderAllowed(string header)
     {
+        if (allowedHeaders.Count == 0 || allowedHeaders.Contains("*"))
+            return true;
         return allowedHeaders.Contains(header);
     }
 
@@ -74,13 +105,15 @@ public class Cors
     {
         if (req.Headers.ContainsKey(header))
         {
-            return exposedHeaders.Contains(header);
+            return IsHeaderAllowed(req.Headers[header]);
         }
         return false;
     }
 
     public bool IsExposedHeaderAllowed(string header)
     {
+        if (exposedHeaders.Count == 0 || exposedHeaders.Contains("*"))
+            return true;
         return exposedHeaders.Contains(header);
     }
 
@@ -88,7 +121,7 @@ public class Cors
     {
         if (req.Headers.ContainsKey(header))
         {
-            return allowedHeaders.Contains(header);
+            return IsExposedHeaderAllowed(req.Headers[header]);
         }
         return false;
     }

@@ -1,4 +1,5 @@
-﻿using HSB.Components.WebSockets;
+﻿using System.Collections.Concurrent;
+using HSB.Components.WebSockets;
 using HSB.Constants;
 using HSB.Constants.TLS;
 using System.Diagnostics;
@@ -33,6 +34,9 @@ public class Server
     private TlsConnection? _tlsConnection;
     private readonly SemaphoreSlim _uploadConcurrencyLimiter;
     private readonly Dictionary<HttpMethod, List<Map>> _routesByMethod = [];
+    private readonly ConcurrentDictionary<string, int> _webSocketConnectionsByIp = new(StringComparer.OrdinalIgnoreCase);
+    private readonly RequestRateLimiter? _requestRateLimiter;
+    private RequestPipelineDelegate _requestPipeline;
 
     private X509Certificate2? _serverCertificate;
 
@@ -193,6 +197,7 @@ public class Server
         _tlsConnection = null;
         _serverCertificate = null;
         _uploadConcurrencyLimiter = new SemaphoreSlim(1, 1);
+        _requestPipeline = static _ => ValueTask.CompletedTask;
 
         config ??= new Configuration();
 
@@ -208,8 +213,10 @@ public class Server
         _config = config;
         _config.Http.ApplyLegacyRequestMaxSize(_config.RequestMaxSize);
         _config.Upload.Clamp();
+        _config.Security.Clamp();
         _uploadConcurrencyLimiter =
             new SemaphoreSlim(_config.Upload.MaxConcurrentUploads, _config.Upload.MaxConcurrentUploads);
+        _requestRateLimiter = _config.Security.RateLimit.Enabled ? new RequestRateLimiter(_config.Security.RateLimit) : null;
 
         _config.ExpressRouteAdded += (r) =>
         {
@@ -256,6 +263,8 @@ public class Server
                 
         ExecuteModule(ModuleType.Global, _config);
         ExecuteModule(ModuleType.Service, _config);
+        RebuildRequestPipeline();
+        _config.MiddlewareAdded += RebuildRequestPipeline;
         
         //end of the server initialization
     }
@@ -319,6 +328,125 @@ public class Server
         }
 
         return true;
+    }
+
+    private void RebuildRequestPipeline()
+    {
+        _requestPipeline = BuildRequestPipeline();
+    }
+
+    private RequestPipelineDelegate BuildRequestPipeline()
+    {
+        RequestPipelineDelegate pipeline = ProcessRequestCoreAsync;
+
+        if (_config.Security.Headers.Enabled)
+        {
+            pipeline = WrapMiddleware(ApplySecurityHeadersAsync, pipeline);
+        }
+
+        if (_requestRateLimiter != null)
+        {
+            pipeline = WrapMiddleware(ApplyRateLimitAsync, pipeline);
+        }
+
+        for (var i = _config.Middleware.Count - 1; i >= 0; i--)
+        {
+            pipeline = WrapMiddleware(_config.Middleware[i], pipeline);
+        }
+
+        return pipeline;
+    }
+
+    private static RequestPipelineDelegate WrapMiddleware(RequestMiddleware middleware, RequestPipelineDelegate next)
+    {
+        return context => middleware(context, () => next(context));
+    }
+
+    private ValueTask ApplySecurityHeadersAsync(RequestContext context, MiddlewareNext next)
+    {
+        var headers = _config.Security.Headers;
+        if (!headers.Enabled)
+        {
+            return next();
+        }
+
+        if (headers.AddContentTypeOptionsHeader)
+        {
+            context.Response.SetHeader("X-Content-Type-Options", "nosniff");
+        }
+
+        if (headers.AddFrameOptionsHeader)
+        {
+            context.Response.SetHeader("X-Frame-Options", headers.FrameOptionsValue);
+        }
+
+        if (headers.AddReferrerPolicyHeader)
+        {
+            context.Response.SetHeader("Referrer-Policy", headers.ReferrerPolicyValue);
+        }
+
+        if (headers.AddPermissionsPolicyHeader)
+        {
+            context.Response.SetHeader("Permissions-Policy", headers.PermissionsPolicyValue);
+        }
+
+        if (headers.AddCrossOriginOpenerPolicyHeader)
+        {
+            context.Response.SetHeader("Cross-Origin-Opener-Policy", headers.CrossOriginOpenerPolicyValue);
+        }
+
+        if (headers.AddCrossOriginResourcePolicyHeader)
+        {
+            context.Response.SetHeader("Cross-Origin-Resource-Policy", headers.CrossOriginResourcePolicyValue);
+        }
+
+        if (headers.AddStrictTransportSecurityHeader && context.Request.IsTls)
+        {
+            context.Response.SetHeader("Strict-Transport-Security", headers.StrictTransportSecurityValue);
+        }
+
+        foreach (var header in headers.CustomHeaders)
+        {
+            context.Response.SetHeader(header.Key, header.Value);
+        }
+
+        return next();
+    }
+
+    private ValueTask ApplyRateLimitAsync(RequestContext context, MiddlewareNext next)
+    {
+        if (_requestRateLimiter == null)
+        {
+            return next();
+        }
+
+        if (!_config.Security.RateLimit.ApplyToWebSocketHandshake && context.Request.IsWebSocket())
+        {
+            return next();
+        }
+
+        var decision = _requestRateLimiter.Evaluate(context.Request.ClientIp);
+        if (decision.Limit > 0 && _config.Security.RateLimit.AddResponseHeaders)
+        {
+            context.Response.SetHeader("X-RateLimit-Limit", decision.Limit.ToString());
+            context.Response.SetHeader("X-RateLimit-Remaining", decision.Remaining.ToString());
+            context.Response.SetHeader("X-RateLimit-Reset", decision.RetryAfterSeconds.ToString());
+        }
+
+        if (decision.Allowed)
+        {
+            return next();
+        }
+
+        if (decision.RetryAfterSeconds > 0)
+        {
+            context.Response.SetHeader("Retry-After", decision.RetryAfterSeconds.ToString());
+        }
+
+        _config.Debug.WARNING(
+            $"Rate limit exceeded ip={context.Request.ClientIp} path={context.Request.Path}");
+        new Error(context.Response, _config, "Rate limit exceeded", HttpCodes.TOO_MANY_REQUESTS).Throw();
+        return ValueTask.CompletedTask;
     }
 
     public void Start(bool openInBrowser = false)
@@ -1098,7 +1226,6 @@ public class Server
     {
         try
         {
-            //check if request is valid                    
             if (!req.ValidRequest)
             {
                 _config.Debug.WARNING($"{req.Method} '{req.Url}' {HttpCodes.NOT_FOUND} (Invalid Request)");
@@ -1106,306 +1233,343 @@ public class Server
                 return;
             }
 
-
-            if (!ExecuteModule(ModuleType.RequestInterceptor, _config, req, res))
-            {
-                return;
-            }
-
-            /*
-            //check if server is launched with --listFiles
-            if (_config.GetRawArguments().Contains("--listFiles"))
-            {
-                if (PathUtils.SafeRequestOrBan(_config, req, res)) return;
-
-                new FileList(req, res, _config).Get();
-                return;
-            }
-            */
-
-
-            //if global CORS are set in configuration, check if the request is allowed
-            if (_config.GlobalCors != null)
-            {
-                if (!_config.GlobalCors.IsRequestAllowed(req))
-                {
-                    _config.Debug.WARNING($"{req.Method} '{req.Url}' {HttpCodes.FORBIDDEN} (CORS not allowed)");
-                    new Error(res, _config, "CORS not allowed", HttpCodes.FORBIDDEN).Throw();
-                    return;
-                }
-            }
-
-            //if dev has used the express mapping, we run the mapped function
-            //if (RunIfExpressMapping(req, res)) return;
-
-            if (req.IsWebSocket())
-            {
-                var endpoint = _config.WebSocketRouter.Match(req.Url);
-                if (endpoint == null)
-                {
-                    _config.Debug.WARNING($"WebSocket '{req.Url}' {HttpCodes.NOT_FOUND} (Route not found)");
-                    new Error(res, _config, "WebSocket route not found", HttpCodes.NOT_FOUND).Throw();
-                    return;
-                }
-
-                var connection = new WebSocketConnection(req, res, _config, endpoint);
-
-                try
-                {
-                    if (_config.WebSocketRouter.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsTotal)
-                    {
-                        _config.Debug.WARNING(
-                            $"WebSocket '{req.Url}' {HttpCodes.SERVICE_UNAVAILABLE} (Global connection limit reached)");
-                        new Error(res, _config, "WebSocket global connection limit reached",
-                            HttpCodes.SERVICE_UNAVAILABLE).Throw();
-                        return;
-                    }
-
-                    if (endpoint.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsPerEndpoint)
-                    {
-                        _config.Debug.WARNING(
-                            $"WebSocket '{req.Url}' {HttpCodes.TOO_MANY_REQUESTS} (Endpoint connection limit reached)");
-                        new Error(res, _config, "WebSocket endpoint connection limit reached",
-                            HttpCodes.TOO_MANY_REQUESTS).Throw();
-                        return;
-                    }
-
-                    endpoint.Add(connection);
-                    _config.Debug.INFO(
-                        $"[WS][CONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path}");
-                    await connection.Runtime.ProcessAsync(() => endpoint.ConfigureAsync(connection));
-                }
-                finally
-                {
-                    var duration = DateTime.UtcNow - connection.ConnectedAtUtc;
-                    _config.Debug.INFO(
-                        $"[WS][DISCONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path} durationMs={duration.TotalMilliseconds:0}");
-                    endpoint.Remove(connection);
-                }
-
-                return;
-            }
-
-            //We check if the route requested is handled by any servlet
-            var o = GetInstance(req);
-
-            if (o != null)
-            {
-                ParameterInfo[] parameters;
-                switch (o)
-                {
-                    case (null, RoutableMethod route):
-                        if (route.Type != RoutableMethodType.Delegate)
-                        {
-                            throw new Exception("Invalid route type, expected delegate");
-                        }
-
-                        parameters = route.Delegate!.GetMethodInfo().GetParameters();
-                        List<object> callingParams = [];
-
-                        foreach (var field in parameters)
-                        {
-                            if (field.ParameterType == typeof(Request))
-                            {
-                                callingParams.Add(req);
-                            }
-                            else if (field.ParameterType == typeof(Response))
-                            {
-                                callingParams.Add(res);
-                            }
-                        }
-
-
-                        if (!ExecuteModule(ModuleType.RequestHandlerInterceptor, _config, req, res,
-                                route.Delegate!.Method))
-                        {
-                            return;
-                        }
-
-                        route.Delegate!.DynamicInvoke(callingParams.ToArray());
-                        return;
-                    case (Type tipo, RoutableMethod route):
-                        if (route.Type != RoutableMethodType.Method)
-                        {
-                            throw new Exception("Invalid route type, expected Class and Method");
-                        }
-
-                        parameters = route.MethodInfo!.GetParameters();
-                        var instance = Activator.CreateInstance(tipo);
-
-                        //get public instance fields
-                        var fields = tipo
-                            .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                            .Where(fi => fi.FieldType == typeof(Request) || fi.FieldType == typeof(Response));
-                        foreach (var field in fields)
-                        {
-                            if (field.FieldType == typeof(Request))
-                            {
-                                field.SetValue(instance, req);
-                            }
-                            else if (field.FieldType == typeof(Response))
-                            {
-                                field.SetValue(instance,
-                                    res); //response is not available at this point, we will set it to null and then inject the real response in the Process() function
-                            }
-                        }
-
-                        _config.Debug.INFO($"HTTP Request | {req.Method} {req.Url}");
-                        //try automatically inject parameters from request to the method
-                        //it must use decorator to specify the parameters to inject, for example [FromQuery] or [FromBody]
-                        //try collect parameters
-                        var methodParameters = route.MethodInfo.GetParameters()
-                            .Where(p => p.GetCustomAttribute<NamedParameter>() != null);
-
-                        List<object> injectionParameters = [];
-
-                        foreach (var methodParameter in methodParameters)
-                        {
-                            var paramAttributes = methodParameter.GetCustomAttribute<NamedParameter>();
-
-                            if (paramAttributes == null) break;
-                            if (paramAttributes.Body)
-                            {
-                                var deserializedBody = JsonSerializer.Deserialize<Dictionary<string, object>>(req.Body);
-                                
-                              if (deserializedBody == null || !deserializedBody.ContainsKey(paramAttributes.Name))
-                                {
-                                    new Error(res,
-                                            _config,
-                                            $"Missing value for parameter {paramAttributes!.Name}",
-                                            HttpCodes.BAD_REQUEST)
-                                        .Throw();
-                                    return;
-                                }
-
-                                //parameters must be collected in order to be applied
-                                var paramValue = deserializedBody[paramAttributes.Name] as string;
-                                var parsedType = TypeUtils.ConvertToType(paramValue!, methodParameter.ParameterType);
-                                injectionParameters.Add(parsedType);
-                            }
-                            else
-                            {
-                                if ((!req.Parameters.ContainsKey(paramAttributes.Name) ||
-                                     req.Parameters[paramAttributes.Name] == "") && paramAttributes.Required)
-                                {
-                                    new Error(res,
-                                            _config,
-                                            $"Missing value for parameter {paramAttributes!.Name}",
-                                            HttpCodes.BAD_REQUEST)
-                                        .Throw();
-                                    return;
-                                }
-
-                                //parameters must be collected in order to be applied
-                                var paramValue = req.Parameters[paramAttributes!.Name];
-                                var parsedType = TypeUtils.ConvertToType(paramValue, methodParameter.ParameterType);
-                                injectionParameters.Add(parsedType);
-                            }
-                        }
-
-                        if (parameters.Length != methodParameters.Count())
-                        {
-                            //method has parameters that are not noted by decorators, we will try to inject req and res if those are needed
-                            foreach (var parameter in parameters)
-                            {
-                                if (parameter.ParameterType == typeof(Request))
-                                {
-                                    injectionParameters.Add(req);
-                                }
-                                else if (parameter.ParameterType == typeof(Response))
-                                {
-                                    injectionParameters.Add(res);
-                                }
-                                else if (parameter.ParameterType == typeof(Configuration))
-                                {
-                                    injectionParameters.Add(_config);
-                                }
-                                else
-                                {
-                                    injectionParameters.Add(new object()); //fall back
-                                }
-                            }
-                        }
-
-                        if (!ExecuteModule(ModuleType.RequestHandlerInterceptor, _config, req, res, route.MethodInfo))
-                        {
-                            return;
-                        }
-
-                        switch (parameters.Length)
-                        {
-                            case 0:
-                                route.MethodInfo.Invoke(instance, null);
-                                break;
-                            default:
-                                route.MethodInfo.Invoke(instance, injectionParameters.ToArray());
-                                break;
-                        }
-
-                        return;
-                    default:
-                        Console.WriteLine(o.GetType());
-                        throw new Exception($"Developer tried to map an invalid object to a route -> {o.GetType()}");
-                }
-            }
-
-            //the client searched for a route that is not mapped by any servlet
-            //so we do some other checks like root page or static resource
-            //if no root page is set we search for and index.html file, else we show the default home page
-            if (req.Url == "/")
-            {
-                //if the client is requesting the root file, we check if there is an index.html file
-                //if not, we use the default servlet
-                if (File.Exists(_config.StaticFolderPath + "/index.html"))
-                {
-                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200");
-                    res.SendHtmlFile(_config.StaticFolderPath + "/index.html");
-                }
-                else
-                {
-                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Default Index Page)");
-                    new Index(res, _config).Get();
-                }
-            }
-            else
-            {
-                //we check if the client is requesting a resource, else 404 not found
-                //to check if the path is safe we use the same regex used in send.js
-                //see: https://github.com/pillarjs/send/blob/master/index.js#L63
-                if (PathUtils.SafeRequestOrBan(_config, req, res))
-                {
-                    return;
-                }
-
-                //if the path is safe, the static folder is set and the file exists, we send it
-                if (_config.StaticFolderPath != "" && File.Exists(_config.StaticFolderPath + "/" + req.Url))
-                {
-                    //config.debug.INFO($"Static file found, serving '{req.URL}'");
-                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Static file)");
-                    res.SendFile(_config.StaticFolderPath + "/" + req.Url);
-                }
-                else if (_config.ServeEmbeddedResource &&
-                         ResourceUtils.IsEmbeddedResource(req.Url, _config.EmbeddedResourcePrefix))
-                {
-                    _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Embedded resource)");
-                    var resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix) ??
-                                   throw new Exception("Resource not found");
-                    res.SendObject(resource, req.Url);
-                }
-                else
-                {
-                    //if no servlet or static file found, send 404
-                    _config.Debug.INFO($"{req.Method} '{req.Url}' 404 (Resource not found)");
-                    new Error(res, _config, "Page not found", HttpCodes.NOT_FOUND).Throw();
-                }
-            }
+            await _requestPipeline(new RequestContext(req, res, _config));
         }
         catch (Exception e)
         {
-            //config.debug.ERROR("Error handling request ->\n " + e);
             _config.Debug.ERROR($"{req.Method} '{req.Url}' 500 (Internal Server Error)\n{e}");
-            //we show an error page with the message and code 500
             new Error(res, _config, e.ToString(), HttpCodes.INTERNAL_SERVER_ERROR).Throw();
+        }
+    }
+
+    private async ValueTask ProcessRequestCoreAsync(RequestContext context)
+    {
+        var req = context.Request;
+        var res = context.Response;
+
+        if (!ExecuteModule(ModuleType.RequestInterceptor, _config, req, res))
+        {
+            return;
+        }
+
+        if (_config.GlobalCors != null && !_config.GlobalCors.IsRequestAllowed(req))
+        {
+            _config.Debug.WARNING($"{req.Method} '{req.Url}' {HttpCodes.FORBIDDEN} (CORS not allowed)");
+            new Error(res, _config, "CORS not allowed", HttpCodes.FORBIDDEN).Throw();
+            return;
+        }
+
+        if (req.IsWebSocket())
+        {
+            var endpoint = _config.WebSocketRouter.Match(req.Url);
+            if (endpoint == null)
+            {
+                _config.Debug.WARNING($"WebSocket '{req.Url}' {HttpCodes.NOT_FOUND} (Route not found)");
+                new Error(res, _config, "WebSocket route not found", HttpCodes.NOT_FOUND).Throw();
+                return;
+            }
+
+            var connection = new WebSocketConnection(req, res, _config, endpoint);
+            var ipSlotReserved = false;
+
+            try
+            {
+                if (_config.WebSocketRouter.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsTotal)
+                {
+                    _config.Debug.WARNING(
+                        $"WebSocket '{req.Url}' {HttpCodes.SERVICE_UNAVAILABLE} (Global connection limit reached)");
+                    new Error(res, _config, "WebSocket global connection limit reached",
+                        HttpCodes.SERVICE_UNAVAILABLE).Throw();
+                    return;
+                }
+
+                if (endpoint.ConnectionCount >= _config.WebSocketOptions.MaxConnectionsPerEndpoint)
+                {
+                    _config.Debug.WARNING(
+                        $"WebSocket '{req.Url}' {HttpCodes.TOO_MANY_REQUESTS} (Endpoint connection limit reached)");
+                    new Error(res, _config, "WebSocket endpoint connection limit reached",
+                        HttpCodes.TOO_MANY_REQUESTS).Throw();
+                    return;
+                }
+
+                if (_config.WebSocketOptions.MaxConnectionsPerIp > 0 &&
+                    !TryReserveWebSocketConnectionSlot(connection.RemoteIp, _config.WebSocketOptions.MaxConnectionsPerIp))
+                {
+                    _config.Debug.WARNING(
+                        $"WebSocket '{req.Url}' {HttpCodes.TOO_MANY_REQUESTS} (IP connection limit reached)");
+                    new Error(res, _config, "WebSocket IP connection limit reached",
+                        HttpCodes.TOO_MANY_REQUESTS).Throw();
+                    return;
+                }
+
+                ipSlotReserved = _config.WebSocketOptions.MaxConnectionsPerIp > 0;
+                endpoint.Add(connection);
+                _config.Debug.INFO(
+                    $"[WS][CONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path}");
+                await connection.Runtime.ProcessAsync(() => endpoint.ConfigureAsync(connection));
+            }
+            finally
+            {
+                if (ipSlotReserved)
+                {
+                    ReleaseWebSocketConnectionSlot(connection.RemoteIp);
+                }
+
+                var duration = DateTime.UtcNow - connection.ConnectedAtUtc;
+                _config.Debug.INFO(
+                    $"[WS][DISCONNECT] id={connection.Id} ip={connection.RemoteIp} path={connection.Path} durationMs={duration.TotalMilliseconds:0}");
+                endpoint.Remove(connection);
+            }
+
+            return;
+        }
+
+        var o = GetInstance(req);
+        if (o != null)
+        {
+            ParameterInfo[] parameters;
+            switch (o)
+            {
+                case (null, RoutableMethod route):
+                    if (route.Type != RoutableMethodType.Delegate)
+                    {
+                        throw new Exception("Invalid route type, expected delegate");
+                    }
+
+                    parameters = route.Delegate!.GetMethodInfo().GetParameters();
+                    List<object> callingParams = [];
+
+                    foreach (var field in parameters)
+                    {
+                        if (field.ParameterType == typeof(Request))
+                        {
+                            callingParams.Add(req);
+                        }
+                        else if (field.ParameterType == typeof(Response))
+                        {
+                            callingParams.Add(res);
+                        }
+                    }
+
+                    if (!ExecuteModule(ModuleType.RequestHandlerInterceptor, _config, req, res,
+                            route.Delegate!.Method))
+                    {
+                        return;
+                    }
+
+                    await AwaitResultAsync(route.Delegate.DynamicInvoke(callingParams.ToArray()));
+                    return;
+                case (Type tipo, RoutableMethod route):
+                    if (route.Type != RoutableMethodType.Method)
+                    {
+                        throw new Exception("Invalid route type, expected Class and Method");
+                    }
+
+                    parameters = route.MethodInfo!.GetParameters();
+                    var instance = Activator.CreateInstance(tipo);
+
+                    var fields = tipo
+                        .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Where(fi => fi.FieldType == typeof(Request) || fi.FieldType == typeof(Response));
+                    foreach (var field in fields)
+                    {
+                        if (field.FieldType == typeof(Request))
+                        {
+                            field.SetValue(instance, req);
+                        }
+                        else if (field.FieldType == typeof(Response))
+                        {
+                            field.SetValue(instance, res);
+                        }
+                    }
+
+                    _config.Debug.INFO($"HTTP Request | {req.Method} {req.Url}");
+                    var methodParameters = route.MethodInfo.GetParameters()
+                        .Where(p => p.GetCustomAttribute<NamedParameter>() != null);
+
+                    List<object> injectionParameters = [];
+
+                    foreach (var methodParameter in methodParameters)
+                    {
+                        var paramAttributes = methodParameter.GetCustomAttribute<NamedParameter>();
+
+                        if (paramAttributes == null) break;
+                        if (paramAttributes.Body)
+                        {
+                            var deserializedBody = JsonSerializer.Deserialize<Dictionary<string, object>>(req.Body);
+
+                            if (deserializedBody == null || !deserializedBody.ContainsKey(paramAttributes.Name))
+                            {
+                                new Error(res,
+                                        _config,
+                                        $"Missing value for parameter {paramAttributes!.Name}",
+                                        HttpCodes.BAD_REQUEST)
+                                    .Throw();
+                                return;
+                            }
+
+                            var paramValue = deserializedBody[paramAttributes.Name] as string;
+                            var parsedType = TypeUtils.ConvertToType(paramValue!, methodParameter.ParameterType);
+                            injectionParameters.Add(parsedType);
+                        }
+                        else
+                        {
+                            if ((!req.Parameters.ContainsKey(paramAttributes.Name) ||
+                                 req.Parameters[paramAttributes.Name] == "") && paramAttributes.Required)
+                            {
+                                new Error(res,
+                                        _config,
+                                        $"Missing value for parameter {paramAttributes!.Name}",
+                                        HttpCodes.BAD_REQUEST)
+                                    .Throw();
+                                return;
+                            }
+
+                            var paramValue = req.Parameters[paramAttributes!.Name];
+                            var parsedType = TypeUtils.ConvertToType(paramValue, methodParameter.ParameterType);
+                            injectionParameters.Add(parsedType);
+                        }
+                    }
+
+                    if (parameters.Length != methodParameters.Count())
+                    {
+                        foreach (var parameter in parameters)
+                        {
+                            if (parameter.ParameterType == typeof(Request))
+                            {
+                                injectionParameters.Add(req);
+                            }
+                            else if (parameter.ParameterType == typeof(Response))
+                            {
+                                injectionParameters.Add(res);
+                            }
+                            else if (parameter.ParameterType == typeof(Configuration))
+                            {
+                                injectionParameters.Add(_config);
+                            }
+                            else
+                            {
+                                injectionParameters.Add(new object());
+                            }
+                        }
+                    }
+
+                    if (!ExecuteModule(ModuleType.RequestHandlerInterceptor, _config, req, res, route.MethodInfo))
+                    {
+                        return;
+                    }
+
+                    var invocationResult = parameters.Length == 0
+                        ? route.MethodInfo.Invoke(instance, null)
+                        : route.MethodInfo.Invoke(instance, injectionParameters.ToArray());
+                    await AwaitResultAsync(invocationResult);
+                    return;
+                default:
+                    Console.WriteLine(o.GetType());
+                    throw new Exception($"Developer tried to map an invalid object to a route -> {o.GetType()}");
+            }
+        }
+
+        if (req.Url == "/")
+        {
+            if (File.Exists(_config.StaticFolderPath + "/index.html"))
+            {
+                _config.Debug.INFO($"{req.Method} '{req.Url}' 200");
+                res.SendHtmlFile(_config.StaticFolderPath + "/index.html");
+            }
+            else
+            {
+                _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Default Index Page)");
+                new Index(res, _config).Get();
+            }
+
+            return;
+        }
+
+        if (PathUtils.SafeRequestOrBan(_config, req, res))
+        {
+            return;
+        }
+
+        if (_config.StaticFolderPath != "" && File.Exists(_config.StaticFolderPath + "/" + req.Url))
+        {
+            _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Static file)");
+            res.SendFile(_config.StaticFolderPath + "/" + req.Url);
+        }
+        else if (_config.ServeEmbeddedResource &&
+                 ResourceUtils.IsEmbeddedResource(req.Url, _config.EmbeddedResourcePrefix))
+        {
+            _config.Debug.INFO($"{req.Method} '{req.Url}' 200 (Embedded resource)");
+            var resource = ResourceUtils.LoadResource<object>(req.Url, _config.EmbeddedResourcePrefix) ??
+                           throw new Exception("Resource not found");
+            res.SendObject(resource, req.Url);
+        }
+        else
+        {
+            _config.Debug.INFO($"{req.Method} '{req.Url}' 404 (Resource not found)");
+            new Error(res, _config, "Page not found", HttpCodes.NOT_FOUND).Throw();
+        }
+    }
+
+    private static async ValueTask AwaitResultAsync(object? result)
+    {
+        switch (result)
+        {
+            case null:
+                return;
+            case Task task:
+                await task;
+                return;
+            case ValueTask valueTask:
+                await valueTask;
+                return;
+        }
+    }
+
+    private bool TryReserveWebSocketConnectionSlot(string remoteIp, int maxConnectionsPerIp)
+    {
+        while (true)
+        {
+            if (_webSocketConnectionsByIp.TryGetValue(remoteIp, out var current))
+            {
+                if (current >= maxConnectionsPerIp)
+                {
+                    return false;
+                }
+
+                if (_webSocketConnectionsByIp.TryUpdate(remoteIp, current + 1, current))
+                {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if (_webSocketConnectionsByIp.TryAdd(remoteIp, 1))
+            {
+                return true;
+            }
+        }
+    }
+
+    private void ReleaseWebSocketConnectionSlot(string remoteIp)
+    {
+        while (_webSocketConnectionsByIp.TryGetValue(remoteIp, out var current))
+        {
+            if (current <= 1)
+            {
+                if (_webSocketConnectionsByIp.TryRemove(remoteIp, out _))
+                {
+                    return;
+                }
+
+                continue;
+            }
+
+            if (_webSocketConnectionsByIp.TryUpdate(remoteIp, current - 1, current))
+            {
+                return;
+            }
         }
     }
 

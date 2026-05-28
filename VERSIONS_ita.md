@@ -1,8 +1,72 @@
 # HSB Versions
 This file documents the evolution of the HSB framework. Recent versions are described in detail to support migrations and maintenance; historical versions are summarized from the information available in the repository, examples, and previous roadmap.
 HSB is still pre-1.0: until a stable release, APIs may change. The "Breaking changes" and "Migration notes" sections should always be checked before upgrading.
-## 0.0.21
+## 0.0.22
 Versione corrente indicata in `HSB/Properties/AssemblyInfo.cs`.
+### Focus
+- Release dedicata al primo vero layer di hardening security/runtime sopra il server streaming moderno.
+- Introduce una pipeline middleware, controlli di request hardening, throttling avanzato e protezioni piu' forti su autenticazione e runtime mantenendo le API di routing correnti.
+### Added
+- Pipeline middleware request tramite `Configuration.Use(...)`.
+- Contesto middleware per-request con:
+  - `Request`
+  - `Response`
+  - `Configuration`
+  - `Items` per-request
+- Nuovo gruppo di configurazione `Security` con:
+  - security headers di risposta
+  - regole di validazione request
+  - rate limiting token-bucket
+- API per modificare header sulla singola response in `Response`:
+  - `SetHeader(...)`
+  - `RemoveHeader(...)`
+  - `TryGetHeader(...)`
+- Storage generico per-request su `Request`.
+- Supporto al contesto autenticato tramite `AuthContext` e helper request per leggere il principal autenticato.
+- Registrazioni strutturate per autenticazione con metadata identita' per:
+  - bearer token
+  - API key
+  - utenti basic
+- Opzioni di hardening WebSocket per:
+  - origini consentite
+  - header origin obbligatorio
+  - subprotocol ammessi
+  - limiti connessioni per IP
+### Changed
+- Le request HTTP passano ora attraverso una pipeline middleware compilata prima del dispatch route.
+- Gli handler minimal API e i metodi controller possono ora completare correttamente in modo asincrono quando restituiscono `Task` o `ValueTask`.
+- Il parsing request puo' ora rifiutare prima pattern invalidi di host/path/query/cookie quando `Security.Validation` e' abilitato.
+- Il rate limiting built-in puo' ora emettere header `Retry-After` e `X-RateLimit-*`.
+- L'ammissione WebSocket puo' ora imporre regole piu' strette su origin/subprotocol prima del completamento dell'handshake.
+- Il modulo authentication ora:
+  - salva i dati dell'identita' autenticata sulla request
+  - supporta autorizzazione a ruoli tramite `[RequireAuth(Roles = ...)]`
+  - scrive risposte corrette `401` vs `403`
+  - emette challenge `WWW-Authenticate` quando configurato
+- L'esempio TokenAuthentication mostra ora un flusso auth configurato reale invece di generare un token fittizio dentro l'endpoint di login.
+### Fixed
+- Corretto il comportamento degli handler async minimal route che prima venivano invocati senza await.
+- Corretto il modulo authentication che prima si fermava a un semplice esempio booleano senza contesto autenticato sulla request.
+- Corrette le risposte di autorizzazione: ruoli insufficienti producono ora `403 Forbidden` invece di una risposta genericamente unauthorized.
+### Security
+- Gli hardening header opzionali coprono ora controlli comuni come `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` e HSTS opzionale.
+- La validazione request opzionale puo' ora imporre allow-list sugli host e request-target piu' rigorosi.
+- Il throttling opzionale per IP puo' ora rifiutare rate abusive prima dell'esecuzione della route.
+- I controlli credenziali basic ora usano confronto a tempo costante.
+- La validazione dell'handshake WebSocket puo' ora rifiutare origini sconosciute, origin mancanti, subprotocol non supportati e fan-out eccessivo per IP.
+### Validation
+- Build verificate:
+  - `HSB/HSB.csproj`
+  - `Examples/HelloWorld/HelloWorld.csproj`
+  - `Examples/StreamingResponse/StreamingResponse.csproj`
+  - `Examples/TokenAuthentication/TokenAuthentication.csproj`
+  - `Runner/Runner.csproj`
+### Known limitations
+- I middleware sono append-only nell'API corrente: non esiste ancora un handle built-in per rimuoverli/disabilitarli dopo la registrazione.
+- I module interceptor legacy restano parte del runtime per backward compatibility e convivono ancora con la nuova pipeline middleware.
+- I metadata endpoint-aware non sono ancora esposti come uno stage middleware dedicato post-routing.
+## 0.0.21
+Versione precedente.
 ### Focus
 - Release dedicata alla disciplina della memoria e alla pulizia prestazionale interna sopra l'architettura streaming della 0.0.20.
 - Nessuna nuova feature lato utente e' stata introdotta in questa release.

@@ -12,8 +12,13 @@ public sealed class WebSocketOptions
     public int MaxMessagePayloadBytes { get; set; } = Configuration.KILOBYTE * 256;
     public int MaxConnectionsPerEndpoint { get; set; } = 1000;
     public int MaxConnectionsTotal { get; set; } = 10000;
+    public int MaxConnectionsPerIp { get; set; }
     public bool ValidateOriginWithCors { get; set; } = true;
+    public bool RequireOriginHeader { get; set; }
+    public bool RequireKnownSubProtocol { get; set; }
     public bool SuppressExpectedDisconnectErrors { get; set; } = true;
+    public string[] AllowedOrigins { get; set; } = [];
+    public string[] AllowedSubProtocols { get; set; } = [];
 
     public static WebSocketOptions FromJson(JsonElement json)
     {
@@ -59,14 +64,47 @@ public sealed class WebSocketOptions
             options.MaxConnectionsTotal = maxConnectionsTotal.GetInt32();
         }
 
+        if (json.TryGetProperty(nameof(MaxConnectionsPerIp), out var maxConnectionsPerIp))
+        {
+            options.MaxConnectionsPerIp = maxConnectionsPerIp.GetInt32();
+        }
+
         if (json.TryGetProperty(nameof(ValidateOriginWithCors), out var validateOriginWithCors))
         {
             options.ValidateOriginWithCors = validateOriginWithCors.GetBoolean();
         }
 
+        if (json.TryGetProperty(nameof(RequireOriginHeader), out var requireOriginHeader))
+        {
+            options.RequireOriginHeader = requireOriginHeader.GetBoolean();
+        }
+
+        if (json.TryGetProperty(nameof(RequireKnownSubProtocol), out var requireKnownSubProtocol))
+        {
+            options.RequireKnownSubProtocol = requireKnownSubProtocol.GetBoolean();
+        }
+
         if (json.TryGetProperty(nameof(SuppressExpectedDisconnectErrors), out var suppressExpectedDisconnectErrors))
         {
             options.SuppressExpectedDisconnectErrors = suppressExpectedDisconnectErrors.GetBoolean();
+        }
+
+        if (json.TryGetProperty(nameof(AllowedOrigins), out var allowedOrigins) &&
+            allowedOrigins.ValueKind == JsonValueKind.Array)
+        {
+            options.AllowedOrigins = allowedOrigins.EnumerateArray()
+                .Select(item => item.GetString())
+                .OfType<string>()
+                .ToArray();
+        }
+
+        if (json.TryGetProperty(nameof(AllowedSubProtocols), out var allowedSubProtocols) &&
+            allowedSubProtocols.ValueKind == JsonValueKind.Array)
+        {
+            options.AllowedSubProtocols = allowedSubProtocols.EnumerateArray()
+                .Select(item => item.GetString())
+                .OfType<string>()
+                .ToArray();
         }
 
         options.Clamp();
@@ -83,5 +121,16 @@ public sealed class WebSocketOptions
         MaxMessagePayloadBytes = Math.Max(MaxFramePayloadBytes, MaxMessagePayloadBytes);
         MaxConnectionsPerEndpoint = Math.Max(1, MaxConnectionsPerEndpoint);
         MaxConnectionsTotal = Math.Max(MaxConnectionsPerEndpoint, MaxConnectionsTotal);
+        MaxConnectionsPerIp = Math.Max(0, MaxConnectionsPerIp);
+        AllowedOrigins = AllowedOrigins
+            .Where(origin => !string.IsNullOrWhiteSpace(origin))
+            .Select(origin => origin.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        AllowedSubProtocols = AllowedSubProtocols
+            .Where(protocol => !string.IsNullOrWhiteSpace(protocol))
+            .Select(protocol => protocol.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 }

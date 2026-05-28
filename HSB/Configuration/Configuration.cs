@@ -18,6 +18,7 @@ public class Configuration
     
     public event Action<ExpressMap>? ExpressRouteAdded;
     public event Action<WebSocketEndpoint>? WebSocketRouteAdded;
+    internal event Action? MiddlewareAdded;
     /// <summary>
     /// The server listening address, ex : "127.0.0.1" or "192.168.1.2" or "" (for any address)
     /// </summary>
@@ -97,6 +98,7 @@ public class Configuration
     /// Expressjs-like routing (es in Express.js you map pages and path like : app.get(path, (req, res){})
     /// </summary>
     private readonly List<ExpressMap> expressMapping = [];
+    private readonly List<RequestMiddleware> middleware = [];
     private readonly WebSocketRouter webSocketRouter = new();
 
     /// <summary>
@@ -175,6 +177,7 @@ public class Configuration
     public readonly WebSocketOptions WebSocketOptions = new();
     public readonly HttpOptions Http = new();
     public readonly UploadOptions Upload = new();
+    public readonly SecurityOptions Security = new();
     
     public readonly List<string> EnabledModules = ClassUtils.ListClassWithPrefix("HSB.Modules");
     
@@ -204,6 +207,7 @@ public class Configuration
         WebSocketOptions = new WebSocketOptions();
         Http = new HttpOptions();
         Upload = new UploadOptions();
+        Security = new SecurityOptions();
     }
 
     /// <summary>
@@ -289,6 +293,16 @@ public class Configuration
             {
                 Upload = new UploadOptions();
             }
+
+            if (TryGetProperty(root, "security", out var securityOptions))
+            {
+                lastProp = nameof(Security);
+                Security = SecurityOptions.FromJson(securityOptions);
+            }
+            else
+            {
+                Security = new SecurityOptions();
+            }
             
         }
         catch (Exception e)
@@ -330,6 +344,7 @@ public class Configuration
         Http = new HttpOptions();
         Http.ApplyLegacyRequestMaxSize(RequestMaxSize);
         Upload = new UploadOptions();
+        Security = new SecurityOptions();
     }
 
     /// <summary>
@@ -362,7 +377,19 @@ public class Configuration
     }
 
     protected internal List<ExpressMap> ExpressRoutes => expressMapping;
+    internal IReadOnlyList<RequestMiddleware> Middleware => middleware;
     public WebSocketRouter WebSocketRouter => webSocketRouter;
+
+    public void Use(RequestMiddleware requestMiddleware)
+    {
+        middleware.Add(requestMiddleware);
+        MiddlewareAdded?.Invoke();
+    }
+
+    public void Use(Func<RequestContext, MiddlewareNext, Task> requestMiddleware)
+    {
+        Use(new RequestMiddleware(async (ctx, next) => await requestMiddleware(ctx, next)));
+    }
 
     /// <summary>
     /// Map a function to a path that will reply with a GET response 

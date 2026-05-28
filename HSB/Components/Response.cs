@@ -31,6 +31,7 @@ public class Response(
     private readonly Request request = request;
     private readonly Configuration config = c;
     readonly Dictionary<string, string> attributes = [];
+    readonly Dictionary<string, string> responseHeaders = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<string> responseCookies = [];
     private volatile bool streamClosed;
 
@@ -479,6 +480,30 @@ public class Response(
         }
     }
 
+    public void SetHeader(string name, string value)
+    {
+        lock (responseHeaders)
+        {
+            responseHeaders[name] = value;
+        }
+    }
+
+    public void RemoveHeader(string name)
+    {
+        lock (responseHeaders)
+        {
+            responseHeaders.Remove(name);
+        }
+    }
+
+    public bool TryGetHeader(string name, out string value)
+    {
+        lock (responseHeaders)
+        {
+            return responseHeaders.TryGetValue(name, out value!);
+        }
+    }
+
     #endregion
 
     #region Utils
@@ -518,8 +543,14 @@ public class Response(
 
         var globalHeadersSnapshot = config.CustomGlobalHeaders.ToArray();
         var globalCookiesSnapshot = config.CustomGlobalCookies.ToArray();
+        KeyValuePair<string, string>[] responseHeadersSnapshot;
 
         string[] responseCookiesSnapshot;
+        lock (responseHeaders)
+        {
+            responseHeadersSnapshot = responseHeaders.ToArray();
+        }
+
         lock (responseCookies)
         {
             responseCookiesSnapshot = responseCookies.ToArray();
@@ -530,6 +561,11 @@ public class Response(
 
         var mergedHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         foreach (var header in globalHeadersSnapshot)
+        {
+            mergedHeaders[header.Key] = header.Value;
+        }
+
+        foreach (var header in responseHeadersSnapshot)
         {
             mergedHeaders[header.Key] = header.Value;
         }

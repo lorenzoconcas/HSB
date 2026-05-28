@@ -3,7 +3,7 @@
 ![HSB banner](banner.png)
 
 [![.NET](https://img.shields.io/badge/.NET-net10.0-512BD4)](https://dotnet.microsoft.com/)
-[![Version](https://img.shields.io/badge/version-0.0.18-blue)](./VERSIONS.md)
+[![Version](https://img.shields.io/badge/version-0.0.22-blue)](./VERSIONS.md)
 [![License](https://img.shields.io/badge/license-see%20LICENSE.md-lightgrey)](./LICENSE.md)
 
 
@@ -25,6 +25,7 @@ Security	Header/request limits, timeouts, anti-Slowloris hardening, CORS, IP fil
 Middleware/hooks	Global modules, request interceptors, request handler interceptors, service modules
 TLS	SslConfiguration, .p12/.pkcs12 certificates, native .NET TLS and experimental HSB handler
 OpenAPI	Attributes and dedicated handlers for API documentation
+Runtime hardening	Optional middleware pipeline, security headers, request validation, rate limiting, and stricter WebSocket admission controls
 
 Philosophy
 
@@ -119,6 +120,36 @@ expiresIn = 3600
 });
 
 Helpers are available for Get, Post, Put, Delete, Patch, Head, Options, Trace, and Connect.
+
+Middleware
+
+HSB also supports a lightweight middleware pipeline for cross-cutting request logic:
+
+```csharp
+config.Use(async (ctx, next) =>
+{
+    Console.WriteLine(ctx.Request.Path);
+    ctx.Response.SetHeader("X-Trace", "hsb");
+    await next();
+});
+```
+
+Middlewares execute in registration order and can short-circuit by not calling `next()`.
+
+Security hardening
+
+The `Security` options group is fully opt-in:
+
+```csharp
+config.Security.Headers.Enabled = true;
+config.Security.RateLimit.Enabled = true;
+config.Security.RateLimit.PermitLimit = 240;
+config.Security.RateLimit.BurstLimit = 300;
+config.Security.Validation.Enabled = true;
+config.Security.Validation.AllowedHosts = ["localhost", "127.0.0.1"];
+```
+
+`Security.Headers` adds common response hardening headers, `Security.Validation` enforces request-level guards, and `Security.RateLimit` enables per-IP token-bucket throttling with `Retry-After` and `X-RateLimit-*` headers.
 
 Route parameters
 

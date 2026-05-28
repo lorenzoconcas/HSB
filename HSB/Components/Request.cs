@@ -36,6 +36,7 @@ public class Request : IDisposable
     private string body = "";
     readonly Dictionary<string, string> headers = new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string, string> parameters = new(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string, object?> items = new(StringComparer.Ordinal);
     readonly List<string> rawHeaders = [];
     readonly Dictionary<string, Cookie> cookies = new(StringComparer.OrdinalIgnoreCase);
     readonly List<Cookie> responseCookies = [];
@@ -48,6 +49,8 @@ public class Request : IDisposable
     private Session session = new();
     private MultiPartFormData? multiPartFormData;
     private Form? form;
+    private string queryString = string.Empty;
+    private string rawTarget = string.Empty;
 
     public bool IsValidRequest = true;
     public int InvalidStatusCode { get; private set; } = HttpCodes.BAD_REQUEST;
@@ -161,6 +164,7 @@ public class Request : IDisposable
             }
 
             string rawTarget = firstLine[1];
+            this.rawTarget = rawTarget;
 
             if (string.IsNullOrWhiteSpace(rawTarget))
             {
@@ -170,6 +174,7 @@ public class Request : IDisposable
 
             string[] targetParts = rawTarget.Split('?', 2);
             Url = targetParts[0];
+            queryString = targetParts.Length == 2 ? targetParts[1] : string.Empty;
 
             if (string.IsNullOrWhiteSpace(Url))
             {
@@ -184,9 +189,9 @@ public class Request : IDisposable
 
             Protocol = HttpUtils.GetProtocol(firstLine[2]);
 
-            if (targetParts.Length == 2)
+            if (queryString.Length != 0)
             {
-                ParseQueryString(targetParts[1]);
+                ParseQueryString(queryString);
             }
 
             ParseHeaders();
@@ -200,6 +205,11 @@ public class Request : IDisposable
             }
 
             ParseCookies();
+            ValidateSecurityRules();
+            if (!IsValidRequest)
+            {
+                return;
+            }
             ResolveSession();
             AttachBodyData();
 
@@ -253,7 +263,21 @@ public class Request : IDisposable
             return;
         }
 
+        if (config.Security.Validation.Enabled &&
+            config.Security.Validation.MaxQueryStringLength > 0 &&
+            queryString.Length > config.Security.Validation.MaxQueryStringLength)
+        {
+            MarkInvalidRequest("Query string too long", HttpCodes.URI_TOO_LONG);
+            return;
+        }
+
         string[] requestParameters = queryString.Split('&', StringSplitOptions.RemoveEmptyEntries);
+        if (config.Security.Validation.Enabled &&
+            requestParameters.Length > config.Security.Validation.MaxQueryParameterCount)
+        {
+            MarkInvalidRequest("Too many query parameters", HttpCodes.BAD_REQUEST);
+            return;
+        }
 
         foreach (var p in requestParameters)
         {
@@ -365,9 +389,19 @@ public class Request : IDisposable
 
         var cookieValues = val.Split(';', StringSplitOptions.RemoveEmptyEntries);
 
+        var validationOptions = config.Security.Validation;
+        if (validationOptions.Enabled && cookieValues.Length > validationOptions.MaxCookieCount)
+        {
+            MarkInvalidRequest("Too many cookies", HttpCodes.BAD_REQUEST);
+            return;
+        }
+
         foreach (var rawCookie in cookieValues)
         {
-            if (rawCookie.Length > 4096)
+            var maxCookieLength = validationOptions.Enabled
+                ? validationOptions.MaxCookieLengthBytes
+                : 4096;
+            if (rawCookie.Length > maxCookieLength)
             {
                 continue;
             }
@@ -442,6 +476,90 @@ public class Request : IDisposable
         body = Encoding.UTF8.GetString(rawBody);
     }
 
+    private void ValidateSecurityRules()
+    {
+        var validation = config.Security.Validation;
+        if (!validation.Enabled)
+        {
+            return;
+        }
+
+        if (validation.MaxPathLength > 0 && Url.Length > validation.MaxPathLength)
+        {
+            MarkInvalidRequest("Request path too long", HttpCodes.URI_TOO_LONG);
+            return;
+        }
+
+        if (validation.RequireHostHeaderForHttp11 &&
+            Protocol == HttpProtocol.HTTP1_1 &&
+            !headers.ContainsKey("Host"))
+        {
+            MarkInvalidRequest("Missing Host header", HttpCodes.BAD_REQUEST);
+            return;
+        }
+
+        if (validation.AllowedHosts.Length > 0)
+        {
+            if (!headers.TryGetValue("Host", out var hostHeader) || !IsAllowedHost(hostHeader, validation.AllowedHosts))
+            {
+                MarkInvalidRequest("Host header not allowed", HttpCodes.FORBIDDEN);
+                return;
+            }
+        }
+
+        if (validation.RejectBackslashInPath && (rawTarget.Contains('\\') || Url.Contains('\\')))
+        {
+            MarkInvalidRequest("Invalid path", HttpCodes.BAD_REQUEST);
+            return;
+        }
+
+        if (!validation.RejectEncodedPathTraversal)
+        {
+            return;
+        }
+
+        var decodedPath = SafeUrlDecode(Url);
+        if (decodedPath.Contains("../", StringComparison.Ordinal) ||
+            decodedPath.Contains("..\\", StringComparison.Ordinal) ||
+            decodedPath.Equals("..", StringComparison.Ordinal))
+        {
+            MarkInvalidRequest("Unsafe path", HttpCodes.BAD_REQUEST);
+        }
+    }
+
+    private static bool IsAllowedHost(string hostHeader, IReadOnlyCollection<string> allowedHosts)
+    {
+        if (string.IsNullOrWhiteSpace(hostHeader))
+        {
+            return false;
+        }
+
+        var normalizedHost = NormalizeHost(hostHeader);
+        return allowedHosts.Any(allowed => string.Equals(NormalizeHost(allowed), normalizedHost,
+            StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string NormalizeHost(string host)
+    {
+        host = host.Trim();
+        if (host.StartsWith('['))
+        {
+            var endBracketIndex = host.IndexOf(']');
+            if (endBracketIndex > 0)
+            {
+                return host[1..endBracketIndex];
+            }
+        }
+
+        var colonIndex = host.LastIndexOf(':');
+        if (colonIndex > 0 && host.IndexOf(':') == colonIndex)
+        {
+            return host[..colonIndex];
+        }
+
+        return host;
+    }
+
     private static string SafeUrlDecode(string value)
     {
         if (string.IsNullOrEmpty(value))
@@ -473,6 +591,9 @@ public class Request : IDisposable
     /// Return the url of the request
     /// </summary>
     public string Url { get; private set; } = "";
+    public string Path => Url;
+    public string QueryString => queryString;
+    public string RawTarget => rawTarget;
 
     /// <summary>
     /// Return the ip of the client (request source ip)
@@ -509,6 +630,7 @@ public class Request : IDisposable
     /// Return the parameters
     /// </summary>
     public Dictionary<string, string> Parameters => parameters;
+    public IDictionary<string, object?> Items => items;
     /// <summary>
     /// Return the session associated with the request
     /// </summary>
@@ -558,6 +680,28 @@ public class Request : IDisposable
     /// </summary>
     /// <returns></returns>
     public Form? GetFormData() => form;
+
+    public void SetItem(string key, object? value)
+    {
+        items[key] = value;
+    }
+
+    public bool RemoveItem(string key)
+    {
+        return items.Remove(key);
+    }
+
+    public bool TryGetItem<T>(string key, out T? value)
+    {
+        if (items.TryGetValue(key, out var rawValue) && rawValue is T typedValue)
+        {
+            value = typedValue;
+            return true;
+        }
+
+        value = default;
+        return false;
+    }
 
     public void Dispose()
     {

@@ -11,8 +11,8 @@ namespace JwtAuth;
 [ApiTag("Example Controller")]
 class AuthenticationExample
 {
-    public Request req;
-    private Response res;
+    public Request req = null!;
+    private Response res = null!;
 
 
     [Get("/")]
@@ -101,8 +101,8 @@ class AuthenticationExample
 
 
     [Post("login")]
-    [ApiSummary("Login endpoint, send any username and password to login")]
-    [ApiDescription("")]
+    [ApiSummary("Login endpoint returning a configured bearer token for valid credentials")]
+    [ApiDescription("This example validates the submitted credentials against the AuthenticationManager and returns a bearer token with an admin role.")]
     public void Login([NamedParameter("username", true, true)] string username,
         [NamedParameter("password", true, true)] string password)
     {
@@ -116,24 +116,34 @@ class AuthenticationExample
             return;
         }
 
-        //your login logic
+        if (!AuthenticationManager.Instance.ValidateBasic(username, password))
+        {
+            res.Json(new
+            {
+                error = "Unauthorized"
+            }, HttpCodes.UNAUTHORIZED);
+            return;
+        }
 
-        AuthenticationManager.Instance.AddBearerToken("IMAFAKEBEARER");
-        
         res.Json(new
         {
-            accessToken = "IMAFAKEBEARER"
+            accessToken = "demo-admin-token"
         });
     }
 
 
     [Get("admin")]
-    [RequireAuth]
+    [RequireAuth(Roles = ["admin"])]
     public void AdminPage()
     {
+        var auth = req.GetAuthContext();
+
         res.SendJson(new
         {
-            result = "Logged"
+            result = "Logged",
+            user = auth?.Username,
+            roles = auth?.Roles,
+            authType = auth?.AuthType.ToString()
         });
     }
 }

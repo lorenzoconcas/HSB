@@ -21,6 +21,7 @@ The default Configuration constructor holds the following properties:
 | `CustomServerName`             | `""`                         | string                 | If this string is not empty all HSB related strings are replaced by this value, even in the "Server" response header                                                                               |
 | `Debug`                        | `new Debugger()`             | Debugger Class         | Hold all debug information and functions, like logging to disk and to Console                                                                                                                      |
 | `SslSettings`                  | `new SslConfiguration()`     | SslConfiguration Class | This class contains all ssl-related settings, by default is not enabled                                                                                                                            |
+| `Security`                     | `new SecurityOptions()`      | SecurityOptions Class  | Optional runtime hardening options for headers, request validation, and rate limiting                                                                                                              |
 
 The configuration class provides also some utilities, like object sharing between servlets (so you can avoid to use the singleton tecnique) and global headers (used to append custom headers to ALL responses)
 
@@ -59,5 +60,36 @@ Cookies added to each request
 | `void GetRawArguments()`                   | Returns the unparsed command line arguments |
 | `void HideBrandingOnStartup()`             | Hides the logo printing on startup          |
 | `List<Tuple<string, string>> GetAllRoutes` | Return the list of detected routes          |
+
+##### Middleware
+
+You can register request middleware without changing existing route mappings:
+
+```csharp
+config.Use(async (ctx, next) =>
+{
+    Console.WriteLine(ctx.Request.Path);
+    await next();
+});
+```
+
+The middleware context exposes:
+
+| Name | Description |
+| ---- | ----------- |
+| `ctx.Request` | The current HSB request |
+| `ctx.Response` | The current HSB response |
+| `ctx.Configuration` | The active HSB configuration |
+| `ctx.Items` | Per-request storage for middleware and handlers |
+
+##### Security
+
+The `Security` property contains three opt-in groups:
+
+| Property | Description |
+| -------- | ----------- |
+| `Security.Headers` | Adds configurable security headers to responses |
+| `Security.Validation` | Enforces host/path/query/cookie validation rules |
+| `Security.RateLimit` | Enables per-IP token-bucket throttling with optional response headers |
 
 ---

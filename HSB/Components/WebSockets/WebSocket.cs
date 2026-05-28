@@ -106,14 +106,30 @@ internal sealed class WebSocket(
             return false;
         }
 
-        if (options.ValidateOriginWithCors &&
-            headers.TryGetValue("Origin", out var origin) &&
-            c.GlobalCors != null &&
-            !c.GlobalCors.IsOriginAllowed(origin))
+        if (options.RequireOriginHeader && !headers.ContainsKey("Origin"))
         {
-            c.Debug.WARNING($"Rejected websocket origin '{origin}'");
+            c.Debug.WARNING("Rejected websocket connection without Origin header");
             res.SendCode(HttpCodes.FORBIDDEN);
             return false;
+        }
+
+        if (headers.TryGetValue("Origin", out var origin))
+        {
+            if (options.AllowedOrigins.Length > 0 && !IsOriginAllowed(origin))
+            {
+                c.Debug.WARNING($"Rejected websocket origin '{origin}'");
+                res.SendCode(HttpCodes.FORBIDDEN);
+                return false;
+            }
+
+            if (options.ValidateOriginWithCors &&
+                c.GlobalCors != null &&
+                !c.GlobalCors.IsOriginAllowed(origin))
+            {
+                c.Debug.WARNING($"Rejected websocket origin '{origin}'");
+                res.SendCode(HttpCodes.FORBIDDEN);
+                return false;
+            }
         }
 
         res.SetReadTimeout(options.ReceivePollTimeoutMilliseconds);
@@ -130,16 +146,20 @@ internal sealed class WebSocket(
             "Sec-WebSocket-Accept: " + key + "\r\n",
         ];
 
+        var selectedProtocol = string.Empty;
         if (headers.TryGetValue("Sec-WebSocket-Protocol", out var protocolHeader))
         {
-            var protocol = protocolHeader
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .FirstOrDefault();
-
-            if (!string.IsNullOrWhiteSpace(protocol))
+            if (!TrySelectSubProtocol(protocolHeader, out selectedProtocol))
             {
-                response.Add("Sec-WebSocket-Protocol: " + protocol + "\r\n");
+                c.Debug.WARNING("Rejected websocket subprotocol negotiation");
+                res.SendCode(HttpCodes.BAD_REQUEST);
+                return false;
             }
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedProtocol))
+        {
+            response.Add("Sec-WebSocket-Protocol: " + selectedProtocol + "\r\n");
         }
 
         response.Add("\r\n");
@@ -593,6 +613,39 @@ internal sealed class WebSocket(
         {
             return false;
         }
+    }
+
+    private bool IsOriginAllowed(string origin)
+    {
+        if (options.AllowedOrigins.Contains("*"))
+        {
+            return true;
+        }
+
+        return options.AllowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private bool TrySelectSubProtocol(string headerValue, out string selectedProtocol)
+    {
+        selectedProtocol = string.Empty;
+        var requestedProtocols = headerValue
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (requestedProtocols.Length == 0)
+        {
+            return !options.RequireKnownSubProtocol;
+        }
+
+        if (options.AllowedSubProtocols.Length == 0)
+        {
+            selectedProtocol = requestedProtocols[0];
+            return true;
+        }
+
+        selectedProtocol = requestedProtocols.FirstOrDefault(protocol =>
+            options.AllowedSubProtocols.Contains(protocol, StringComparer.OrdinalIgnoreCase)) ?? string.Empty;
+
+        return !string.IsNullOrWhiteSpace(selectedProtocol) || !options.RequireKnownSubProtocol;
     }
 
     private static bool IsExpectedDisconnect(Exception exception)

@@ -2,6 +2,9 @@
 using HSB;
 using HSB.OpenApi;
 using HSB.OpenApi.Attributes;
+using HSB.OpenApi.models;
+using Response = HSB.Response;
+using Server = HSB.Server;
 
 namespace StressTest;
 
@@ -21,7 +24,7 @@ internal static class Program
             orders.Add(new
             {
                 id = Guid.NewGuid(),
-               // amount = random.Next(10, 10000),
+                // amount = random.Next(10, 10000),
                 currency = "EUR",
                 createdAt = DateTime.UtcNow
             });
@@ -215,6 +218,13 @@ internal static class Program
                 MaxConcurrentUploads = 10,
                 TempPath = "./temp"
             },
+            OpenApiSettings = new OpenApiSettings()
+            {
+                Info = new Info("Fake Enterprise Server",
+                    "This is a simulator of a enterprise server to stress test HSB")
+                {
+                }
+            }
             //Address = "0.0.0.0"
         };
 

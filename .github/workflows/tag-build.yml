@@ -37,3 +37,11 @@ jobs:
 
       - name: Build solution
         run: dotnet build HSB.sln --configuration ${{ matrix.configuration }} --no-restore
+
+      - name: Upload HSB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HSB-${{ matrix.configuration }}-${{ github.ref_name }}
+          path: HSB/bin/${{ matrix.configuration }}/net10.0/
+          if-no-files-found: error
+          retention-days: 30

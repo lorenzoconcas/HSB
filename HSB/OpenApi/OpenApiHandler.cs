@@ -32,7 +32,9 @@ public static class OpenApiBuilder
                     Delete = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Delete)),
                     Patch = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Patch)),
                     Options = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Options)),
-                    Head = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Head))
+                    Head = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Head)),
+                    Trace = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Trace)),
+                    Query = GetOperation(methods.FirstOrDefault(r => r.HttpMethod == HttpMethod.Query))
                 };
                 
                 var suggestedTag = route.Class?.GetCustomAttribute<ApiTag>()?.Tag ?? "default";
@@ -44,6 +46,8 @@ public static class OpenApiBuilder
                 pathItem.Patch?.Tags = [suggestedTag];
                 pathItem.Options?.Tags = [suggestedTag];
                 pathItem.Head?.Tags = [suggestedTag];
+                pathItem.Trace?.Tags = [suggestedTag];
+                pathItem.Query?.Tags = [suggestedTag];
 
 
                 paths.Add(PathUtils.JoinPath(route.Path, group.Key), pathItem);
@@ -139,7 +143,7 @@ public static class OpenApiBuilder
 
     public static void BuildOpenApiYaml(Configuration configuration)
     {
-        var api = new models.OpenApi("3.0.0")
+        var api = new models.OpenApi("3.2.0")
         {
             Info = configuration.OpenApiSettings.Info,
             Servers = [],
@@ -158,4 +162,3 @@ public static class OpenApiBuilder
         configuration.AddSharedObject("openapi.json", json);
     }
 }
-

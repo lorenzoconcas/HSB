@@ -7,6 +7,8 @@ Current version indicated in `HSB/Properties/AssemblyInfo.cs`.
 - Release dedicated to the first real security/runtime hardening layer on top of the modern streaming server.
 - Introduces a middleware pipeline, request hardening controls, advanced throttling, and stronger authentication/runtime protections while preserving the current routing APIs.
 ### Added
+- HTTP `QUERY` support following RFC 10008 across request parsing, minimal routes, controller attributes, and OpenAPI 3.2 output.
+- `Configuration.Query(...)`, `[Query(...)]`, and `HttpMethod.Query`.
 - Request middleware pipeline through `Configuration.Use(...)`.
 - Request-scoped middleware context with:
   - `Request`
@@ -33,6 +35,8 @@ Current version indicated in `HSB/Properties/AssemblyInfo.cs`.
   - allowed subprotocols
   - per-IP connection caps
 ### Changed
+- QUERY requests now require `Content-Type` and retain their request body for route handlers.
+- Generated OpenAPI documents now use OpenAPI 3.2 so QUERY operations can be represented natively.
 - HTTP requests now execute through a compiled middleware pipeline before route dispatch.
 - Minimal API delegates and controller handlers can now complete asynchronously when they return `Task` or `ValueTask`.
 - Request parsing can now reject invalid host/path/query/cookie patterns earlier when `Security.Validation` is enabled.
@@ -45,6 +49,8 @@ Current version indicated in `HSB/Properties/AssemblyInfo.cs`.
   - emits `WWW-Authenticate` challenges when configured
 - The TokenAuthentication example now demonstrates a real configured auth flow instead of dynamically minting a placeholder token inside the login endpoint.
 ### Fixed
+- Fixed `[Options(...)]` incorrectly registering a POST route.
+- Invalid parsed requests now preserve their specific 4xx status and reason in the server response.
 - Fixed minimal-route async handlers previously being invoked without awaiting completion.
 - Fixed authentication behavior so endpoint protection is no longer a simple boolean example with no authenticated request context.
 - Fixed authorization responses so insufficient roles now produce `403 Forbidden` instead of generic unauthorized behavior.

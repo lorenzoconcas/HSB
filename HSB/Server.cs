@@ -1228,8 +1228,8 @@ public class Server
         {
             if (!req.ValidRequest)
             {
-                _config.Debug.WARNING($"{req.Method} '{req.Url}' {HttpCodes.NOT_FOUND} (Invalid Request)");
-                new Error(res, _config, "Invalid Request", HttpCodes.NOT_FOUND).Throw();
+                _config.Debug.WARNING($"{req.Method} '{req.Url}' {req.InvalidStatusCode} ({req.InvalidReason})");
+                new Error(res, _config, req.InvalidReason, req.InvalidStatusCode).Throw();
                 return;
             }
 

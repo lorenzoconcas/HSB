@@ -7,6 +7,8 @@ Versione corrente indicata in `HSB/Properties/AssemblyInfo.cs`.
 - Release dedicata al primo vero layer di hardening security/runtime sopra il server streaming moderno.
 - Introduce una pipeline middleware, controlli di request hardening, throttling avanzato e protezioni piu' forti su autenticazione e runtime mantenendo le API di routing correnti.
 ### Added
+- Supporto al metodo HTTP `QUERY` conforme a RFC 10008 nel parsing request, nelle route minimal, negli attributi controller e nell'output OpenAPI 3.2.
+- `Configuration.Query(...)`, `[Query(...)]` e `HttpMethod.Query`.
 - Pipeline middleware request tramite `Configuration.Use(...)`.
 - Contesto middleware per-request con:
   - `Request`
@@ -33,6 +35,8 @@ Versione corrente indicata in `HSB/Properties/AssemblyInfo.cs`.
   - subprotocol ammessi
   - limiti connessioni per IP
 ### Changed
+- Le request QUERY richiedono ora `Content-Type` e mantengono il body disponibile agli handler.
+- I documenti OpenAPI generati usano ora OpenAPI 3.2, che rappresenta nativamente le operazioni QUERY.
 - Le request HTTP passano ora attraverso una pipeline middleware compilata prima del dispatch route.
 - Gli handler minimal API e i metodi controller possono ora completare correttamente in modo asincrono quando restituiscono `Task` o `ValueTask`.
 - Il parsing request puo' ora rifiutare prima pattern invalidi di host/path/query/cookie quando `Security.Validation` e' abilitato.
@@ -45,6 +49,8 @@ Versione corrente indicata in `HSB/Properties/AssemblyInfo.cs`.
   - emette challenge `WWW-Authenticate` quando configurato
 - L'esempio TokenAuthentication mostra ora un flusso auth configurato reale invece di generare un token fittizio dentro l'endpoint di login.
 ### Fixed
+- Corretto `[Options(...)]`, che registrava erroneamente una route POST.
+- Le request non valide mantengono ora lo specifico status 4xx e la relativa motivazione nella risposta del server.
 - Corretto il comportamento degli handler async minimal route che prima venivano invocati senza await.
 - Corretto il modulo authentication che prima si fermava a un semplice esempio booleano senza contesto autenticato sulla request.
 - Corrette le risposte di autorizzazione: ruoli insufficienti producono ora `403 Forbidden` invece di una risposta genericamente unauthorized.

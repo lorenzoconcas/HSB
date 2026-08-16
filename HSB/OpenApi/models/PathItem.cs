@@ -16,7 +16,8 @@ public class PathItem
         Operation? trace,
         string? @ref,
         List<Server>? servers,
-        List<Parameter>? parameters)
+        List<Parameter>? parameters,
+        Operation? query = null)
     {
         Ref = @ref;
         Summary = summary;
@@ -29,6 +30,7 @@ public class PathItem
         Head = head;
         Patch = patch;
         Trace = trace;
+        Query = query;
         Servers = servers;
         Parameters = parameters;
     }
@@ -67,6 +69,8 @@ public class PathItem
     [JsonPropertyName("patch")] public Operation? Patch { get; set; }
 
     [JsonPropertyName("trace")] public Operation? Trace { get; set; }
+
+    [JsonPropertyName("query")] public Operation? Query { get; set; }
 
     [JsonPropertyName("servers")] public List<Server>? Servers { get; set; }
 

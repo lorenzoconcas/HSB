@@ -3,6 +3,6 @@ using HttpMethod = HSB.Constants.HttpMethod;
 
 namespace HSB.Components.Controller;
 
-public class Options(string path) : Route(path, HttpMethod.Post)
+public class Options(string path) : Route(path, HttpMethod.Options)
 {
 }

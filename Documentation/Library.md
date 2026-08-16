@@ -40,11 +40,22 @@ config.Post("/echo", (Request req, Response res) =>
 {
     res.Send(req.Body);
 });
+
+config.Query("/search", (Request req, Response res) =>
+{
+    res.Json(new { query = req.Body });
+});
 ```
 
 The configuration class provides helpers for:
 
-`Get`, `Post`, `Head`, `Put`, `Delete`, `Patch`, `Trace`, `Options`, `Connect`.
+`Get`, `Post`, `Head`, `Put`, `Delete`, `Patch`, `Trace`, `Options`, `Connect`, `Query`.
+
+`Query` implements the safe and idempotent HTTP `QUERY` method defined by
+[RFC 10008](https://www.rfc-editor.org/rfc/rfc10008.html). Its input is supplied in the request body,
+and clients must include `Content-Type`. Use `Response.SetHeader("Accept-Query", ...)` to advertise
+the media types accepted by a resource. Cross-origin browser requests require `QUERY` in the CORS
+allowed-method list.
 
 ### Controllers
 
@@ -58,6 +69,12 @@ public class ApiController
     private void Hello(Response res)
     {
         res.Json(new { message = "hello" });
+    }
+
+    [Query("/search")]
+    private void Search(Request req, Response res)
+    {
+        res.Json(new { query = req.Body });
     }
 }
 ```

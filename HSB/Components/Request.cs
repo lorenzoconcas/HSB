@@ -195,6 +195,15 @@ public class Request : IDisposable
             }
 
             ParseHeaders();
+            if (Method == HttpMethod.Query &&
+                (!headers.TryGetValue("Content-Type", out var queryContentType) ||
+                 string.IsNullOrWhiteSpace(queryContentType) ||
+                 !System.Net.Http.Headers.MediaTypeHeaderValue.TryParse(queryContentType, out _)))
+            {
+                MarkInvalidRequest("QUERY requests require a valid Content-Type header", HttpCodes.BAD_REQUEST);
+                return;
+            }
+
             ExtractAuthData();
             TryExtractAndSetOAuth1_0();
 
@@ -807,6 +816,7 @@ public static class HttpUtils
         HttpMethod.Options => "OPTIONS",
         HttpMethod.Trace => "TRACE",
         HttpMethod.Connect => "CONNECT",
+        HttpMethod.Query => "QUERY",
         _ => "GET", //failsafe?
     };
 
@@ -829,6 +839,7 @@ public static class HttpUtils
         "OPTIONS" => HttpMethod.Options,
         "TRACE" => HttpMethod.Trace,
         "CONNECT" => HttpMethod.Connect,
+        "QUERY" => HttpMethod.Query,
         _ => HttpMethod.Unknown
     };
 

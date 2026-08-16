@@ -454,6 +454,14 @@ public class Configuration
     /// <param name="func">Function that will handle the request</param>
     public void Connect(string path, Delegate func) => AddExpressMapping(path, HttpMethod.Connect, func);
 
+    /// <summary>
+    /// Map a function to a path that will process a safe, idempotent QUERY request.
+    /// QUERY requests carry their query representation in the request body.
+    /// </summary>
+    /// <param name="path">Mapping</param>
+    /// <param name="func">Function that will handle the request</param>
+    public void Query(string path, Delegate func) => AddExpressMapping(path, HttpMethod.Query, func);
+
     public WebSocketEndpoint WebSocket(string path, Action<WebSocketConnection> handler)
     {
         var endpoint = webSocketRouter.Map(path, handler);

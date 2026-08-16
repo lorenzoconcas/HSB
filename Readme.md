@@ -18,7 +18,7 @@ HSB currently provides:
 Area	Current support
 HTTP server	TCP sockets, routing, static files, embedded resources
 Modern routing	Attribute-based controllers and minimal API/Express-style mappings
-Controllers	[Controller], [Get], [Post], [Route], route parameters, Request and Response injection
+Controllers	[Controller], [Get], [Post], [Query], [Route], route parameters, Request and Response injection
 WebSocket	Modern endpoints via Configuration.WebSocket(...) and [Ws] inside controllers
 Streaming	Chunked responses with InitStream, AddStreamChunk, EndStream
 Security	Header/request limits, timeouts, anti-Slowloris hardening, CORS, IP filters, TLS
@@ -34,7 +34,7 @@ HSB aims to stay small, explicit, and close to the protocol. The framework does 
 The modern design focuses on three ways of building applications:
 
 * Attribute-based controllers for APIs organized by functional area.
-* Minimal API style with config.Get(...), config.Post(...), config.WebSocket(...) for small endpoints or prototypes.
+* Minimal API style with config.Get(...), config.Post(...), config.Query(...), config.WebSocket(...) for small endpoints or prototypes.
 * Modules for cross-cutting hooks such as authentication, filtering, and pre/post-routing logic.
 
 The old Servlet and [Binding] model has been removed: routes are now defined through controllers or direct mappings on Configuration.
@@ -119,7 +119,18 @@ expiresIn = 3600
 });
 });
 
-Helpers are available for Get, Post, Put, Delete, Patch, Head, Options, Trace, and Connect.
+config.Query("/search", (Request req, Response res) =>
+{
+// QUERY is safe and idempotent like GET, but its query is carried in the body.
+res.Json(new { received = req.Body });
+});
+
+Helpers are available for Get, Post, Put, Delete, Patch, Head, Options, Trace, Connect, and Query.
+
+`QUERY` follows [RFC 10008](https://www.rfc-editor.org/rfc/rfc10008.html). Clients must send a
+`Content-Type` header; HSB rejects a QUERY request without one as `400 Bad Request`. A resource can
+advertise its supported query formats with `res.SetHeader("Accept-Query", "application/json")`.
+Browser clients must include `QUERY` in the configured CORS methods because it requires preflight.
 
 Middleware
 
@@ -219,6 +230,7 @@ Attribute	Usage
 [Patch("/path")]	HTTP PATCH route
 [Head("/path")]	HTTP HEAD route
 [Options("/path")]	HTTP OPTIONS route
+[Query("/path")]	HTTP QUERY route (safe and idempotent, with request content)
 [Route("/path", HttpMethod.X)]	Route with explicit method
 [Ws("/path")]	WebSocket endpoint inside the controller
 

@@ -1,5 +1,5 @@
 name: Build tagged commit
-
+runs-on: self-hosted
 on:
   push:
     tags:
